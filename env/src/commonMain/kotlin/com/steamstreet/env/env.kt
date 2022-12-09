@@ -19,6 +19,8 @@ object Env {
     operator fun get(key: String): String = getEnvironmentVariable(key)!!
 
     fun int(key: String): Int? = getIntEnvironmentVariable(key)
+
+    fun long(key: String): Long? = getEnvironmentVariable(key)?.toLongOrNull()
 }
 
 expect fun getEnvironmentVariable(key: String): String?
