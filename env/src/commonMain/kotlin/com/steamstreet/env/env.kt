@@ -20,6 +20,9 @@ object Env {
 
     fun int(key: String): Int? = getIntEnvironmentVariable(key)
 
+    /**
+     * Get a long value.
+     */
     fun long(key: String): Long? = getEnvironmentVariable(key)?.toLongOrNull()
 }
 
