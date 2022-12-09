@@ -10,7 +10,7 @@ val MINOR_VERSION = 0
 
 allprojects {
     group = "com.steamstreet.common"
-    version = "$MAJOR_VERSION.$MINOR_VERSION.${this.findProperty("BUILD_NUMBER") ?: "SNAPSHOT"}"
+    version = "$MAJOR_VERSION.$MINOR_VERSION${this.findProperty("BUILD_NUMBER")?.let {".$it"} ?: "-SNAPSHOT"}"
 
     repositories {
         mavenCentral()
