@@ -5,9 +5,12 @@ buildscript {
     }
 }
 
+val MAJOR_VERSION = 1
+val MINOR_VERSION = 0
+
 allprojects {
     group = "com.steamstreet.common"
-    version = "1.0.0-SNAPSHOT"
+    version = "$MAJOR_VERSION.$MINOR_VERSION.${this.findProperty("BUILD_NUMBER") ?: "SNAPSHOT"}"
 
     repositories {
         mavenCentral()
