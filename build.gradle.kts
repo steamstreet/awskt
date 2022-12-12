@@ -8,6 +8,10 @@ buildscript {
 val MAJOR_VERSION = 1
 val MINOR_VERSION = 0
 
+val codeArtifactQuery = (properties["steamstreet.codeartifact.profile"] as? String)?.let {
+    "?profile=$it"
+} ?: ""
+
 allprojects {
     group = "com.steamstreet.common"
     version = "$MAJOR_VERSION.$MINOR_VERSION${this.findProperty("BUILD_NUMBER")?.let { ".$it" } ?: ".0-SNAPSHOT"}"
@@ -16,7 +20,7 @@ allprojects {
         mavenCentral()
 
         repositories {
-            maven("https://steamstreet-141660060409.d.codeartifact.us-west-2.amazonaws.com/maven/steamstreet/")
+            maven("https://steamstreet-141660060409.d.codeartifact.us-west-2.amazonaws.com/maven/steamstreet/$codeArtifactQuery")
         }
     }
 }
@@ -24,6 +28,12 @@ allprojects {
 subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "ai.clarity.codeartifact")
+
+    configure<PublishingExtension> {
+        repositories {
+            maven("https://steamstreet-141660060409.d.codeartifact.us-west-2.amazonaws.com/maven/steamstreet/$codeArtifactQuery")
+        }
+    }
 }
 
 plugins {
@@ -31,5 +41,4 @@ plugins {
     kotlin("plugin.serialization") version "1.7.22" apply false
     kotlin("multiplatform") version "1.7.22" apply false
 }
-
 

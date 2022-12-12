@@ -27,9 +27,3 @@ kotlin {
         }
     }
 }
-
-publishing {
-    repositories {
-        maven("https://steamstreet-141660060409.d.codeartifact.us-west-2.amazonaws.com/maven/steamstreet/")
-    }
-}
