@@ -1,7 +1,8 @@
 job("publish-1.0") {
-    container("amazoncorretto:17-alpine") {
-        kotlinScript {
-            it.gradlew("publish", "-PBUILD_NUMBER=${it.executionNumber()}")
-        }
-    }
+    gradlew("openjdk:11", "build")
+//    container("thowimmer/kotlin-native-multiplatform") {
+//        kotlinScript {
+//            it.gradlew("publish", "-PBUILD_NUMBER=${it.executionNumber()}")
+//        }
+//    }
 }

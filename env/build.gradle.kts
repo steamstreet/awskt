@@ -7,11 +7,11 @@ kotlin {
     jvm {
 
     }
-//
-//    js(IR) {
-//        useCommonJs()
-//        browser()
-//    }
+
+    js(IR) {
+        useCommonJs()
+        browser()
+    }
 
     sourceSets {
         val commonMain by getting {
