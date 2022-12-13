@@ -1,16 +1,10 @@
-buildscript {
-    dependencies {
-        classpath("software.amazon.awssdk:sso:2.17.295")
-        classpath("ai.clarity:clarity-artifact:0.0.12")
-    }
-}
-
 val MAJOR_VERSION = 1
 val MINOR_VERSION = 0
 
-val codeArtifactQuery = (properties["steamstreet.codeartifact.profile"] as? String)?.let {
-    "?profile=$it"
-} ?: ""
+val spaceUserName =
+    (project.findProperty("steamstreet.space.username") as? String) ?: System.getenv("JB_SPACE_CLIENT_ID")
+val spacePassword =
+    (project.findProperty("steamstreet.space.password") as? String) ?: System.getenv("JB_SPACE_CLIENT_SECRET")
 
 allprojects {
     group = "com.steamstreet.common"
@@ -19,19 +13,30 @@ allprojects {
     repositories {
         mavenCentral()
 
-        repositories {
-            maven("https://steamstreet-141660060409.d.codeartifact.us-west-2.amazonaws.com/maven/steamstreet/$codeArtifactQuery")
+        maven {
+            url = uri("https://maven.pkg.jetbrains.space/steamstreet/p/vg/vegasful")
+
+            credentials {
+                username = spaceUserName
+                password = spacePassword
+            }
         }
     }
 }
 
 subprojects {
     apply(plugin = "maven-publish")
-    apply(plugin = "ai.clarity.codeartifact")
 
     configure<PublishingExtension> {
         repositories {
-            maven("https://steamstreet-141660060409.d.codeartifact.us-west-2.amazonaws.com/maven/steamstreet/$codeArtifactQuery")
+            maven {
+                url = uri("https://maven.pkg.jetbrains.space/steamstreet/p/vg/vegasful")
+
+                credentials {
+                    username = spaceUserName
+                    password = spacePassword
+                }
+            }
         }
     }
 }
