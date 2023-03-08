@@ -27,3 +27,13 @@ kotlin {
         }
     }
 }
+
+val hello = tasks.register("hello") {
+    doLast {
+        println(gradle.gradleHomeDir!!.absolutePath)
+    }
+}
+tasks.named("build") {
+    dependsOn(hello)
+}
+
