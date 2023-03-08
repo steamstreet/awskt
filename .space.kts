@@ -1,9 +1,9 @@
 job("publish-1.0") {
-    container(displayName = "Run gradle build", image = "amazoncorretto:17-alpine") {
+    container("openjdk:11") {
         mountDir = "/root"
 
-        kotlinScript { api ->
-            api.gradlew("publish", "-PBUILD_NUMBER=${api.executionNumber()}")
+        kotlinScript {
+            it.gradlew("publish", "-PBUILD_NUMBER=${it.executionNumber()}")
         }
 
         cache {
