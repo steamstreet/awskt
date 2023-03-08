@@ -1,7 +1,8 @@
 job("publish-1.0") {
-    container("openjdk:11") {
-        kotlinScript {
-            it.gradlew("publish", "-PBUILD_NUMBER=${it.executionNumber()}")
+    container(displayName = "Run gradle build", image = "amazoncorretto:17-alpine") {
+        kotlinScript { api ->
+            // here can be your complex logic
+            api.gradlew("publish", "-PBUILD_NUMBER=${api.executionNumber()}")
         }
 
         cache {
