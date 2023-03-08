@@ -3,7 +3,7 @@ job("publish-1.0") {
         mountDir = "/root"
 
         kotlinScript {
-            it.gradlew("publish", "-PBUILD_NUMBER=${it.executionNumber()}")
+            it.gradlew("publish", "-PBUILD_NUMBER=${it.executionNumber()}", "--stacktrace")
         }
 
         cache {
