@@ -5,7 +5,7 @@ job("publish-1.0") {
         }
 
         cache {
-            storeKey = "gradle-{{ hashFiles('gradle-wrapper.properties') }}"
+            storeKey = "gradle-{{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}"
             localPath = "~/.gradle"
         }
     }
