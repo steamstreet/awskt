@@ -3,7 +3,6 @@ package com.steamstreet.env
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-
 /**
  * A property delegate for string values.
  */
@@ -13,7 +12,6 @@ public fun <T> env(name: String, default: String? = null): ReadOnlyProperty<T, S
  * A property delegate for integer values. This is a non-null property that requires a default.
  */
 public fun <T> env(name: String, default: Int): ReadOnlyProperty<T, Int> = EnvIntProperty(name, default)
-
 
 public class EnvProperty<T>(private val name: String, private val default: String? = null) :
     ReadOnlyProperty<T, String> {

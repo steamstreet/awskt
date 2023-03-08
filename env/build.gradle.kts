@@ -1,9 +1,13 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 plugins {
     kotlin("multiplatform")
     id("kotlinx-serialization")
 }
 
 kotlin {
+    explicitApi()
+
     jvm {
 
     }
@@ -33,7 +37,7 @@ val hello = tasks.register("hello") {
         println(gradle.gradleHomeDir!!.absolutePath)
     }
 }
-tasks.named("build") {
+tasks.named("publish") {
     dependsOn(hello)
 }
 

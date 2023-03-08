@@ -7,11 +7,11 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient
 
-val secrets: SecretsManagerClient by lazy {
+private val secrets: SecretsManagerClient by lazy {
     SecretsManagerClient.create()
 }
 
-actual fun getEnvironmentVariable(key: String): String? {
+public actual fun getEnvironmentVariable(key: String): String? {
     // we can encode an environment variable as a secret, which will retrieve it using the AWS secrets manager.
     val secretKey = System.getenv()["Secret_${key}"]
     return if (secretKey != null) {
@@ -39,10 +39,10 @@ actual fun getEnvironmentVariable(key: String): String? {
  * Register an environment variable. This simple implementation installs system properties with an "ENV." prefix.
  * This allows other tools to be used to install variables (like the command line).
  */
-actual fun registerEnvironmentVariable(key: String, value: String) {
+public actual fun registerEnvironmentVariable(key: String, value: String) {
     System.setProperty("ENV.$key", value)
 }
 
-actual fun getIntEnvironmentVariable(key: String): Int? {
+public actual fun getIntEnvironmentVariable(key: String): Int? {
     return optional(key)?.toIntOrNull()
 }
