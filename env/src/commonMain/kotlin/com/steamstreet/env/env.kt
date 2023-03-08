@@ -18,10 +18,13 @@ public object Env {
      */
     public operator fun get(key: String): String = getEnvironmentVariable(key)!!
 
+    /**
+     * Get an integer environment variable.
+     */
     public fun int(key: String): Int? = getIntEnvironmentVariable(key)
 
     /**
-     * Get a long value.
+     * Get a long environment variable.
      */
     public fun long(key: String): Long? = getEnvironmentVariable(key)?.toLongOrNull()
 }
