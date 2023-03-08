@@ -3,5 +3,9 @@ job("publish-1.0") {
         kotlinScript {
             it.gradlew("publish", "-PBUILD_NUMBER=${it.executionNumber()}")
         }
+
+        cache {
+            localPath = "~/.gradle"
+        }
     }
 }
