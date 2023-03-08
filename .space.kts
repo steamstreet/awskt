@@ -7,12 +7,8 @@ job("publish-1.0") {
         }
 
         cache {
-            storeKey = "gradle-root-{{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}"
+            storeKey = "gradle-root-{{ hashFiles('gradle/wrapper/gradle-wrapper.properties', 'build.gradle.kts', 'env/build.gradle.kts', 'settings.gradle.kts') }}"
             localPath = "/root/.gradle"
-        }
-        cache {
-            storeKey = "m2-{{ hashFiles('build.gradle.kts', 'env/build.gradle.kts', 'settings.gradle.kts') }}"
-            localPath = "/root/.m2/repository"
         }
     }
 }
