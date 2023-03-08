@@ -13,6 +13,9 @@ public fun <T> env(name: String, default: String? = null): ReadOnlyProperty<T, S
  */
 public fun <T> env(name: String, default: Int): ReadOnlyProperty<T, Int> = EnvIntProperty(name, default)
 
+/**
+ * Property class to read from the environment.
+ */
 public class EnvProperty<T>(private val name: String, private val default: String? = null) :
     ReadOnlyProperty<T, String> {
     override fun getValue(thisRef: T, property: KProperty<*>): String {
