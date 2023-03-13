@@ -2,6 +2,14 @@ job("publish-1.0") {
     container("openjdk:11") {
         mountDir = "/root"
 
+        shellScript {
+            interpreter = "/bin/bash"
+
+            content = """
+                chmod +x /root/.gradle/nodejs/node-v16.13.0-linux-x64/bin/node
+            """
+        }
+
         kotlinScript {
             it.gradlew("publish", "-PBUILD_NUMBER=${it.executionNumber()}", "--stacktrace")
         }
