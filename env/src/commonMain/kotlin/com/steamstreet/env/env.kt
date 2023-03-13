@@ -29,6 +29,9 @@ public object Env {
     public fun long(key: String): Long? = getEnvironmentVariable(key)?.toLongOrNull()
 }
 
+/**
+ * Native call to get an environment variable
+ */
 public expect fun getEnvironmentVariable(key: String): String?
 public expect fun getIntEnvironmentVariable(key: String): Int?
 
