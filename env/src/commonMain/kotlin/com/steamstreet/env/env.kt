@@ -33,6 +33,10 @@ public object Env {
  * Native call to get an environment variable
  */
 public expect fun getEnvironmentVariable(key: String): String?
+
+/**
+ * Native call to get an integer environment variable.
+ */
 public expect fun getIntEnvironmentVariable(key: String): Int?
 
 /**
