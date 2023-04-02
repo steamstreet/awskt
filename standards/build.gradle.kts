@@ -1,19 +1,20 @@
-@file:Suppress("UNUSED_VARIABLE")
-
 plugins {
     kotlin("multiplatform")
+    id("kotlinx-serialization")
 }
 
 kotlin {
     explicitApi()
 
-    jvm {}
+    jvm {
+    }
 
     js(IR) {
         useCommonJs()
         browser()
     }
 
+    @Suppress("UNUSED_VARIABLE")
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -22,8 +23,6 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
-                compileOnly(libs.aws.secrets)
-                compileOnly(libs.kotlin.serialization.json)
             }
         }
     }
