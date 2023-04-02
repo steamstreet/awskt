@@ -15,7 +15,7 @@ public fun env(name: String, default: Int): EnvIntProperty = EnvIntProperty(name
 /**
  * Property class to read from the environment.
  */
-public class EnvProperty(private val name: String, private val default: String? = null) {
+public class EnvProperty(public val name: String, private val default: String? = null) {
     public operator fun getValue(thisRef: Any, property: KProperty<*>): String = value
 
     /**
