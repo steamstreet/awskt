@@ -1,4 +1,4 @@
-package com.steamstreet.standards
+package com.steamstreet
 
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
