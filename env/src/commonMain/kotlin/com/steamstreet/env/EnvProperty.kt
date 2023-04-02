@@ -16,8 +16,7 @@ public fun env(name: String, default: Int): EnvIntProperty = EnvIntProperty(name
  * Property class to read from the environment.
  */
 public class EnvProperty(private val name: String, private val default: String? = null) {
-    @Suppress("UNUSED_PARAMETER")
-    public fun getValue(thisRef: Any, property: KProperty<*>): String {
+    public operator fun getValue(thisRef: Any, property: KProperty<*>): String {
         return if (default != null) {
             Env.optional(name) ?: default
         } else {
@@ -30,8 +29,7 @@ public class EnvProperty(private val name: String, private val default: String? 
  * A property that can be used to retrieve an environment variable as an integer.
  */
 public class EnvIntProperty(private val name: String, private val default: Int) {
-    @Suppress("UNUSED_PARAMETER")
-    public fun getValue(thisRef: Any, property: KProperty<*>): Int {
+    public operator fun getValue(thisRef: Any, property: KProperty<*>): Int {
         return Env.int(name) ?: default
     }
 }
