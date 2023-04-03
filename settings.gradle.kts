@@ -2,7 +2,6 @@
 
 rootProject.name = "steamstreet-common"
 
-
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
@@ -23,8 +22,19 @@ dependencyResolutionManagement {
             )
 
             library("aws-secrets", "software.amazon.awssdk", "secretsmanager").versionRef(awsVersion)
+
+            val slf4jVersion = version("slf4j", "1.8.0-beta4")
+
+            library("slf4j-api", "org.slf4j", "slf4j-api").versionRef(slf4jVersion)
+            library("slf4j-simple", "org.slf4j", "slf4j-simple").versionRef(slf4jVersion)
+            library("slf4j-jcl", "org.slf4j", "jcl-over-slf4j").versionRef(slf4jVersion)
+            library("slf4j-log4j", "org.slf4j", "log4j-over-slf4j").versionRef(slf4jVersion)
+            library("aws-lambda-logback", "org.jlib", "jlib-awslambda-logback").version("1.0.0")
+
+            library("logstash-logback-encoder", "net.logstash.logback:logstash-logback-encoder:6.6")
         }
     }
 }
 include("standards")
 include("env")
+include("logging")

@@ -7,7 +7,7 @@ val spacePassword =
     (project.findProperty("steamstreet.space.password") as? String) ?: System.getenv("JB_SPACE_CLIENT_SECRET")
 
 allprojects {
-    group = "com.steamstreet.common"
+    group = "com.steamstreet.awskt"
     version = "$MAJOR_VERSION.$MINOR_VERSION${this.findProperty("BUILD_NUMBER")?.let { ".$it" } ?: ".0-SNAPSHOT"}"
 
     repositories {
