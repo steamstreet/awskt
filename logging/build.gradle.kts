@@ -1,14 +1,21 @@
+@file:Suppress("UNUSED_VARIABLE")
 plugins {
-    kotlin("jvm")
+    kotlin("multiplatform")
     id("kotlinx-serialization")
 }
 
 kotlin {
     explicitApi()
-}
 
-dependencies {
-    api(libs.slf4j.api)
-    api(libs.logstash.logback.encoder)
-    implementation(libs.kotlin.serialization.json)
+    jvm {}
+
+    sourceSets {
+        val jvmMain by getting {
+            dependencies {
+                api(libs.slf4j.api)
+                api(libs.logstash.logback.encoder)
+                implementation(libs.kotlin.serialization.json)
+            }
+        }
+    }
 }
