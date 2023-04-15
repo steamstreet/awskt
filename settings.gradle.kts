@@ -11,11 +11,10 @@ dependencyResolutionManagement {
             url = uri("https://maven.pkg.jetbrains.space/steamstreet/p/vg/vegasful")
 
             credentials {
-                username = extra["steamstreet.space.username"] as String
-                password = extra["steamstreet.space.password"] as String
+                username = (extra.properties["steamstreet.space.username"] as? String) ?: System.getenv("JB_SPACE_CLIENT_ID")
+                password = (extra.properties["steamstreet.space.password"] as? String) ?: System.getenv("JB_SPACE_CLIENT_SECRET")
             }
         }
-
     }
 
     pluginManagement {
