@@ -1,16 +1,10 @@
 @file:Suppress("UNUSED_VARIABLE")
+
 plugins {
-    kotlin("multiplatform")
-    id("kotlinx-serialization")
+    id("steamstreet-common.multiplatform-library-conventions")
 }
 
 kotlin {
-    explicitApi()
-
-    jvm {
-
-    }
-
     sourceSets {
         val jvmMain by getting {
             dependencies {

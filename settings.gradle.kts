@@ -3,6 +3,28 @@
 rootProject.name = "steamstreet-common"
 
 dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+
+        maven {
+            url = uri("https://maven.pkg.jetbrains.space/steamstreet/p/vg/vegasful")
+
+            credentials {
+                username = extra["steamstreet.space.username"] as String
+                password = extra["steamstreet.space.password"] as String
+            }
+        }
+
+    }
+
+    pluginManagement {
+        repositories {
+            gradlePluginPortal()
+            mavenCentral()
+        }
+    }
+
     versionCatalogs {
         create("libs") {
             val kotlinSerializationVersion = version("kotlin-serialization", "1.4.1")

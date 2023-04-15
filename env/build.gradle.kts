@@ -1,25 +1,11 @@
 @file:Suppress("UNUSED_VARIABLE")
 
 plugins {
-    kotlin("multiplatform")
+    id("steamstreet-common.multiplatform-library-conventions")
 }
 
 kotlin {
-    explicitApi()
-
-    jvm {}
-
-    js(IR) {
-        useCommonJs()
-        browser()
-    }
-
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-            }
-        }
-
         val jvmMain by getting {
             dependencies {
                 compileOnly(libs.aws.secrets)

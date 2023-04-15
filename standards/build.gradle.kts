@@ -1,19 +1,8 @@
 plugins {
-    kotlin("multiplatform")
-    id("kotlinx-serialization")
+    id("steamstreet-common.multiplatform-library-conventions")
 }
 
 kotlin {
-    explicitApi()
-
-    jvm {
-    }
-
-    js(IR) {
-        useCommonJs()
-        browser()
-    }
-
     @Suppress("UNUSED_VARIABLE")
     sourceSets {
         val commonMain by getting {

@@ -1,5 +1,6 @@
 package com.steamstreet.env
 
+import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 /**
@@ -15,8 +16,8 @@ public fun env(name: String, default: Int): EnvIntProperty = EnvIntProperty(name
 /**
  * Property class to read from the environment.
  */
-public class EnvProperty(public val name: String, private val default: String? = null) {
-    public operator fun getValue(thisRef: Any, property: KProperty<*>): String = value
+public class EnvProperty(public val name: String, private val default: String? = null): ReadOnlyProperty<Any?, String> {
+    public override operator fun getValue(thisRef: Any?, property: KProperty<*>): String = value
 
     /**
      * Get the value of the property
@@ -27,6 +28,22 @@ public class EnvProperty(public val name: String, private val default: String? =
         } else {
             Env[name]
         }
+    }
+
+    public val optional: EnvOptionalProperty get() = EnvOptionalProperty(name)
+}
+
+/**
+ * An optional version of the property.
+ */
+public class EnvOptionalProperty(public val name: String): ReadOnlyProperty<Any?, String?> {
+    public override operator fun getValue(thisRef: Any?, property: KProperty<*>): String? = value
+
+    /**
+     * Get the value of the property
+     */
+    public val value: String? get() {
+        return Env.optional(name)
     }
 }
 
@@ -39,8 +56,4 @@ public class EnvIntProperty(private val name: String, private val default: Int) 
     }
 }
 
-/**
- * Defines a variable as a constant that can be used in multiple places. Useful for sharing
- * environment variable names between the CDK and code.
- */
-public fun variable(name: String, default: String? = null): EnvProperty = EnvProperty(name, default)
+public val x: EnvProperty = env("SomeName")
