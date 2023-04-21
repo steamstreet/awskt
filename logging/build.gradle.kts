@@ -15,3 +15,13 @@ kotlin {
         }
     }
 }
+
+publishing {
+    publications {
+        withType<MavenPublication> {
+            pom {
+                description.set("Useful logging tools for Kotlin on AWS")
+            }
+        }
+    }
+}

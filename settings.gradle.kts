@@ -1,6 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
-rootProject.name = "steamstreet-common"
+rootProject.name = "aws-kt"
 
 dependencyResolutionManagement {
     repositories {

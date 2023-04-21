@@ -16,3 +16,13 @@ kotlin {
         }
     }
 }
+
+publishing {
+    publications {
+        withType<MavenPublication> {
+            pom {
+                description.set("Standard constructs and functions for working with AWS in Kotlin.")
+            }
+        }
+    }
+}

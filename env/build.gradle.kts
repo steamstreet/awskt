@@ -14,3 +14,13 @@ kotlin {
         }
     }
 }
+
+publishing {
+    publications {
+        withType<MavenPublication> {
+            pom {
+                description.set("Tools for retrieving environment variables from different sources.")
+            }
+        }
+    }
+}
