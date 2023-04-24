@@ -7,7 +7,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
  */
 class AWSLocal(
     val region: String = "us-east-1",
-    val accountId: String = "455481184986"
+    val accountId: String = "123412341234"
 ) {
     lateinit var dynamoRunner: DynamoRunner
 
