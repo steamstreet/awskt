@@ -5,10 +5,20 @@ plugins {
 }
 
 kotlin {
+    explicitApi()
+
+    jvm {
+    }
+
+    js(IR) {
+        useCommonJs()
+        browser()
+    }
+
     sourceSets {
         val jvmMain by getting {
             dependencies {
-                compileOnly(libs.aws.secrets)
+                compileOnly(libs.aws.secretsmanager)
                 compileOnly(libs.kotlin.serialization.json)
             }
         }
@@ -18,6 +28,7 @@ kotlin {
 publishing {
     publications {
         withType<MavenPublication> {
+            artifactId = "awskt-${artifactId}"
             pom {
                 description.set("Tools for retrieving environment variables from different sources.")
             }

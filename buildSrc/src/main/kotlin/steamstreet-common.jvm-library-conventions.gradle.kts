@@ -1,7 +1,8 @@
 import org.gradle.kotlin.dsl.kotlin
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("multiplatform")
+    kotlin("jvm")
     id("kotlinx-serialization")
 
     id("maven-publish")
@@ -9,10 +10,17 @@ plugins {
     signing
 }
 
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
+    }
+}
+
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(11))
     }
+    withSourcesJar()
 }
 
 val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
@@ -34,9 +42,12 @@ publishing {
         }
     }
 
-    publications.withType<MavenPublication> {
+    publications.create<MavenPublication>("maven") {
         artifact(tasks.findByName("javadocJar"))
         groupId = "com.steamstreet"
+        artifactId = "awskt-${artifactId}"
+
+        from(components["java"])
 
         pom {
             name.set(project.name)

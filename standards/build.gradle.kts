@@ -3,6 +3,16 @@ plugins {
 }
 
 kotlin {
+    explicitApi()
+
+    jvm {
+    }
+
+    js(IR) {
+        useCommonJs()
+        browser()
+    }
+
     @Suppress("UNUSED_VARIABLE")
     sourceSets {
         val commonMain by getting {
@@ -20,6 +30,7 @@ kotlin {
 publishing {
     publications {
         withType<MavenPublication> {
+            artifactId = "awskt-${artifactId}"
             pom {
                 description.set("Standard constructs and functions for working with AWS in Kotlin.")
             }
