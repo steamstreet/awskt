@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     api(project(":logging"))
+    implementation(libs.aws.lambda.logback)
 }
 
 publishing {

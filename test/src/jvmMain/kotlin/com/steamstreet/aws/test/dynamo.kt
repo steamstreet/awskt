@@ -4,6 +4,9 @@ import com.amazonaws.services.dynamodbv2.local.main.ServerRunner
 import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer
 import com.amazonaws.services.lambda.runtime.events.DynamodbEvent
 import com.amazonaws.services.lambda.runtime.events.models.dynamodb.StreamViewType
+import com.steamstreet.dynamokt.DynamoStreamEvent
+import com.steamstreet.dynamokt.DynamoStreamEventDetail
+import kotlinx.serialization.json.Json
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.awscore.exception.AwsServiceException
@@ -12,6 +15,8 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClientBuilder
 import software.amazon.awssdk.services.dynamodb.model.*
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient
+import software.amazon.awssdk.services.eventbridge.EventBridgeClient
+import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry
 import java.net.URI
 import java.util.*
 import java.util.concurrent.Semaphore
@@ -22,7 +27,7 @@ import kotlin.concurrent.thread
 typealias StreamProcessorFunction = ((DynamodbEvent, Record) -> Unit)
 
 /**
- * Wraps up configuration of a local dyanmo runner.
+ * Wraps up configuration of a local dynamo runner, allowing for custom stream processing logic.
  */
 class DynamoRunner {
     private var server: DynamoDBProxyServer? = null
@@ -30,6 +35,7 @@ class DynamoRunner {
     var listeners: List<StreamListener>? = null
 
     var streamProcessor: StreamProcessorFunction? = null
+    var pipes: PipesConfiguration? = null
 
     val processing: Boolean
         get() {
@@ -90,7 +96,7 @@ class DynamoRunner {
             ).build()
     }
 
-    class ShardReader(
+    inner class ShardReader(
         val processor: StreamProcessorFunction?,
         val streams: DynamoDbStreamsClient,
         val streamArn: String,
@@ -178,19 +184,18 @@ class DynamoRunner {
                             .withOldImage(it.oldImage()?.toEventAttributeValue())
                             .withSequenceNumber(it.sequenceNumber())
                             .withStreamViewType(StreamViewType.valueOf(it.streamViewTypeAsString()))
-                            .withApproximateCreationDateTime(
-                                Date(
-                                    record.dynamodb().approximateCreationDateTime().toEpochMilli()
-                                )
-                            )
+                            .withApproximateCreationDateTime(Date())
                     }
                 })
             }
-            processor?.invoke(event, record)
+            if (running) {
+                processor?.invoke(event, record)
+                pipes?.send(event.records.first(), record)
+            }
         }
     }
 
-    class StreamListener(
+    inner class StreamListener(
         val processor: StreamProcessorFunction?,
         val streams: DynamoDbStreamsClient,
         val streamArn: String
@@ -266,6 +271,41 @@ fun AttributeValue.toEventAttributeValue(): com.amazonaws.services.lambda.runtim
             it.withBS(bs().map { it.asByteBuffer() })
         } else if (bool() != null) {
             it.withBOOL(bool())
+        }
+    }
+}
+
+class PipesConfiguration(
+    val client: EventBridgeClient,
+    val busArn: String,
+    val detailType: String,
+    val source: String = "DefaultSource"
+) {
+    fun send(record: DynamodbEvent.DynamodbStreamRecord, srcRecord: Record) {
+        val event = DynamoStreamEvent(
+            UUID.randomUUID().toString(),
+            record.eventName,
+            record.eventVersion,
+            record.eventSource,
+            record.awsRegion,
+            record.dynamodb.let {
+                DynamoStreamEventDetail(
+                    it.approximateCreationDateTime.time,
+                    srcRecord.dynamodb().keys(),
+                    srcRecord.dynamodb().newImage(),
+                    srcRecord.dynamodb().oldImage()
+                )
+            },
+            record.eventSourceARN
+        )
+
+        client.putEvents {
+            it.entries(PutEventsRequestEntry.builder().apply {
+                eventBusName(busArn.substringAfterLast(":event-bus/"))
+                detail(Json.encodeToString(DynamoStreamEvent.serializer(), event))
+                detailType(detailType)
+                source(source)
+            }.build())
         }
     }
 }

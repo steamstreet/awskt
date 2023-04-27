@@ -21,9 +21,10 @@ public var dynamoKtClientBuilder: DynamoDbClientBuilder by mutableLazy {
 public class DynamoKt(
     public val table: String,
     public val pkName: String = "pk",
-    public val skName: String = "sk",
+    public val skName: String? = "sk",
     public val builder: DynamoDbClientBuilder = dynamoKtClientBuilder,
-    public val defaultCredentials: AwsCredentialsProvider? = null
+    public val defaultCredentials: AwsCredentialsProvider? = null,
+    public val ttlAttribute: String? = null
 ) {
     internal val indexes = hashMapOf<String, DynamoKtIndex>()
 
@@ -68,14 +69,14 @@ public class DynamoKtSession(
     public val dynamo: DynamoDbClient,
     public val table: String,
     public val pkName: String,
-    public val skName: String,
+    public val skName: String?,
     private val cache: MutableMap<String, Item>? = null
 ) : ItemUpdater {
 
-    public fun getOrNull(pk: String, sk: String, attributes: List<String>? = null): Item? {
+    public fun getOrNull(pk: String, sk: String?, attributes: List<String>? = null): Item? {
         return dynamo.getItem {
             it.tableName(table)
-            it.key(mapOf(pkName to pk.attributeValue(), skName to sk.attributeValue()))
+            it.key(keyMap(pk, sk))
             attributes?.apply {
                 it.attributesToGet(this)
             }
@@ -83,13 +84,13 @@ public class DynamoKtSession(
             if (!it.hasItem()) {
                 null
             } else {
-                val combined = it.item() + mapOf(pkName to pk.attributeValue(), skName to sk.attributeValue())
+                val combined = it.item() + keyMap(pk, sk)
                 Item(this, combined).also(::cacheItem)
             }
         }
     }
 
-    public fun get(pk: String, sk: String, attributes: List<String>? = null): Item {
+    public fun get(pk: String, sk: String?, attributes: List<String>? = null): Item {
         return getOrNull(pk, sk, attributes) ?: throw NotFoundException("Unknown item $pk $sk")
     }
 
@@ -129,12 +130,9 @@ public class DynamoKtSession(
         }
     }
 
-    override fun put(pk: AttributeValue, sk: AttributeValue, block: MutableItem.() -> Unit): Item {
+    override fun put(pk: AttributeValue, sk: AttributeValue?, block: MutableItem.() -> Unit): Item {
         return MutableItem(
-            this, mapOf(
-                pkName to pk,
-                skName to sk
-            )
+            this, keyMap(pk, sk)
         ).let {
             it.doNotOverwrite = true
             it.block()
@@ -142,26 +140,19 @@ public class DynamoKtSession(
         }
     }
 
-    override fun put(pk: String, sk: String, attributes: Map<String, AttributeValue>): Item {
+    override fun put(pk: String, sk: String?, attributes: Map<String, AttributeValue>): Item {
         dynamo.putItem {
             it.tableName(table)
-            it.item(attributes + (pkName to pk.attributeValue()) + (skName to sk.attributeValue()))
+            it.item(attributes + keyMap(pk, sk))
         }.let {
             return Item(
-                this, attributes +
-                        (pkName to pk.attributeValue()) +
-                        (skName to sk.attributeValue())
+                this, attributes + keyMap(pk, sk)
             )
         }
     }
 
-    override fun update(pk: String, sk: String, block: MutableItem.() -> Unit): Item {
-        return MutableItem(
-            this, mapOf(
-                pkName to pk.attributeValue(),
-                skName to sk.attributeValue()
-            )
-        ).let {
+    override fun update(pk: String, sk: String?, block: MutableItem.() -> Unit): Item {
+        return MutableItem(this, keyMap(pk, sk)).let {
             it.block()
             it.save()
         }
@@ -229,18 +220,26 @@ public class DynamoKtSession(
         }
     }
 
-    override fun delete(pk: String, sk: String, block: MutableItem.() -> Unit) {
-        val item = MutableItem(this, mapOf(pkName to pk.attributeValue(), skName to sk.attributeValue()))
+    internal fun keyMap(pk: String, sk: String?): Map<String, AttributeValue> {
+        return keyMap(pk.attributeValue(), sk?.attributeValue())
+    }
+
+    internal fun keyMap(pk: AttributeValue, sk: AttributeValue?): Map<String, AttributeValue> {
+        return buildMap {
+            put(pkName, pk)
+            if (skName != null) {
+                put(skName, sk!!)
+            }
+        }
+    }
+
+    override fun delete(pk: String, sk: String?, block: MutableItem.() -> Unit) {
+        val item = MutableItem(this, keyMap(pk, sk))
         item.block()
 
         dynamo.deleteItem {
             it.tableName(table)
-            it.key(
-                mapOf(
-                    pkName to pk.attributeValue(),
-                    skName to sk.attributeValue()
-                )
-            )
+            it.key(keyMap(pk, sk))
 
             if (item.conditionExpression != null) {
                 it.conditionExpression(item.conditionExpression)
@@ -271,12 +270,7 @@ public class DynamoKtSession(
         pk: String, sk: String,
         attributes: Map<String, AttributeValue> = emptyMap()
     ): Item {
-        return facade(
-            attributes +
-                    mapOf(
-                        pkName to pk.attributeValue(),
-                        skName to sk.attributeValue()
-                    )
+        return facade(attributes + keyMap(pk, sk)
         )
     }
 
@@ -293,12 +287,9 @@ public class DynamoKtSession(
         return Item(this, attributes, false, failOnLoading)
     }
 
-    public fun unloaded(pk: String, sk: String, attributes: Map<String, AttributeValue>, failOnLoading: Boolean): Item {
+    public fun unloaded(pk: String, sk: String?, attributes: Map<String, AttributeValue>, failOnLoading: Boolean): Item {
         return unloaded(
-            mapOf(
-                pkName to pk.attributeValue(),
-                skName to sk.attributeValue()
-            ) + attributes, failOnLoading
+            keyMap(pk, sk) + attributes, failOnLoading
         )
     }
 }

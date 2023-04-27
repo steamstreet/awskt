@@ -7,14 +7,6 @@ dependencyResolutionManagement {
         mavenCentral()
         gradlePluginPortal()
 
-        maven {
-            url = uri("https://maven.pkg.jetbrains.space/steamstreet/p/vg/vegasful")
-
-            credentials {
-                username = (extra.properties["steamstreet.space.username"] as? String) ?: System.getenv("JB_SPACE_CLIENT_ID")
-                password = (extra.properties["steamstreet.space.password"] as? String) ?: System.getenv("JB_SPACE_CLIENT_SECRET")
-            }
-        }
         maven("https://s3-us-west-2.amazonaws.com/dynamodb-local/release")
     }
 

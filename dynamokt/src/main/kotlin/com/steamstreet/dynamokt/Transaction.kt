@@ -20,10 +20,10 @@ public class Transaction internal constructor(private val mapper: DynamoKtSessio
         }
     }
 
-    override fun put(pk: String, sk: String, attributes: Map<String, AttributeValue>): Item {
+    override fun put(pk: String, sk: String?, attributes: Map<String, AttributeValue>): Item {
         items.add(TransactWriteItem.builder().put {
             it.tableName(mapper.table)
-            it.item(attributes + (mapper.pkName to pk.attributeValue()) + (mapper.skName to sk.attributeValue()) )
+            it.item(attributes + mapper.keyMap(pk, sk))
         }.build())
         return Item(mapper, attributes)
     }
@@ -55,16 +55,11 @@ public class Transaction internal constructor(private val mapper: DynamoKtSessio
         items.add(TransactWriteItem.builder().conditionCheck(check).build())
     }
 
-    private fun buildDelete(pk: String, sk: String): TransactWriteItem {
+    private fun buildDelete(pk: String, sk: String?): TransactWriteItem {
         return TransactWriteItem.builder().apply {
             delete(Delete.builder().apply {
                 tableName(mapper.table)
-                key(
-                    mapOf(
-                        mapper.pkName to pk.attributeValue(),
-                        mapper.skName to sk.attributeValue()
-                    )
-                )
+                key(mapper.keyMap(pk, sk))
             }.build())
         }.build()
     }
@@ -74,12 +69,9 @@ public class Transaction internal constructor(private val mapper: DynamoKtSessio
             update(Update.builder().apply {
                 this.tableName(mapper.table)
 
-                key(
-                    mapOf(
-                        mapper.pkName to entity.attributes[mapper.pkName],
-                        mapper.skName to entity.attributes[mapper.skName]
-                    )
-                )
+                key(mapper.keyMap(entity.attributes[mapper.pkName]!!, mapper.skName?.let {
+                    entity.attributes[it]
+                }))
 
                 this.updateExpression(entity.buildUpdateExpression())
                 entity.conditionExpression?.let {
@@ -116,11 +108,8 @@ public class Transaction internal constructor(private val mapper: DynamoKtSessio
         }.build()
     }
 
-    override fun put(pk: AttributeValue, sk: AttributeValue, block: MutableItem.() -> Unit): Item {
-        val key = mapOf(
-            mapper.pkName to pk,
-            mapper.skName to sk
-        )
+    override fun put(pk: AttributeValue, sk: AttributeValue?, block: MutableItem.() -> Unit): Item {
+        val key = mapper.keyMap(pk, sk)
         return MutableItem(mapper, key).let {
             it.doNotOverwrite = true
             it.block()
@@ -130,11 +119,8 @@ public class Transaction internal constructor(private val mapper: DynamoKtSessio
         }
     }
 
-    override fun update(pk: String, sk: String, block: MutableItem.() -> Unit): Item {
-        val key = mapOf(
-            mapper.pkName to pk.attributeValue(),
-            mapper.skName to sk.attributeValue()
-        )
+    override fun update(pk: String, sk: String?, block: MutableItem.() -> Unit): Item {
+        val key = mapper.keyMap(pk, sk)
         return MutableItem(mapper, key).let {
             it.block()
 
@@ -151,7 +137,7 @@ public class Transaction internal constructor(private val mapper: DynamoKtSessio
         }
     }
 
-    override fun delete(pk: String, sk: String, block: MutableItem.() -> Unit) {
+    override fun delete(pk: String, sk: String?, block: MutableItem.() -> Unit) {
         items.add(buildDelete(pk, sk))
     }
 

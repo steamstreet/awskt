@@ -248,7 +248,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      * Adds a condition to ensure that the item already exists.
      */
     public fun mustExist() {
-        this.condition("attribute_exists(#sk)", mapOf("#sk" to dynamo.skName))
+        this.condition("attribute_exists(#pk)", mapOf("#pk" to dynamo.pkName))
     }
 
     public fun save(): Item {
@@ -259,15 +259,33 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
         }
     }
 
+    /**
+     * Set the ttl of the item using the attribute provided in the main DynamoKt class.
+     */
+    public fun setTTL(instant: Instant) {
+        dynamo.dynamoKt.ttlAttribute?.let {
+            setLong(it, instant.epochSeconds)
+        }
+    }
+
+    /**
+     * Set the TTL to the current time plus the provided offset.
+     */
+    public fun setTTL(duration: kotlin.time.Duration) {
+        setTTL(kotlinx.datetime.Clock.System.now().plus(duration))
+    }
+
     private fun putItem(): Item {
         val attributes = (updates.filter {
             it.value.action() == AttributeAction.PUT
         }.mapValues {
             it.value.value()
-        } + mapOf(
-            dynamo.pkName to attributes[dynamo.pkName],
-            dynamo.skName to attributes[dynamo.skName]
-        )).filterNullValues()
+        } + buildMap {
+            put(dynamo.pkName, attributes[dynamo.pkName])
+            if (dynamo.skName != null) {
+                put(dynamo.skName, attributes[dynamo.skName])
+            }
+        }).filterNullValues()
 
         val result = try {
             dynamo.dynamo.putItem {

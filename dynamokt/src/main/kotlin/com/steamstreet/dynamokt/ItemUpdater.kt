@@ -12,24 +12,24 @@ public interface ItemUpdater {
      * implementation will not allow for updating an existing item and will throw an exception
      * if the item exists. To overwrite the item, set `doNotOverwrite` to `false` and `replace` to `true`.
      */
-    public fun put(pk: String, sk: String, block: MutableItem.() -> Unit = {}): Item =
-        put(pk.attributeValue(), sk.attributeValue(), block)
+    public fun put(pk: String, sk: String?, block: MutableItem.() -> Unit = {}): Item =
+        put(pk.attributeValue(), sk?.attributeValue(), block)
 
     /**
      * Pu an update using attribute values for the key.
      */
-    public fun put(pk: AttributeValue, sk: AttributeValue, block: MutableItem.() -> Unit = {}): Item
+    public fun put(pk: AttributeValue, sk: AttributeValue?, block: MutableItem.() -> Unit = {}): Item
 
     /**
      * Put an item with the given attributes. Always overwrites the previous item.
      */
-    public fun put(pk: String, sk: String, attributes: Map<String, AttributeValue>): Item
+    public fun put(pk: String, sk: String?, attributes: Map<String, AttributeValue>): Item
 
     /**
      * Update an item. This will not replace an item, but update individual attributes based on
      * the callback.
      */
-    public fun update(pk: String, sk: String, block: MutableItem.() -> Unit = {}): Item
+    public fun update(pk: String, sk: String?, block: MutableItem.() -> Unit = {}): Item
 
     /**
      * Update an item
@@ -41,7 +41,7 @@ public interface ItemUpdater {
      * Delete an item. The provided block allows the caller to set conditional expressions on the delete
      * operation for implementations that support it.
      */
-    public fun delete(pk: String, sk: String, block: MutableItem.() -> Unit = {})
+    public fun delete(pk: String, sk: String?, block: MutableItem.() -> Unit = {})
 
     /**
      * Commit changes. Not all implementations will use this, and instead will perform updates as they are submitted.

@@ -137,7 +137,7 @@ public fun <R : ItemContainer, C> R.stringBacked(
         val c = Converter<C, String?>().apply(converter)
         it?.s().let {
             c.f?.invoke(it) as C
-        } as C
+        }
     }
     to {
         Converter<C, String?>().apply(converter).t?.invoke(it)?.let { str ->

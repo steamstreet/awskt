@@ -3,6 +3,7 @@ package com.steamstreet.aws.test
 import com.amazonaws.services.lambda.runtime.Context
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.steamstreet.aws.lambda.eventbridge.EventBridgeFunction
 import kotlinx.serialization.json.*
 import software.amazon.awssdk.awscore.exception.AwsServiceException
 import software.amazon.awssdk.core.SdkBytes
@@ -10,6 +11,7 @@ import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient
 import software.amazon.awssdk.services.eventbridge.model.*
 import software.amazon.awssdk.services.lambda.LambdaClient
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.time.Instant
 import java.util.*
@@ -160,6 +162,23 @@ class EventBridgeLocal(
         bus.putRule(putRuleRequest)
         return PutRuleResponse.builder()
             .ruleArn("arn:aws:events:${region.id()}:$accountId:rule/${putRuleRequest.name()}").build()
+    }
+
+    /**
+     * Utility to set an EventBridgeFunction as a target for an event.
+     */
+    fun putTarget(eventBusName: String, pattern: String, handler: EventBridgeFunction) {
+        val ruleName = UUID.randomUUID().toString()
+
+        putRule {
+            it.eventBusName(eventBusName)
+            it.eventPattern(pattern)
+            it.name(ruleName)
+        }
+
+        putTarget(eventBusName, ruleName) { input, context ->
+            handler.execute(input, ByteArrayOutputStream(), context)
+        }
     }
 
     override fun putTargets(putTargetsRequest: PutTargetsRequest): PutTargetsResponse {

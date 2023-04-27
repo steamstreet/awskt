@@ -24,6 +24,8 @@ kotlin {
                 implementation(libs.kotlin.date.time)
 
                 api(project(":standards"))
+                api(project(":dynamokt"))
+                api(project(":lambda:lambda-eventbridge"))
             }
         }
     }

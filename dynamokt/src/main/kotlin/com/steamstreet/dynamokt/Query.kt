@@ -46,7 +46,7 @@ public class Query internal constructor(
                 if (attributeNames == null) {
                     attributeNames = HashMap()
                 }
-                attributeNames?.put(it, name)
+                attributeNames?.put(it, keyElement)
             }
         }.joinToString(".")
 
