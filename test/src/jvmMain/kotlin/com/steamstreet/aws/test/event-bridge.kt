@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.steamstreet.aws.lambda.eventbridge.EventBridgeFunction
+import com.steamstreet.events.EventSchema
 import kotlinx.serialization.json.*
 import software.amazon.awssdk.awscore.exception.AwsServiceException
 import software.amazon.awssdk.core.SdkBytes
@@ -254,4 +255,13 @@ fun match(filter: String, data: String): Boolean {
     val dataJson = Json.parseToJsonElement(data)
 
     return match(filterJson, dataJson)
+}
+
+/**
+ * Get events of a given type and deserialize
+ */
+fun <T> EventBridgeLocal.eventsOfType(type: EventSchema<T>): List<T> {
+    return this.eventsOfType(type.type).map {
+        Json.decodeFromString(type.serializer, it.detail())
+    }
 }

@@ -1,5 +1,7 @@
 package com.steamstreet.awskt.logging
 
+import kotlinx.coroutines.slf4j.MDCContext
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -10,6 +12,26 @@ import net.logstash.logback.marker.Markers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
+
+/**
+ * Create a suspendable context for logging with MDC.
+ */
+public suspend inline fun <T> mdcContext(vararg pairs: Pair<String, String?>, crossinline block: suspend () -> T): T {
+    val notNull = pairs.mapNotNull {
+        if (it.second == null) null
+        else it.first to it.second!!
+    }
+    return withContext(MDCContext(*notNull.toTypedArray())) {
+        block()
+    }
+}
+
+/**
+ * Construct an MDC context with data.
+ */
+public fun MDCContext(vararg pairs: Pair<String, String>): MDCContext =
+    MDCContext(MDC.getCopyOfContextMap().orEmpty() + pairs)
+
 
 public fun <T> mdc(vararg metadata: Pair<String, String?>, block: () -> T): T {
     val previous = hashMapOf<String, String?>()

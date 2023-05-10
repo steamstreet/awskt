@@ -1,5 +1,4 @@
 @file:Suppress("UNUSED_VARIABLE")
-
 plugins {
     id("steamstreet-common.multiplatform-library-conventions")
 }
@@ -21,8 +20,16 @@ kotlin {
                 api(libs.slf4j.api)
                 api(libs.logstash.logback.encoder)
                 implementation(libs.kotlin.serialization.json)
+                implementation(libs.kotlin.coroutines.slf4j)
             }
         }
+    }
+}
+
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
     }
 }
 

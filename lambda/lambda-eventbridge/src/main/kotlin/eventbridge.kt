@@ -5,6 +5,7 @@ import com.steamstreet.aws.lambda.lambdaInput
 import com.steamstreet.aws.lambda.lambdaJson
 import com.steamstreet.aws.lambda.logger
 import com.steamstreet.awskt.logging.logJson
+import com.steamstreet.awskt.logging.mdcContext
 import com.steamstreet.events.EventSchema
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -14,10 +15,12 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import net.logstash.logback.marker.Markers
-import org.slf4j.MDC
 import java.io.InputStream
 import java.io.OutputStream
 
+/**
+ * Callback interface for event bridge handler installation.
+ */
 public interface EventBridgeHandlerConfig {
     /**
      * Get all events of the given type
@@ -73,28 +76,28 @@ public fun eventBridge(
         } else {
             // add the detail type to the mdc for tracing.
             val detailType = obj["detail-type"]!!.jsonPrimitive.content
-            MDC.put("event-detail-type", detailType)
+            mdcContext("event-detail-type" to detailType) {
+                var error: Throwable? = null
+                (object : EventBridgeHandlerConfig {
+                    override fun eventsOfType(type: String): List<Event> {
+                        return if (detailType == type) {
+                            listOf(object : Event {
+                                override val id: String = "__"
+                                override val type: String = detailType
+                                override val detail: JsonObject = obj["detail"]!!.jsonObject
 
-            var error: Throwable? = null
-            (object : EventBridgeHandlerConfig {
-                override fun eventsOfType(type: String): List<Event> {
-                    return if (detailType == type) {
-                        listOf(object : Event {
-                            override val id: String = "__"
-                            override val type: String = detailType
-                            override val detail: JsonObject = obj["detail"]!!.jsonObject
-
-                            override fun failed(t: Throwable?) {
-                                error = t
-                            }
-                        })
-                    } else {
-                        emptyList()
+                                override fun failed(t: Throwable?) {
+                                    error = t
+                                }
+                            })
+                        } else {
+                            emptyList()
+                        }
                     }
-                }
-            }).config()
+                }).config()
 
-            error?.let { throw it }
+                error?.let { throw it }
+            }
         }
     }
 }

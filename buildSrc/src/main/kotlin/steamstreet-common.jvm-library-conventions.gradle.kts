@@ -13,6 +13,7 @@ plugins {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
+        kotlinOptions.jvmTarget = "11"
     }
 }
 

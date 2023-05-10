@@ -1,6 +1,7 @@
 package com.steamstreet.aws.lambda
 
 import com.amazonaws.services.lambda.runtime.Context
+import com.steamstreet.awskt.logging.mdcContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -15,7 +16,6 @@ import kotlinx.serialization.json.encodeToStream
 import net.logstash.logback.marker.Markers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.slf4j.MDC
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -56,16 +56,13 @@ public fun <T> lambda(context: Context = MockLambdaContext(), handler: suspend C
     return runBlocking {
         lambdaContext = context
         withContext(Dispatchers.Default) {
-            try {
-                context.awsRequestId?.let {
-                    MDC.put("requestId", it)
+            mdcContext("requestId" to context.awsRequestId) {
+                try {
+                    handler()
+                } catch (t: Throwable) {
+                    logger.error("Handler failed", t)
+                    throw t
                 }
-                handler()
-            } catch (t: Throwable) {
-                logger.error("Handler failed", t)
-                throw t
-            } finally {
-                MDC.clear()
             }
         }
     }

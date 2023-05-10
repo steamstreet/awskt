@@ -69,6 +69,9 @@ dependencyResolutionManagement {
             library(
                 "kotlin-coroutines-test", "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
             )
+            library(
+                "kotlin-coroutines-slf4j", "org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.6.4"
+            )
             library("kotlin-date-time", "org.jetbrains.kotlinx", "kotlinx-datetime").version("0.4.0")
             library("kluent", "org.amshove.kluent:kluent:1.65")
 

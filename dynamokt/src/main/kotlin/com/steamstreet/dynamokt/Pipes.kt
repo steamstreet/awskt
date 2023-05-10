@@ -97,24 +97,24 @@ public class AttributeValueSerializer : KSerializer<AttributeValue> {
                 )
 
                 value.bool() != null -> encodeBooleanElement(descriptor, 3, value.bool())
-                value.l() != null -> encodeSerializableElement(
+                !value.l().isNullOrEmpty() -> encodeSerializableElement(
                     descriptor, 4,
                     ListSerializer(AttributeValueSerializer()), value.l()
                 )
 
-                value.m() != null -> encodeSerializableElement(
+                !value.m().isNullOrEmpty() -> encodeSerializableElement(
                     descriptor, 5,
                     MapSerializer(String.serializer(), AttributeValueSerializer()), value.m()
                 )
 
-                value.ss() != null -> encodeSerializableElement(
+                !value.ss().isNullOrEmpty() -> encodeSerializableElement(
                     descriptor,
                     6,
                     ListSerializer(String.serializer()),
                     value.ss()
                 )
 
-                value.ns() != null -> encodeSerializableElement(
+                !value.ns().isNullOrEmpty() -> encodeSerializableElement(
                     descriptor,
                     6,
                     ListSerializer(String.serializer()),
