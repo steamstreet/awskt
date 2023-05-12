@@ -13,15 +13,17 @@ private val secrets: SecretsManagerClient by lazy {
 
 public actual fun getEnvironmentVariable(key: String): String? {
     // we can encode an environment variable as a secret, which will retrieve it using the AWS secrets manager.
-    val secretKey = System.getenv()["Secret_${key}"]
-    return if (secretKey != null) {
+    val value = System.getProperty("ENV.$key") ?: System.getenv(key)
+    var secretKey = System.getenv("Secret_$key")
+    return if (secretKey != null || value?.startsWith("Secret_") == true) {
         try {
+            secretKey = secretKey ?: value.removePrefix("Secret_")
             secrets.getSecretValue {
                 it.secretId(secretKey.substringBefore("."))
             }.secretString().let {
                 if (secretKey.contains('.')) {
                     val valueKey = secretKey.substringAfter(".")
-                    Json.parseToJsonElement(it).jsonObject.get(valueKey)?.jsonPrimitive?.contentOrNull
+                    Json.parseToJsonElement(it).jsonObject[valueKey]?.jsonPrimitive?.contentOrNull
                 } else {
                     it
                 }
@@ -30,8 +32,15 @@ public actual fun getEnvironmentVariable(key: String): String? {
             e.printStackTrace()
             null
         }
+    } else if (value == "_NoValue") {
+        null
+    } else if (value?.startsWith("AppConfig_") == true) {
+//        val default = value.substringAfter(":", "").ifBlank { null }
+//        val (_, app, environment, config, configValue) = value.substringBefore(":").split(".")
+//        AppConfig.getString(app, environment, config, configValue, default)
+        throw NotImplementedError("AppConfig support is not yet implemented.")
     } else {
-        System.getProperty("ENV.$key") ?: System.getenv(key)
+        value
     }
 }
 
