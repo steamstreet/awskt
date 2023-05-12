@@ -203,9 +203,14 @@ public class DynamoKtSession(
      * Execute a scan in parallel using the provided number of segments. Returns a flow
      * that a client can use to asynchronously receive events.
      */
-    public fun parallelScan(segments: Int, block: Query.() -> Unit): Flow<Item> {
+    public fun parallelScan(segments: Int, segmentNumbers: List<Int>? = null, block: Query.() -> Unit): Flow<Item> {
+        val actualSegmentNumbers = if (segmentNumbers.isNullOrEmpty()) {
+            (0 until segments).toList()
+        } else {
+            segmentNumbers
+        }
         return channelFlow {
-            repeat(segments) { index ->
+            actualSegmentNumbers.forEach { index ->
                 launch(Dispatchers.IO) {
                     scan {
                         block()

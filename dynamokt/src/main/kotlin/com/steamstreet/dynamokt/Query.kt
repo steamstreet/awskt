@@ -144,14 +144,6 @@ public class Query internal constructor(
         attributeValues?.putAll(values)
     }
 
-    private fun buildRequest(): QueryRequest {
-        val query = QueryRequest.builder()
-
-        query.buildQuery()
-
-        return query.build()
-    }
-
     private fun buildExpressionNames(): HashMap<String, String> {
         return HashMap<String, String>().also {
             if (pk != "SCAN") {
@@ -227,10 +219,10 @@ public class Query internal constructor(
             buildQuery()
         }.build()
 
-        if (loadAll) {
+        return if (loadAll) {
             val result = dynamo.dynamo.queryPaginator(request)
 
-            return object : QueryResult {
+            object : QueryResult {
                 override val items: Iterable<Item>
                     get() = result.items().asSequence().map {
                         Item(dynamo, it)
@@ -239,8 +231,16 @@ public class Query internal constructor(
                 override val paginationToken: String? = null
             }
         } else {
-            return SingleTableQueryResult(dynamo.dynamo.query(request))
+            SingleTableQueryResult(dynamo.dynamo.query(request))
         }
+    }
+
+    /**
+     * Define the segment to scan for.
+     */
+    public fun segment(index: Int, total: Int) {
+        segment = index
+        segments = total
     }
 
     internal fun executeScan(): QueryResult {
@@ -255,6 +255,14 @@ public class Query internal constructor(
             projection?.let {
                 query.projectionExpression(it.joinToString(", "))
             }
+
+            segment?.let {
+                query.segment(it)
+            }
+            segments?.let {
+                query.totalSegments(it)
+            }
+
             query.filterExpression(filter)
         }.items().stream().map {
             Item(dynamo, it)
