@@ -1,5 +1,7 @@
 package com.steamstreet
 
+import kotlinx.coroutines.*
+import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 import kotlin.time.Duration
@@ -9,9 +11,9 @@ internal object UninitializedValue
 /**
  * A version of the lazy delegate that also allows the value to be set at any point.
  */
-private class MutableLazy<T>(val timeout: Duration? = null, initializer: () -> T) : ReadWriteProperty<Any?, T> {
+private class MutableLazy<T>(val timeout: Duration? = null, initializer: suspend () -> T) : ReadWriteProperty<Any?, T> {
     private var value: Any? = UninitializedValue
-    private var initializer: (() -> T)? = initializer
+    private var initializer: (suspend () -> T)? = initializer
     private var lastRetrieved: Long = epochMillis()
     private var manuallySet = false
 
@@ -31,7 +33,9 @@ private class MutableLazy<T>(val timeout: Duration? = null, initializer: () -> T
     }
 
     private fun retrieve() {
-        value = initializer!!()
+        CoroutineScope(Dispatchers.Default).launch {
+            value = initializer?.invoke()
+        }
         lastRetrieved = epochMillis()
     }
 
@@ -54,3 +58,6 @@ public fun <T> mutableLazy(initializer: () -> T): ReadWriteProperty<Any?, T> = M
 public fun <T> cached(timeout: Duration, initializer: () -> T): ReadWriteProperty<Any?, T> =
     MutableLazy(timeout, initializer)
 
+
+public fun <T> coLazy(initializer: suspend () -> T): ReadOnlyProperty<Any?, T> = MutableLazy(null, initializer)
+public fun <T> coMutableLazy(initializer: suspend () -> T): ReadWriteProperty<Any?, T> = MutableLazy(null, initializer)

@@ -69,3 +69,9 @@ signing {
 tasks.withType<Sign> {
     onlyIf { project.hasProperty("signing.keyId") }
 }
+
+
+val signingTasks = tasks.withType<Sign>()
+tasks.withType<AbstractPublishToMaven>().configureEach {
+    dependsOn(signingTasks)
+}

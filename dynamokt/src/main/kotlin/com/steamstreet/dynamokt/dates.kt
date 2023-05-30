@@ -1,8 +1,8 @@
 package com.steamstreet.dynamokt
 
+import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -54,6 +54,6 @@ public fun <R : ItemContainer> R.localDateAttribute(
     }
 }
 
-public val AttributeValue.localDate: java.time.LocalDate? get() = s()?.let { java.time.LocalDate.parse(it) }
-public val AttributeValue.localTime: LocalTime? get() = s()?.let { LocalTime.parse(it) }
-public val AttributeValue.localDateTime: LocalDateTime? get() = s()?.let { LocalDateTime.parse(it) }
+public val AttributeValue.localDate: java.time.LocalDate? get() = asSOrNull()?.let { java.time.LocalDate.parse(it) }
+public val AttributeValue.localTime: LocalTime? get() = asSOrNull()?.let { LocalTime.parse(it) }
+public val AttributeValue.localDateTime: LocalDateTime? get() = asSOrNull()?.let { LocalDateTime.parse(it) }

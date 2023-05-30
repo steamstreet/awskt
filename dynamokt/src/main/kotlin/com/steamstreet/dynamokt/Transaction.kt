@@ -1,6 +1,7 @@
 package com.steamstreet.dynamokt
 
-import software.amazon.awssdk.services.dynamodb.model.*
+import aws.sdk.kotlin.services.dynamodb.model.*
+import kotlinx.coroutines.runBlocking
 import java.io.Closeable
 
 /**
@@ -14,17 +15,19 @@ public class Transaction internal constructor(private val mapper: DynamoKtSessio
     /**
      * Commit the transaction.
      */
-    override fun commit() {
+    override suspend fun commit() {
         if (items.isNotEmpty()) {
-            mapper.dynamo.transactWriteItems(TransactWriteItemsRequest.builder().transactItems(items).build())
+            mapper.dynamo.transactWriteItems(TransactWriteItemsRequest { this.transactItems = items })
         }
     }
 
-    override fun put(pk: String, sk: String?, attributes: Map<String, AttributeValue>): Item {
-        items.add(TransactWriteItem.builder().put {
-            it.tableName(mapper.table)
-            it.item(attributes + mapper.keyMap(pk, sk))
-        }.build())
+    override suspend fun put(pk: String, sk: String?, attributes: Map<String, AttributeValue>): Item {
+        items.add(TransactWriteItem {
+            put {
+                tableName = mapper.table
+                item = attributes + mapper.keyMap(pk, sk)
+            }
+        })
         return Item(mapper, attributes)
     }
 
@@ -32,83 +35,78 @@ public class Transaction internal constructor(private val mapper: DynamoKtSessio
      * Add a condition check to the transaction.
      */
     public fun condition(
-        pk: String, sk: String, expression: String, expressionNames: Map<String, String>,
+        pk: String, sk: String?, expression: String, expressionNames: Map<String, String>,
         expressionValues: Map<String, AttributeValue>
     ) {
-        val check = ConditionCheck.builder().apply {
-            tableName(mapper.table)
-            key(
-                mapOf(
-                    mapper.pkName to pk.attributeValue(),
-                    mapper.skName to sk.attributeValue()
-                )
-            )
+        items.add(TransactWriteItem {
+            conditionCheck {
+                tableName = mapper.table
+                key = mapper.keyMap(pk.attributeValue(), sk?.attributeValue())
 
-            conditionExpression(expression)
-            if (expressionNames.isNotEmpty()) {
-                expressionAttributeNames(expressionNames)
+                conditionExpression = expression
+                if (expressionNames.isNotEmpty()) {
+                    expressionAttributeNames = expressionNames
+                }
+                if (expressionValues.isNotEmpty()) {
+                    expressionAttributeValues = expressionValues
+                }
             }
-            if (expressionValues.isNotEmpty()) {
-                expressionAttributeValues(expressionValues)
-            }
-        }.build()
-        items.add(TransactWriteItem.builder().conditionCheck(check).build())
+        })
     }
 
     private fun buildDelete(pk: String, sk: String?): TransactWriteItem {
-        return TransactWriteItem.builder().apply {
-            delete(Delete.builder().apply {
-                tableName(mapper.table)
-                key(mapper.keyMap(pk, sk))
-            }.build())
-        }.build()
+        return TransactWriteItem {
+            delete  {
+                tableName = mapper.table
+                key = mapper.keyMap(pk, sk)
+            }
+        }
     }
 
     private fun buildUpdate(entity: MutableItem): TransactWriteItem {
-        return TransactWriteItem.builder().apply {
-            update(Update.builder().apply {
-                this.tableName(mapper.table)
+        return TransactWriteItem {
+            update {
+                tableName = mapper.table
 
-                key(mapper.keyMap(entity.attributes[mapper.pkName]!!, mapper.skName?.let {
+                this.key = mapper.keyMap(entity.attributes[mapper.pkName]!!, mapper.skName?.let {
                     entity.attributes[it]
-                }))
+                })
 
-                this.updateExpression(entity.buildUpdateExpression())
+                updateExpression = entity.buildUpdateExpression()
                 entity.conditionExpression?.let {
-                    this.conditionExpression(it)
+                    this.conditionExpression = it
                 }
                 if (entity.attributeNames.isNotEmpty()) {
-                    this.expressionAttributeNames(entity.attributeNames)
+                    this.expressionAttributeNames = entity.attributeNames
                 }
                 if (entity.attributeValues.isNotEmpty()) {
-                    this.expressionAttributeValues(entity.attributeValues)
+                    this.expressionAttributeValues = entity.attributeValues
                 }
-            }.build())
-        }.build()
+            }
+        }
     }
 
     private fun buildPut(entity: MutableItem): TransactWriteItem {
-        return TransactWriteItem.builder().apply {
-            put(Put.builder().apply {
-                tableName(mapper.table)
-                item((entity.updates.filter {
-                    it.value.action() == AttributeAction.PUT
+        return TransactWriteItem {
+            put {
+                tableName = mapper.table
+                item = (entity.updates.filter {
+                    it.value.action == AttributeAction.Put
                 }.mapValues {
-                    it.value.value()
-                } + mapOf(
-                    mapper.pkName to entity.attributes[mapper.pkName],
-                    mapper.skName to entity.attributes[mapper.skName]
-                )).filterNullValues())
+                    it.value.value
+                } + mapper.keyMap(entity.attributes[mapper.pkName]!!, mapper.skName?.let {
+                    entity.attributes[it]
+                })).filterNullValues()
 
                 if (entity.doNotOverwrite) {
-                    conditionExpression("attribute_not_exists(#pk)")
-                    expressionAttributeNames(mapOf("#pk" to mapper.pkName))
+                    conditionExpression = "attribute_not_exists(#pk)"
+                    expressionAttributeNames = mapOf("#pk" to mapper.pkName)
                 }
-            }.build())
-        }.build()
+            }
+        }
     }
 
-    override fun put(pk: AttributeValue, sk: AttributeValue?, block: MutableItem.() -> Unit): Item {
+    override suspend fun put(pk: AttributeValue, sk: AttributeValue?, block: MutableItem.() -> Unit): Item {
         val key = mapper.keyMap(pk, sk)
         return MutableItem(mapper, key).let {
             it.doNotOverwrite = true
@@ -119,7 +117,7 @@ public class Transaction internal constructor(private val mapper: DynamoKtSessio
         }
     }
 
-    override fun update(pk: String, sk: String?, block: MutableItem.() -> Unit): Item {
+    override suspend fun update(pk: String, sk: String?, block: MutableItem.() -> Unit): Item {
         val key = mapper.keyMap(pk, sk)
         return MutableItem(mapper, key).let {
             it.block()
@@ -137,11 +135,13 @@ public class Transaction internal constructor(private val mapper: DynamoKtSessio
         }
     }
 
-    override fun delete(pk: String, sk: String?, block: MutableItem.() -> Unit) {
+    override suspend fun delete(pk: String, sk: String?, block: MutableItem.() -> Unit) {
         items.add(buildDelete(pk, sk))
     }
 
     override fun close() {
-        commit()
+        runBlocking {
+            commit()
+        }
     }
 }

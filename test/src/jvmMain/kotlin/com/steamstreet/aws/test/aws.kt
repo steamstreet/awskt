@@ -1,6 +1,6 @@
 package com.steamstreet.aws.test
 
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 
 /**
  * Creates an AWS local environment

@@ -1,6 +1,7 @@
 package com.steamstreet.dynamokt
 
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
+
 
 /**
  * Interface for an instance that can make changes to entities. This provides a base class for both regular updates
@@ -12,41 +13,41 @@ public interface ItemUpdater {
      * implementation will not allow for updating an existing item and will throw an exception
      * if the item exists. To overwrite the item, set `doNotOverwrite` to `false` and `replace` to `true`.
      */
-    public fun put(pk: String, sk: String?, block: MutableItem.() -> Unit = {}): Item =
+    public suspend fun put(pk: String, sk: String?, block: MutableItem.() -> Unit = {}): Item =
         put(pk.attributeValue(), sk?.attributeValue(), block)
 
     /**
      * Pu an update using attribute values for the key.
      */
-    public fun put(pk: AttributeValue, sk: AttributeValue?, block: MutableItem.() -> Unit = {}): Item
+    public suspend fun put(pk: AttributeValue, sk: AttributeValue?, block: MutableItem.() -> Unit = {}): Item
 
     /**
      * Put an item with the given attributes. Always overwrites the previous item.
      */
-    public fun put(pk: String, sk: String?, attributes: Map<String, AttributeValue>): Item
+    public suspend fun put(pk: String, sk: String?, attributes: Map<String, AttributeValue>): Item
 
     /**
      * Update an item. This will not replace an item, but update individual attributes based on
      * the callback.
      */
-    public fun update(pk: String, sk: String?, block: MutableItem.() -> Unit = {}): Item
+    public suspend fun update(pk: String, sk: String?, block: MutableItem.() -> Unit = {}): Item
 
     /**
      * Update an item
      */
-    public fun update(entity: Item, block: MutableItem.() -> Unit = {}): Item =
+    public suspend fun update(entity: Item, block: MutableItem.() -> Unit = {}): Item =
         update(entity.pk, entity.sk!!, block)
 
     /**
      * Delete an item. The provided block allows the caller to set conditional expressions on the delete
      * operation for implementations that support it.
      */
-    public fun delete(pk: String, sk: String?, block: MutableItem.() -> Unit = {})
+    public suspend fun delete(pk: String, sk: String?, block: MutableItem.() -> Unit = {})
 
     /**
      * Commit changes. Not all implementations will use this, and instead will perform updates as they are submitted.
      * However, implementations that do not will implement this as a no-op.
      */
-    public fun commit()
+    public suspend fun commit()
 }
 

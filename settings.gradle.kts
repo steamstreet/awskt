@@ -19,8 +19,8 @@ dependencyResolutionManagement {
 
     versionCatalogs {
         create("libs") {
-            val kotlinSerializationVersion = version("kotlin-serialization", "1.4.1")
-            val awsVersion = version("aws", "2.18.31")
+            val kotlinSerializationVersion = version("kotlin-serialization", "1.5.1")
+            val awsVersion = version("aws", "0.24.0-beta")
 
             library(
                 "kotlin-serialization-core", "org.jetbrains.kotlinx",
@@ -39,12 +39,13 @@ dependencyResolutionManagement {
             library("aws-lambda-events", "com.amazonaws:aws-lambda-java-events:3.8.0")
 
             fun aws(artifact: String) {
-                library("aws-${artifact}", "software.amazon.awssdk", artifact).versionRef(awsVersion)
+                library("aws-${artifact}", "aws.sdk.kotlin", artifact).versionRef(awsVersion)
             }
 
 
             aws("secretsmanager")
             aws("dynamodb")
+            aws("dynamodbstreams")
             aws("lambda")
             aws("eventbridge")
             aws("s3")

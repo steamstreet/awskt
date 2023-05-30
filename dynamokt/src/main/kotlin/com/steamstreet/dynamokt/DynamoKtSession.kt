@@ -1,17 +1,16 @@
 package com.steamstreet.dynamokt
 
+import aws.sdk.kotlin.services.dynamodb.*
+import aws.sdk.kotlin.services.dynamodb.model.*
+import aws.smithy.kotlin.runtime.auth.awscredentials.CredentialsProvider
+import com.steamstreet.coLazy
 import com.steamstreet.exceptions.NotFoundException
 import com.steamstreet.mutableLazy
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.DynamoDbClientBuilder
-import software.amazon.awssdk.services.dynamodb.model.*
 
-public var dynamoKtClientBuilder: DynamoDbClientBuilder by mutableLazy {
+public var dynamoKtClientBuilder: DynamoDbClient.Builder by mutableLazy {
     DynamoDbClient.builder()
 }
 
@@ -22,27 +21,30 @@ public class DynamoKt(
     public val table: String,
     public val pkName: String = "pk",
     public val skName: String? = "sk",
-    public val builder: DynamoDbClientBuilder = dynamoKtClientBuilder,
-    public val defaultCredentials: AwsCredentialsProvider? = null,
+    public val builder: DynamoDbClient.Builder = dynamoKtClientBuilder,
+    public val defaultCredentials: CredentialsProvider? = null,
     public val ttlAttribute: String? = null
 ) {
     internal val indexes = hashMapOf<String, DynamoKtIndex>()
 
-    private val defaultClient: DynamoDbClient by lazy {
-        if (defaultCredentials != null) {
-            builder.credentialsProvider(defaultCredentials)
-        }
-        builder.build()
+    private val defaultClient: DynamoDbClient by coLazy {
+        builder.apply {
+            if (defaultCredentials != null) {
+                this.config.credentialsProvider = defaultCredentials
+            }
+        }.build()
     }
 
     /**
      * Create an AWS session, which is just operations linked with specific credentials.
      */
-    public fun session(awsCredentialsProvider: AwsCredentialsProvider? = null): DynamoKtSession {
+    public fun session(awsCredentialsProvider: CredentialsProvider? = null): DynamoKtSession {
         val client = if (awsCredentialsProvider == null) {
             defaultClient
         } else {
-            builder.credentialsProvider(awsCredentialsProvider).build()
+            builder.apply {
+                config.credentialsProvider = awsCredentialsProvider
+            }.build()
         }
         return DynamoKtSession(
             this,
@@ -73,24 +75,24 @@ public class DynamoKtSession(
     private val cache: MutableMap<String, Item>? = null
 ) : ItemUpdater {
 
-    public fun getOrNull(pk: String, sk: String?, attributes: List<String>? = null): Item? {
+    public suspend fun getOrNull(pk: String, sk: String?, attributes: List<String>? = null): Item? {
         return dynamo.getItem {
-            it.tableName(table)
-            it.key(keyMap(pk, sk))
+            tableName = table
+            key = keyMap(pk, sk)
             attributes?.apply {
-                it.attributesToGet(this)
+                attributesToGet = this
             }
         }.let {
-            if (!it.hasItem()) {
+            if (it.item == null) {
                 null
             } else {
-                val combined = it.item() + keyMap(pk, sk)
+                val combined = it.item!! + keyMap(pk, sk)
                 Item(this, combined).also(::cacheItem)
             }
         }
     }
 
-    public fun get(pk: String, sk: String?, attributes: List<String>? = null): Item {
+    public suspend fun get(pk: String, sk: String?, attributes: List<String>? = null): Item {
         return getOrNull(pk, sk, attributes) ?: throw NotFoundException("Unknown item $pk $sk")
     }
 
@@ -99,28 +101,32 @@ public class DynamoKtSession(
         cache?.put(cacheKey, item)
     }
 
-    public fun getAll(items: List<Pair<String, String>>, attributes: Collection<String> = emptyList()): List<Item> {
+    public suspend fun getAll(items: List<Pair<String, String>>, attributes: Collection<String> = emptyList()): List<Item> {
         return items.chunked(80).flatMap { chunkedItems ->
-            val request = BatchGetItemRequest.builder().apply {
-                requestItems(
+            val request = BatchGetItemRequest {
+                requestItems =
                     mapOf(
                         table to
-                                KeysAndAttributes.builder().apply {
-                                    keys(chunkedItems.map {
-                                        mapOf(pkName to it.first.attributeValue(), skName to it.second.attributeValue())
-                                    })
+                                KeysAndAttributes {
+                                    keys = chunkedItems.map {
+                                        buildMap {
+                                            put(pkName, it.first.attributeValue())
+                                            if (skName != null) {
+                                                put(skName, it.second.attributeValue())
+                                            }
+                                        }
+                                    }
 
                                     if (attributes.isNotEmpty()) {
                                         var index = 0
                                         val names = attributes.associateBy { "#attr${index++}" }
-                                        expressionAttributeNames(names)
-                                        projectionExpression(names.keys.joinToString(","))
+                                        expressionAttributeNames = names
+                                        projectionExpression = names.keys.joinToString(",")
                                     }
-                                }.build()
+                                }
                     )
-                )
-            }.build()
-            dynamo.batchGetItem(request).responses().get(table)?.map {
+            }
+            dynamo.batchGetItem(request).responses?.get(table)?.map {
                 Item(this, it).also { item ->
                     if (attributes.isEmpty()) {
                         cacheItem(item)
@@ -130,7 +136,7 @@ public class DynamoKtSession(
         }
     }
 
-    override fun put(pk: AttributeValue, sk: AttributeValue?, block: MutableItem.() -> Unit): Item {
+    override suspend fun put(pk: AttributeValue, sk: AttributeValue?, block: MutableItem.() -> Unit): Item {
         return MutableItem(
             this, keyMap(pk, sk)
         ).let {
@@ -140,10 +146,10 @@ public class DynamoKtSession(
         }
     }
 
-    override fun put(pk: String, sk: String?, attributes: Map<String, AttributeValue>): Item {
+    override suspend fun put(pk: String, sk: String?, attributes: Map<String, AttributeValue>): Item {
         dynamo.putItem {
-            it.tableName(table)
-            it.item(attributes + keyMap(pk, sk))
+            tableName = table
+            item = attributes + keyMap(pk, sk)
         }.let {
             return Item(
                 this, attributes + keyMap(pk, sk)
@@ -151,7 +157,7 @@ public class DynamoKtSession(
         }
     }
 
-    override fun update(pk: String, sk: String?, block: MutableItem.() -> Unit): Item {
+    override suspend fun update(pk: String, sk: String?, block: MutableItem.() -> Unit): Item {
         return MutableItem(this, keyMap(pk, sk)).let {
             it.block()
             it.save()
@@ -162,11 +168,11 @@ public class DynamoKtSession(
         return Transaction(this)
     }
 
-    public fun query(pk: String, block: Query.() -> Unit = {}): QueryResult {
+    public suspend fun query(pk: String, block: Query.() -> Unit = {}): QueryResult {
         return Query(this, pk).apply(block).execute()
     }
 
-    public fun queryIndex(name: String, pk: String, block: Query.() -> Unit = {}): QueryResult {
+    public suspend fun queryIndex(name: String, pk: String, block: Query.() -> Unit = {}): QueryResult {
         val index = dynamoKt.indexes[name] ?: throw IllegalArgumentException("Unknown index")
         return Query(this, pk, index.name, index.pk, index.sk).apply(block).execute()
     }
@@ -174,28 +180,31 @@ public class DynamoKtSession(
     /**
      * Execute the query and delete all of the items in the result
      */
-    public fun queryDelete(pk: String, block: Query.() -> Unit = {}): QueryResult {
+    public suspend fun queryDelete(pk: String, block: Query.() -> Unit = {}): QueryResult {
         val result = Query(this, pk).apply(block).execute()
 
         result.items.map { item ->
-            DeleteRequest.builder().key(
-                mapOf(
-                    pkName to item.pk.attributeValue(),
-                skName to item.sk!!.attributeValue()
-            )).build()
+            DeleteRequest {
+                key = keyMap(item.pk.attributeValue(),
+                        item.sk?.attributeValue()
+                    )
+            }
         }.map {
-            WriteRequest.builder().deleteRequest(it).build()
+            WriteRequest {
+                this.deleteRequest = it
+            }
         }.let { items ->
-            if (items.isNotEmpty()) {
+            val toDelete = items.toList()
+            if (toDelete.isNotEmpty()) {
                 dynamo.batchWriteItem {
-                    it.requestItems(mapOf(table to items))
+                    requestItems = (mapOf(table to toDelete))
                 }
             }
         }
         return result
     }
 
-    public fun scan(block: Query.() -> Unit): QueryResult {
+    public suspend fun scan(block: Query.() -> Unit): QueryResult {
         return Query(this, "SCAN").apply(block).executeScan()
     }
 
@@ -217,7 +226,7 @@ public class DynamoKtSession(
                         this.segments = segments
                         this.segment = index
                         loadAll = true
-                    }.items.forEach {
+                    }.items.collect {
                         send(it)
                     }
                 }
@@ -238,28 +247,28 @@ public class DynamoKtSession(
         }
     }
 
-    override fun delete(pk: String, sk: String?, block: MutableItem.() -> Unit) {
+    override suspend fun delete(pk: String, sk: String?, block: MutableItem.() -> Unit) {
         val item = MutableItem(this, keyMap(pk, sk))
         item.block()
 
         dynamo.deleteItem {
-            it.tableName(table)
-            it.key(keyMap(pk, sk))
+            tableName = (table)
+            key = (keyMap(pk, sk))
 
             if (item.conditionExpression != null) {
-                it.conditionExpression(item.conditionExpression)
+                conditionExpression = item.conditionExpression
 
                 if (item.attributeNames.isNotEmpty()) {
-                    it.expressionAttributeNames(item.attributeNames)
+                    expressionAttributeNames = item.attributeNames
                 }
                 if (item.attributeValues.isNotEmpty()) {
-                    it.expressionAttributeValues(item.attributeValues)
+                    expressionAttributeValues = item.attributeValues
                 }
             }
         }
     }
 
-    override fun commit() {
+    override suspend fun commit() {
         // do nothing
     }
 

@@ -13,15 +13,26 @@ kotlin {
         browser()
     }
 
+    ios {
+
+    }
+
     @Suppress("UNUSED_VARIABLE")
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(libs.kotlin.coroutines.core)
             }
         }
 
         val jvmMain by getting {
             dependencies {
+            }
+        }
+
+        val iosMain by getting {
+            dependencies {
+                implementation(libs.kotlin.date.time)
             }
         }
     }

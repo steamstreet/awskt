@@ -11,6 +11,7 @@ kotlin {
             dependencies {
                 api(libs.aws.dynamodb)
                 api(libs.aws.dynamodb.local)
+                api(libs.aws.dynamodbstreams)
                 api(libs.aws.eventbridge)
                 api(libs.aws.s3)
                 api(libs.aws.lambda)

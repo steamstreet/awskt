@@ -16,7 +16,7 @@ public interface ItemContainer {
  * An item container that can be updated.
  */
 public interface MutableItemContainer<T : ItemContainer> : ItemContainer {
-    public fun update(updates: T.(MutableItem) -> Unit): Item {
+    public suspend fun update(updates: T.(MutableItem) -> Unit): Item {
         return entity.update {
             val mutable = mutable(this)
             mutable.updates(this)

@@ -1,12 +1,11 @@
 package com.steamstreet.dynamokt
 
+import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
-import software.amazon.awssdk.core.SdkBytes
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import java.util.*
 
 /**
@@ -26,21 +25,20 @@ public class SerializableAttributeValue(
     public val b: String? = null
 ) {
     public fun toAttributeValue(): AttributeValue {
-        return AttributeValue.builder().apply {
-            m?.let { m(it.mapValues { entry -> entry.value.toAttributeValue() }) }
-            l?.let { l(it.map { it.toAttributeValue() }) }
-            ss?.let { ss(it) }
-            ns?.let { ns(it) }
-            bs?.let {
-                bs(it.map {
-                    SdkBytes.fromByteArray(Base64.getDecoder().decode(it))
-                })
-            }
-            n?.let { n(it) }
-            s?.let { s(it) }
-            bool?.let { bool(it) }
-            b?.let { b(SdkBytes.fromByteArray(Base64.getDecoder().decode(it))) }
-        }.build()
+        return when {
+            m != null -> AttributeValue.M(m.mapValues { entry -> entry.value.toAttributeValue() })
+            l != null -> AttributeValue.L(l.map { it.toAttributeValue() })
+            ss != null -> AttributeValue.Ss(ss)
+            ns != null -> AttributeValue.Ns(ns)
+            bs != null -> AttributeValue.Bs(bs.map {
+                Base64.getDecoder().decode(it)
+            })
+            n != null -> AttributeValue.N(n)
+            s != null -> AttributeValue.S(s)
+            bool != null -> AttributeValue.Bool(bool)
+            b != null -> AttributeValue.B(Base64.getDecoder().decode(b))
+            else -> throw IllegalStateException()
+        }
     }
 }
 
@@ -52,36 +50,36 @@ public fun SerializableAttributeValue(value: AttributeValue): SerializableAttrib
 public fun AttributeValue.toSerializable(): SerializableAttributeValue {
     val attribute = this
     return when {
-        attribute.hasL() -> {
-            SerializableAttributeValue(l = attribute.l().map { it.toSerializable() })
+        attribute.asLOrNull() != null -> {
+            SerializableAttributeValue(l = attribute.asL().map { it.toSerializable() })
         }
-        attribute.hasM() -> {
-            SerializableAttributeValue(m = attribute.m().mapValues { entry ->
+        attribute.asMOrNull() != null -> {
+            SerializableAttributeValue(m = attribute.asM().mapValues { entry ->
                 entry.value.toSerializable()
             })
         }
-        attribute.hasSs() -> {
-            SerializableAttributeValue(ss = attribute.ss())
+        attribute.asSsOrNull() != null -> {
+            SerializableAttributeValue(ss = attribute.asSs())
         }
-        attribute.hasNs() -> {
-            SerializableAttributeValue(ns = attribute.ns())
+        attribute.asNsOrNull() != null -> {
+            SerializableAttributeValue(ns = attribute.asNs())
         }
-        attribute.hasBs() -> {
-            SerializableAttributeValue(bs = attribute.bs().map {
-                String(Base64.getEncoder().encode(it.asByteArray()))
+        attribute.asBsOrNull() != null -> {
+            SerializableAttributeValue(bs = attribute.asBs().map {
+                String(Base64.getEncoder().encode(it))
             })
         }
-        attribute.n() != null -> {
-            SerializableAttributeValue(n = attribute.n())
+        attribute.asNOrNull() != null -> {
+            SerializableAttributeValue(n = attribute.asN())
         }
-        attribute.bool() != null -> {
-            SerializableAttributeValue(bool = attribute.bool())
+        attribute.asBoolOrNull() != null -> {
+            SerializableAttributeValue(bool = attribute.asBool())
         }
-        attribute.b() != null -> {
-            SerializableAttributeValue(b = String(Base64.getEncoder().encode(attribute.b().asByteArray())))
+        attribute.asBOrNull() != null -> {
+            SerializableAttributeValue(b = String(Base64.getEncoder().encode(attribute.asB())))
         }
-        attribute.s() != null -> {
-            SerializableAttributeValue(s = attribute.s())
+        attribute.asSOrNull() != null -> {
+            SerializableAttributeValue(s = attribute.asS())
         }
         else -> throw IllegalArgumentException()
     }

@@ -1,5 +1,6 @@
 package com.steamstreet.dynamokt
 
+import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -16,8 +17,6 @@ import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
-import software.amazon.awssdk.core.SdkBytes
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import java.util.*
 
 /**
@@ -39,46 +38,44 @@ public class AttributeValueSerializer : KSerializer<AttributeValue> {
     override fun deserialize(decoder: Decoder): AttributeValue {
         return decoder.decodeStructure(descriptor) {
             when (val index = decodeElementIndex(descriptor)) {
-                0 -> AttributeValue.builder().s(decodeStringElement(descriptor, index)).build()
-                1 -> AttributeValue.builder().n(decodeStringElement(descriptor, index)).build()
-                2 -> AttributeValue.builder().b(
-                    SdkBytes.fromByteArray(
+                0 -> AttributeValue.S(decodeStringElement(descriptor, index))
+                1 -> AttributeValue.N(decodeStringElement(descriptor, index))
+                2 -> AttributeValue.B(
                         Base64.getDecoder().decode(decodeStringElement(descriptor, index))
-                    )
-                ).build()
+                )
 
-                3 -> AttributeValue.builder().bool(decodeBooleanElement(descriptor, index)).build()
-                4 -> AttributeValue.builder().l(
+                3 -> AttributeValue.Bool(decodeBooleanElement(descriptor, index))
+                4 -> AttributeValue.L(
                     decodeSerializableElement(
                         descriptor,
                         index,
                         ListSerializer(this@AttributeValueSerializer)
                     )
-                ).build()
+                )
 
-                5 -> AttributeValue.builder().m(
+                5 -> AttributeValue.M(
                     decodeSerializableElement(
                         descriptor,
                         index,
                         MapSerializer(String.serializer(), this@AttributeValueSerializer)
                     )
-                ).build()
+                )
 
-                6 -> AttributeValue.builder().ss(
+                6 -> AttributeValue.Ss(
                     decodeSerializableElement(
                         descriptor,
                         index,
                         ListSerializer(String.serializer())
                     )
-                ).build()
+                )
 
-                7 -> AttributeValue.builder().ns(
+                7 -> AttributeValue.Ns(
                     decodeSerializableElement(
                         descriptor,
                         index,
                         ListSerializer(String.serializer())
                     )
-                ).build()
+                )
 
                 else -> throw SerializationException("Unexpected index: $index")
             }
@@ -88,37 +85,37 @@ public class AttributeValueSerializer : KSerializer<AttributeValue> {
     override fun serialize(encoder: Encoder, value: AttributeValue) {
         encoder.encodeStructure(descriptor) {
             when {
-                value.s() != null -> encodeStringElement(descriptor, 0, value.s())
-                value.n() != null -> encodeStringElement(descriptor, 1, value.n())
-                value.b() != null -> encodeStringElement(
+                value.asSOrNull() != null -> encodeStringElement(descriptor, 0, value.asS())
+                value.asNOrNull() != null -> encodeStringElement(descriptor, 1, value.asN())
+                value.asBOrNull() != null -> encodeStringElement(
                     descriptor,
                     2,
-                    Base64.getEncoder().encodeToString(value.b().asByteArray())
+                    Base64.getEncoder().encodeToString(value.asB())
                 )
 
-                value.bool() != null -> encodeBooleanElement(descriptor, 3, value.bool())
-                !value.l().isNullOrEmpty() -> encodeSerializableElement(
+                value.asBoolOrNull() != null -> encodeBooleanElement(descriptor, 3, value.asBool())
+                !value.asLOrNull().isNullOrEmpty() -> encodeSerializableElement(
                     descriptor, 4,
-                    ListSerializer(AttributeValueSerializer()), value.l()
+                    ListSerializer(AttributeValueSerializer()), value.asL()
                 )
 
-                !value.m().isNullOrEmpty() -> encodeSerializableElement(
+                !value.asMOrNull().isNullOrEmpty() -> encodeSerializableElement(
                     descriptor, 5,
-                    MapSerializer(String.serializer(), AttributeValueSerializer()), value.m()
+                    MapSerializer(String.serializer(), AttributeValueSerializer()), value.asM()
                 )
 
-                !value.ss().isNullOrEmpty() -> encodeSerializableElement(
+                !value.asSsOrNull().isNullOrEmpty() -> encodeSerializableElement(
                     descriptor,
                     6,
                     ListSerializer(String.serializer()),
-                    value.ss()
+                    value.asSs()
                 )
 
-                !value.ns().isNullOrEmpty() -> encodeSerializableElement(
+                !value.asNsOrNull().isNullOrEmpty() -> encodeSerializableElement(
                     descriptor,
                     6,
                     ListSerializer(String.serializer()),
-                    value.ns()
+                    value.asNs()
                 )
             }
         }

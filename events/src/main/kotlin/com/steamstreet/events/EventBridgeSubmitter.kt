@@ -1,40 +1,44 @@
 package com.steamstreet.events
 
-import software.amazon.awssdk.services.eventbridge.EventBridgeClient
-import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry
+import aws.sdk.kotlin.services.eventbridge.EventBridgeClient
+import aws.sdk.kotlin.services.eventbridge.model.PutEventsRequestEntry
+import aws.sdk.kotlin.services.eventbridge.putEvents
+import kotlinx.coroutines.runBlocking
+
 
 /**
  * Submitter that posts to the event bridge
  */
 public class EventBridgeSubmitter(
     private val busName: String, private val source: String,
-    private val eventBridge: EventBridgeClient = EventBridgeClient.builder().build()
+    private val eventBridge: EventBridgeClient = runBlocking { EventBridgeClient.fromEnvironment() }
 ) : ApplicationEventPoster {
     override fun post(eventType: String, eventDetail: String, source: String?) {
-        eventBridge.putEvents {
-            it.entries(
-                PutEventsRequestEntry.builder()
-                    .eventBusName(busName)
-                    .detail(eventDetail)
-                    .detailType(eventType)
-                    .source(source ?: this.source)
-                    .build()
-            )
+        runBlocking {
+            eventBridge.putEvents {
+                entries = listOf(
+                    PutEventsRequestEntry {
+                        eventBusName = busName
+                        detail = eventDetail
+                        detailType = eventType
+                        this.source = source ?: this@EventBridgeSubmitter.source
+                    }
+                )
+            }
         }
     }
 
     override suspend fun post(events: Collection<Event>) {
         eventBridge.putEvents {
-            it.entries(
-                events.map {
-                    PutEventsRequestEntry.builder()
-                        .eventBusName(busName)
-                        .detail(it.detail)
-                        .detailType(it.type)
-                        .source(it.source ?: source)
-                        .build()
+            entries = events.map {
+                PutEventsRequestEntry {
+                    eventBusName = busName
+                    detail = it.detail
+                    detailType = it.type
+                    this.source = it.source ?: this@EventBridgeSubmitter.source
                 }
-            )
+            }
+
         }
     }
 }

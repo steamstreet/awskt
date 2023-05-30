@@ -16,10 +16,19 @@ kotlin {
     }
 
     sourceSets {
+        val commonMain by getting {
+            dependencies {
+                compileOnly(libs.kotlin.coroutines.core)
+            }
+        }
+
         val jvmMain by getting {
             dependencies {
                 compileOnly(libs.aws.secretsmanager)
                 compileOnly(libs.kotlin.serialization.json)
+                compileOnly(libs.kotlin.coroutines.core)
+
+                implementation(project(":standards"))
             }
         }
     }

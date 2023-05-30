@@ -1,6 +1,7 @@
 package com.steamstreet.dynamokt
 
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
+import kotlinx.coroutines.runBlocking
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
@@ -18,10 +19,11 @@ public open class ItemAttributeDelegate<T, in R : ItemContainer>(
     private var hasDefault = false
     private var defaultValue: T? = null
 
-    @Suppress("UNCHECKED_CAST")
     override fun getValue(thisRef: R, property: KProperty<*>): T {
-        val attribute = thisRef.entity.get(attributeName ?: property.name)
-        return serializer.deserialize(thisRef, attribute)
+        return runBlocking {
+            val attribute = thisRef.entity.get(attributeName ?: property.name)
+            serializer.deserialize(thisRef, attribute)
+        }
     }
 
     /**
@@ -96,7 +98,7 @@ public fun <T, R : ItemContainer> attribute(
  */
 public class IdAttribute<in R : ItemContainer> : ReadOnlyProperty<R, String> {
     override fun getValue(thisRef: R, property: KProperty<*>): String {
-        return "${thisRef.entity.attributes[thisRef.entity.dynamo.pkName]?.s()}/${thisRef.entity.attributes[thisRef.entity.dynamo.skName]?.s()}"
+        return "${thisRef.entity.attributes[thisRef.entity.dynamo.pkName]?.asS()}/${thisRef.entity.attributes[thisRef.entity.dynamo.skName]?.asS()}"
     }
 }
 
@@ -109,7 +111,7 @@ public fun <R : ItemContainer, S : String?> R.stringAttribute(
     defaultValue: String? = null
 ): ItemAttributeDelegate<S, R> = attribute<S, R>(attributeName) {
     from {
-        (it?.s() ?: defaultValue) as S
+        (it?.asSOrNull() ?: defaultValue) as S
     }
     to {
         it?.attributeValue()
@@ -135,13 +137,13 @@ public fun <R : ItemContainer, C> R.stringBacked(
 ): ItemAttributeDelegate<C, R> = attribute<C, R>(attributeName) {
     from {
         val c = Converter<C, String?>().apply(converter)
-        it?.s().let {
+        it?.asS().let {
             c.f?.invoke(it) as C
         }
     }
     to {
         Converter<C, String?>().apply(converter).t?.invoke(it)?.let { str ->
-            AttributeValue.builder().s(str).build()
+            AttributeValue.S(str)
         }
     }
 }
@@ -153,10 +155,10 @@ public fun <R : ItemContainer, C> R.stringBacked(
 public fun <R : ItemContainer, S : Int?> R.intAttribute(attributeName: String? = null): ItemAttributeDelegate<S, R> =
     attribute<S, R>(attributeName) {
         from {
-            it?.n()?.toInt() as S
+            it?.asNOrNull()?.toInt() as S
         }
         to {
-            it?.let { AttributeValue.builder().n(it.toString()).build() }
+            it?.let { AttributeValue.N(it.toString()) }
         }
     }
 
@@ -165,10 +167,10 @@ public fun <R : ItemContainer> R.intAttribute(
     attributeName: String? = null
 ): ItemAttributeDelegate<Int, R> = attribute<Int, R>(attributeName) {
     from {
-        it?.n()?.toInt() ?: default
+        it?.asNOrNull()?.toInt() ?: default
     }
     to {
-        AttributeValue.builder().n(it.toString()).build()
+        AttributeValue.N(it.toString())
     }
 }
 
@@ -177,10 +179,10 @@ public fun <R : ItemContainer> R.boolAttribute(
     attributeName: String? = null
 ): ItemAttributeDelegate<Boolean, R> = attribute<Boolean, R>(attributeName) {
     from {
-        it?.bool() ?: default
+        it?.asBoolOrNull() ?: default
     }
     to {
-        AttributeValue.builder().bool(it).build()
+        AttributeValue.Bool(it)
     }
 }
 
@@ -193,14 +195,14 @@ public fun <R : ItemContainer> R.stringListAttribute(
 ): ItemAttributeDelegate<List<String>, R> = attribute<List<String>, R>(attributeName) {
     from {
         it?.let {
-            it.l()?.map { it.s()!! }
+            it.asLOrNull()?.map { it.asS() }
         } ?: default
     }
     to { strList ->
         if (strList.isEmpty())
             null
         else
-            AttributeValue.builder().l(strList.map { it.attributeValue() }).build()
+            AttributeValue.L(strList.map { it.attributeValue() })
     }
 }
 
@@ -212,13 +214,13 @@ public fun <R : ItemContainer> R.stringSetAttribute(
     attributeName: String? = null
 ): ItemAttributeDelegate<Set<String>, R> = attribute<Set<String>, R>(attributeName) {
     from {
-        it?.ss()?.toSet() ?: default
+        it?.asSsOrNull()?.toSet() ?: default
     }
     to { strList ->
         if (strList.isEmpty())
             null
         else
-            AttributeValue.builder().ss(strList).build()
+            AttributeValue.Ss(strList.toList())
     }
 }
 
@@ -244,7 +246,7 @@ public class EnumSerializer<T : Enum<T>>(private val cls: KClass<T>, private val
 
     override fun deserialize(container: ItemContainer, attribute: AttributeValue?): T {
         return attribute?.let { attr ->
-            cls.java.enumConstants.find { it.name == attr.s() }
+            cls.java.enumConstants.find { it.name == attr.asSOrNull() }
         } ?: default
     }
 }
@@ -257,7 +259,7 @@ public class NullableEnumSerializer<T : Enum<T>>(private val cls: KClass<T>) : A
 
     override fun deserialize(container: ItemContainer, attribute: AttributeValue?): T? {
         return attribute?.let { attr ->
-            cls.java.enumConstants.find { it.name == attr.s() }
+            cls.java.enumConstants.find { it.name == attr.asSOrNull() }
         }
     }
 }

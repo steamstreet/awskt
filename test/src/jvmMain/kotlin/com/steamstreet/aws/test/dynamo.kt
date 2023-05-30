@@ -1,7 +1,11 @@
 package com.steamstreet.aws.test
 
+import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
+import aws.sdk.kotlin.services.dynamodbstreams.DynamoDbStreamsClient
+import aws.smithy.kotlin.runtime.net.Url
 import com.amazonaws.services.dynamodbv2.local.main.ServerRunner
 import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer
+import com.amazonaws.services.dynamodbv2.model.ShardIteratorType
 import com.amazonaws.services.lambda.runtime.events.DynamodbEvent
 import com.amazonaws.services.lambda.runtime.events.models.dynamodb.StreamViewType
 import com.steamstreet.dynamokt.DynamoStreamEvent
@@ -73,7 +77,7 @@ class DynamoRunner {
             ).build()
     }
 
-    val clientBuilder: DynamoDbClientBuilder
+    val clientBuilder: DynamoDbClient.Builder
         get() {
             return DynamoDbClient.builder()
                 .endpointOverride(URI.create("http://localhost:$port")) // The region is meaningless for local DynamoDb but required for client builder validation
@@ -86,14 +90,15 @@ class DynamoRunner {
         }
 
     val streamsClient: DynamoDbStreamsClient by lazy {
-        DynamoDbStreamsClient.builder()
-            .endpointOverride(URI.create("http://localhost:$port"))
-            .region(Region.US_EAST_1)
+        DynamoDbStreamsClient {
+            endpointUrl = Url.parse("http://localhost:$port")
+            region = (Region.US_EAST_1)
             .credentialsProvider(
                 StaticCredentialsProvider.create(
                     AwsBasicCredentials.create("dummy-key", "dummy-secret")
                 )
-            ).build()
+            )
+        }
     }
 
     inner class ShardReader(
@@ -121,7 +126,7 @@ class DynamoRunner {
             while (running) {
                 try {
                     val shardIteratorResult = streams.getShardIterator {
-                        it.streamArn(streamArn)
+                        streamArn = (streamArn)
                         it.shardId(shardId)
                         if (lastSequence == null) {
                             it.shardIteratorType(ShardIteratorType.TRIM_HORIZON)
@@ -309,3 +314,9 @@ class PipesConfiguration(
         }
     }
 }
+
+/**
+ * Simplifies attribute definition creation.
+ */
+fun AttributeDefinition(key: String, type: ScalarAttributeType): AttributeDefinition =
+    AttributeDefinition.builder().attributeName(key).attributeType(type).build()

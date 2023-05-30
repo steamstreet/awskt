@@ -1,7 +1,7 @@
 package com.steamstreet.dynamokt
 
+import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import kotlinx.serialization.json.*
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import java.util.*
 
 /**
@@ -15,16 +15,16 @@ private fun JsonObject.toAttributeMap(): AttributeValue? {
     return this.mapValues {
         it.value.toAttributeValue()
     }.filterNullValues().takeIf { it.isNotEmpty() }?.let {
-        AttributeValue.builder().m(it).build()
+        AttributeValue.M(it)
     }
 }
 
 private fun JsonArray.toAttributeList(): AttributeValue? {
     if (this.isEmpty()) return null
-    return this.map {
+    return this.mapNotNull {
         it.toAttributeValue()
     }.let {
-        AttributeValue.builder().l(it).build()
+        AttributeValue.L(it)
     }
 }
 
@@ -52,42 +52,42 @@ private fun JsonElement.toAttributeValue(): AttributeValue? {
 public fun AttributeValue.asJsonElement(): JsonElement {
     val attribute = this
     return when {
-        attribute.hasL() -> {
+        attribute.asLOrNull() != null -> {
             buildJsonArray {
-                attribute.l()!!.forEach {
+                attribute.asL().forEach {
                     add(it.asJsonElement())
                 }
             }
         }
-        attribute.hasM() -> {
+        attribute.asMOrNull() != null -> {
             buildJsonObject {
-                attribute.m().forEach { mapElement ->
+                attribute.asM().forEach { mapElement ->
                     mapElement.value.asJsonElement().let {
                         this.put(mapElement.key, it)
                     }
                 }
             }
         }
-        attribute.hasSs() -> {
-            JsonArray(attribute.ss().map { JsonPrimitive(it) })
+        attribute.asSsOrNull() != null -> {
+            JsonArray(attribute.asSs().map { JsonPrimitive(it) })
         }
-        attribute.hasNs() -> {
-            JsonArray(attribute.ns().map { JsonPrimitive(it.toBigDecimal()) })
+        attribute.asNsOrNull() != null -> {
+            JsonArray(attribute.asNs().map { JsonPrimitive(it.toBigDecimal()) })
         }
-        attribute.hasBs() -> {
-            JsonArray(attribute.bs().map { JsonPrimitive(String(Base64.getEncoder().encode(it.asByteArray()))) })
+        attribute.asBsOrNull() != null -> {
+            JsonArray(attribute.asBs().map { JsonPrimitive(String(Base64.getEncoder().encode(it))) })
         }
-        attribute.n() != null -> {
-            JsonPrimitive(attribute.n().toBigDecimal())
+        attribute.asNOrNull() != null -> {
+            JsonPrimitive(attribute.asN().toBigDecimal())
         }
-        attribute.bool() != null -> {
-            JsonPrimitive(attribute.bool())
+        attribute.asBoolOrNull() != null -> {
+            JsonPrimitive(attribute.asBool())
         }
-        attribute.b() != null -> {
-            JsonPrimitive(String(Base64.getEncoder().encode(attribute.b().asByteArray())))
+        attribute.asBOrNull() != null -> {
+            JsonPrimitive(String(Base64.getEncoder().encode(attribute.asB())))
         }
-        attribute.s() != null -> {
-            JsonPrimitive(attribute.s())
+        attribute.asSOrNull() != null -> {
+            JsonPrimitive(attribute.asS())
         }
         else -> throw IllegalArgumentException()
     }
@@ -134,8 +134,8 @@ public inline fun <reified T> MutableItem.setObject(key: String, value: T) {
     set(key, attributeValueJson.encodeToJsonElement(value))
 }
 
-public inline fun <reified T> Item.getObject(key: String): T? = deserialize(key)
-public inline fun <reified T> Item.deserialize(key: String): T? {
+public suspend inline fun <reified T> Item.getObject(key: String): T? = deserialize(key)
+public suspend inline fun <reified T> Item.deserialize(key: String): T? {
     return get(key)?.asJsonElement()?.let {
         attributeValueJson.decodeFromJsonElement(it)
     }

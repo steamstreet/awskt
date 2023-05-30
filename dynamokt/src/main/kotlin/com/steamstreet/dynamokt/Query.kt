@@ -1,10 +1,15 @@
 package com.steamstreet.dynamokt
 
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest
-import software.amazon.awssdk.services.dynamodb.model.QueryResponse
+import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
+import aws.sdk.kotlin.services.dynamodb.model.QueryRequest
+import aws.sdk.kotlin.services.dynamodb.model.QueryResponse
+import aws.sdk.kotlin.services.dynamodb.paginators.items
+import aws.sdk.kotlin.services.dynamodb.paginators.queryPaginated
+import aws.sdk.kotlin.services.dynamodb.paginators.scanPaginated
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.stream.Stream
+
 
 public class Query internal constructor(
     public val dynamo: DynamoKtSession,
@@ -175,33 +180,33 @@ public class Query internal constructor(
     }
 
     private fun QueryRequest.Builder.buildQuery() {
-        this.tableName(dynamo.table)
+        this.tableName = dynamo.table
 
         if (!forward) {
-            scanIndexForward(false)
+            scanIndexForward = false
         }
 
         token?.let {
-            exclusiveStartKey(it.fromJsonToAttributeValue().m())
+            exclusiveStartKey = it.fromJsonToAttributeValue().asM()
         }
 
         if (this@Query.indexName != null) {
-            indexName(this@Query.indexName)
+            indexName = this@Query.indexName
         }
 
         if (consistent) {
-            this.consistentRead(true)
+            this.consistentRead = (true)
         }
 
         if (!projection.isNullOrEmpty()) {
-            this.projectionExpression(projection?.joinToString(", "))
+            this.projectionExpression = (projection?.joinToString(", "))
         }
 
-        expressionAttributeNames(buildExpressionNames())
-        expressionAttributeValues(buildExpressionValues())
-        this.filterExpression(filter)
+        expressionAttributeNames = (buildExpressionNames())
+        expressionAttributeValues = (buildExpressionValues())
+        this.filterExpression = (filter)
 
-        keyConditionExpression("#pk = :pk".let {
+        keyConditionExpression = ("#pk = :pk".let {
             if (sk.expression != null) {
                 "$it and ${sk.expression}"
             } else {
@@ -210,24 +215,22 @@ public class Query internal constructor(
         })
 
         if (this@Query.limit != null) {
-            this.limit(this@Query.limit)
+            this.limit = this@Query.limit
         }
     }
 
-    internal fun execute(): QueryResult {
-        val request = QueryRequest.builder().apply {
+    @OptIn(FlowPreview::class)
+    internal suspend fun execute(): QueryResult {
+        val request = QueryRequest {
             buildQuery()
-        }.build()
+        }
 
         return if (loadAll) {
-            val result = dynamo.dynamo.queryPaginator(request)
+            val result = dynamo.dynamo.queryPaginated(request)
+
 
             object : QueryResult {
-                override val items: Iterable<Item>
-                    get() = result.items().asSequence().map {
-                        Item(dynamo, it)
-                    }.asIterable()
-
+                override val items: Flow<Item> = result.items().map { Item(dynamo, it) }
                 override val paginationToken: String? = null
             }
         } else {
@@ -244,45 +247,40 @@ public class Query internal constructor(
     }
 
     internal fun executeScan(): QueryResult {
-        val items: Stream<Item> = dynamo.dynamo.scanPaginator { query ->
-            query.tableName(dynamo.table)
+        val items = dynamo.dynamo.scanPaginated {
+            tableName = (dynamo.table)
             buildExpressionNames().takeIf { it.isNotEmpty() }?.let {
-                query.expressionAttributeNames(it)
+                expressionAttributeNames = it
             }
             buildExpressionValues().takeIf { it.isNotEmpty() }?.let {
-                query.expressionAttributeValues(it)
+                expressionAttributeValues = it
             }
             projection?.let {
-                query.projectionExpression(it.joinToString(", "))
+                projectionExpression = it.joinToString(", ")
             }
 
             segment?.let {
-                query.segment(it)
+                segment = it
             }
             segments?.let {
-                query.totalSegments(it)
+                totalSegments = it
             }
 
-            query.filterExpression(filter)
-        }.items().stream().map {
+            filterExpression = filter
+        }.items().map {
             Item(dynamo, it)
         }
 
         return object : QueryResult {
-            override val items: Iterable<Item>
-                get() = object : Iterable<Item> {
-                    override fun iterator(): Iterator<Item> {
-                        return items.iterator()
-                    }
-                }
+            override val items: Flow<Item> = items
             override val paginationToken: String? = null
         }
     }
 
     private inner class SingleTableQueryResult(val result: QueryResponse) : QueryResult {
-        override val items by lazy { result.items().map { Item(dynamo, it) } }
+        override val items by lazy { result.items?.map { Item(dynamo, it) }.orEmpty().asFlow() }
         override val paginationToken: String? by lazy {
-            result.lastEvaluatedKey()?.toJsonItemString()
+            result.lastEvaluatedKey?.toJsonItemString()
         }
     }
 }
@@ -292,7 +290,7 @@ public interface QueryResult {
     /**
      * The list of items
      */
-    public val items: Iterable<Item>
+    public val items: Flow<Item>
 
     /**
      * A pagination token used to subsequent calls to get more items.

@@ -1,9 +1,11 @@
 package com.steamstreet.dynamokt
 
+import aws.sdk.kotlin.services.dynamodb.model.*
+import aws.sdk.kotlin.services.dynamodb.putItem
+import aws.sdk.kotlin.services.dynamodb.updateItem
 import com.steamstreet.exceptions.DuplicateItemException
 import com.steamstreet.exceptions.NotFoundException
 import kotlinx.datetime.Instant
-import software.amazon.awssdk.services.dynamodb.model.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.reflect.KProperty1
 
@@ -42,25 +44,25 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      * The values that are returned when the update is called. Defaults to all of the new
      * values, but might be useful to return only updated values for example.
      */
-    public var returnValues: ReturnValue = ReturnValue.ALL_NEW
+    public var returnValues: ReturnValue = ReturnValue.AllNew
 
     /**
      * Get the attribute with the given name. Attempts to use the updated value if it
      * is available.
      */
-    override fun get(name: String): AttributeValue? {
+    override suspend fun get(name: String): AttributeValue? {
         val value = attributes[name]
         val update = updates[name]
         return when {
             update == null -> {
                 value
             }
-            update.action() == AttributeAction.DELETE -> {
+            update.action == AttributeAction.Delete -> {
                 null
             }
 
             else -> {
-                update.value()
+                update.value
             }
         }
     }
@@ -78,7 +80,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
         }
 
     public operator fun set(key: String, value: String?) {
-        set(key, value?.let { AttributeValue.builder().s(value)?.build() })
+        set(key, value?.let { AttributeValue(value) })
     }
 
     public operator fun set(key: String, value: Instant?) {
@@ -92,15 +94,15 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     }
 
     public operator fun set(key: String, value: Int?) {
-        set(key, value?.let { AttributeValue.builder().n(value.toString()).build() })
+        set(key, value?.let { AttributeValue.N(value.toString()) })
     }
 
     public fun setLong(key: String, value: Long?) {
-        set(key, value?.let { AttributeValue.builder().n(value.toString()).build() })
+        set(key, value?.let { AttributeValue.N(value.toString()) })
     }
 
     public fun setBoolean(key: String, value: Boolean?) {
-        set(key, value?.let { AttributeValue.builder().bool(value)?.build() })
+        set(key, value?.let { AttributeValue.Bool(value) })
     }
 
     /**
@@ -124,8 +126,8 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
         } else {
             updateExpressions.add(Update("REMOVE", newKey))
         }
-        updates[key] = AttributeValueUpdate.builder().value(value)
-            .action(if (value != null) AttributeAction.PUT else AttributeAction.DELETE).build()
+        updates[key] = AttributeValueUpdate(value,
+            if (value != null) AttributeAction.Put else AttributeAction.Delete)
     }
 
     /**
@@ -135,7 +137,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
         if (amount != 0) {
             val attr = "attr${attributeIndex.getAndIncrement()}"
             attributeNames["#$attr"] = key
-            attributeValues[":$attr"] = AttributeValue.builder().n(amount.toString()).build()
+            attributeValues[":$attr"] = AttributeValue.N(amount.toString())
             updateExpressions.add(Update("ADD", "#$attr :$attr"))
         }
     }
@@ -149,13 +151,13 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
         val existingAttr = attributeNames.entries.find { it.value == key }?.key?.drop(1)
         val attr = existingAttr ?: "attr${attributeIndex.getAndIncrement()}"
         val existingList = attributeValues[":$attr"]
-        val list = existingList ?: AttributeValue.builder().l(emptyList()).build()
+        var list = existingList ?: AttributeValue.L(emptyList())
 
-        list.l().add(value)
+        list = AttributeValue.L(list.asL() + value)
 
         attributeNames["#$attr"] = key
         attributeValues[":$attr"] = list
-        attributeValues[":empty_list"] = AttributeValue.builder().l(emptyList()).build()
+        attributeValues[":empty_list"] = AttributeValue.L(emptyList())
 
         if (existingList == null) {
             updateExpressions.add(Update("SET", "#$attr = list_append(if_not_exists(#$attr, :empty_list), :$attr)"))
@@ -251,7 +253,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
         this.condition("attribute_exists(#pk)", mapOf("#pk" to dynamo.pkName))
     }
 
-    public fun save(): Item {
+    public suspend fun save(): Item {
         return if (replace || doNotOverwrite) {
             putItem()
         } else {
@@ -275,11 +277,11 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
         setTTL(kotlinx.datetime.Clock.System.now().plus(duration))
     }
 
-    private fun putItem(): Item {
+    private suspend fun putItem(): Item {
         val attributes = (updates.filter {
-            it.value.action() == AttributeAction.PUT
+            it.value.action == AttributeAction.Put
         }.mapValues {
-            it.value.value()
+            it.value.value
         } + buildMap {
             put(dynamo.pkName, attributes[dynamo.pkName])
             if (dynamo.skName != null) {
@@ -289,62 +291,63 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
 
         val result = try {
             dynamo.dynamo.putItem {
-                it.tableName(dynamo.table)
-                it.item(attributes)
+                tableName = dynamo.table
+                item = attributes
 
                 // ALL_NEW is the default
-                if (returnValues != ReturnValue.ALL_NEW) {
-                    it.returnValues(returnValues)
+                if (this@MutableItem.returnValues != ReturnValue.AllNew) {
+                    returnValues = this@MutableItem.returnValues
                 }
 
                 if (doNotOverwrite) {
-                    it.conditionExpression("attribute_not_exists(#pk)")
-                    it.expressionAttributeNames(mapOf("#pk" to dynamo.pkName))
+                    conditionExpression = "attribute_not_exists(#pk)"
+                    expressionAttributeNames = mapOf("#pk" to dynamo.pkName)
                 }
             }
         } catch (cce: ConditionalCheckFailedException) {
-            throw DuplicateItemException("${attributes[dynamo.pkName]?.s()}:${attributes[dynamo.skName]?.s()}")
+            throw DuplicateItemException("${attributes[dynamo.pkName]?.asS()}:${attributes[dynamo.skName]?.asS()}")
         }
 
-        return if (returnValues == ReturnValue.ALL_NEW) {
+        return if (returnValues == ReturnValue.AllNew) {
             Item(dynamo, attributes)
         } else {
-            Item(dynamo, result.attributes())
+            Item(dynamo, result.attributes.orEmpty())
         }
     }
 
-    private fun updateItem(): Item {
+    private suspend fun updateItem(): Item {
         if (updates.isEmpty() && updateExpressions.isEmpty()) {
             // if there are no updates, just get a new copy of the item. This isn't super
             // efficient, but maintains the ability to use the result of this call.
             return try {
-                dynamo.get(attributes[dynamo.pkName]!!.s(), attributes[dynamo.skName]!!.s())
+                dynamo.get(attributes[dynamo.pkName]!!.asS(), dynamo.skName?.let {attributes[it]?.asS()})
             } catch (e: NotFoundException) {
                 this
             }
         }
         return Item(dynamo, dynamo.dynamo.updateItem {
-            it.tableName(dynamo.table)
-            it.key(
-                mapOf(
-                    dynamo.pkName to attributes[dynamo.pkName],
-                    dynamo.skName to attributes[dynamo.skName]
-                )
-            )
+            tableName = dynamo.table
+            key = buildMap {
+                put(dynamo.pkName, attributes[dynamo.pkName]!!)
+                if (dynamo.skName != null) {
+                    put(dynamo.skName, attributes[dynamo.skName]!!)
 
-            it.updateExpression(buildUpdateExpression())
-            it.returnValues(returnValues)
+                }
+            }
+
+            updateExpression = buildUpdateExpression()
+            returnValues = this@MutableItem.returnValues
 
             conditionExpression?.let { expr ->
-                it.conditionExpression(expr)
+                conditionExpression = expr
             }
             if (attributeNames.isNotEmpty()) {
-                it.expressionAttributeNames(attributeNames)
+                expressionAttributeNames = attributeNames
             }
             if (attributeValues.isNotEmpty()) {
-                it.expressionAttributeValues(attributeValues)
+                expressionAttributeValues = attributeValues
             }
-        }.attributes())
+        }.attributes!!)
     }
 }
 
