@@ -1,21 +1,19 @@
 package com.steamstreet.aws.test
 
+import aws.sdk.kotlin.runtime.AwsServiceException
+import aws.sdk.kotlin.services.lambda.LambdaClient
+import aws.sdk.kotlin.services.lambda.model.*
 import com.amazonaws.services.lambda.runtime.ClientContext
 import com.amazonaws.services.lambda.runtime.CognitoIdentity
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.LambdaLogger
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import software.amazon.awssdk.awscore.exception.AwsServiceException
-import software.amazon.awssdk.core.SdkBytes
-import software.amazon.awssdk.services.lambda.LambdaClient
-import software.amazon.awssdk.services.lambda.model.*
+import io.mockk.mockk
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.lang.reflect.Modifier
-import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
@@ -75,7 +73,9 @@ class LambdaLocalContext(val name: String = "UnknownFunction") : Context {
     }
 }
 
-class LocalLambdaClient : LambdaClient {
+class LocalLambdaClient(
+    val mock: LambdaClient = mockk(relaxed = true)
+) : LambdaClient by mock {
     val functions = HashMap<String, LambdaInvocationHandler>()
     val errors = ArrayList<Throwable>()
 
@@ -86,39 +86,44 @@ class LocalLambdaClient : LambdaClient {
 
     override fun close() {}
 
-    override fun serviceName(): String = "LambdaLocal"
-
-    override fun invoke(invokeRequest: InvokeRequest): InvokeResponse {
+    override suspend fun invoke(input: InvokeRequest): InvokeResponse {
         active.incrementAndGet()
-        val name = invokeRequest.functionName().let {
+        val name = input.functionName?.let {
             if (it.startsWith("arn")) {
                 it.substringAfterLast(":")
             } else {
                 it
             }
-        }
-        val handler = functions[name] ?: throw AwsServiceException.builder().build()
+        } ?: throw IllegalArgumentException("Uknonwn function name")
+        val handler = functions[name] ?: throw AwsServiceException()
 
-        return when (invokeRequest.invocationType()) {
-            InvocationType.EVENT -> {
+        return when (input.invocationType) {
+            InvocationType.Event -> {
                 thread {
                     try {
-                        handler.invoke(invokeRequest.payload())
+                        handler.invoke(input.payload ?: ByteArray(0))
                     } catch (t: Throwable) {
                         t.printStackTrace()
                         errors.add(t)
                     }
                     active.decrementAndGet()
                 }
-                InvokeResponse.builder().statusCode(200).build()
+                InvokeResponse { statusCode = 200 }
             }
+
             else -> {
                 try {
-                    val responsePayload = handler.invoke(invokeRequest.payload())
-                    InvokeResponse.builder().payload(responsePayload).statusCode(200).build()
+                    val responsePayload = handler.invoke(input.payload ?: ByteArray(0))
+                    InvokeResponse {
+                        payload = responsePayload
+                        statusCode = 200
+                    }
                 } catch (e: Throwable) {
                     errors.add(e)
-                    InvokeResponse.builder().functionError(e.message).statusCode(200).build()
+                    InvokeResponse {
+                        functionError = e.message
+                        statusCode = 200
+                    }
                 }.also {
                     active.decrementAndGet()
                 }
@@ -130,38 +135,43 @@ class LocalLambdaClient : LambdaClient {
         functions.put(name, DirectInvocationHandler(handler))
     }
 
-    override fun createFunction(createFunctionRequest: CreateFunctionRequest): CreateFunctionResponse {
-        val handler = createFunctionRequest.handler()
+    override suspend fun createFunction(input: CreateFunctionRequest): CreateFunctionResponse {
+        val handler = input.handler!!
         functions.put(
-            createFunctionRequest.functionName(), ReflectionHandler(
-                createFunctionRequest.functionName(),
+            input.functionName!!, ReflectionHandler(
+                input.functionName!!,
                 handler.substringBefore("::"), handler.substringAfter("::")
             )
         )
-        return CreateFunctionResponse.builder().functionName(createFunctionRequest.functionName())
-            .functionArn("arn:aws:lambda:us-west-2:141660060409:function:${createFunctionRequest.functionName()}")
-            .build()
+        return CreateFunctionResponse {
+            functionName = input.functionName
+            functionArn = "arn:aws:lambda:us-west-2:141660060409:function:${input.functionName}"
+        }
     }
 
-    override fun createEventSourceMapping(createEventSourceMappingRequest: CreateEventSourceMappingRequest): CreateEventSourceMappingResponse {
+    override suspend fun createEventSourceMapping(input: CreateEventSourceMappingRequest): CreateEventSourceMappingResponse {
         val uuid = UUID.randomUUID().toString()
-        eventSourceMappings[uuid] = getEventSourceConfiguration(uuid, createEventSourceMappingRequest)
-        return CreateEventSourceMappingResponse.builder().uuid(uuid).build()
+        eventSourceMappings[uuid] = getEventSourceConfiguration(uuid, input)
+        return CreateEventSourceMappingResponse { this.uuid = uuid }
     }
+//
+//    suspend fun listEventSourceMappings(): ListEventSourceMappingsResponse {
+//        return ListEventSourceMappingsResponse {
+//            this.eventSourceMappings = this@LocalLambdaClient.eventSourceMappings.values.toList()
+//        }
+//    }
 
-    override fun listEventSourceMappings(): ListEventSourceMappingsResponse {
-        return ListEventSourceMappingsResponse.builder().eventSourceMappings(eventSourceMappings.values).build()
-    }
-
-    override fun listEventSourceMappings(listEventSourceMappingsRequest: ListEventSourceMappingsRequest): ListEventSourceMappingsResponse {
+    override suspend fun listEventSourceMappings(input: ListEventSourceMappingsRequest): ListEventSourceMappingsResponse {
         val mappings = ArrayList<EventSourceMappingConfiguration>()
-        val sourceArn = listEventSourceMappingsRequest.eventSourceArn()
+        val sourceArn = input.eventSourceArn
         if (sourceArn != null) {
             mappings.addAll(eventSourceMappings.values.filter {
-                it.eventSourceArn() == sourceArn
+                it.eventSourceArn == sourceArn
             })
         }
-        return ListEventSourceMappingsResponse.builder().eventSourceMappings(mappings).build()
+        return ListEventSourceMappingsResponse {
+            this.eventSourceMappings = (mappings)
+        }
     }
 
     private fun getFunctionArn(functionNameOrArn: String): String {
@@ -174,36 +184,39 @@ class LocalLambdaClient : LambdaClient {
         }
     }
 
-    override fun getEventSourceMapping(getEventSourceMappingRequest: GetEventSourceMappingRequest): GetEventSourceMappingResponse {
-        val config = eventSourceMappings[getEventSourceMappingRequest.uuid()]
-            ?: throw AwsServiceException.create("Unknown source mapping ${getEventSourceMappingRequest.uuid()}", null)
-        return GetEventSourceMappingResponse.builder()
-            .eventSourceArn(config.eventSourceArn())
-            .functionArn(config.functionArn())
-            .uuid(getEventSourceMappingRequest.uuid())
-            .build()
+    override suspend fun getEventSourceMapping(input: GetEventSourceMappingRequest): GetEventSourceMappingResponse {
+        val config = eventSourceMappings[input.uuid]
+            ?: throw AwsServiceException("Unknown source mapping ${input.uuid}", null)
+        return GetEventSourceMappingResponse {
+            eventSourceArn = (config.eventSourceArn)
+            functionArn = config.functionArn
+            uuid = input.uuid
+        }
     }
 
     private fun getEventSourceConfiguration(
         uuid: String,
         mapping: CreateEventSourceMappingRequest
     ): EventSourceMappingConfiguration {
-        return EventSourceMappingConfiguration.builder()
-            .eventSourceArn(mapping.eventSourceArn())
-            .functionArn(getFunctionArn(mapping.functionName()))
-            .uuid(uuid)
-            .build()
+        return EventSourceMappingConfiguration {
+            eventSourceArn = mapping.eventSourceArn
+            functionArn = getFunctionArn(mapping.functionName!!)
+            this.uuid = uuid
+        }
     }
 
-    override fun listFunctions(listFunctionsRequest: ListFunctionsRequest): ListFunctionsResponse {
-        return ListFunctionsResponse.builder().functions(
-            functions.values.mapNotNull {
-                it as? ReflectionHandler
-            }.map { function ->
-                FunctionConfiguration.builder().functionName(function.name).functionArn(getFunctionArn(function.name))
-                    .build()
-            }
-        ).build()
+    override suspend fun listFunctions(input: ListFunctionsRequest): ListFunctionsResponse {
+        return ListFunctionsResponse {
+            this.functions =
+                this@LocalLambdaClient.functions.values.mapNotNull {
+                    it as? ReflectionHandler
+                }.map { function ->
+                    FunctionConfiguration {
+                        functionName = function.name
+                        functionArn = getFunctionArn(function.name)
+                    }
+                }
+        }
     }
 }
 
@@ -212,7 +225,7 @@ private val json = jacksonObjectMapper().apply {
 }
 
 interface LambdaInvocationHandler {
-    fun invoke(payload: SdkBytes): SdkBytes
+    fun invoke(payload: ByteArray): ByteArray
 }
 
 class ReflectionHandler(
@@ -220,61 +233,43 @@ class ReflectionHandler(
     val clazz: String,
     val methodName: String
 ) : LambdaInvocationHandler {
-    override fun invoke(payload: SdkBytes): SdkBytes {
+    override fun invoke(payload: ByteArray): ByteArray {
         val output = ByteArrayOutputStream()
         val parameterValues = method.parameters.map {
             val clz = it.type
             when {
                 clz == InputStream::class.java -> {
-                    ByteBufferBackedInputStream(payload.asByteBuffer())
+                    payload.inputStream()
                 }
+
                 clz == String::class.java -> {
-                    String(payload.asByteArray())
+                    payload.decodeToString()
                 }
+
                 clz == Context::class.java -> LambdaLocalContext(name)
                 clz == OutputStream::class.java -> output
-                else -> json.readValue(ByteBufferBackedInputStream(payload.asByteBuffer()).reader(), clz)
+                else -> json.readValue(payload.inputStream().reader(), clz)
             }
         }
         method.invoke(instance, *(parameterValues.toTypedArray()))
 
-        return SdkBytes.fromByteArray(output.toByteArray())
+        return output.toByteArray()
     }
 
     private val kclass: Class<*> get() = Class.forName(clazz)
     private val method
         get() = kclass.methods.find {
             it.name == methodName
-        } ?: throw AwsServiceException.create("$name $clazz::$methodName", null)
+        } ?: throw AwsServiceException("$name $clazz::$methodName", null)
     val instance get() = if (Modifier.isStatic(method.modifiers)) null else kclass.getConstructor().newInstance()
 }
 
 class DirectInvocationHandler(
     val function: (InputStream) -> Unit
 ) : LambdaInvocationHandler {
-    override fun invoke(payload: SdkBytes): SdkBytes {
-        function(payload.asInputStream())
-        return SdkBytes.fromByteArray(ByteArray(0))
+    override fun invoke(payload: ByteArray): ByteArray {
+        function(payload.inputStream())
+        return ByteArray(0)
     }
 }
 
-class ByteBufferBackedInputStream(var buf: ByteBuffer) : InputStream() {
-    @Throws(IOException::class)
-    override fun read(): Int {
-        return if (!buf.hasRemaining()) {
-            -1
-        } else (buf.get().toInt())
-    }
-
-    @Throws(IOException::class)
-    override fun read(bytes: ByteArray, off: Int, len: Int): Int {
-        var length = len
-        if (!buf.hasRemaining()) {
-            return -1
-        }
-        length = Math.min(length, buf.remaining())
-        buf[bytes, off, length]
-        return length
-    }
-
-}

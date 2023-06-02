@@ -30,7 +30,7 @@ class AWSLocal(
         EventBridgeLocal(lambda)
     }
 
-    fun start() {
+    suspend fun start() {
         if (this::dynamoRunner.isInitialized) {
             dynamoRunner.startStreamProcessing()
         }

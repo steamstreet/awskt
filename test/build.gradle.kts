@@ -20,6 +20,7 @@ kotlin {
                 implementation(libs.aws.lambda.events)
                 implementation(libs.jackson)
 
+                api(libs.mockk)
                 api(libs.kotlin.coroutines.core)
                 api(libs.kotlin.serialization.json)
                 implementation(libs.kotlin.date.time)

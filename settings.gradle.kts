@@ -77,6 +77,8 @@ dependencyResolutionManagement {
             library("kluent", "org.amshove.kluent:kluent:1.65")
 
             library("jackson", "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6")
+
+            library("mockk", "io.mockk:mockk:1.13.5")
         }
     }
 }
