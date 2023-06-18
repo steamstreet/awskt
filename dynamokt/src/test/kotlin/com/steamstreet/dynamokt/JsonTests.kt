@@ -1,5 +1,12 @@
 package com.steamstreet.dynamokt
 
+import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.serializer
 import org.amshove.kluent.*
 import kotlin.test.Test
 
@@ -19,7 +26,7 @@ class JsonTests {
         with(jsonString.fromJsonToItem()) {
             keys.shouldHaveSingleItem().shouldBeEqualTo("name")
 
-            this["name"].shouldNotBeNull().s().shouldBeEqualTo("Jon")
+            this["name"].shouldNotBeNull().asS().shouldBeEqualTo("Jon")
         }
     }
 
@@ -36,12 +43,25 @@ class JsonTests {
 
         with(jsonString.fromJsonToItem()) {
             with(this["name-set"].shouldNotBeNull()) {
-                hasSs().shouldBeTrue()
-                ss().shouldHaveSize(3).shouldContainAll(listOf("Jon", "Steve", "Joe"))
+                asSs().shouldHaveSize(3).shouldContainAll(listOf("Jon", "Steve", "Joe"))
             }
             with(this["name-list"].shouldNotBeNull()) {
-                hasL().shouldBeTrue()
+                asL().shouldHaveSize(3)
             }
         }
+    }
+
+    @Test
+    fun testSerializer() {
+        val encoded =
+            Json.encodeToString(AttributeValueSerializer(), AttributeValue.S("Jon"))
+        println(encoded)
+
+       val mapEncoded = Json.encodeToString(MapSerializer(String.serializer(),
+            AttributeValueSerializer()), mapOf(
+                "name" to AttributeValue.S("Jon"),
+                "ago" to AttributeValue.N("48")
+            ))
+        println(mapEncoded)
     }
 }

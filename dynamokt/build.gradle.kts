@@ -15,6 +15,8 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation(libs.kluent)
+    testImplementation(libs.aws.dynamodb.local)
+    testImplementation(libs.kotlin.coroutines.test)
 }
 
 publishing {
@@ -25,4 +27,11 @@ publishing {
             }
         }
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
+
+    val libsDir = File(projectDir, "dynamo_libs")
+    this.systemProperty("java.library.path", libsDir.canonicalPath)
 }

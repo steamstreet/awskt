@@ -36,7 +36,7 @@ public interface ItemUpdater {
      * Update an item
      */
     public suspend fun update(entity: Item, block: MutableItem.() -> Unit = {}): Item =
-        update(entity.pk, entity.sk!!, block)
+        update(entity.pk, entity.sk, block)
 
     /**
      * Delete an item. The provided block allows the caller to set conditional expressions on the delete

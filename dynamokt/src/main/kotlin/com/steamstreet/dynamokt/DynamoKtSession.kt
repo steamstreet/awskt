@@ -2,69 +2,11 @@ package com.steamstreet.dynamokt
 
 import aws.sdk.kotlin.services.dynamodb.*
 import aws.sdk.kotlin.services.dynamodb.model.*
-import aws.smithy.kotlin.runtime.auth.awscredentials.CredentialsProvider
-import com.steamstreet.coLazy
 import com.steamstreet.exceptions.NotFoundException
 import com.steamstreet.mutableLazy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-
-public var dynamoKtClientBuilder: DynamoDbClient.Builder by mutableLazy {
-    DynamoDbClient.builder()
-}
-
-/**
- * The global object that stores the Dynamo configuration.
- */
-public class DynamoKt(
-    public val table: String,
-    public val pkName: String = "pk",
-    public val skName: String? = "sk",
-    public val builder: DynamoDbClient.Builder = dynamoKtClientBuilder,
-    public val defaultCredentials: CredentialsProvider? = null,
-    public val ttlAttribute: String? = null
-) {
-    internal val indexes = hashMapOf<String, DynamoKtIndex>()
-
-    private val defaultClient: DynamoDbClient by coLazy {
-        builder.apply {
-            if (defaultCredentials != null) {
-                this.config.credentialsProvider = defaultCredentials
-            }
-        }.build()
-    }
-
-    /**
-     * Create an AWS session, which is just operations linked with specific credentials.
-     */
-    public fun session(awsCredentialsProvider: CredentialsProvider? = null): DynamoKtSession {
-        val client = if (awsCredentialsProvider == null) {
-            defaultClient
-        } else {
-            builder.apply {
-                config.credentialsProvider = awsCredentialsProvider
-            }.build()
-        }
-        return DynamoKtSession(
-            this,
-            client,
-            table, pkName, skName
-        )
-    }
-
-    public fun registerIndex(name: String, pk: String, sk: String?): DynamoKtIndex {
-        return DynamoKtIndex(name, pk, sk).apply {
-            indexes[name] = this
-        }
-    }
-}
-
-public class DynamoKtIndex(
-    public val name: String,
-    public val pk: String,
-    public val sk: String?
-)
 
 public class DynamoKtSession(
     public val dynamoKt: DynamoKt,
@@ -94,6 +36,11 @@ public class DynamoKtSession(
 
     public suspend fun get(pk: String, sk: String?, attributes: List<String>? = null): Item {
         return getOrNull(pk, sk, attributes) ?: throw NotFoundException("Unknown item $pk $sk")
+    }
+
+    public suspend fun <T> get(pk: String, sk: String?,
+                               factory: (Item)->T): T {
+        return factory(get(pk, sk))
     }
 
     private fun cacheItem(item: Item) {

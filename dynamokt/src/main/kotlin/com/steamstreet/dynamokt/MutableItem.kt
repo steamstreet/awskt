@@ -1,5 +1,6 @@
 package com.steamstreet.dynamokt
 
+import aws.sdk.kotlin.services.dynamodb.listTables
 import aws.sdk.kotlin.services.dynamodb.model.*
 import aws.sdk.kotlin.services.dynamodb.putItem
 import aws.sdk.kotlin.services.dynamodb.updateItem
@@ -288,6 +289,9 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
                 put(dynamo.skName, attributes[dynamo.skName])
             }
         }).filterNullValues()
+
+        val tables = dynamo.dynamo.listTables {  }.tableNames.orEmpty().joinToString()
+        println(tables)
 
         val result = try {
             dynamo.dynamo.putItem {
