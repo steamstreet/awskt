@@ -318,7 +318,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
             // if there are no updates, just get a new copy of the item. This isn't super
             // efficient, but maintains the ability to use the result of this call.
             return try {
-                dynamo.get(attributes[dynamo.pkName]!!.s(), attributes[dynamo.skName]!!.s())
+                dynamo.get(attributes[dynamo.pkName]!!.s(), attributes[dynamo.skName]?.s())
             } catch (e: NotFoundException) {
                 this
             }

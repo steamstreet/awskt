@@ -48,6 +48,7 @@ dependencyResolutionManagement {
             aws("lambda")
             aws("eventbridge")
             aws("s3")
+            aws("appconfigdata")
 
             val slf4jVersion = version("slf4j", "1.8.0-beta4")
 
@@ -91,4 +92,5 @@ include(":lambda:lambda-core")
 include(":lambda:lambda-coroutines")
 include(":lambda:lambda-eventbridge")
 include(":lambda:lambda-sns")
+include(":lambda:lambda-sqs")
 include(":lambda:lambda-logging")

@@ -181,7 +181,7 @@ public class DynamoKtSession(
             DeleteRequest.builder().key(
                 mapOf(
                     pkName to item.pk.attributeValue(),
-                skName to item.sk!!.attributeValue()
+                    skName to item.sk?.attributeValue()
             )).build()
         }.map {
             WriteRequest.builder().deleteRequest(it).build()

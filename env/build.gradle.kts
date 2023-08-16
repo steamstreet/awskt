@@ -18,8 +18,11 @@ kotlin {
     sourceSets {
         val jvmMain by getting {
             dependencies {
+                implementation(project(":standards"))
+                implementation(libs.logstash.logback.encoder)
                 compileOnly(libs.aws.secretsmanager)
                 compileOnly(libs.kotlin.serialization.json)
+                compileOnly(libs.aws.appconfigdata)
             }
         }
     }
