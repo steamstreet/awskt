@@ -77,27 +77,35 @@ public fun eventBridge(
             // add the detail type to the mdc for tracing.
             val detailType = obj["detail-type"]!!.jsonPrimitive.content
             mdcContext("event-detail-type" to detailType) {
-                var error: Throwable? = null
-                (object : EventBridgeHandlerConfig {
-                    override fun eventsOfType(type: String): List<Event> {
-                        return if (detailType == type) {
-                            listOf(object : Event {
-                                override val id: String = "__"
-                                override val type: String = detailType
-                                override val detail: JsonObject = obj["detail"]!!.jsonObject
-
-                                override fun failed(t: Throwable?) {
-                                    error = t
-                                }
-                            })
-                        } else {
-                            emptyList()
-                        }
-                    }
-                }).config()
-
-                error?.let { throw it }
+                val handlerConfig = DefaultEventBridgeHandlerConfig(obj)
+                handlerConfig.config()
+                handlerConfig.error?.let { throw it }
             }
+        }
+    }
+}
+
+/**
+ * A default implementation of the handler config
+ */
+public class DefaultEventBridgeHandlerConfig(private val obj: JsonObject) : EventBridgeHandlerConfig {
+    public var error: Throwable? = null
+    public val detailType: String get() = obj["detail-type"]!!.jsonPrimitive.content
+    public val detail: JsonObject get() = obj["detail"]!!.jsonObject
+
+    override fun eventsOfType(type: String): List<Event> {
+        return if (detailType == type) {
+            listOf(object : Event {
+                override val id: String = "__"
+                override val type: String = detailType
+                override val detail: JsonObject = this@DefaultEventBridgeHandlerConfig.detail
+
+                override fun failed(t: Throwable?) {
+                    error = t
+                }
+            })
+        } else {
+            emptyList()
         }
     }
 }
@@ -229,4 +237,28 @@ public fun JsonElement.string(key: String): String? {
 
 public fun JsonElement.strings(): List<String> {
     return jsonArray.mapNotNull { it.jsonPrimitive.contentOrNull }
+}
+
+/**
+ * Enables testability, allowing to send a raw event to an EventBridge function.
+ */
+public suspend fun EventBridgeFunction.processEvent(str: String) {
+    DefaultEventBridgeHandlerConfig(Json.parseToJsonElement(str).jsonObject).apply {
+        this@processEvent.onEvent()
+    }
+}
+
+/**
+ * Process an event directly. Useful for testing.
+ */
+public suspend fun <T> EventBridgeFunction.processEvent(schema: EventSchema<T>, payload: T, source: String? = null) {
+    processEvent(
+        Json.encodeToString(
+            EventBusEvent(
+                detailType = schema.type,
+                detail = Json.encodeToJsonElement(schema.serializer, payload),
+                source = source ?: "aws-kt"
+            )
+        )
+    )
 }

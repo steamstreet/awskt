@@ -13,15 +13,21 @@ kotlin {
         browser()
     }
 
-    @Suppress("UNUSED_VARIABLE")
     sourceSets {
         val commonMain by getting {
             dependencies {
             }
         }
 
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+
         val jvmMain by getting {
             dependencies {
+                implementation(libs.kotlin.coroutines.core)
             }
         }
     }

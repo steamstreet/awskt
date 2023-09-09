@@ -12,6 +12,10 @@ dependencies {
     api(project(":lambda:lambda-coroutines"))
     api(project(":events"))
     api(project(":logging"))
+
+    testImplementation(kotlin("test"))
+    testImplementation(libs.kotlin.coroutines.test)
+    testImplementation(libs.kluent)
 }
 
 publishing {
