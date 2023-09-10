@@ -16,10 +16,10 @@ import org.slf4j.MDC
 /**
  * Create a suspendable context for logging with MDC.
  */
-public suspend inline fun <T> mdcContext(vararg pairs: Pair<String, String?>, crossinline block: suspend () -> T): T {
+public suspend inline fun <T> mdcContext(vararg pairs: Pair<String, Any?>, crossinline block: suspend () -> T): T {
     val notNull = pairs.mapNotNull {
         if (it.second == null) null
-        else it.first to it.second!!
+        else it.first to it.second!!.toString()
     }
     return withContext(MDCContext(*notNull.toTypedArray())) {
         block()
@@ -33,18 +33,18 @@ public fun MDCContext(vararg pairs: Pair<String, String>): MDCContext =
     MDCContext(MDC.getCopyOfContextMap().orEmpty() + pairs)
 
 
-public fun <T> mdc(vararg metadata: Pair<String, String?>, block: () -> T): T {
-    val previous = hashMapOf<String, String?>()
+public fun <T> mdc(vararg metadata: Pair<String, Any?>, block: () -> T): T {
+    val previous = hashMapOf<String, Any?>()
     metadata.forEach {
         previous[it.first] = MDC.get(it.first)
-        MDC.put(it.first, it.second)
+        MDC.put(it.first, it.second.toString())
     }
     val result = block()
     previous.forEach { (key, value) ->
         if (value == null) {
             MDC.remove(key)
         } else {
-            MDC.put(key, value)
+            MDC.put(key, value.toString())
         }
     }
     return result
@@ -106,13 +106,13 @@ public inline fun <reified T> Logger.logValue(message: String, data: T) {
 /**
  * Log warning with additional metadata
  */
-public fun logWarning(message: String, vararg metadata: Pair<String, String?>) {
+public fun logWarning(message: String, vararg metadata: Pair<String, Any?>) {
     mdc(*metadata) {
         defaultLogger.warn(message)
     }
 }
 
-public fun logWarning(message: String, throwable: Throwable?, vararg metadata: Pair<String, String?>) {
+public fun logWarning(message: String, throwable: Throwable?, vararg metadata: Pair<String, Any?>) {
     mdc(*metadata) {
         defaultLogger.warn(message, throwable)
     }
@@ -121,7 +121,7 @@ public fun logWarning(message: String, throwable: Throwable?, vararg metadata: P
 /**
  * Log info with additional metadata
  */
-public fun logInfo(message: String, vararg metadata: Pair<String, String?>) {
+public fun logInfo(message: String, vararg metadata: Pair<String, Any?>) {
     mdc(*metadata) {
         defaultLogger.info(message)
     }
@@ -131,8 +131,8 @@ public fun logInfo(message: String, vararg metadata: Pair<String, String?>) {
 /**
  * Log info with additional metadata
  */
-public fun logInfo(message: String, builderAction: MutableList<Pair<String, String>>.() -> Unit) {
-    val metadata: List<Pair<String, String>> = buildList(builderAction)
+public fun logInfo(message: String, builderAction: MutableList<Pair<String, Any>>.() -> Unit) {
+    val metadata: List<Pair<String, Any>> = buildList(builderAction)
     mdc(*metadata.toTypedArray()) {
         defaultLogger.info(message)
     }

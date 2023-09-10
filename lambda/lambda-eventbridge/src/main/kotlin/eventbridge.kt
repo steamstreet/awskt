@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context
 import com.steamstreet.aws.lambda.lambdaInput
 import com.steamstreet.aws.lambda.lambdaJson
 import com.steamstreet.aws.lambda.logger
+import com.steamstreet.awskt.logging.logInfo
 import com.steamstreet.awskt.logging.logJson
 import com.steamstreet.awskt.logging.mdcContext
 import com.steamstreet.events.EventSchema
@@ -17,6 +18,7 @@ import kotlinx.serialization.json.*
 import net.logstash.logback.marker.Markers
 import java.io.InputStream
 import java.io.OutputStream
+import kotlin.system.measureTimeMillis
 
 /**
  * Callback interface for event bridge handler installation.
@@ -40,6 +42,7 @@ public fun eventBridge(
     input: InputStream,
     context: Context,
     output: OutputStream? = null,
+    tracePerformance: Boolean = true,
     config: suspend EventBridgeHandlerConfig.() -> Unit
 ) {
     lambdaInput<JsonElement>(input, context) { element ->
@@ -77,9 +80,17 @@ public fun eventBridge(
             // add the detail type to the mdc for tracing.
             val detailType = obj["detail-type"]!!.jsonPrimitive.content
             mdcContext("event-detail-type" to detailType) {
-                val handlerConfig = DefaultEventBridgeHandlerConfig(obj)
-                handlerConfig.config()
-                handlerConfig.error?.let { throw it }
+                val processing = measureTimeMillis {
+                    val handlerConfig = DefaultEventBridgeHandlerConfig(obj)
+                    handlerConfig.config()
+                    handlerConfig.error?.let { throw it }
+                }
+                if (tracePerformance) {
+                    logInfo(
+                        "Completed event processing",
+                        "duration" to processing.toString()
+                    )
+                }
             }
         }
     }
@@ -173,6 +184,8 @@ public class RecordResponse(
  * Base class for a lambda that handles event bridge events.
  */
 public interface EventBridgeFunction {
+    public val tracePerformance: Boolean get() = true
+
     public fun execute(input: InputStream, output: OutputStream, context: Context) {
         eventBridge(input, context, output) {
             onEvent()
