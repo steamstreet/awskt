@@ -18,6 +18,7 @@ kotlin {
                 implementation(libs.aws.lambda.core)
                 implementation(libs.aws.lambda.events)
                 implementation(libs.jackson)
+                implementation(libs.aws.apache.client)
 
                 api(libs.kotlin.coroutines.core)
                 api(libs.kotlin.serialization.json)

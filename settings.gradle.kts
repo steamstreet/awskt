@@ -49,6 +49,7 @@ dependencyResolutionManagement {
             aws("eventbridge")
             aws("s3")
             aws("appconfigdata")
+            aws("apache-client")
 
             val slf4jVersion = version("slf4j", "1.8.0-beta4")
 
