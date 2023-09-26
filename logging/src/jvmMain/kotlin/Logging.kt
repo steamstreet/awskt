@@ -118,6 +118,18 @@ public fun logWarning(message: String, throwable: Throwable?, vararg metadata: P
     }
 }
 
+public fun logError(message: String, vararg metadata: Pair<String, Any?>) {
+    mdc(*metadata) {
+        defaultLogger.error(message)
+    }
+}
+
+public fun logError(message: String, throwable: Throwable?, vararg metadata: Pair<String, Any?>) {
+    mdc(*metadata) {
+        defaultLogger.error(message, throwable)
+    }
+}
+
 /**
  * Log info with additional metadata
  */
