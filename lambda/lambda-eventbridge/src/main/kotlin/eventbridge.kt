@@ -20,6 +20,7 @@ import net.logstash.logback.marker.Markers
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.OutputStream
+import java.util.*
 import kotlin.system.measureTimeMillis
 
 /**
@@ -81,10 +82,12 @@ public fun eventBridge(
             }
         } else {
             // add the detail type to the mdc for tracing.
-            val detailType = obj["detail-type"]!!.jsonPrimitive.content
+            val detailType =
+                obj["detail-type"]?.jsonPrimitive?.content ?: throw IllegalArgumentException("Missing detail type")
+            val detail = obj["detail"]?.jsonObject ?: throw IllegalArgumentException("Missing detail for $detailType")
             mdcContext("event-detail-type" to detailType) {
                 val processing = measureTimeMillis {
-                    val handlerConfig = DefaultEventBridgeHandlerConfig(obj)
+                    val handlerConfig = DefaultEventBridgeHandlerConfig(detailType, detail)
                     handlerConfig.config()
                     handlerConfig.error?.let { throw it }
                 }
@@ -102,10 +105,11 @@ public fun eventBridge(
 /**
  * A default implementation of the handler config
  */
-public class DefaultEventBridgeHandlerConfig(private val obj: JsonObject) : EventBridgeHandlerConfig {
+public class DefaultEventBridgeHandlerConfig(
+    private val detailType: String,
+    private val detail: JsonObject
+) : EventBridgeHandlerConfig {
     public var error: Throwable? = null
-    public val detailType: String get() = obj["detail-type"]!!.jsonPrimitive.content
-    public val detail: JsonObject get() = obj["detail"]!!.jsonObject
 
     override fun eventsOfType(type: String): List<Event> {
         return if (detailType == type) {
@@ -151,11 +155,16 @@ private class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
             val body = record["body"]?.jsonPrimitive?.content
             if (body != null) {
                 val eventBridgeRecord = lambdaJson.parseToJsonElement(body).jsonObject
-                val type = eventBridgeRecord["detail-type"]!!.jsonPrimitive.content
-                val detail = eventBridgeRecord["detail"]!!.jsonObject
+                val type = eventBridgeRecord["detail-type"]?.jsonPrimitive?.content
+                val detail = eventBridgeRecord["detail"]?.jsonObject
+
+                if (type == null || detail == null) {
+                    throw IllegalArgumentException("Missing detail type or detail from message")
+                }
 
                 object : Event {
-                    override val id: String = record["messageId"]!!.jsonPrimitive.content
+                    override val id: String =
+                        record["messageId"]?.jsonPrimitive?.content ?: UUID.randomUUID().toString()
                     override val type: String = type
                     override val detail: JsonObject = detail
 
@@ -279,7 +288,7 @@ public fun JsonElement.strings(): List<String> {
 /**
  * Enables testability, allowing to send a raw event to an EventBridge function.
  */
-public suspend fun EventBridgeFunction.processEvent(str: String) {
+public fun EventBridgeFunction.processEvent(str: String) {
     val output = ByteArrayOutputStream()
     execute(str.byteInputStream(), output, MockLambdaContext())
 }
@@ -287,7 +296,7 @@ public suspend fun EventBridgeFunction.processEvent(str: String) {
 /**
  * Process an event directly. Useful for testing.
  */
-public suspend fun <T> EventBridgeFunction.processEvent(schema: EventSchema<T>, payload: T, source: String? = null) {
+public fun <T> EventBridgeFunction.processEvent(schema: EventSchema<T>, payload: T, source: String? = null) {
     processEvent(
         Json.encodeToString(
             EventBusEvent(
