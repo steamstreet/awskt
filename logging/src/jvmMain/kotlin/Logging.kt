@@ -14,6 +14,13 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 
 /**
+ * Mixing to use with exceptions to allow mdc values to be logged with the exception.
+ */
+public interface MDCException {
+    public val mdcAttributes: Map<String, Any?>? get() = null
+}
+
+/**
  * Create a suspendable context for logging with MDC.
  */
 public suspend inline fun <T> mdcContext(vararg pairs: Pair<String, Any?>, crossinline block: suspend () -> T): T {
@@ -32,12 +39,14 @@ public suspend inline fun <T> mdcContext(vararg pairs: Pair<String, Any?>, cross
 public fun MDCContext(vararg pairs: Pair<String, String>): MDCContext =
     MDCContext(MDC.getCopyOfContextMap().orEmpty() + pairs)
 
-
-public fun <T> mdc(vararg metadata: Pair<String, Any?>, block: () -> T): T {
+/**
+ * Wrap a block with MDC parameters
+ */
+public fun <T> mdc(metadata: Map<String, Any?>, block: () -> T): T {
     val previous = hashMapOf<String, Any?>()
     metadata.forEach {
-        previous[it.first] = MDC.get(it.first)
-        MDC.put(it.first, it.second.toString())
+        previous[it.key] = MDC.get(it.key)
+        MDC.put(it.key, it.value?.toString())
     }
     val result = block()
     previous.forEach { (key, value) ->
@@ -48,6 +57,11 @@ public fun <T> mdc(vararg metadata: Pair<String, Any?>, block: () -> T): T {
         }
     }
     return result
+}
+
+
+public fun <T> mdc(vararg metadata: Pair<String, Any?>, block: () -> T): T {
+    return mdc(metadata.toMap(), block)
 }
 
 private val defaultLogger = LoggerFactory.getLogger("EventLogger")
@@ -112,8 +126,17 @@ public fun logWarning(message: String, vararg metadata: Pair<String, Any?>) {
     }
 }
 
+/**
+ * Merge MDC data from a throwable.
+ */
+private fun mergeMdc(throwable: Throwable?, metadata: Array<out Pair<String, Any?>>): Map<String, Any?> {
+    return if (throwable != null && throwable is MDCException) {
+        throwable.mdcAttributes.orEmpty() + metadata.toMap()
+    } else metadata.toMap()
+}
+
 public fun logWarning(message: String, throwable: Throwable?, vararg metadata: Pair<String, Any?>) {
-    mdc(*metadata) {
+    mdc(mergeMdc(throwable, metadata)) {
         defaultLogger.warn(message, throwable)
     }
 }
@@ -125,7 +148,7 @@ public fun logError(message: String, vararg metadata: Pair<String, Any?>) {
 }
 
 public fun logError(message: String, throwable: Throwable?, vararg metadata: Pair<String, Any?>) {
-    mdc(*metadata) {
+    mdc(mergeMdc(throwable, metadata)) {
         defaultLogger.error(message, throwable)
     }
 }

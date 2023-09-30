@@ -14,6 +14,7 @@ dependencies {
     api(project(":logging"))
 
     testImplementation(kotlin("test"))
+    testImplementation(project(":lambda:lambda-sqs"))
     testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.kluent)
 }
