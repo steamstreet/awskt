@@ -1,6 +1,7 @@
 package com.steamstreet.aws.lambda.eventbridge
 
 import com.amazonaws.services.lambda.runtime.Context
+import com.steamstreet.aws.lambda.MockLambdaContext
 import com.steamstreet.aws.lambda.lambdaInput
 import com.steamstreet.aws.lambda.lambdaJson
 import com.steamstreet.aws.lambda.logger
@@ -16,6 +17,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import net.logstash.logback.marker.Markers
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.OutputStream
 import kotlin.system.measureTimeMillis
@@ -29,7 +31,7 @@ public interface EventBridgeHandlerConfig {
      */
     public fun eventsOfType(type: String): List<Event>
 
-    public suspend operator fun <T> EventSchema<T>.invoke(block: suspend (T) -> Unit) {
+    public suspend operator fun <T> EventSchema<T>.invoke(block: suspend context(Event) (T) -> Unit) {
         type(this, block)
     }
 }
@@ -43,6 +45,7 @@ public fun eventBridge(
     context: Context,
     output: OutputStream? = null,
     tracePerformance: Boolean = true,
+    batchSqs: Boolean = false,
     config: suspend EventBridgeHandlerConfig.() -> Unit
 ) {
     lambdaInput<JsonElement>(input, context) { element ->
@@ -57,7 +60,7 @@ public fun eventBridge(
 
             // if output is null, we'll just throw the first exception, and the entire
             // batch will be reprocessed
-            if (output == null) {
+            if (!batchSqs || output == null) {
                 if (sqs.failures.isNotEmpty()) {
                     sqs.failures.values.filterNotNull().firstOrNull()?.let {
                         throw it
@@ -114,6 +117,8 @@ public class DefaultEventBridgeHandlerConfig(private val obj: JsonObject) : Even
                 override fun failed(t: Throwable?) {
                     error = t
                 }
+
+                override val sourceEvent: Any get() = this
             })
         } else {
             emptyList()
@@ -130,6 +135,8 @@ public interface Event {
      * Report failure
      */
     public fun failed(t: Throwable?)
+
+    public val sourceEvent: Any?
 }
 
 private class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
@@ -156,6 +163,8 @@ private class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
                         logger.error("Event processing failed")
                         failures[id] = t
                     }
+
+                    override val sourceEvent: Any = record
                 }
             } else {
                 null
@@ -185,9 +194,10 @@ public class RecordResponse(
  */
 public interface EventBridgeFunction {
     public val tracePerformance: Boolean get() = true
+    public val batchRetries: Boolean get() = false
 
     public fun execute(input: InputStream, output: OutputStream, context: Context) {
-        eventBridge(input, context, output) {
+        eventBridge(input, context, output, tracePerformance, batchRetries) {
             onEvent()
         }
     }
@@ -198,28 +208,42 @@ public interface EventBridgeFunction {
 
 
 context(EventBridgeHandlerConfig)
-public suspend fun <T> on(type: EventSchema<T>, handler: suspend (T) -> Any?): Unit =
+public suspend fun <T> on(type: EventSchema<T>, handler: suspend context(Event) (T) -> Any?): Unit =
     type(type, handler)
 
 /**
  * Register a handler for a given event.
  */
-public suspend fun <T, R> EventBridgeHandlerConfig.type(type: EventSchema<T>, handler: suspend (T) -> R) {
+public suspend fun <T, R> EventBridgeHandlerConfig.type(
+    type: EventSchema<T>,
+    handler: suspend context(Event) (T) -> R
+) {
     eventsOfType(type.type).forEach { event ->
         logger.logJson("Processing event", "event", event.detail.toString())
 
-        val value = lambdaJson.decodeFromJsonElement(type.serializer, event.detail)
-        coroutineScope {
-            handler(value)
+        try {
+            val value = lambdaJson.decodeFromJsonElement(type.serializer, event.detail)
+            coroutineScope {
+                handler(event, value)
+            }
+        } catch (t: Throwable) {
+            event.failed(t)
         }
     }
 }
 
-public suspend fun EventBridgeHandlerConfig.type(detailType: String, handler: suspend (JsonObject) -> Any?) {
+public suspend fun EventBridgeHandlerConfig.type(
+    detailType: String,
+    handler: suspend context(Event) (JsonObject) -> Any?
+) {
     eventsOfType(detailType).forEach { event ->
         logger.logJson("Processing event", "event", event.detail.toString())
-        coroutineScope {
-            handler(event.detail)
+        try {
+            coroutineScope {
+                handler(event, event.detail)
+            }
+        } catch (t: Throwable) {
+            event.failed(t)
         }
     }
 }
@@ -256,9 +280,8 @@ public fun JsonElement.strings(): List<String> {
  * Enables testability, allowing to send a raw event to an EventBridge function.
  */
 public suspend fun EventBridgeFunction.processEvent(str: String) {
-    DefaultEventBridgeHandlerConfig(Json.parseToJsonElement(str).jsonObject).apply {
-        this@processEvent.onEvent()
-    }
+    val output = ByteArrayOutputStream()
+    execute(str.byteInputStream(), output, MockLambdaContext())
 }
 
 /**
