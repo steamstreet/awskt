@@ -73,13 +73,17 @@ public class DynamoKtSession(
     private val cache: MutableMap<String, Item>? = null
 ) : ItemUpdater {
 
-    public fun getOrNull(pk: String, sk: String?, attributes: List<String>? = null): Item? {
+    public fun getOrNull(
+        pk: String, sk: String?, attributes: List<String>? = null,
+        consistent: Boolean = false
+    ): Item? {
         return dynamo.getItem {
             it.tableName(table)
             it.key(keyMap(pk, sk))
             attributes?.apply {
                 it.attributesToGet(this)
             }
+            it.consistentRead(consistent)
         }.let {
             if (!it.hasItem()) {
                 null
@@ -90,8 +94,8 @@ public class DynamoKtSession(
         }
     }
 
-    public fun get(pk: String, sk: String?, attributes: List<String>? = null): Item {
-        return getOrNull(pk, sk, attributes) ?: throw NotFoundException("Unknown item $pk $sk")
+    public fun get(pk: String, sk: String?, attributes: List<String>? = null, consistent: Boolean = false): Item {
+        return getOrNull(pk, sk, attributes, consistent) ?: throw NotFoundException("Unknown item $pk $sk")
     }
 
     private fun cacheItem(item: Item) {
@@ -99,7 +103,10 @@ public class DynamoKtSession(
         cache?.put(cacheKey, item)
     }
 
-    public fun getAll(items: List<Pair<String, String>>, attributes: Collection<String> = emptyList()): List<Item> {
+    public fun getAll(
+        items: List<Pair<String, String?>>, attributes: Collection<String> = emptyList(),
+        consistent: Boolean = false
+    ): List<Item> {
         return items.chunked(80).flatMap { chunkedItems ->
             val request = BatchGetItemRequest.builder().apply {
                 requestItems(
@@ -107,7 +114,12 @@ public class DynamoKtSession(
                         table to
                                 KeysAndAttributes.builder().apply {
                                     keys(chunkedItems.map {
-                                        mapOf(pkName to it.first.attributeValue(), skName to it.second.attributeValue())
+                                        buildMap {
+                                            put(pkName, it.first.attributeValue())
+                                            if (skName != null) {
+                                                put(skName, it.second?.attributeValue())
+                                            }
+                                        }
                                     })
 
                                     if (attributes.isNotEmpty()) {
@@ -116,6 +128,7 @@ public class DynamoKtSession(
                                         expressionAttributeNames(names)
                                         projectionExpression(names.keys.joinToString(","))
                                     }
+                                    this.consistentRead(consistent)
                                 }.build()
                     )
                 )

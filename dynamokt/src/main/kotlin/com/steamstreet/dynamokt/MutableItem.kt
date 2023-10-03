@@ -163,6 +163,17 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     }
 
     /**
+     * Add the given string to a string set attribute.
+     */
+    public fun addToSet(key: String, value: String) {
+        val attr = "attr${attributeIndex.getAndIncrement()}"
+        attributeNames["#$attr"] = key
+        attributeValues[":$attr"] = value.attributeValue()
+        updateExpressions.add(Update("ADD", "#$attr :$attr"))
+
+    }
+
+    /**
      * Remove an item from a list
      */
     public fun removeFromList(key: String, index: Int) {
