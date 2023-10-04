@@ -5,6 +5,8 @@ import com.steamstreet.aws.lambda.MockLambdaContext
 import com.steamstreet.aws.lambda.lambdaInput
 import com.steamstreet.aws.lambda.lambdaJson
 import com.steamstreet.aws.lambda.logger
+import com.steamstreet.aws.sqs.BatchResponse
+import com.steamstreet.aws.sqs.RecordResponse
 import com.steamstreet.awskt.logging.logInfo
 import com.steamstreet.awskt.logging.logJson
 import com.steamstreet.awskt.logging.mdcContext
@@ -188,16 +190,6 @@ private class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
     }
 }
 
-@Serializable
-public class BatchResponse(
-    public val batchItemFailures: List<RecordResponse>
-)
-
-@Serializable
-public class RecordResponse(
-    public val itemIdentifier: String
-)
-
 /**
  * Base class for a lambda that handles event bridge events.
  */
@@ -218,12 +210,12 @@ public interface EventBridgeFunction {
 
 context(EventBridgeHandlerConfig)
 public suspend fun <T> on(type: EventSchema<T>, handler: suspend context(Event) (T) -> Any?): Unit =
-    type(type, handler)
+    typeWithContext(type, handler)
 
 /**
  * Register a handler for a given event.
  */
-public suspend fun <T, R> EventBridgeHandlerConfig.type(
+public suspend fun <T, R> EventBridgeHandlerConfig.typeWithContext(
     type: EventSchema<T>,
     handler: suspend context(Event) (T) -> R
 ) {
@@ -238,6 +230,22 @@ public suspend fun <T, R> EventBridgeHandlerConfig.type(
         } catch (t: Throwable) {
             event.failed(t)
         }
+    }
+}
+
+public suspend fun <T, R> EventBridgeHandlerConfig.type(
+    type: EventSchema<T>,
+    handler: suspend context(Event) (T) -> R
+) {
+    typeWithContext(type, handler)
+}
+
+public suspend fun <T, R> EventBridgeHandlerConfig.type(
+    type: EventSchema<T>,
+    handler: suspend (T) -> R
+) {
+    typeWithContext(type) {
+        handler(it)
     }
 }
 

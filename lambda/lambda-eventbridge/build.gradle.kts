@@ -12,9 +12,9 @@ dependencies {
     api(project(":lambda:lambda-coroutines"))
     api(project(":events"))
     api(project(":logging"))
+    api(project(":lambda:lambda-sqs"))
 
     testImplementation(kotlin("test"))
-    testImplementation(project(":lambda:lambda-sqs"))
     testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.kluent)
 }
