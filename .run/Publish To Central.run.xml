@@ -4,7 +4,7 @@
       <option name="executionName"/>
       <option name="externalProjectPath" value="$PROJECT_DIR$"/>
       <option name="externalSystemIdString" value="GRADLE"/>
-      <option name="scriptParameters" value="-PBUILD_NUMBER=19"/>
+      <option name="scriptParameters" value="-PBUILD_NUMBER=20"/>
       <option name="taskDescriptions">
         <list/>
       </option>
