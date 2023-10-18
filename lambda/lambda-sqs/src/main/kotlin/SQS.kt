@@ -103,7 +103,6 @@ public abstract class SQSBatchHandler<T>(private val serializer: KSerializer<T>)
         check(results.size == input.Records.size) {
             "Invalid response list"
         }
-        println("got results")
         return input.Records.filterIndexed { index, sqsRecord ->
             !results[index]
         }.map {
