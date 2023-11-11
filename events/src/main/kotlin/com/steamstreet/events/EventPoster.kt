@@ -28,5 +28,8 @@ public interface Event {
 }
 
 public var poster: ApplicationEventPoster by mutableLazy {
-    EventBridgeSubmitter(Env["EventBusArn"], Env["EventPosterSource"])
+    EventBridgeSubmitter(
+        Env.optional("EventBusArn") ?: throw IllegalStateException("Missing EventBusArn"),
+        Env.optional("EventPosterSource") ?: throw IllegalStateException("Missing EventPosterSource")
+    )
 }
