@@ -16,11 +16,14 @@ public interface ItemContainer {
  * An item container that can be updated.
  */
 public interface MutableItemContainer<T : ItemContainer> : ItemContainer {
+    override var entity: Item
+
     public fun update(updates: T.(MutableItem) -> Unit): Item {
         return entity.update {
             val mutable = mutable(this)
             mutable.updates(this)
             decorate(this)
+            entity = this
         }
     }
 
