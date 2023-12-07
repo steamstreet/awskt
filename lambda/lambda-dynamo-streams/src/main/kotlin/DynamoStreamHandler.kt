@@ -20,7 +20,7 @@ public abstract class DynamoStreamHandler : InputLambda<DynamoStreamRecords>(
     /**
      * If true, the handleRecord method is called asynchronously for each item.
      */
-    private var async: Boolean = false
+    protected var async: Boolean = false
 
     /**
      * Handle a batch of records. Default implementation calls handleRecord for each
@@ -54,5 +54,5 @@ public abstract class DynamoStreamHandler : InputLambda<DynamoStreamRecords>(
     /**
      * A database item has been updated.
      */
-    protected open fun onItemUpdate(old: Item?, new: Item?, record: DynamoStreamEvent) {}
+    protected open suspend fun onItemUpdate(old: Item?, new: Item?, record: DynamoStreamEvent) {}
 }

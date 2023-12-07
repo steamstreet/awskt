@@ -133,7 +133,14 @@ public class DynamoStreamEvent(
     public val eventSource: String,
     public val awsRegion: String,
     public val dynamodb: DynamoStreamEventDetail,
-    public val eventSourceARN: String
+    public val eventSourceARN: String,
+    public val userIdentity: UserIdentity? = null
+)
+
+@Serializable
+public class UserIdentity(
+    public val type: String? = null,
+    public val principalId: String? = null
 )
 
 @Serializable

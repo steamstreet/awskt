@@ -2,6 +2,12 @@ package com.steamstreet.aws.sqs
 
 import com.steamstreet.aws.lambda.IOLambda
 import com.steamstreet.aws.lambda.InputLambda
+import com.steamstreet.awskt.logging.logWarning
+import com.steamstreet.awskt.logging.mdcContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -90,6 +96,8 @@ public abstract class SQSBatchHandler<T>(private val serializer: KSerializer<T>)
     private val json = Json {
         ignoreUnknownKeys = true
     }
+    protected var logExceptions: Boolean = true
+    protected var async: Boolean = false
 
     override suspend fun handle(input: SQSEvent): BatchResponse {
         val events = input.Records.map {
@@ -120,12 +128,32 @@ public abstract class SQSBatchHandler<T>(private val serializer: KSerializer<T>)
      */
     context(SQSEvent)
     public open suspend fun handleEvents(events: List<T>): List<Boolean> {
-        return events.mapIndexed { index, t ->
-            with(Records[index]) {
+        return if (async) {
+            coroutineScope {
+                events.mapIndexed { index, t ->
+                    val record = Records[index]
+                    async(Dispatchers.IO) {
+                        handleRecord(record, t)
+                    }
+                }.awaitAll()
+            }
+        } else {
+            events.mapIndexed { index, t ->
+                handleRecord(Records[index], t)
+            }
+        }
+    }
+
+    private suspend fun handleRecord(sqsRecord: SQSRecord, message: T): Boolean {
+        return with(sqsRecord) {
+            mdcContext("sqs-message-id" to this.messageId) {
                 try {
-                    handleMessage(t)
+                    handleMessage(message)
                     true
                 } catch (t: Throwable) {
+                    if (logExceptions) {
+                        logWarning("SQS Processing Failed", t)
+                    }
                     false
                 }
             }
