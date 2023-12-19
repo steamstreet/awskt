@@ -3,10 +3,7 @@ package com.steamstreet.dynamokt
 import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.serializer
 import org.amshove.kluent.*
 import kotlin.test.Test
 
@@ -38,8 +35,8 @@ class JsonTests {
         ).toJsonItemString()
 
         // make sure there is an 'ss' and 'l' attribute
-        jsonString.shouldContain("\"ss\"")
-        jsonString.shouldContain("\"l\"")
+        jsonString.shouldContain("\"SS\"")
+        jsonString.shouldContain("\"L\"")
 
         with(jsonString.fromJsonToItem()) {
             with(this["name-set"].shouldNotBeNull()) {

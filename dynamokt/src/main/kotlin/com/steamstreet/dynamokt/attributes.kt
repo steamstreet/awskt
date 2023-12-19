@@ -64,6 +64,39 @@ public fun findDifferences(record1: Map<String, AttributeValue>?, record2: Map<S
     }
 }
 
+private fun diff(value1: AttributeValue, value2: AttributeValue, path: List<String> = emptyList()): List<String> {
+    val diff = mutableListOf<String>()
+
+    if (value1.asMOrNull() != null && value2.asMOrNull() != null) {
+        val m1 = value1.asM()
+        val m2 = value2.asM()
+        m1.keys.forEach {
+            val v1 = m1[it]
+            val v2 = m2[it]
+
+            if (v1 != v2) {
+                diff += (path + it).joinToString(".")
+                if (v1 != null && v2 != null) {
+                    diff(v1, v2, path)
+                }
+            }
+        }
+    }
+
+    return diff
+}
+
+/**
+ * Diff two items
+ */
+public fun diff(value1: Map<String, AttributeValue>, value2: Map<String, AttributeValue>): List<String> {
+    return diff(AttributeValue.M(value1), AttributeValue.M(value2))
+}
+
+public fun diff(item1: Item, item2: Item): List<String> =
+    diff(item1.attributes, item2.attributes)
+
+
 /**
  * Extension functions that make it easy to create attribute value objects from Kotlin data types.
  */

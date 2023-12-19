@@ -1,7 +1,6 @@
 package com.steamstreet.aws.test
 
 import aws.sdk.kotlin.runtime.AwsServiceException
-import aws.sdk.kotlin.runtime.auth.credentials.StaticCredentialsProvider
 import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 import aws.sdk.kotlin.services.dynamodb.model.AttributeDefinition
 import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
@@ -14,9 +13,6 @@ import aws.sdk.kotlin.services.dynamodbstreams.model.TrimmedDataAccessException
 import aws.sdk.kotlin.services.eventbridge.EventBridgeClient
 import aws.sdk.kotlin.services.eventbridge.model.PutEventsRequestEntry
 import aws.sdk.kotlin.services.eventbridge.putEvents
-import aws.smithy.kotlin.runtime.net.Url
-import com.amazonaws.services.dynamodbv2.local.main.ServerRunner
-import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer
 import com.amazonaws.services.lambda.runtime.events.DynamodbEvent
 import com.amazonaws.services.lambda.runtime.events.models.dynamodb.StreamViewType
 import com.steamstreet.dynamokt.DynamoStreamEvent
@@ -35,9 +31,10 @@ typealias StreamProcessorFunction = ((DynamodbEvent, Record) -> Unit)
 /**
  * Wraps up configuration of a local dynamo runner, allowing for custom stream processing logic.
  */
-class DynamoRunner {
-    private var server: DynamoDBProxyServer? = null
-    var port: Int = 9945
+class DynamoRunner(
+    val client: DynamoDbClient,
+    val streamsClient: DynamoDbStreamsClient
+) {
     var listeners: List<StreamListener>? = null
 
     var streamProcessor: StreamProcessorFunction? = null
@@ -54,44 +51,6 @@ class DynamoRunner {
         listeners = streamList.streams.orEmpty().map {
             StreamListener(streamProcessor, streamsClient, it.streamArn!!).also {
                 thread { it.run() }
-            }
-        }
-    }
-
-    private fun createServer(): DynamoDBProxyServer {
-        return ServerRunner.createServerFromCommandLineArgs(
-            arrayOf("-inMemory", "-port", port.toString())
-        )
-    }
-
-    init {
-        server = createServer()
-        server?.start()
-    }
-
-    val client: DynamoDbClient by lazy {
-        DynamoDbClient {
-            clientBuilder()
-        }
-    }
-
-    val clientBuilder: DynamoDbClient.Config.Builder.() -> Unit
-        get() = {
-            endpointUrl = Url.parse("http://localhost:$port")
-            region = "us-east-1"
-            credentialsProvider = StaticCredentialsProvider {
-                accessKeyId = "dummy-key"
-                secretAccessKey = "dummy-secret"
-            }
-        }
-
-    val streamsClient: DynamoDbStreamsClient by lazy {
-        DynamoDbStreamsClient {
-            endpointUrl = Url.parse("http://localhost:$port")
-            region = "us-east-1"
-            credentialsProvider = StaticCredentialsProvider {
-                accessKeyId = "dummy-key"
-                secretAccessKey = "dummy-secret"
             }
         }
     }
@@ -246,7 +205,6 @@ class DynamoRunner {
         listeners?.forEach {
             it.running = false
         }
-        server?.stop()
     }
 }
 
