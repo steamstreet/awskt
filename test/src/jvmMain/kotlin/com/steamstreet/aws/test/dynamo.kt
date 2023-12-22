@@ -1,23 +1,16 @@
 package com.steamstreet.aws.test
 
-import com.amazonaws.services.dynamodbv2.local.main.ServerRunner
-import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer
 import com.amazonaws.services.lambda.runtime.events.DynamodbEvent
 import com.amazonaws.services.lambda.runtime.events.models.dynamodb.StreamViewType
 import com.steamstreet.dynamokt.DynamoStreamEvent
 import com.steamstreet.dynamokt.DynamoStreamEventDetail
 import kotlinx.serialization.json.Json
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.awscore.exception.AwsServiceException
-import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.DynamoDbClientBuilder
 import software.amazon.awssdk.services.dynamodb.model.*
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry
-import java.net.URI
 import java.util.*
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
@@ -29,9 +22,10 @@ typealias StreamProcessorFunction = ((DynamodbEvent, Record) -> Unit)
 /**
  * Wraps up configuration of a local dynamo runner, allowing for custom stream processing logic.
  */
-class DynamoRunner {
-    private var server: DynamoDBProxyServer? = null
-    var port: Int = 9945
+class DynamoRunner(
+    val client: DynamoDbClient,
+    val streamsClient: DynamoDbStreamsClient,
+) {
     var listeners: List<StreamListener>? = null
 
     var streamProcessor: StreamProcessorFunction? = null
@@ -49,51 +43,6 @@ class DynamoRunner {
                 thread { it.run() }
             }
         }
-    }
-
-    private fun createServer(): DynamoDBProxyServer {
-        return ServerRunner.createServerFromCommandLineArgs(
-            arrayOf("-inMemory", "-port", port.toString())
-        )
-    }
-
-    init {
-        server = createServer()
-        server?.start()
-    }
-
-    val client: DynamoDbClient by lazy {
-        DynamoDbClient.builder()
-            .endpointOverride(URI.create("http://localhost:$port")) // The region is meaningless for local DynamoDb but required for client builder validation
-            .region(Region.US_EAST_1)
-            .credentialsProvider(
-                StaticCredentialsProvider.create(
-                    AwsBasicCredentials.create("dummy-key", "dummy-secret")
-                )
-            ).build()
-    }
-
-    val clientBuilder: DynamoDbClientBuilder
-        get() {
-            return DynamoDbClient.builder()
-                .endpointOverride(URI.create("http://localhost:$port")) // The region is meaningless for local DynamoDb but required for client builder validation
-                .region(Region.US_EAST_1)
-                .credentialsProvider(
-                    StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create("dummy-key", "dummy-secret")
-                    )
-                )
-        }
-
-    val streamsClient: DynamoDbStreamsClient by lazy {
-        DynamoDbStreamsClient.builder()
-            .endpointOverride(URI.create("http://localhost:$port"))
-            .region(Region.US_EAST_1)
-            .credentialsProvider(
-                StaticCredentialsProvider.create(
-                    AwsBasicCredentials.create("dummy-key", "dummy-secret")
-                )
-            ).build()
     }
 
     inner class ShardReader(
@@ -242,7 +191,6 @@ class DynamoRunner {
         listeners?.forEach {
             it.running = false
         }
-        server?.stop()
     }
 }
 

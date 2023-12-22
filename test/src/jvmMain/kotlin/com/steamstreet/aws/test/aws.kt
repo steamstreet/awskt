@@ -7,7 +7,8 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
  */
 class AWSLocal(
     val region: String = "us-east-1",
-    val accountId: String = "123412341234"
+    val accountId: String = "123412341234",
+    val dynamoPort: Int = 9945
 ) {
     lateinit var dynamoRunner: DynamoRunner
 
@@ -22,7 +23,8 @@ class AWSLocal(
     }
 
     val dynamo: DynamoDbClient by lazy {
-        dynamoRunner = DynamoRunner()
+        val localBuilder = DynamoLocalBuilder(dynamoPort)
+        dynamoRunner = DynamoRunner(localBuilder.client, localBuilder.streamsClient)
         dynamoRunner.client
     }
 
