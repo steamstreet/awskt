@@ -37,7 +37,7 @@ class SnsData(
  */
 abstract class SNSHandler<T>(private val serializer: KSerializer<T>) :
     InputLambda<SnsPayload>(SnsPayload.serializer()) {
-    val json = Json {
+    private val json = Json {
         ignoreUnknownKeys = true
     }
 

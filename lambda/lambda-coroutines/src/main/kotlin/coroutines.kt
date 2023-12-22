@@ -210,7 +210,7 @@ public abstract class IOLambda<T, R>(
 
             if (result != null) {
                 @OptIn(ExperimentalSerializationApi::class)
-                lambdaJson.encodeToStream(out, output)
+                lambdaJson.encodeToStream(out, result, output)
             }
         }
     }

@@ -281,7 +281,7 @@ class PipesConfiguration(
             record.awsRegion,
             record.dynamodb.let {
                 DynamoStreamEventDetail(
-                    it.approximateCreationDateTime.time,
+                    it.approximateCreationDateTime.time.toDouble(),
                     srcRecord.dynamodb!!.keys!!.toModelAttributeValue(),
                     srcRecord.dynamodb?.newImage?.toModelAttributeValue(),
                     srcRecord.dynamodb?.oldImage?.toModelAttributeValue()

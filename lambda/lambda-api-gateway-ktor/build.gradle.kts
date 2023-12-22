@@ -7,23 +7,24 @@ kotlin {
 }
 
 dependencies {
-    api(libs.aws.lambda.core)
-    api(libs.kotlin.serialization.json)
+    implementation(libs.kotlin.serialization.json)
     api(project(":lambda:lambda-coroutines"))
-    api(project(":events"))
-    api(project(":logging"))
-    api(project(":lambda:lambda-sqs"))
+    api(project(":lambda:lambda-api-gateway"))
 
     testImplementation(kotlin("test"))
-    testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.kluent)
+
+    api(libs.ktor.server.test.host)
+    api(libs.ktor.server.host.common)
+    api(libs.ktor.server.core)
+
 }
 
 publishing {
     publications {
         withType<MavenPublication> {
             pom {
-                description.set("Helpers for building EventBridge Lambdas in Kotlin")
+                description.set("Build an API Gateway Lambda using Ktor server.")
             }
         }
     }

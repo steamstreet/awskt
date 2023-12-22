@@ -49,6 +49,13 @@ dependencyResolutionManagement {
             aws("lambda")
             aws("eventbridge")
             aws("s3")
+            aws("appconfigdata")
+
+            val ktorVersion = version("ktor", "2.2.3")
+            library("ktor-server-core", "io.ktor", "ktor-server-core").versionRef(ktorVersion)
+            library("ktor-server-host-common", "io.ktor", "ktor-server-host-common").versionRef(ktorVersion)
+            library("ktor-server-test-host", "io.ktor", "ktor-server-test-host").versionRef(ktorVersion)
+
 
             val slf4jVersion = version("slf4j", "1.8.0-beta4")
 
@@ -89,9 +96,13 @@ include("logging")
 include("dynamokt")
 include("events")
 include("test")
+include(":lambda:lambda-api-gateway")
+include(":lambda:lambda-api-gateway-ktor")
 include(":lambda:lambda-appsync")
 include(":lambda:lambda-core")
 include(":lambda:lambda-coroutines")
+include(":lambda:lambda-dynamo-streams")
 include(":lambda:lambda-eventbridge")
 include(":lambda:lambda-sns")
+include(":lambda:lambda-sqs")
 include(":lambda:lambda-logging")

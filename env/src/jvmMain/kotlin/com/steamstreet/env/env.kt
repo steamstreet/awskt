@@ -39,11 +39,10 @@ public actual fun getEnvironmentVariable(key: String): String? = runBlocking {
         }
     } else if (value == "_NoValue") {
         null
-    } else if (value?.startsWith("AppConfig_") == true) {
-//        val default = value.substringAfter(":", "").ifBlank { null }
-//        val (_, app, environment, config, configValue) = value.substringBefore(":").split(".")
-//        AppConfig.getString(app, environment, config, configValue, default)
-        throw NotImplementedError("AppConfig support is not yet implemented.")
+    } else if (value?.startsWith("AppConfig") == true) {
+        val default = value.substringAfter(":", "").ifBlank { null }
+        val (_, app, environment, config, configValue) = value.substringBefore(":").split(".")
+        AppConfig.getString(app, environment, config, configValue, default)
     } else {
         value
     }

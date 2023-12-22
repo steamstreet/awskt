@@ -38,7 +38,10 @@ private fun JsonPrimitive.toPrimitiveValue(): AttributeValue {
     }
 }
 
-private fun JsonElement.toAttributeValue(): AttributeValue? {
+/**
+ * Convert a standard Json Element to an Attribute Value.
+ */
+public fun JsonElement.toAttributeValue(): AttributeValue? {
     return when (this) {
         is JsonNull -> null
         is JsonObject -> this.toAttributeMap()
@@ -47,7 +50,6 @@ private fun JsonElement.toAttributeValue(): AttributeValue? {
         else -> throw IllegalStateException()
     }
 }
-
 
 public fun AttributeValue.asJsonElement(): JsonElement {
     val attribute = this

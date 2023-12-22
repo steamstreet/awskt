@@ -24,6 +24,7 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
+                implementation(libs.logstash.logback.encoder)
                 compileOnly(libs.aws.secretsmanager)
                 compileOnly(libs.kotlin.serialization.json)
                 compileOnly(libs.kotlin.coroutines.core)

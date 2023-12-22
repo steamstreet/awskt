@@ -12,13 +12,21 @@ public class DynamoStreamEvent(
     public val eventSource: String,
     public val awsRegion: String,
     public val dynamodb: DynamoStreamEventDetail,
-    public val eventSourceARN: String
+    public val eventSourceARN: String,
+    public val userIdentity: UserIdentity? = null
+)
+
+@Serializable
+public class UserIdentity(
+    public val type: String? = null,
+    public val principalId: String? = null
 )
 
 @Serializable
 public class DynamoStreamEventDetail(
     @SerialName("ApproximateCreationDateTime")
-    public val createDateTime: Long,
+    private val approximateCreationDateTime: Double,
+
     @SerialName("Keys")
     public val keys: Map<String, @Serializable(with = AttributeValueSerializer::class) AttributeValue>,
     @SerialName("NewImage")
@@ -34,7 +42,9 @@ public class DynamoStreamEventDetail(
 
     @SerialName("StreamViewType")
     public val viewType: String? = null
-)
+) {
+    public val createDateTime: Long = approximateCreationDateTime.toLong()
+}
 
 /**
  * Get the pair of values from the new and old images
@@ -87,3 +97,12 @@ public fun eventBridgeKeyRule(keyName: String, match: List<Any>): Map<String, An
         )
     )
 }
+
+/**
+ * Mapping for the incoming dynamo event when it can include multiple records.
+ */
+@Serializable
+public class DynamoStreamRecords(
+    @SerialName("Records")
+    public val records: List<DynamoStreamEvent>
+)

@@ -17,13 +17,17 @@ public class DynamoKtSession(
     private val cache: MutableMap<String, Item>? = null
 ) : ItemUpdater {
 
-    public suspend fun getOrNull(pk: String, sk: String?, attributes: List<String>? = null): Item? {
+    public fun getOrNull(
+        pk: String, sk: String?, attributes: List<String>? = null,
+        consistent: Boolean = false
+    ): Item? {
         return dynamo.getItem {
             tableName = table
             key = keyMap(pk, sk)
             attributes?.apply {
                 attributesToGet = this
             }
+            it.consistentRead(consistent)
         }.let {
             if (it.item == null) {
                 null
@@ -34,8 +38,8 @@ public class DynamoKtSession(
         }
     }
 
-    public suspend fun get(pk: String, sk: String?, attributes: List<String>? = null): Item {
-        return getOrNull(pk, sk, attributes) ?: throw NotFoundException("Unknown item $pk $sk")
+    public fun get(pk: String, sk: String?, attributes: List<String>? = null, consistent: Boolean = false): Item {
+        return getOrNull(pk, sk, attributes, consistent) ?: throw NotFoundException("Unknown item $pk $sk")
     }
 
     public suspend fun <T> get(pk: String, sk: String?,
@@ -48,21 +52,24 @@ public class DynamoKtSession(
         cache?.put(cacheKey, item)
     }
 
-    public suspend fun getAll(items: List<Pair<String, String>>, attributes: Collection<String> = emptyList()): List<Item> {
+    public fun getAll(
+        items: List<Pair<String, String?>>, attributes: Collection<String> = emptyList(),
+        consistent: Boolean = false
+    ): List<Item> {
         return items.chunked(80).flatMap { chunkedItems ->
             val request = BatchGetItemRequest {
                 requestItems =
                     mapOf(
                         table to
-                                KeysAndAttributes {
-                                    keys = chunkedItems.map {
+                                KeysAndAttributes.builder().apply {
+                                    keys(chunkedItems.map {
                                         buildMap {
                                             put(pkName, it.first.attributeValue())
                                             if (skName != null) {
-                                                put(skName, it.second.attributeValue())
+                                                put(skName, it.second?.attributeValue())
                                             }
                                         }
-                                    }
+                                    })
 
                                     if (attributes.isNotEmpty()) {
                                         var index = 0
@@ -70,7 +77,8 @@ public class DynamoKtSession(
                                         expressionAttributeNames = names
                                         projectionExpression = names.keys.joinToString(",")
                                     }
-                                }
+                                    this.consistentRead(consistent)
+                                }.build()
                     )
             }
             dynamo.batchGetItem(request).responses?.get(table)?.map {
@@ -131,11 +139,11 @@ public class DynamoKtSession(
         val result = Query(this, pk).apply(block).execute()
 
         result.items.map { item ->
-            DeleteRequest {
-                key = keyMap(item.pk.attributeValue(),
-                        item.sk?.attributeValue()
-                    )
-            }
+            DeleteRequest.builder().key(
+                mapOf(
+                    pkName to item.pk.attributeValue(),
+                    skName to item.sk?.attributeValue()
+            )).build()
         }.map {
             WriteRequest {
                 this.deleteRequest = it

@@ -7,15 +7,10 @@ kotlin {
 }
 
 dependencies {
-    api(libs.aws.lambda.core)
-    api(libs.kotlin.serialization.json)
+    implementation(libs.kotlin.serialization.json)
     api(project(":lambda:lambda-coroutines"))
-    api(project(":events"))
-    api(project(":logging"))
-    api(project(":lambda:lambda-sqs"))
 
     testImplementation(kotlin("test"))
-    testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.kluent)
 }
 
@@ -23,7 +18,7 @@ publishing {
     publications {
         withType<MavenPublication> {
             pom {
-                description.set("Helpers for building EventBridge Lambdas in Kotlin")
+                description.set("Helpers for building SQS handling Lambdas in Kotlin")
             }
         }
     }

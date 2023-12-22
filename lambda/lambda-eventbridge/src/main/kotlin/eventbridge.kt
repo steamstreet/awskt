@@ -1,9 +1,13 @@
 package com.steamstreet.aws.lambda.eventbridge
 
 import com.amazonaws.services.lambda.runtime.Context
+import com.steamstreet.aws.lambda.MockLambdaContext
 import com.steamstreet.aws.lambda.lambdaInput
 import com.steamstreet.aws.lambda.lambdaJson
 import com.steamstreet.aws.lambda.logger
+import com.steamstreet.aws.sqs.BatchResponse
+import com.steamstreet.aws.sqs.RecordResponse
+import com.steamstreet.awskt.logging.logInfo
 import com.steamstreet.awskt.logging.logJson
 import com.steamstreet.awskt.logging.mdcContext
 import com.steamstreet.events.EventSchema
@@ -15,8 +19,11 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import net.logstash.logback.marker.Markers
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.OutputStream
+import java.util.*
+import kotlin.system.measureTimeMillis
 
 /**
  * Callback interface for event bridge handler installation.
@@ -27,7 +34,7 @@ public interface EventBridgeHandlerConfig {
      */
     public fun eventsOfType(type: String): List<Event>
 
-    public suspend operator fun <T> EventSchema<T>.invoke(block: suspend (T) -> Unit) {
+    public suspend operator fun <T> EventSchema<T>.invoke(block: suspend context(Event) (T) -> Unit) {
         type(this, block)
     }
 }
@@ -40,6 +47,8 @@ public fun eventBridge(
     input: InputStream,
     context: Context,
     output: OutputStream? = null,
+    tracePerformance: Boolean = true,
+    batchSqs: Boolean = false,
     config: suspend EventBridgeHandlerConfig.() -> Unit
 ) {
     lambdaInput<JsonElement>(input, context) { element ->
@@ -54,7 +63,7 @@ public fun eventBridge(
 
             // if output is null, we'll just throw the first exception, and the entire
             // batch will be reprocessed
-            if (output == null) {
+            if (!batchSqs || output == null) {
                 if (sqs.failures.isNotEmpty()) {
                     sqs.failures.values.filterNotNull().firstOrNull()?.let {
                         throw it
@@ -75,29 +84,50 @@ public fun eventBridge(
             }
         } else {
             // add the detail type to the mdc for tracing.
-            val detailType = obj["detail-type"]!!.jsonPrimitive.content
+            val detailType =
+                obj["detail-type"]?.jsonPrimitive?.content ?: throw IllegalArgumentException("Missing detail type")
+            val detail = obj["detail"]?.jsonObject ?: throw IllegalArgumentException("Missing detail for $detailType")
             mdcContext("event-detail-type" to detailType) {
-                var error: Throwable? = null
-                (object : EventBridgeHandlerConfig {
-                    override fun eventsOfType(type: String): List<Event> {
-                        return if (detailType == type) {
-                            listOf(object : Event {
-                                override val id: String = "__"
-                                override val type: String = detailType
-                                override val detail: JsonObject = obj["detail"]!!.jsonObject
-
-                                override fun failed(t: Throwable?) {
-                                    error = t
-                                }
-                            })
-                        } else {
-                            emptyList()
-                        }
-                    }
-                }).config()
-
-                error?.let { throw it }
+                val processing = measureTimeMillis {
+                    val handlerConfig = DefaultEventBridgeHandlerConfig(detailType, detail)
+                    handlerConfig.config()
+                    handlerConfig.error?.let { throw it }
+                }
+                if (tracePerformance) {
+                    logInfo(
+                        "Completed event processing",
+                        "duration" to processing.toString()
+                    )
+                }
             }
+        }
+    }
+}
+
+/**
+ * A default implementation of the handler config
+ */
+public class DefaultEventBridgeHandlerConfig(
+    private val detailType: String,
+    private val detail: JsonObject
+) : EventBridgeHandlerConfig {
+    public var error: Throwable? = null
+
+    override fun eventsOfType(type: String): List<Event> {
+        return if (detailType == type) {
+            listOf(object : Event {
+                override val id: String = "__"
+                override val type: String = detailType
+                override val detail: JsonObject = this@DefaultEventBridgeHandlerConfig.detail
+
+                override fun failed(t: Throwable?) {
+                    error = t
+                }
+
+                override val sourceEvent: Any get() = this
+            })
+        } else {
+            emptyList()
         }
     }
 }
@@ -111,6 +141,8 @@ public interface Event {
      * Report failure
      */
     public fun failed(t: Throwable?)
+
+    public val sourceEvent: Any?
 }
 
 private class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
@@ -125,11 +157,16 @@ private class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
             val body = record["body"]?.jsonPrimitive?.content
             if (body != null) {
                 val eventBridgeRecord = lambdaJson.parseToJsonElement(body).jsonObject
-                val type = eventBridgeRecord["detail-type"]!!.jsonPrimitive.content
-                val detail = eventBridgeRecord["detail"]!!.jsonObject
+                val type = eventBridgeRecord["detail-type"]?.jsonPrimitive?.content
+                val detail = eventBridgeRecord["detail"]?.jsonObject
+
+                if (type == null || detail == null) {
+                    throw IllegalArgumentException("Missing detail type or detail from message")
+                }
 
                 object : Event {
-                    override val id: String = record["messageId"]!!.jsonPrimitive.content
+                    override val id: String =
+                        record["messageId"]?.jsonPrimitive?.content ?: UUID.randomUUID().toString()
                     override val type: String = type
                     override val detail: JsonObject = detail
 
@@ -137,6 +174,8 @@ private class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
                         logger.error("Event processing failed")
                         failures[id] = t
                     }
+
+                    override val sourceEvent: Any = record
                 }
             } else {
                 null
@@ -151,22 +190,15 @@ private class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
     }
 }
 
-@Serializable
-public class BatchResponse(
-    public val batchItemFailures: List<RecordResponse>
-)
-
-@Serializable
-public class RecordResponse(
-    public val itemIdentifier: String
-)
-
 /**
  * Base class for a lambda that handles event bridge events.
  */
 public interface EventBridgeFunction {
+    public val tracePerformance: Boolean get() = true
+    public val batchRetries: Boolean get() = false
+
     public fun execute(input: InputStream, output: OutputStream, context: Context) {
-        eventBridge(input, context, output) {
+        eventBridge(input, context, output, tracePerformance, batchRetries) {
             onEvent()
         }
     }
@@ -177,28 +209,58 @@ public interface EventBridgeFunction {
 
 
 context(EventBridgeHandlerConfig)
-public suspend fun <T> on(type: EventSchema<T>, handler: suspend (T) -> Any?): Unit =
-    type(type, handler)
+public suspend fun <T> on(type: EventSchema<T>, handler: suspend context(Event) (T) -> Any?): Unit =
+    typeWithContext(type, handler)
 
 /**
  * Register a handler for a given event.
  */
-public suspend fun <T, R> EventBridgeHandlerConfig.type(type: EventSchema<T>, handler: suspend (T) -> R) {
+public suspend fun <T, R> EventBridgeHandlerConfig.typeWithContext(
+    type: EventSchema<T>,
+    handler: suspend context(Event) (T) -> R
+) {
     eventsOfType(type.type).forEach { event ->
         logger.logJson("Processing event", "event", event.detail.toString())
 
-        val value = lambdaJson.decodeFromJsonElement(type.serializer, event.detail)
-        coroutineScope {
-            handler(value)
+        try {
+            val value = lambdaJson.decodeFromJsonElement(type.serializer, event.detail)
+            coroutineScope {
+                handler(event, value)
+            }
+        } catch (t: Throwable) {
+            event.failed(t)
         }
     }
 }
 
-public suspend fun EventBridgeHandlerConfig.type(detailType: String, handler: suspend (JsonObject) -> Any?) {
+public suspend fun <T, R> EventBridgeHandlerConfig.type(
+    type: EventSchema<T>,
+    handler: suspend context(Event) (T) -> R
+) {
+    typeWithContext(type, handler)
+}
+
+public suspend fun <T, R> EventBridgeHandlerConfig.type(
+    type: EventSchema<T>,
+    handler: suspend (T) -> R
+) {
+    typeWithContext(type) {
+        handler(it)
+    }
+}
+
+public suspend fun EventBridgeHandlerConfig.type(
+    detailType: String,
+    handler: suspend context(Event) (JsonObject) -> Any?
+) {
     eventsOfType(detailType).forEach { event ->
         logger.logJson("Processing event", "event", event.detail.toString())
-        coroutineScope {
-            handler(event.detail)
+        try {
+            coroutineScope {
+                handler(event, event.detail)
+            }
+        } catch (t: Throwable) {
+            event.failed(t)
         }
     }
 }
@@ -229,4 +291,27 @@ public fun JsonElement.string(key: String): String? {
 
 public fun JsonElement.strings(): List<String> {
     return jsonArray.mapNotNull { it.jsonPrimitive.contentOrNull }
+}
+
+/**
+ * Enables testability, allowing to send a raw event to an EventBridge function.
+ */
+public fun EventBridgeFunction.processEvent(str: String) {
+    val output = ByteArrayOutputStream()
+    execute(str.byteInputStream(), output, MockLambdaContext())
+}
+
+/**
+ * Process an event directly. Useful for testing.
+ */
+public fun <T> EventBridgeFunction.processEvent(schema: EventSchema<T>, payload: T, source: String? = null) {
+    processEvent(
+        Json.encodeToString(
+            EventBusEvent(
+                detailType = schema.type,
+                detail = Json.encodeToJsonElement(schema.serializer, payload),
+                source = source ?: "aws-kt"
+            )
+        )
+    )
 }
