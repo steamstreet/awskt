@@ -1,4 +1,4 @@
-val MAJOR_VERSION = 1
+val MAJOR_VERSION = 2
 val MINOR_VERSION = 0
 
 allprojects {

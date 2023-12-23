@@ -2,7 +2,6 @@ package com.steamstreet.env
 
 import aws.sdk.kotlin.services.secretsmanager.SecretsManagerClient
 import aws.sdk.kotlin.services.secretsmanager.getSecretValue
-import com.steamstreet.coLazy
 import com.steamstreet.env.Env.optional
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -10,10 +9,8 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-private val secrets: SecretsManagerClient by coLazy {
-    runBlocking {
-        SecretsManagerClient.fromEnvironment()
-    }
+private val secrets: SecretsManagerClient by lazy {
+    SecretsManagerClient {}
 }
 
 public actual fun getEnvironmentVariable(key: String): String? = runBlocking {

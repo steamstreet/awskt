@@ -2,7 +2,6 @@ package com.steamstreet.dynamokt
 
 import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 import aws.smithy.kotlin.runtime.auth.awscredentials.CredentialsProvider
-import com.steamstreet.coLazy
 import com.steamstreet.mutableLazy
 
 /**

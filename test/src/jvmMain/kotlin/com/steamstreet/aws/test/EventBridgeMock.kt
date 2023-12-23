@@ -4,9 +4,6 @@ import aws.sdk.kotlin.runtime.AwsServiceException
 import aws.sdk.kotlin.services.eventbridge.EventBridgeClient
 import aws.sdk.kotlin.services.eventbridge.model.*
 import aws.sdk.kotlin.services.eventbridge.putRule
-import aws.sdk.kotlin.services.lambda.LambdaClient
-import aws.sdk.kotlin.services.lambda.invoke
-import aws.sdk.kotlin.services.lambda.model.InvocationType
 import com.amazonaws.services.lambda.runtime.Context
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -14,7 +11,11 @@ import com.steamstreet.aws.lambda.eventbridge.EventBridgeFunction
 import com.steamstreet.events.EventSchema
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import software.amazon.event.ruler.Ruler
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.time.Instant
@@ -24,28 +25,27 @@ import kotlin.concurrent.thread
 
 private class LocalTarget(
     val arn: String?,
-    val handler: ((InputStream, Context) -> Unit)? = null
+    val handler: (suspend (InputStream, Context) -> Unit)? = null
 )
 
 /**
  * A local mocked version of event bridge.
  */
-class EventBridgeLocal(
-    val lambda: LambdaClient, val accountId: String = "1234",
-    val region: String = "us-west-2",
-    val mockk: EventBridgeClient = mockk(relaxed = true)
-) : EventBridgeClient by mockk {
+public class EventBridgeMock(
+    private val accountId: String = "1234",
+    private val region: String = "us-west-2",
+    private val mockk: EventBridgeClient = mockk(relaxed = true)
+) : EventBridgeClient by mockk, MockService {
     private val buses = hashMapOf(
         "default" to Bus("default")
     )
 
+    private val events = ArrayList<PutEventsRequestEntry>()
 
-    val events = ArrayList<PutEventsRequestEntry>()
+    private val jackson = jacksonObjectMapper()
+    private var processSemaphore = AtomicInteger(0)
 
-    val jackson = jacksonObjectMapper()
-    var processSemaphore = AtomicInteger(0)
-
-    val processing: Boolean get() = processSemaphore.get() != 0
+    override val isProcessing: Boolean get() = processSemaphore.get() != 0
 
     override fun close() {}
 
@@ -57,11 +57,11 @@ class EventBridgeLocal(
     /**
      * Clear all saved events
      */
-    fun clearSaved() {
+    public fun clearSaved() {
         events.clear()
     }
 
-    fun eventsOfType(detailType: String): List<PutEventsRequestEntry> {
+    public fun eventsOfType(detailType: String): List<PutEventsRequestEntry> {
         return events.filter {
             it.detailType == detailType
         }
@@ -70,7 +70,7 @@ class EventBridgeLocal(
     private inner class Bus(val name: String) {
         val rules = ArrayList<EventRule>()
 
-        fun putEvent(entry: PutEventsRequestEntry) {
+        suspend fun putEvent(entry: PutEventsRequestEntry) {
             processSemaphore.incrementAndGet()
 
             val str = buildJsonObject {
@@ -84,7 +84,7 @@ class EventBridgeLocal(
             thread {
                 runBlocking {
                     rules.filter {
-                        match(it.rule.eventPattern!!, str)
+                        Ruler.matchesRule(str, it.rule.eventPattern!!)
                     }.flatMap { it.targets }.forEach {
                         sendToTarget(entry, it)
                     }
@@ -102,26 +102,12 @@ class EventBridgeLocal(
                 put("detail-type", JsonPrimitive(entry.detailType))
                 put("account", JsonPrimitive(accountId))
                 put("detail", Json.parseToJsonElement(entry.detail!!))
-                put("region", JsonPrimitive(this@EventBridgeLocal.region))
+                put("region", JsonPrimitive(this@EventBridgeMock.region))
                 put("id", JsonPrimitive(UUID.randomUUID().toString()))
                 put("time", JsonPrimitive(Instant.now().toString()))
             }
             val buffer = event.toString().toByteArray()
-
-            if (target.arn != null) {
-                val arnPieces = target.arn.split(":")
-                if (arnPieces.size > 2) {
-                    when (arnPieces[2]) {
-                        "lambda" -> {
-                            lambda.invoke {
-                                functionName = target.arn
-                                payload = (buffer)
-                                invocationType = InvocationType.Event
-                            }
-                        }
-                    }
-                }
-            } else if (target.handler != null) {
+            if (target.handler != null) {
                 target.handler.invoke(buffer.inputStream(), LambdaLocalContext())
             }
         }
@@ -176,7 +162,7 @@ class EventBridgeLocal(
     /**
      * Utility to set an EventBridgeFunction as a target for an event.
      */
-    suspend fun putTarget(eventBusName: String, pattern: String, handler: EventBridgeFunction) {
+    public suspend fun putTarget(eventBusName: String, pattern: String, handler: EventBridgeFunction) {
         val ruleName = UUID.randomUUID().toString()
 
         putRule {
@@ -203,7 +189,7 @@ class EventBridgeLocal(
         return PutTargetsResponse {}
     }
 
-    fun putTarget(eventBus: String, ruleName: String, handler: (InputStream, Context) -> Unit) {
+    public fun putTarget(eventBus: String, ruleName: String, handler: suspend (InputStream, Context) -> Unit) {
         val bus = buses[eventBus]
             ?: throw throw AwsServiceException(eventBus, null)
         val rule = bus.rules.find { it.rule.name == ruleName } ?: throw throw AwsServiceException(
@@ -228,55 +214,10 @@ class EventBridgeLocal(
 
 }
 
-fun match(filter: JsonElement, data: JsonElement): Boolean {
-    if (data is JsonPrimitive) {
-        when (filter) {
-            is JsonArray -> {
-                filter.forEach { filterElement ->
-                    if (match(filterElement, data)) {
-                        return true
-                    }
-                }
-            }
-
-            is JsonPrimitive -> {
-                return data == filter
-            }
-
-            is JsonObject -> {
-                val prefix = (filter["prefix"] as? JsonPrimitive)?.content
-                return if (prefix != null) {
-                    (data.content.startsWith(prefix))
-                } else {
-                    false
-                }
-            }
-        }
-    } else if (data is JsonObject) {
-        if (filter is JsonObject) {
-            filter.forEach { (key, value) ->
-                val dataValue = data[key] ?: return false
-                if (!match(value, dataValue)) {
-                    return false
-                }
-            }
-            return true
-        }
-    }
-    return false
-}
-
-fun match(filter: String, data: String): Boolean {
-    val filterJson = Json.parseToJsonElement(filter)
-    val dataJson = Json.parseToJsonElement(data)
-
-    return match(filterJson, dataJson)
-}
-
 /**
  * Get events of a given type and deserialize
  */
-fun <T> EventBridgeLocal.eventsOfType(type: EventSchema<T>): List<T> {
+public fun <T> EventBridgeMock.eventsOfType(type: EventSchema<T>): List<T> {
     return this.eventsOfType(type.type).map {
         Json.decodeFromString(type.serializer, it.detail!!)
     }

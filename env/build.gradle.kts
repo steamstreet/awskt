@@ -1,5 +1,3 @@
-@file:Suppress("UNUSED_VARIABLE")
-
 plugins {
     id("steamstreet-common.multiplatform-library-conventions")
 }
@@ -24,10 +22,12 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
+                implementation(libs.slf4j.api)
                 implementation(libs.logstash.logback.encoder)
                 compileOnly(libs.aws.secretsmanager)
                 compileOnly(libs.kotlin.serialization.json)
                 compileOnly(libs.kotlin.coroutines.core)
+                compileOnly(libs.aws.appconfigdata)
 
                 implementation(project(":standards"))
             }

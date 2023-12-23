@@ -18,8 +18,8 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
 
-class LambdaLocalContext(val name: String = "UnknownFunction") : Context {
-    val uuid = UUID.randomUUID().toString()
+public class LambdaLocalContext(private val name: String = "UnknownFunction") : Context {
+    private val uuid = UUID.randomUUID().toString()
     override fun getAwsRequestId(): String {
         return uuid
     }
@@ -73,14 +73,14 @@ class LambdaLocalContext(val name: String = "UnknownFunction") : Context {
     }
 }
 
-class LocalLambdaClient(
-    val mock: LambdaClient = mockk(relaxed = true)
-) : LambdaClient by mock {
-    val functions = HashMap<String, LambdaInvocationHandler>()
-    val errors = ArrayList<Throwable>()
+public class LambdaMock(
+    private val mock: LambdaClient = mockk(relaxed = true)
+) : LambdaClient by mock, MockService {
+    private val functions = HashMap<String, LambdaInvocationHandler>()
+    private val errors = ArrayList<Throwable>()
 
-    val active = AtomicInteger(0)
-    val processing: Boolean get() = active.get() > 0
+    private val active = AtomicInteger(0)
+    override val isProcessing: Boolean get() = active.get() > 0
 
     private val eventSourceMappings = HashMap<String, EventSourceMappingConfiguration>()
 
@@ -131,8 +131,8 @@ class LocalLambdaClient(
         }
     }
 
-    fun createFunction(name: String, handler: (InputStream) -> Unit) {
-        functions.put(name, DirectInvocationHandler(handler))
+    public fun createFunction(name: String, handler: (InputStream) -> Unit) {
+        functions[name] = DirectInvocationHandler(handler)
     }
 
     override suspend fun createFunction(input: CreateFunctionRequest): CreateFunctionResponse {
@@ -208,7 +208,7 @@ class LocalLambdaClient(
     override suspend fun listFunctions(input: ListFunctionsRequest): ListFunctionsResponse {
         return ListFunctionsResponse {
             this.functions =
-                this@LocalLambdaClient.functions.values.mapNotNull {
+                this@LambdaMock.functions.values.mapNotNull {
                     it as? ReflectionHandler
                 }.map { function ->
                     FunctionConfiguration {
@@ -224,14 +224,14 @@ private val json = jacksonObjectMapper().apply {
     configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 }
 
-interface LambdaInvocationHandler {
-    fun invoke(payload: ByteArray): ByteArray
+public interface LambdaInvocationHandler {
+    public fun invoke(payload: ByteArray): ByteArray
 }
 
-class ReflectionHandler(
-    val name: String,
-    val clazz: String,
-    val methodName: String
+public class ReflectionHandler(
+    public val name: String,
+    public val clazz: String,
+    public val methodName: String
 ) : LambdaInvocationHandler {
     override fun invoke(payload: ByteArray): ByteArray {
         val output = ByteArrayOutputStream()
@@ -261,11 +261,12 @@ class ReflectionHandler(
         get() = kclass.methods.find {
             it.name == methodName
         } ?: throw AwsServiceException("$name $clazz::$methodName", null)
-    val instance get() = if (Modifier.isStatic(method.modifiers)) null else kclass.getConstructor().newInstance()
+    public val instance: Any?
+        get() = if (Modifier.isStatic(method.modifiers)) null else kclass.getConstructor().newInstance()
 }
 
-class DirectInvocationHandler(
-    val function: (InputStream) -> Unit
+public class DirectInvocationHandler(
+    public val function: (InputStream) -> Unit
 ) : LambdaInvocationHandler {
     override fun invoke(payload: ByteArray): ByteArray {
         function(payload.inputStream())

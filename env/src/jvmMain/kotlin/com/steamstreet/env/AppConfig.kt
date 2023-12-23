@@ -1,12 +1,17 @@
 package com.steamstreet.env
 
 
+import aws.sdk.kotlin.services.appconfigdata.AppConfigDataClient
+import aws.sdk.kotlin.services.appconfigdata.getLatestConfiguration
+import aws.sdk.kotlin.services.appconfigdata.model.ResourceNotFoundException
+import aws.sdk.kotlin.services.appconfigdata.startConfigurationSession
 import com.steamstreet.mutableLazy
+import com.steamstreet.strings.isNotNullOrBlank
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.*
 import net.logstash.logback.marker.Markers
 import org.slf4j.LoggerFactory
-import software.amazon.awssdk.services.appconfigdata.AppConfigDataClient
-import software.amazon.awssdk.services.appconfigdata.model.ResourceNotFoundException
 import java.time.Instant
 
 /**
@@ -14,13 +19,13 @@ import java.time.Instant
  */
 public object AppConfig {
     private var appConfig: AppConfigDataClient by mutableLazy {
-        AppConfigDataClient.create()
+        AppConfigDataClient {}
     }
 
     private val configurations = mutableMapOf<String, AppConfigConfiguration>()
 
 
-    public fun getString(
+    public suspend fun getString(
         applicationName: String,
         environment: String,
         configuration: String,
@@ -30,11 +35,16 @@ public object AppConfig {
         return getConfiguration(applicationName, environment, configuration).getString(key) ?: default
     }
 
-    public fun getInt(applicationName: String, environment: String, configuration: String, key: String): Int? {
+    public suspend fun getInt(applicationName: String, environment: String, configuration: String, key: String): Int? {
         return getConfiguration(applicationName, environment, configuration).getInt(key)
     }
 
-    public fun getFeature(applicationName: String, environment: String, configuration: String, key: String): Feature {
+    public suspend fun getFeature(
+        applicationName: String,
+        environment: String,
+        configuration: String,
+        key: String
+    ): Feature {
         return getConfiguration(applicationName, environment, configuration).getFeature(key)
     }
 
@@ -63,20 +73,21 @@ public class AppConfigConfiguration(
     private val appConfig: AppConfigDataClient
 ) {
     private val logger = LoggerFactory.getLogger(this.javaClass.name)
+    private val mutex = Mutex()
 
     private var token: String? = null
     private var nextPoll: Instant = Instant.EPOCH
     private var data: JsonObject = JsonObject(emptyMap())
 
-    private fun initSession(now: Instant) {
-        synchronized(this) {
+    private suspend fun initSession(now: Instant) {
+        mutex.withLock {
             if (token == null || (token == NO_DEPLOYMENT_TOKEN && now > nextPoll)) {
                 try {
                     token = appConfig.startConfigurationSession {
-                        it.applicationIdentifier(applicationName)
-                        it.environmentIdentifier(environment)
-                        it.configurationProfileIdentifier(configuration)
-                    }.initialConfigurationToken()
+                        applicationIdentifier = applicationName
+                        environmentIdentifier = environment
+                        configurationProfileIdentifier = configuration
+                    }.initialConfigurationToken
                 } catch (e: ResourceNotFoundException) {
                     logger.warn("Missing AppConfig configuration: ${applicationName}, ${environment}, ${configuration}")
                     token = NO_DEPLOYMENT_TOKEN
@@ -86,45 +97,44 @@ public class AppConfigConfiguration(
         }
     }
 
-    private fun loadConfig() {
+    private suspend fun loadConfig() {
         var now = Instant.now()
 
         initSession(now)
 
         if (now > nextPoll) {
-            synchronized(this) {
+            mutex.withLock {
                 now = Instant.now()
                 if (now > nextPoll) {
                     val result = appConfig.getLatestConfiguration {
-                        it.configurationToken(token)
+                        configurationToken = token
                     }
 
-                    token = result.nextPollConfigurationToken()
+                    token = result.nextPollConfigurationToken
 
-                    val config = result.configuration()
-                    val configString = config.asUtf8String()
-                    if (configString.isNotBlank()) {
+                    val config = result.configuration
+                    val configString = config?.toString(Charsets.UTF_8)
+                    if (configString.isNotNullOrBlank()) {
                         logger.info(Markers.appendRaw("configuration", configString), "Configuration loaded")
-                        data = Json.parseToJsonElement(config.asUtf8String()).jsonObject
+                        data = Json.parseToJsonElement(configString!!).jsonObject
                     }
-
-                    val interval = result.nextPollIntervalInSeconds()
+                    val interval = result.nextPollIntervalInSeconds
                     nextPoll = now.plusSeconds(interval.toLong())
                 }
             }
         }
     }
 
-    public fun getJson(key: String): JsonElement? {
+    public suspend fun getJson(key: String): JsonElement? {
         loadConfig()
         return data[key]
     }
 
-    public fun getString(key: String): String? {
+    public suspend fun getString(key: String): String? {
         return getJson(key)?.jsonPrimitive?.contentOrNull
     }
 
-    public fun getInt(key: String): Int? {
+    public suspend fun getInt(key: String): Int? {
         return getJson(key)?.jsonPrimitive?.intOrNull
     }
 }

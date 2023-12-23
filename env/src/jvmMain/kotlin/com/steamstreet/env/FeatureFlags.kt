@@ -11,7 +11,7 @@ public interface FeatureFlags {
     /**
      * Get the feature with the given feature id.
      */
-    public fun feature(featureId: String): Feature
+    public suspend fun feature(featureId: String): Feature
 }
 
 /**
@@ -35,7 +35,7 @@ public class AppConfigFeaturesFlags(
     /**
      * Get a feature by id.
      */
-    override fun feature(featureId: String): Feature {
+    override suspend fun feature(featureId: String): Feature {
         return AppConfig.getFeature(applicationName, environment, configuration, featureId)
     }
 }
@@ -52,22 +52,22 @@ public var Features: FeatureFlags by mutableLazy {
 /**
  * Uses the name of the enumeration as the feature flag name
  */
-public fun <E : Enum<E>> E.enabled(default: Boolean = false): Boolean {
+public suspend fun <E : Enum<E>> E.enabled(default: Boolean = false): Boolean {
     return Features.feature(this.featureName).enabled(default)
 }
 
-public fun <E : Enum<E>> E.featureAttribute(key: String): String? {
+public suspend fun <E : Enum<E>> E.featureAttribute(key: String): String? {
     return Features.feature(this.featureName).attribute(key)?.jsonPrimitive?.contentOrNull
 }
 
-public fun <E : Enum<E>> E.featureInt(key: String, defaultValue: Int = 0): Int {
+public suspend fun <E : Enum<E>> E.featureInt(key: String, defaultValue: Int = 0): Int {
     return Features.feature(this.featureName).attribute(key)?.jsonPrimitive?.intOrNull ?: defaultValue
 }
 
 /**
  * Executes a block if a feature is enabled
  */
-public fun <E : Enum<E>, T> withFeature(feature: E, block: () -> T): T? {
+public suspend fun <E : Enum<E>, T> withFeature(feature: E, block: () -> T): T? {
     return if (feature.enabled()) {
         block()
     } else {
@@ -78,7 +78,7 @@ public fun <E : Enum<E>, T> withFeature(feature: E, block: () -> T): T? {
 /**
  * Executes a given block if a feature is NOT enabled
  */
-public fun <E : Enum<E>, T> withoutFeature(feature: E, block: () -> T): T? {
+public suspend fun <E : Enum<E>, T> withoutFeature(feature: E, block: () -> T): T? {
     return if (!feature.enabled()) {
         block()
     } else {
@@ -119,7 +119,7 @@ public data class JsonFeature(
 /**
  * Get a feature descriptor from the AppConfig configuration.
  */
-public fun AppConfigConfiguration.getFeature(key: String): Feature {
+public suspend fun AppConfigConfiguration.getFeature(key: String): Feature {
     val featureInfo = getJson(key)
     return JsonFeature(key, featureInfo?.jsonObject)
 }

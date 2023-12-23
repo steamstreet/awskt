@@ -3,9 +3,11 @@ package com.steamstreet.dynamokt
 import aws.sdk.kotlin.services.dynamodb.*
 import aws.sdk.kotlin.services.dynamodb.model.*
 import com.steamstreet.exceptions.NotFoundException
-import com.steamstreet.mutableLazy
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 
 public class DynamoKtSession(
@@ -17,7 +19,7 @@ public class DynamoKtSession(
     private val cache: MutableMap<String, Item>? = null
 ) : ItemUpdater {
 
-    public fun getOrNull(
+    public suspend fun getOrNull(
         pk: String, sk: String?, attributes: List<String>? = null,
         consistent: Boolean = false
     ): Item? {
@@ -27,7 +29,7 @@ public class DynamoKtSession(
             attributes?.apply {
                 attributesToGet = this
             }
-            it.consistentRead(consistent)
+            consistentRead = consistent
         }.let {
             if (it.item == null) {
                 null
@@ -38,12 +40,19 @@ public class DynamoKtSession(
         }
     }
 
-    public fun get(pk: String, sk: String?, attributes: List<String>? = null, consistent: Boolean = false): Item {
+    public suspend fun get(
+        pk: String,
+        sk: String?,
+        attributes: List<String>? = null,
+        consistent: Boolean = false
+    ): Item {
         return getOrNull(pk, sk, attributes, consistent) ?: throw NotFoundException("Unknown item $pk $sk")
     }
 
-    public suspend fun <T> get(pk: String, sk: String?,
-                               factory: (Item)->T): T {
+    public suspend fun <T> get(
+        pk: String, sk: String?,
+        factory: (Item) -> T
+    ): T {
         return factory(get(pk, sk))
     }
 
@@ -52,7 +61,7 @@ public class DynamoKtSession(
         cache?.put(cacheKey, item)
     }
 
-    public fun getAll(
+    public suspend fun getAll(
         items: List<Pair<String, String?>>, attributes: Collection<String> = emptyList(),
         consistent: Boolean = false
     ): List<Item> {
@@ -61,15 +70,15 @@ public class DynamoKtSession(
                 requestItems =
                     mapOf(
                         table to
-                                KeysAndAttributes.builder().apply {
-                                    keys(chunkedItems.map {
+                                KeysAndAttributes {
+                                    keys = chunkedItems.map {
                                         buildMap {
                                             put(pkName, it.first.attributeValue())
                                             if (skName != null) {
-                                                put(skName, it.second?.attributeValue())
+                                                put(skName, it.second!!.attributeValue())
                                             }
                                         }
-                                    })
+                                    }
 
                                     if (attributes.isNotEmpty()) {
                                         var index = 0
@@ -77,8 +86,8 @@ public class DynamoKtSession(
                                         expressionAttributeNames = names
                                         projectionExpression = names.keys.joinToString(",")
                                     }
-                                    this.consistentRead(consistent)
-                                }.build()
+                                    consistentRead = consistent
+                                }
                     )
             }
             dynamo.batchGetItem(request).responses?.get(table)?.map {
@@ -139,11 +148,14 @@ public class DynamoKtSession(
         val result = Query(this, pk).apply(block).execute()
 
         result.items.map { item ->
-            DeleteRequest.builder().key(
-                mapOf(
-                    pkName to item.pk.attributeValue(),
-                    skName to item.sk?.attributeValue()
-            )).build()
+            DeleteRequest {
+                key = buildMap {
+                    put(pkName, item.pk.attributeValue())
+                    if (skName != null) {
+                        put(skName, item.sk!!.attributeValue())
+                    }
+                }
+            }
         }.map {
             WriteRequest {
                 this.deleteRequest = it
@@ -239,7 +251,8 @@ public class DynamoKtSession(
         pk: String, sk: String,
         attributes: Map<String, AttributeValue> = emptyMap()
     ): Item {
-        return facade(attributes + keyMap(pk, sk)
+        return facade(
+            attributes + keyMap(pk, sk)
         )
     }
 
@@ -256,7 +269,12 @@ public class DynamoKtSession(
         return Item(this, attributes, false, failOnLoading)
     }
 
-    public fun unloaded(pk: String, sk: String?, attributes: Map<String, AttributeValue>, failOnLoading: Boolean): Item {
+    public fun unloaded(
+        pk: String,
+        sk: String?,
+        attributes: Map<String, AttributeValue>,
+        failOnLoading: Boolean
+    ): Item {
         return unloaded(
             keyMap(pk, sk) + attributes, failOnLoading
         )

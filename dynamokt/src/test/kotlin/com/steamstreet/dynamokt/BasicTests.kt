@@ -5,43 +5,40 @@ import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 import aws.sdk.kotlin.services.dynamodb.createTable
 import aws.sdk.kotlin.services.dynamodb.model.*
 import aws.smithy.kotlin.runtime.net.Url
-import com.amazonaws.services.dynamodbv2.local.main.ServerRunner
-import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.testcontainers.containers.localstack.LocalStackContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
+import org.testcontainers.utility.DockerImageName
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
+
 @OptIn(ExperimentalCoroutinesApi::class)
+@Testcontainers
 class BasicTests {
-    lateinit var server: DynamoDBProxyServer
+    private val localstackImage: DockerImageName =
+        DockerImageName.parse("localstack/localstack:0.11.3")
+
+    @Container
+    val localstack: LocalStackContainer = LocalStackContainer(localstackImage)
+        .withServices(
+            LocalStackContainer.Service.DYNAMODB,
+            LocalStackContainer.Service.DYNAMODB_STREAMS
+        ).withReuse(true)
 
     @BeforeTest
     fun initDynamo() {
-        val ports = 9945..9965
-        val (port: Int, server: DynamoDBProxyServer) =
-            ports.asSequence().mapNotNull {
-                try {
-                    it to ServerRunner.createServerFromCommandLineArgs(
-                        arrayOf("-inMemory", "-port", it.toString())
-                    )
-                } catch (e: Throwable) {
-                    null
-                }
-            }.first()
-
-        this.server = server
-        server.start()
-
         DynamoKt.defaultClientBuilder = DynamoDbClient.builder().apply {
             config.apply {
-                endpointUrl = Url.parse("http://localhost:$port")
+                endpointUrl = Url.parse(localstack.endpoint.toString())
                 region = "us-east-1"
                 credentialsProvider = StaticCredentialsProvider {
-                    accessKeyId = "dummy-key"
-                    secretAccessKey = "dummy-secret"
+                    accessKeyId = localstack.accessKey
+                    secretAccessKey = localstack.secretKey
 
                 }
             }
@@ -49,12 +46,7 @@ class BasicTests {
     }
 
     @AfterTest
-    fun stopDynamo() {
-        try {
-            this.server.stop()
-        } catch (e: Throwable) {
-            // ignore
-        }
+    fun destroy() {
     }
 
     @Test

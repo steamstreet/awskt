@@ -86,6 +86,7 @@ dependencyResolutionManagement {
             library("jackson", "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6")
 
             library("mockk", "io.mockk:mockk:1.13.5")
+            library("event-ruler", "software.amazon.event.ruler:event-ruler:1.7.0")
         }
     }
 }

@@ -10,46 +10,46 @@ import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer
 /**
  * Manages a DynamoLocal instance.
  */
-class DynamoLocalBuilder(
-    var port: Int = 9945
+public class DynamoLocalBuilder(
+    public var port: Int = 9945
 ) {
     private var server: DynamoDBProxyServer? = null
 
-    private fun start() {
+    public fun start() {
         server = ServerRunner.createServerFromCommandLineArgs(
             arrayOf("-inMemory", "-port", port.toString())
         )
         server?.start()
     }
 
-    val client: DynamoDbClient by lazy {
+    public val client: DynamoDbClient by lazy {
         DynamoDbClient {
             clientBuilder()
         }
     }
 
-    val clientBuilder: DynamoDbClient.Config.Builder.() -> Unit
+    public val clientBuilder: DynamoDbClient.Config.Builder.() -> Unit
         get() = {
             endpointUrl = Url.parse("http://localhost:$port")
             region = "us-east-1"
             credentialsProvider = StaticCredentialsProvider {
-                accessKeyId = "dummy-key"
-                secretAccessKey = "dummy-secret"
+                accessKeyId = "dummyKey"
+                secretAccessKey = "dummySecret"
             }
         }
 
-    val streamsClient: DynamoDbStreamsClient by lazy {
+    public val streamsClient: DynamoDbStreamsClient by lazy {
         DynamoDbStreamsClient {
             endpointUrl = Url.parse("http://localhost:$port")
             region = "us-east-1"
             credentialsProvider = StaticCredentialsProvider {
-                accessKeyId = "dummy-key"
-                secretAccessKey = "dummy-secret"
+                accessKeyId = "dummyKey"
+                secretAccessKey = "dummySecret"
             }
         }
     }
 
-    private fun stop() {
+    public fun stop() {
         server?.stop()
     }
 }

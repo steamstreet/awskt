@@ -1,6 +1,7 @@
 package com.steamstreet.aws.lambda.eventbridge
 
 import com.steamstreet.aws.lambda.MockLambdaContext
+import com.steamstreet.aws.sqs.BatchResponse
 import com.steamstreet.aws.sqs.SQSEvent
 import com.steamstreet.aws.sqs.SQSRecord
 import com.steamstreet.events.eventSchema

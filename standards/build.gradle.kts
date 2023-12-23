@@ -13,11 +13,10 @@ kotlin {
         browser()
     }
 
-    ios {
+    iosArm64 {
 
     }
 
-    @Suppress("UNUSED_VARIABLE")
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -37,7 +36,7 @@ kotlin {
             }
         }
 
-        val iosMain by getting {
+        val iosArm64Main by getting {
             dependencies {
                 implementation(libs.kotlin.date.time)
             }

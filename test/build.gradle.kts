@@ -3,6 +3,8 @@ plugins {
 }
 
 kotlin {
+    explicitApi()
+
     jvm {
     }
 
@@ -23,6 +25,7 @@ kotlin {
                 api(libs.mockk)
                 api(libs.kotlin.coroutines.core)
                 api(libs.kotlin.serialization.json)
+                implementation(libs.event.ruler)
                 implementation(libs.kotlin.date.time)
 
                 api(project(":standards"))

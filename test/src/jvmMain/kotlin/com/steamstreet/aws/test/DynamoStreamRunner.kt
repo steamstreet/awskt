@@ -1,10 +1,7 @@
 package com.steamstreet.aws.test
 
 import aws.sdk.kotlin.runtime.AwsServiceException
-import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
-import aws.sdk.kotlin.services.dynamodb.model.AttributeDefinition
 import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
-import aws.sdk.kotlin.services.dynamodb.model.ScalarAttributeType
 import aws.sdk.kotlin.services.dynamodbstreams.*
 import aws.sdk.kotlin.services.dynamodbstreams.model.GetRecordsResponse
 import aws.sdk.kotlin.services.dynamodbstreams.model.Record
@@ -26,26 +23,23 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
 
-typealias StreamProcessorFunction = ((DynamodbEvent, Record) -> Unit)
+public typealias StreamProcessorFunction = (suspend (DynamodbEvent, Record) -> Unit)
 
 /**
- * Wraps up configuration of a local dynamo runner, allowing for custom stream processing logic.
+ * Handles reading from a dynamo stream and writing to a callback.
  */
-class DynamoRunner(
-    val client: DynamoDbClient,
-    val streamsClient: DynamoDbStreamsClient
-) {
-    var listeners: List<StreamListener>? = null
+public class DynamoStreamRunner(
+    private val streamsClient: DynamoDbStreamsClient
+) : MockService {
+    private var listeners: List<StreamListener>? = null
 
-    var streamProcessor: StreamProcessorFunction? = null
-    var pipes: PipesConfiguration? = null
+    private var streamProcessor: StreamProcessorFunction? = null
+    private var pipes: PipesConfiguration? = null
 
-    val processing: Boolean
-        get() {
-            return listeners?.find { it.processing } != null
-        }
+    override val isProcessing: Boolean
+        get() = listeners.orEmpty().any { it.processing }
 
-    suspend fun startStreamProcessing() {
+    override suspend fun start() {
         val streamList = streamsClient.listStreams {
         }
         listeners = streamList.streams.orEmpty().map {
@@ -55,7 +49,7 @@ class DynamoRunner(
         }
     }
 
-    inner class ShardReader(
+    internal inner class ShardReader(
         val processor: StreamProcessorFunction?,
         val streams: DynamoDbStreamsClient,
         val streamArn: String,
@@ -156,7 +150,7 @@ class DynamoRunner(
         }
     }
 
-    inner class StreamListener(
+    internal inner class StreamListener(
         val processor: StreamProcessorFunction?,
         val streams: DynamoDbStreamsClient,
         val streamArn: String
@@ -201,7 +195,7 @@ class DynamoRunner(
         }
     }
 
-    fun stop() {
+    override suspend fun stop() {
         listeners?.forEach {
             it.running = false
         }
@@ -209,11 +203,11 @@ class DynamoRunner(
 }
 
 
-fun Map<String, aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue>.toEventAttributeValue(): Map<String, com.amazonaws.services.lambda.runtime.events.models.dynamodb.AttributeValue> {
+internal fun Map<String, aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue>.toEventAttributeValue(): Map<String, com.amazonaws.services.lambda.runtime.events.models.dynamodb.AttributeValue> {
     return mapValues { (_, value) -> value.toEventAttributeValue() }
 }
 
-fun aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.toEventAttributeValue(): com.amazonaws.services.lambda.runtime.events.models.dynamodb.AttributeValue {
+internal fun aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.toEventAttributeValue(): com.amazonaws.services.lambda.runtime.events.models.dynamodb.AttributeValue {
     return com.amazonaws.services.lambda.runtime.events.models.dynamodb.AttributeValue().also {
         if (asSOrNull() != null) {
             it.withS(asS())
@@ -237,7 +231,7 @@ fun aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.toEventAttribut
     }
 }
 
-fun aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.toModelAttributeValue(): AttributeValue {
+internal fun aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.toModelAttributeValue(): AttributeValue {
     return when {
         this.asSOrNull() != null -> AttributeValue.S(this.asS())
         this.asNOrNull() != null -> AttributeValue.N(this.asS())
@@ -259,20 +253,20 @@ fun aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.toModelAttribut
     }
 }
 
-fun Map<String, aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue>.toModelAttributeValue():
+internal fun Map<String, aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue>.toModelAttributeValue():
         Map<String, AttributeValue> {
     return this.mapValues { (_, value) ->
         value.toModelAttributeValue()
     }
 }
 
-class PipesConfiguration(
-    val client: EventBridgeClient,
-    val busArn: String,
-    val detailType: String,
-    val source: String = "DefaultSource"
+public class PipesConfiguration(
+    public val client: EventBridgeClient,
+    public val busArn: String,
+    public val detailType: String,
+    public val source: String = "DefaultSource"
 ) {
-    suspend fun send(record: DynamodbEvent.DynamodbStreamRecord, srcRecord: Record) {
+    public suspend fun send(record: DynamodbEvent.DynamodbStreamRecord, srcRecord: Record) {
         val event = DynamoStreamEvent(
             UUID.randomUUID().toString(),
             record.eventName,
@@ -302,12 +296,3 @@ class PipesConfiguration(
         }
     }
 }
-
-/**
- * Simplifies attribute definition creation.
- */
-fun AttributeDefinition(key: String, type: ScalarAttributeType): AttributeDefinition =
-    AttributeDefinition {
-        attributeName = key
-        attributeType = (type)
-    }
