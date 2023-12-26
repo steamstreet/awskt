@@ -27,6 +27,11 @@ public class AWSLocal(
         }
     }
 
+    public fun <T : MockService> addService(service: T): T {
+        services.add(service)
+        return service
+    }
+
     /**
      * Wait for certain processes to complete before moving on.
      */

@@ -29,19 +29,16 @@ public typealias StreamProcessorFunction = (suspend (DynamodbEvent, Record) -> U
  * Handles reading from a dynamo stream and writing to a callback.
  */
 public class DynamoStreamRunner(
-    private val streamsClient: DynamoDbStreamsClient
+    private val streamsClient: DynamoDbStreamsClient,
+    private val streamProcessor: StreamProcessorFunction
 ) : MockService {
     private var listeners: List<StreamListener>? = null
-
-    private var streamProcessor: StreamProcessorFunction? = null
-    private var pipes: PipesConfiguration? = null
 
     override val isProcessing: Boolean
         get() = listeners.orEmpty().any { it.processing }
 
     override suspend fun start() {
-        val streamList = streamsClient.listStreams {
-        }
+        val streamList = streamsClient.listStreams {}
         listeners = streamList.streams.orEmpty().map {
             StreamListener(streamProcessor, streamsClient, it.streamArn!!).also {
                 thread { it.run() }
@@ -145,7 +142,6 @@ public class DynamoStreamRunner(
             }
             if (running) {
                 processor?.invoke(event, record)
-                pipes?.send(event.records.first(), record)
             }
         }
     }

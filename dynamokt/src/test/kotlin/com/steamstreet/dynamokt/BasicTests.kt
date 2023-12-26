@@ -8,10 +8,9 @@ import aws.smithy.kotlin.runtime.net.Url
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
-import org.testcontainers.containers.localstack.LocalStackContainer
+import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import org.testcontainers.utility.DockerImageName
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -20,25 +19,19 @@ import kotlin.test.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 @Testcontainers
 class BasicTests {
-    private val localstackImage: DockerImageName =
-        DockerImageName.parse("localstack/localstack:0.11.3")
-
     @Container
-    val localstack: LocalStackContainer = LocalStackContainer(localstackImage)
-        .withServices(
-            LocalStackContainer.Service.DYNAMODB,
-            LocalStackContainer.Service.DYNAMODB_STREAMS
-        ).withReuse(true)
+    val dynamo: GenericContainer<*> = GenericContainer("amazon/dynamodb-local:2.2.0")
+        .withExposedPorts(8000)
 
     @BeforeTest
     fun initDynamo() {
         DynamoKt.defaultClientBuilder = DynamoDbClient.builder().apply {
             config.apply {
-                endpointUrl = Url.parse(localstack.endpoint.toString())
+                endpointUrl = Url.parse("http://localhost:${dynamo.getFirstMappedPort()}")
                 region = "us-east-1"
                 credentialsProvider = StaticCredentialsProvider {
-                    accessKeyId = localstack.accessKey
-                    secretAccessKey = localstack.secretKey
+                    accessKeyId = "DummyKey"
+                    secretAccessKey = "DummySecret"
 
                 }
             }

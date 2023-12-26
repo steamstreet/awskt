@@ -5,9 +5,8 @@ import aws.sdk.kotlin.services.eventbridge.EventBridgeClient
 import aws.sdk.kotlin.services.eventbridge.model.*
 import aws.sdk.kotlin.services.eventbridge.putRule
 import com.amazonaws.services.lambda.runtime.Context
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.steamstreet.aws.lambda.eventbridge.EventBridgeFunction
+import com.steamstreet.aws.lambda.lambdaJson
 import com.steamstreet.events.EventSchema
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -24,7 +23,6 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
 
 private class LocalTarget(
-    val arn: String?,
     val handler: (suspend (InputStream, Context) -> Unit)? = null
 )
 
@@ -37,12 +35,11 @@ public class EventBridgeMock(
     private val mockk: EventBridgeClient = mockk(relaxed = true)
 ) : EventBridgeClient by mockk, MockService {
     private val buses = hashMapOf(
-        "default" to Bus("default")
+        "default" to Bus()
     )
 
     private val events = ArrayList<PutEventsRequestEntry>()
 
-    private val jackson = jacksonObjectMapper()
     private var processSemaphore = AtomicInteger(0)
 
     override val isProcessing: Boolean get() = processSemaphore.get() != 0
@@ -51,7 +48,6 @@ public class EventBridgeMock(
 
     private inner class EventRule(val rule: PutRuleRequest) {
         val targets = ArrayList<LocalTarget>()
-        val ruleExpression = rule.eventPattern?.let { jackson.readValue<Map<String, Any>>(it) }
     }
 
     /**
@@ -67,7 +63,7 @@ public class EventBridgeMock(
         }
     }
 
-    private inner class Bus(val name: String) {
+    private inner class Bus {
         val rules = ArrayList<EventRule>()
 
         suspend fun putEvent(entry: PutEventsRequestEntry) {
@@ -112,16 +108,6 @@ public class EventBridgeMock(
             }
         }
 
-        fun filterEvent(entry: PutEventsRequestEntry, rule: EventRule): Boolean {
-            if (rule.ruleExpression == null) return false
-            // for now we just filter on detail type since that is our common use case.
-            val detailTypeFilter = rule.ruleExpression["detail-type"] as? List<*>
-            if (!detailTypeFilter.isNullOrEmpty()) {
-                return detailTypeFilter.contains("*") || detailTypeFilter.contains(entry.detailType)
-            }
-            return false
-        }
-
         fun putRule(rule: PutRuleRequest) {
             if (rules.find { it.rule.name == rule.name } != null) {
                 throw AwsServiceException("Duplicate rule name", null)
@@ -143,7 +129,7 @@ public class EventBridgeMock(
     }
 
     override suspend fun createEventBus(input: CreateEventBusRequest): CreateEventBusResponse {
-        buses[input.name!!] = Bus(input.name!!)
+        buses[input.name!!] = Bus()
         return CreateEventBusResponse {
             eventBusArn = "arn:aws:events:${region}:$accountId:event-bus/${input.name}"
         }
@@ -184,7 +170,7 @@ public class EventBridgeMock(
                 input.rule, null
             )
         rule.targets.addAll(input.targets!!.map {
-            LocalTarget(it.arn)
+            LocalTarget()
         })
         return PutTargetsResponse {}
     }
@@ -196,7 +182,7 @@ public class EventBridgeMock(
             ruleName, null
         )
 
-        rule.targets.add(LocalTarget(null, handler))
+        rule.targets.add(LocalTarget(handler))
     }
 
     override suspend fun putEvents(input: PutEventsRequest): PutEventsResponse {
@@ -220,5 +206,47 @@ public class EventBridgeMock(
 public fun <T> EventBridgeMock.eventsOfType(type: EventSchema<T>): List<T> {
     return this.eventsOfType(type.type).map {
         Json.decodeFromString(type.serializer, it.detail!!)
+    }
+}
+
+
+/**
+ * Forward all events of the given type to the handler
+ */
+public suspend inline fun <reified T> EventBridgeMock.forwardEvents(
+    type: EventSchema<T>,
+    handler: EventBridgeFunction
+) {
+    eventsOfType(type).let {
+        type.post(it, handler)
+    }
+}
+
+/**
+ * Post events directly to an EventBridgeFunction
+ */
+public suspend fun <T> EventSchema<T>.post(input: Collection<T>, handler: EventBridgeFunction) {
+    post(input) {
+        handler.execute(it, ByteArrayOutputStream(), LambdaLocalContext())
+    }
+}
+
+/**
+ * Post an event directly to an EventBridgeFunction
+ */
+public suspend fun <T> EventSchema<T>.post(input: T, handler: EventBridgeFunction) {
+    post(listOf(input), handler)
+}
+
+/**
+ * Post an event directly to a handler.
+ */
+public suspend fun <T, R> EventSchema<T>.post(input: Collection<T>, handler: suspend (InputStream) -> R) {
+    input.forEach {
+        val jsonString = buildJsonObject {
+            put("detail-type", type)
+            put("detail", lambdaJson.encodeToJsonElement(this@post.serializer, it))
+        }.toString()
+        handler(jsonString.byteInputStream())
     }
 }
