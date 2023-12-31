@@ -10,10 +10,7 @@ import com.steamstreet.aws.lambda.lambdaJson
 import com.steamstreet.events.EventSchema
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
+import kotlinx.serialization.json.*
 import software.amazon.event.ruler.Ruler
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -146,6 +143,27 @@ public class EventBridgeMock(
     }
 
     /**
+     * Create a rule that targets the given function
+     */
+    public suspend fun putRule(bus: String, pattern: String, target: EventBridgeFunction) {
+        val ruleName = UUID.randomUUID().toString()
+        putRule(PutRuleRequest {
+            eventBusName = bus
+            eventPattern = pattern
+            name = UUID.randomUUID().toString()
+        })
+
+        putTarget(bus, ruleName) { input, context ->
+            val output = ByteArrayOutputStream()
+            target.execute(input, output, context)
+        }
+    }
+
+    public suspend fun putRule(bus: String, pattern: JsonObject, target: EventBridgeFunction) {
+        putRule(bus, pattern.toString(), target)
+    }
+
+    /**
      * Utility to set an EventBridgeFunction as a target for an event.
      */
     public suspend fun putTarget(eventBusName: String, pattern: String, handler: EventBridgeFunction) {
@@ -160,6 +178,23 @@ public class EventBridgeMock(
         putTarget(eventBusName, ruleName) { input, context ->
             handler.execute(input, ByteArrayOutputStream(), context)
         }
+    }
+
+    public suspend fun putTarget(
+        eventBusName: String,
+        pattern: JsonObjectBuilder.() -> Unit,
+        handler: EventBridgeFunction
+    ) {
+        putTarget(eventBusName, buildJsonObject(pattern).toString(), handler)
+    }
+
+    public suspend fun putTarget(eventBusName: String, detailTypes: List<String>, handler: EventBridgeFunction) {
+        putTarget(eventBusName, buildJsonObject {
+            put("detail-type", buildJsonArray {
+                @Suppress("OPT_IN_USAGE")
+                addAll(detailTypes.map { JsonPrimitive(it) })
+            })
+        }.toString(), handler)
     }
 
     override suspend fun putTargets(input: PutTargetsRequest): PutTargetsResponse {

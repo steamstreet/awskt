@@ -6,8 +6,6 @@ import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 
-public fun AttributeValue.toSerializable(): AttributeValue = this
-
 public fun String.fromJsonToAttributeValue(): AttributeValue {
     return attributeValueJson.decodeFromString(AttributeValueSerializer(), this)
 }

@@ -3,7 +3,7 @@ package com.steamstreet.aws.test
 import aws.sdk.kotlin.runtime.auth.credentials.StaticCredentialsProvider
 import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 import aws.sdk.kotlin.services.dynamodbstreams.DynamoDbStreamsClient
-import aws.smithy.kotlin.runtime.net.Url
+import aws.smithy.kotlin.runtime.net.url.Url
 import com.amazonaws.services.dynamodbv2.local.main.ServerRunner
 import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer
 
@@ -30,7 +30,7 @@ public class DynamoLocalBuilder(
 
     public val clientBuilder: DynamoDbClient.Config.Builder.() -> Unit
         get() = {
-            endpointUrl = Url.parse("http://localhost:$port")
+            endpointUrl = Url.parse("http://localhost:$port/")
             region = "us-east-1"
             credentialsProvider = StaticCredentialsProvider {
                 accessKeyId = "dummyKey"
@@ -40,7 +40,7 @@ public class DynamoLocalBuilder(
 
     public val streamsClient: DynamoDbStreamsClient by lazy {
         DynamoDbStreamsClient {
-            endpointUrl = Url.parse("http://localhost:$port")
+            endpointUrl = Url.parse("http://localhost:$port/")
             region = "us-east-1"
             credentialsProvider = StaticCredentialsProvider {
                 accessKeyId = "dummyKey"
@@ -51,5 +51,6 @@ public class DynamoLocalBuilder(
 
     public fun stop() {
         server?.stop()
+        println("Server stopped on port $port")
     }
 }

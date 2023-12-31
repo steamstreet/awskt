@@ -20,7 +20,7 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             val kotlinSerializationVersion = version("kotlin-serialization", "1.5.1")
-            val awsVersion = version("aws", "0.24.0-beta")
+            val awsVersion = version("aws", "1.0.18")
 
             library(
                 "kotlin-serialization-core", "org.jetbrains.kotlinx",
@@ -42,7 +42,6 @@ dependencyResolutionManagement {
                 library("aws-${artifact}", "aws.sdk.kotlin", artifact).versionRef(awsVersion)
             }
 
-
             aws("secretsmanager")
             aws("dynamodb")
             aws("dynamodbstreams")
@@ -57,14 +56,14 @@ dependencyResolutionManagement {
             library("ktor-server-test-host", "io.ktor", "ktor-server-test-host").versionRef(ktorVersion)
 
 
-            val slf4jVersion = version("slf4j", "1.8.0-beta4")
+            val slf4jVersion = version("slf4j", "2.0.9")
 
             library("slf4j-api", "org.slf4j", "slf4j-api").versionRef(slf4jVersion)
             library("slf4j-simple", "org.slf4j", "slf4j-simple").versionRef(slf4jVersion)
             library("slf4j-jcl", "org.slf4j", "jcl-over-slf4j").versionRef(slf4jVersion)
             library("slf4j-log4j", "org.slf4j", "log4j-over-slf4j").versionRef(slf4jVersion)
 
-            library("aws-lambda-logback", "org.jlib", "jlib-awslambda-logback").version("1.0.0")
+            library("slf4j-lambda", "uk.bot-by", "slf4j-aws-lambda").version("3.1.0")
 
             library("logstash-logback-encoder", "net.logstash.logback:logstash-logback-encoder:6.6")
 

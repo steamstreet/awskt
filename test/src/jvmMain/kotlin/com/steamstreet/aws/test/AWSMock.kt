@@ -1,5 +1,9 @@
 package com.steamstreet.aws.test
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+
 /**
  * Creates an AWS local environment
  */
@@ -8,6 +12,7 @@ public class AWSLocal(
     public val accountId: String = "123412341234"
 ) {
     private val services = mutableListOf<MockService>()
+    private lateinit var job: Job
 
     /**
      * Are any of the services currently processing data.
@@ -18,12 +23,22 @@ public class AWSLocal(
     }
 
     public suspend fun start() {
-        services.forEach { it.start() }
+        @Suppress("OPT_IN_USAGE")
+        job = GlobalScope.launch {
+            services.forEach {
+                launch {
+                    it.start()
+                }
+            }
+        }
     }
 
     public suspend fun stop() {
         services.forEach {
             it.stop()
+        }
+        if (this::job.isInitialized) {
+            job.cancel()
         }
     }
 

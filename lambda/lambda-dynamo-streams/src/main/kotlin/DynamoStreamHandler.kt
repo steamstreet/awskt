@@ -1,4 +1,5 @@
-import com.steamstreet.aws.lambda.InputLambda
+package com.steamstreet.aws.lambda
+
 import com.steamstreet.dynamokt.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope

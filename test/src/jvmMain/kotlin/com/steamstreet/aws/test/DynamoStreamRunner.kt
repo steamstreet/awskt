@@ -7,244 +7,154 @@ import aws.sdk.kotlin.services.dynamodbstreams.model.GetRecordsResponse
 import aws.sdk.kotlin.services.dynamodbstreams.model.Record
 import aws.sdk.kotlin.services.dynamodbstreams.model.ShardIteratorType
 import aws.sdk.kotlin.services.dynamodbstreams.model.TrimmedDataAccessException
-import aws.sdk.kotlin.services.eventbridge.EventBridgeClient
-import aws.sdk.kotlin.services.eventbridge.model.PutEventsRequestEntry
-import aws.sdk.kotlin.services.eventbridge.putEvents
-import com.amazonaws.services.lambda.runtime.events.DynamodbEvent
-import com.amazonaws.services.lambda.runtime.events.models.dynamodb.StreamViewType
+import aws.smithy.kotlin.runtime.time.epochMilliseconds
 import com.steamstreet.dynamokt.DynamoStreamEvent
 import com.steamstreet.dynamokt.DynamoStreamEventDetail
-import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.json.Json
-import java.nio.ByteBuffer
-import java.util.*
-import java.util.concurrent.Semaphore
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.concurrent.thread
+import kotlinx.coroutines.*
 
-public typealias StreamProcessorFunction = (suspend (DynamodbEvent, Record) -> Unit)
+public typealias StreamProcessorFunction = (suspend (DynamoStreamEvent) -> Unit)
 
 /**
  * Handles reading from a dynamo stream and writing to a callback.
  */
 public class DynamoStreamRunner(
+    private val tableName: String,
     private val streamsClient: DynamoDbStreamsClient,
     private val streamProcessor: StreamProcessorFunction
 ) : MockService {
-    private var listeners: List<StreamListener>? = null
+    private val iterators = mutableSetOf<String>()
 
     override val isProcessing: Boolean
-        get() = listeners.orEmpty().any { it.processing }
+        get() {
+            return iterators.isNotEmpty()
+        }
 
     override suspend fun start() {
-        val streamList = streamsClient.listStreams {}
-        listeners = streamList.streams.orEmpty().map {
-            StreamListener(streamProcessor, streamsClient, it.streamArn!!).also {
-                thread { it.run() }
-            }
-        }
+        val stream = streamsClient.listStreams {}.streams?.find {
+            it.tableName == this@DynamoStreamRunner.tableName
+        } ?: throw IllegalArgumentException("Unknown table")
+
+        processStream(stream.streamArn!!)
     }
 
-    internal inner class ShardReader(
-        val processor: StreamProcessorFunction?,
-        val streams: DynamoDbStreamsClient,
-        val streamArn: String,
-        val shardId: String
-    ) : Runnable {
-        var running = true
-        val processing: Boolean
-            get() {
-                processingSemaphore.tryAcquire(5, TimeUnit.SECONDS)
-                val response = processingRecords.get()
-                processingSemaphore.release()
-                return response
-            }
-        var processingRecords = AtomicBoolean(true)
-        var currentIterator: String? = null
-        val processingSemaphore = Semaphore(1)
+    private fun CoroutineScope.processShard(streamArn: String, shardId: String) {
+        var lastSequence: String? = null
 
-        override fun run() {
-            runBlocking {
-                val iterators = HashSet<String>()
-                var lastSequence: String? = null
-
-                while (running) {
-                    try {
-                        val shardIteratorResult = streams.getShardIterator {
-                            streamArn = (streamArn)
-                            shardId = this@ShardReader.shardId
-                            if (lastSequence == null) {
-                                shardIteratorType = ShardIteratorType.TrimHorizon
-                            } else {
-                                shardIteratorType = ShardIteratorType.AfterSequenceNumber
-                                sequenceNumber = lastSequence
+        launch {
+            while (true) {
+                try {
+                    val shardIteratorResult = streamsClient.getShardIterator {
+                        this.streamArn = streamArn
+                        this.shardId = shardId
+                        if (lastSequence == null) {
+                            shardIteratorType = ShardIteratorType.TrimHorizon
+                        } else {
+                            shardIteratorType = ShardIteratorType.AfterSequenceNumber
+                            sequenceNumber = lastSequence
+                        }
+                    }
+                    var currentIterator = shardIteratorResult.shardIterator
+                    while (currentIterator != null) {
+                        val recordsResult: GetRecordsResponse?
+                        try {
+                            recordsResult = streamsClient.getRecords {
+                                shardIterator = currentIterator
                             }
-                        }
-                        if (!iterators.contains(shardIteratorResult.shardIterator)) {
-                            iterators.add(shardIteratorResult.shardIterator!!)
-                        }
+                            iterators += currentIterator
+                            recordsResult.records?.forEach {
+                                processRecord(streamArn, it)
+                                lastSequence = it.dynamodb?.sequenceNumber
+                            }
 
-                        currentIterator = shardIteratorResult.shardIterator
-                        processingSemaphore.acquire()
-                        while (currentIterator != null && running) {
-                            val recordsResult: GetRecordsResponse?
-                            try {
-                                recordsResult = streams.getRecords {
-                                    shardIterator = currentIterator
-                                }
-                                recordsResult.records?.forEach {
-                                    processRecord(streamArn, it)
-                                    lastSequence = it.dynamodb?.sequenceNumber
-                                }
+                            if (recordsResult.records.isNullOrEmpty()) {
+                                iterators.remove(currentIterator)
+                                delay(100)
+                            }
+
+                            if (recordsResult.nextShardIterator != currentIterator) {
+                                iterators.remove(currentIterator)
                                 currentIterator = recordsResult.nextShardIterator
-
-                                if (recordsResult.records.isNullOrEmpty()) {
-                                    processingRecords.set(false)
-                                    processingSemaphore.release()
-                                    Thread.sleep(25)
-                                    processingSemaphore.acquire()
-                                    processingRecords.set(true)
-                                    Thread.sleep(100)
-                                }
-                            } catch (t: TrimmedDataAccessException) {
-                                currentIterator = null
-                                processingSemaphore.release()
                             }
+                        } catch (t: TrimmedDataAccessException) {
+                            currentIterator = null
                         }
-                    } catch (e: AwsServiceException) {
-                        processingSemaphore.release()
-                        throw e
                     }
+                } catch (e: AwsServiceException) {
+                    throw e
                 }
-            }
-        }
-
-        suspend fun processRecord(streamArn: String, record: Record) {
-            val event = DynamodbEvent().also {
-                it.records = listOf(DynamodbEvent.DynamodbStreamRecord().also { ddbStreamRecord ->
-                    ddbStreamRecord.eventSourceARN = streamArn
-                    ddbStreamRecord.eventName = record.eventName!!.value
-                    ddbStreamRecord.eventSource = record.eventSource
-                    ddbStreamRecord.awsRegion = record.awsRegion
-                    ddbStreamRecord.eventID = record.eventId
-                    ddbStreamRecord.eventVersion = record.eventVersion
-                    ddbStreamRecord.dynamodb = record.dynamodb?.let {
-                        com.amazonaws.services.lambda.runtime.events.models.dynamodb.StreamRecord()
-                            .withKeys(it.keys!!.toEventAttributeValue())
-                            .withNewImage(it.newImage?.toEventAttributeValue())
-                            .withOldImage(it.oldImage?.toEventAttributeValue())
-                            .withSequenceNumber(it.sequenceNumber)
-                            .withStreamViewType(StreamViewType.valueOf(it.streamViewType!!.value))
-                            .withApproximateCreationDateTime(Date())
-                    }
-                })
-            }
-            if (running) {
-                processor?.invoke(event, record)
             }
         }
     }
 
-    internal inner class StreamListener(
-        val processor: StreamProcessorFunction?,
-        val streams: DynamoDbStreamsClient,
-        val streamArn: String
-    ) :
-        Runnable {
-        val shards = HashMap<String, ShardReader>()
-        var _running: Boolean = true
-        var running: Boolean
-            get() {
-                return _running
-            }
-            set(value) {
-                _running = value
-                if (!value) {
-                    shards.values.forEach { it.running = false }
-                }
-            }
+    private suspend fun processRecord(streamArn: String, record: Record) {
+        val event = DynamoStreamEvent(
+            record.eventId!!,
+            record.eventName!!.toString(),
+            record.eventVersion!!,
+            record.eventSource!!,
+            record.awsRegion!!,
+            with(record.dynamodb!!) {
+                DynamoStreamEventDetail(
+                    approximateCreationDateTime!!.epochMilliseconds.toDouble(),
+                    keys!!.mapValues {
+                        it.value.toModelAttributeValue()
+                    },
+                    newImage?.toModelAttributeValue(),
+                    oldImage?.toModelAttributeValue(),
+                    sequenceNumber,
+                    sizeBytes,
+                    streamViewType?.toString()
+                )
+            },
+            streamArn,
+            null
+        )
+        streamProcessor.invoke(event)
+    }
 
-        val processing: Boolean
-            get() = synchronized(shards) {
-                shards.values.find { it.processing } != null
-            }
-
-        override fun run() {
-            while (running) {
-                synchronized(shards) {
-                    runBlocking {
-                        val shardResult = streams.describeStream {
-                            streamArn = this@StreamListener.streamArn
+    private suspend fun processStream(streamArn: String): Job {
+        val shards = HashMap<String, Job>()
+        coroutineScope {
+            while (true) {
+                streamsClient.describeStream {
+                    this.streamArn = streamArn
+                }.streamDescription?.shards?.map {
+                    if (!shards.containsKey(it.shardId)) {
+                        val shardJob = launch {
+                            processShard(streamArn, it.shardId!!)
                         }
-                        shardResult.streamDescription?.shards?.filter {
-                            !shards.containsKey(it.shardId)
-                        }?.forEach {
-                            shards[it.shardId!!] = ShardReader(processor, streams, streamArn, it.shardId!!).also {
-                                thread { it.run() }
-                            }
-                        }
+                        shards[it.shardId!!] = shardJob
                     }
-                }
-                Thread.sleep(10000)
+                    it
+                }.orEmpty()
+                delay(1000)
             }
         }
     }
 
     override suspend fun stop() {
-        listeners?.forEach {
-            it.running = false
-        }
     }
 }
 
-
-internal fun Map<String, aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue>.toEventAttributeValue(): Map<String, com.amazonaws.services.lambda.runtime.events.models.dynamodb.AttributeValue> {
-    return mapValues { (_, value) -> value.toEventAttributeValue() }
-}
-
-internal fun aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.toEventAttributeValue(): com.amazonaws.services.lambda.runtime.events.models.dynamodb.AttributeValue {
-    return com.amazonaws.services.lambda.runtime.events.models.dynamodb.AttributeValue().also {
-        if (asSOrNull() != null) {
-            it.withS(asS())
-        } else if (!asSsOrNull().isNullOrEmpty()) {
-            it.withSS(asSs())
-        } else if (asNOrNull() != null) {
-            it.withN(asN())
-        } else if (asNsOrNull() != null) {
-            it.withNS(asNs())
-        } else if (asMOrNull() != null) {
-            it.withM(asM().mapValues { (_, value) -> value.toEventAttributeValue() })
-        } else if (asLOrNull() != null) {
-            it.withL(asL().map { it.toEventAttributeValue() })
-        } else if (asBOrNull() != null) {
-            it.withB(ByteBuffer.wrap(asB()))
-        } else if (asBsOrNull() != null) {
-            it.withBS(asBs().map { ByteBuffer.wrap(it) })
-        } else if (asBoolOrNull() != null) {
-            it.withBOOL(asBool())
-        }
-    }
-}
 
 internal fun aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.toModelAttributeValue(): AttributeValue {
-    return when {
-        this.asSOrNull() != null -> AttributeValue.S(this.asS())
-        this.asNOrNull() != null -> AttributeValue.N(this.asS())
-        this.asBOrNull() != null -> AttributeValue.B(this.asB())
-        this.asSsOrNull() != null -> AttributeValue.Ss(this.asSs())
-        this.asNsOrNull() != null -> AttributeValue.Ns(this.asNs())
-        this.asBoolOrNull() != null -> AttributeValue.Bool(this.asBool())
-        this.asMOrNull() != null -> AttributeValue.M(this.asM().mapValues { (_, value) ->
-            value.toModelAttributeValue()
-        })
+    return when (this) {
+        is aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.S -> AttributeValue.S(this.asS())
+        is aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.N -> AttributeValue.N(this.asN())
+        is aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.B -> AttributeValue.B(this.asB())
+        is aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.Ss -> AttributeValue.Ss(this.asSs())
+        is aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.Ns -> AttributeValue.Ns(this.asNs())
+        is aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.Bool -> AttributeValue.Bool(this.asBool())
+        is aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.M -> AttributeValue.M(
+            this.asM().mapValues { (_, value) ->
+                value.toModelAttributeValue()
+            })
 
-        this.asLOrNull() != null -> AttributeValue.L(this.asL().map {
+        is aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.L -> AttributeValue.L(this.asL().map {
             it.toModelAttributeValue()
         })
 
-        this.asBOrNull() != null -> AttributeValue.B(this.asB())
-        this.asBsOrNull() != null -> AttributeValue.Bs(this.asBs())
+        is aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.Bs -> AttributeValue.Bs(this.asBs())
         else -> AttributeValue.Null(true)
     }
 }
@@ -253,42 +163,5 @@ internal fun Map<String, aws.sdk.kotlin.services.dynamodbstreams.model.Attribute
         Map<String, AttributeValue> {
     return this.mapValues { (_, value) ->
         value.toModelAttributeValue()
-    }
-}
-
-public class PipesConfiguration(
-    public val client: EventBridgeClient,
-    public val busArn: String,
-    public val detailType: String,
-    public val source: String = "DefaultSource"
-) {
-    public suspend fun send(record: DynamodbEvent.DynamodbStreamRecord, srcRecord: Record) {
-        val event = DynamoStreamEvent(
-            UUID.randomUUID().toString(),
-            record.eventName,
-            record.eventVersion,
-            record.eventSource,
-            record.awsRegion,
-            record.dynamodb.let {
-                DynamoStreamEventDetail(
-                    it.approximateCreationDateTime.time.toDouble(),
-                    srcRecord.dynamodb!!.keys!!.toModelAttributeValue(),
-                    srcRecord.dynamodb?.newImage?.toModelAttributeValue(),
-                    srcRecord.dynamodb?.oldImage?.toModelAttributeValue()
-                )
-            },
-            record.eventSourceARN
-        )
-
-        client.putEvents {
-            entries = listOf(
-                PutEventsRequestEntry {
-                    eventBusName = (busArn.substringAfterLast(":event-bus/"))
-                    detail = (Json.encodeToString(DynamoStreamEvent.serializer(), event))
-                    detailType = this@PipesConfiguration.detailType
-                    source = this@PipesConfiguration.source
-                }
-            )
-        }
     }
 }

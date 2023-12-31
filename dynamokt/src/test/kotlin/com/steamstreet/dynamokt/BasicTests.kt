@@ -4,7 +4,7 @@ import aws.sdk.kotlin.runtime.auth.credentials.StaticCredentialsProvider
 import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 import aws.sdk.kotlin.services.dynamodb.createTable
 import aws.sdk.kotlin.services.dynamodb.model.*
-import aws.smithy.kotlin.runtime.net.Url
+import aws.smithy.kotlin.runtime.net.url.Url
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -27,7 +27,7 @@ class BasicTests {
     fun initDynamo() {
         DynamoKt.defaultClientBuilder = DynamoDbClient.builder().apply {
             config.apply {
-                endpointUrl = Url.parse("http://localhost:${dynamo.getFirstMappedPort()}")
+                endpointUrl = Url.parse("http://localhost:${dynamo.firstMappedPort}")
                 region = "us-east-1"
                 credentialsProvider = StaticCredentialsProvider {
                     accessKeyId = "DummyKey"

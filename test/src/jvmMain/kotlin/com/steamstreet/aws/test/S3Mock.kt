@@ -7,6 +7,5 @@ public class S3Local(
     private val mock: S3Client = mockk<S3Client>(relaxed = true)
 ) : S3Client by mock, MockService {
     override fun close() {
-        TODO("not implemented")
     }
 }

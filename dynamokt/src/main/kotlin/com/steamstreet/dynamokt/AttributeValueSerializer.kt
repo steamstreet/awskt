@@ -1,6 +1,7 @@
 package com.steamstreet.dynamokt
 
 import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.builtins.ListSerializer
@@ -80,41 +81,54 @@ public class AttributeValueSerializer : KSerializer<AttributeValue> {
         }
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun serialize(encoder: Encoder, value: AttributeValue) {
         encoder.encodeStructure(descriptor) {
-            when {
-                value.asSOrNull() != null -> encodeStringElement(descriptor, 0, value.asS())
-                value.asNOrNull() != null -> encodeStringElement(descriptor, 1, value.asN())
-                value.asBOrNull() != null -> encodeStringElement(
+            when (value) {
+                is AttributeValue.S -> encodeStringElement(descriptor, 0, value.asS())
+                is AttributeValue.N -> encodeStringElement(descriptor, 1, value.asN())
+                is AttributeValue.B -> encodeStringElement(
                     descriptor,
                     2,
                     Base64.getEncoder().encodeToString(value.asB())
                 )
 
-                value.asBoolOrNull() != null -> encodeBooleanElement(descriptor, 3, value.asBool())
-                !value.asLOrNull().isNullOrEmpty() -> encodeSerializableElement(
+                is AttributeValue.Bool -> encodeBooleanElement(descriptor, 3, value.asBool())
+                is AttributeValue.L -> encodeSerializableElement(
                     descriptor, 4,
                     ListSerializer(AttributeValueSerializer()), value.asL()
                 )
 
-                !value.asMOrNull().isNullOrEmpty() -> encodeSerializableElement(
+                is AttributeValue.M -> encodeSerializableElement(
                     descriptor, 5,
                     MapSerializer(String.serializer(), AttributeValueSerializer()), value.asM()
                 )
 
-                !value.asSsOrNull().isNullOrEmpty() -> encodeSerializableElement(
+                is AttributeValue.Ss -> encodeSerializableElement(
                     descriptor,
                     6,
                     ListSerializer(String.serializer()),
                     value.asSs()
                 )
 
-                !value.asNsOrNull().isNullOrEmpty() -> encodeSerializableElement(
+                is AttributeValue.Ns -> encodeSerializableElement(
                     descriptor,
-                    6,
+                    7,
                     ListSerializer(String.serializer()),
                     value.asNs()
                 )
+
+                is AttributeValue.Bs -> {
+                    encodeSerializableElement(descriptor, 8,
+                        ListSerializer(String.serializer()),
+                        value.asBs().map {
+                            Base64.getEncoder().encodeToString(it)
+                        }
+                    )
+                }
+
+                is AttributeValue.Null -> encoder.encodeNull()
+                is AttributeValue.SdkUnknown -> throw IllegalArgumentException("Unknown attribute type")
             }
         }
     }
