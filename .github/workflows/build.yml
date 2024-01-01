@@ -24,7 +24,11 @@ jobs:
           fileName: 'nexus-key.gpg'
           encodedString: ${{ secrets.NEXUSKEY64 }}
 
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
       - name: Gradle Build
-        uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
-        with:
-          arguments: build
+        run: ./gradlew build
+
+      - name: Gradle Sign
+        run: ./gradlew signMavenPublication -Psigning.keyId=${{ secrets.SIGNING_KEYID }} -Psigning.password=${{ secrets.SIGNING_PASSWORD }} -Psigning.secretKeyRingFile=${{ steps.nexus_gpg_file.outputs.filePath }}
