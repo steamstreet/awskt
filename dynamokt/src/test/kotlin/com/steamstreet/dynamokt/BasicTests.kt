@@ -5,7 +5,6 @@ import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 import aws.sdk.kotlin.services.dynamodb.createTable
 import aws.sdk.kotlin.services.dynamodb.model.*
 import aws.smithy.kotlin.runtime.net.url.Url
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.testcontainers.containers.GenericContainer
@@ -16,7 +15,6 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @Testcontainers
 class BasicTests {
     @Container
