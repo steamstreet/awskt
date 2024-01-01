@@ -14,5 +14,12 @@ jobs:
           distribution: corretto
           java-version: 17
 
+      - name: Write Nexus Key
+        id: nexus_gpg_file
+        uses: timheuer/base64-to-file@v1.2
+        with:
+          fileName: 'nexus-key.gpg'
+          encodedString: ${{ secrets.NEXUSKEY64 }}
+
       - name: Execute Gradle build
         run: ./gradlew build
