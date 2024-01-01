@@ -17,18 +17,8 @@ jobs:
       # validate that the gradle wrapper matches official checksums.
       - uses: gradle/wrapper-validation-action@ccb4328a959376b642e027874838f60f8e596de3
 
-      - name: Write Nexus Key
-        id: nexus_gpg_file
-        uses: timheuer/base64-to-file@v1.2
-        with:
-          fileName: 'nexus-key.gpg'
-          encodedString: ${{ secrets.NEXUSKEY64 }}
-
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
       - name: Gradle Build
         run: ./gradlew build
-
-      - name: Gradle Sign
-        run: ./gradlew signMavenPublication -Psigning.keyId="${{ secrets.SIGNING_KEYID }}" -Psigning.password="${{ secrets.SIGNING_PASSWORD }}" -Psigning.secretKeyRingFile="${{ steps.nexus_gpg_file.outputs.filePath }}"
