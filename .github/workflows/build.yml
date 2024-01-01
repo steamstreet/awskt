@@ -13,3 +13,6 @@ jobs:
         with:
           distribution: corretto
           java-version: 17
+
+      - name: Execute Gradle build
+        run: ./gradlew build
