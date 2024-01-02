@@ -9,6 +9,7 @@ kotlin {
 dependencies {
     api(libs.aws.lambda.core)
     api(libs.kotlin.serialization.json)
+    api(libs.kotlin.date.time)
     api(project(":lambda:lambda-coroutines"))
     api(project(":events"))
     api(project(":logging"))

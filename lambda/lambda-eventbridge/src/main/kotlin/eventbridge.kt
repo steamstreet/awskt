@@ -14,8 +14,10 @@ import com.steamstreet.events.EventSchema
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import net.logstash.logback.marker.Markers
@@ -34,10 +36,31 @@ public interface EventBridgeHandlerConfig {
      */
     public fun eventsOfType(type: String): List<Event>
 
+    /**
+     * The invoke operator allows for a cleaner way to install event handlers,
+     * providing only the eventSchema and a lambda to handle the event.
+     */
     public suspend operator fun <T> EventSchema<T>.invoke(block: suspend context(Event) (T) -> Unit) {
         type(this, block)
     }
 }
+
+/**
+ * An EventBridge event.
+ */
+@Serializable
+public data class EventBridgeEvent(
+    val version: String,
+    val id: String,
+    @SerialName("detail-type")
+    val detailType: String,
+    val account: String? = null,
+    val time: Instant,
+    val region: String? = null,
+    val resources: List<String>? = null,
+    val detail: JsonObject? = null,
+    val source: String? = null
+)
 
 /**
  * A handler for event bridge events. Also handles event bridge events packaged into an SQS
@@ -83,13 +106,10 @@ public fun eventBridge(
                 }
             }
         } else {
-            // add the detail type to the mdc for tracing.
-            val detailType =
-                obj["detail-type"]?.jsonPrimitive?.content ?: throw IllegalArgumentException("Missing detail type")
-            val detail = obj["detail"]?.jsonObject ?: throw IllegalArgumentException("Missing detail for $detailType")
-            mdcContext("event-detail-type" to detailType) {
+            val event = Json.decodeFromJsonElement<EventBridgeEvent>(element)
+            mdcContext("event-detail-type" to event.detailType) {
                 val processing = measureTimeMillis {
-                    val handlerConfig = DefaultEventBridgeHandlerConfig(detailType, detail)
+                    val handlerConfig = DefaultEventBridgeHandlerConfig(event)
                     handlerConfig.config()
                     handlerConfig.error?.let { throw it }
                 }
@@ -108,10 +128,12 @@ public fun eventBridge(
  * A default implementation of the handler config
  */
 public class DefaultEventBridgeHandlerConfig(
-    private val detailType: String,
-    private val detail: JsonObject
+    private val event: EventBridgeEvent
 ) : EventBridgeHandlerConfig {
     public var error: Throwable? = null
+
+    private val detailType: String get() = event.detailType
+    private val detail: JsonObject get() = event.detail!!
 
     override fun eventsOfType(type: String): List<Event> {
         return if (detailType == type) {
@@ -120,11 +142,16 @@ public class DefaultEventBridgeHandlerConfig(
                 override val type: String = detailType
                 override val detail: JsonObject = this@DefaultEventBridgeHandlerConfig.detail
 
+                override val source: String? = event.source
+                override val resources: List<String>? = event.resources
+
+                override val time: Instant = event.time
+
                 override fun failed(t: Throwable?) {
                     error = t
                 }
 
-                override val sourceEvent: Any get() = this
+                override val sourceEvent: Any get() = event
             })
         } else {
             emptyList()
@@ -132,10 +159,18 @@ public class DefaultEventBridgeHandlerConfig(
     }
 }
 
+/**
+ * An abstraction of an event.
+ */
 public interface Event {
     public val id: String
     public val type: String
     public val detail: JsonObject
+
+    public val source: String?
+    public val resources: List<String>?
+
+    public val time: Instant?
 
     /**
      * Report failure
@@ -156,13 +191,15 @@ private class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
         records.mapNotNull { record ->
             val body = record["body"]?.jsonPrimitive?.content
             if (body != null) {
-                val eventBridgeRecord = lambdaJson.parseToJsonElement(body).jsonObject
-                val type = eventBridgeRecord["detail-type"]?.jsonPrimitive?.content
-                val detail = eventBridgeRecord["detail"]?.jsonObject
-
-                if (type == null || detail == null) {
-                    throw IllegalArgumentException("Missing detail type or detail from message")
+                val eventBridgeRecord = try {
+                    lambdaJson.decodeFromString<EventBridgeEvent>(body)
+                } catch (e: SerializationException) {
+                    throw IllegalArgumentException(e.message, e)
                 }
+
+                val type = eventBridgeRecord.detailType
+                val detail = eventBridgeRecord.detail
+                    ?: throw IllegalArgumentException("Missing detail type or detail from message")
 
                 object : Event {
                     override val id: String =
@@ -175,7 +212,10 @@ private class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
                         failures[id] = t
                     }
 
+                    override val source: String? = eventBridgeRecord.source
+                    override val resources: List<String>? = eventBridgeRecord.resources
                     override val sourceEvent: Any = record
+                    override val time: Instant = eventBridgeRecord.time
                 }
             } else {
                 null
