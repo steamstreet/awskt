@@ -138,7 +138,7 @@ public class DefaultEventBridgeHandlerConfig(
     override fun eventsOfType(type: String): List<Event> {
         return if (detailType == type) {
             listOf(object : Event {
-                override val id: String = "__"
+                override val id: String = event.id
                 override val type: String = detailType
                 override val detail: JsonObject = this@DefaultEventBridgeHandlerConfig.detail
 
@@ -160,16 +160,37 @@ public class DefaultEventBridgeHandlerConfig(
 }
 
 /**
- * An abstraction of an event.
+ * Describes the event being received.
  */
 public interface Event {
+    /**
+     * A unique identifier of the event
+     */
     public val id: String
+
+    /**
+     * The event type
+     */
     public val type: String
+
+    /**
+     * The event detail
+     */
     public val detail: JsonObject
 
+    /**
+     * The source of the event (if available)
+     */
     public val source: String?
+
+    /**
+     * A list of resources that this event applies to (if available)
+     */
     public val resources: List<String>?
 
+    /**
+     * The time this event occurred
+     */
     public val time: Instant?
 
     /**
@@ -177,6 +198,10 @@ public interface Event {
      */
     public fun failed(t: Throwable?)
 
+    /**
+     * The original source event. This could be the original event bridge event, the
+     * SQS message, etc.
+     */
     public val sourceEvent: Any?
 }
 
