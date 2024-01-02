@@ -14,6 +14,7 @@ import com.steamstreet.events.EventSchema
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -50,12 +51,12 @@ public interface EventBridgeHandlerConfig {
  */
 @Serializable
 public data class EventBridgeEvent(
-    val version: String,
-    val id: String,
+    val version: String = "0",
+    val id: String = UUID.randomUUID().toString(),
     @SerialName("detail-type")
     val detailType: String,
     val account: String? = null,
-    val time: Instant,
+    val time: Instant = Clock.System.now(),
     val region: String? = null,
     val resources: List<String>? = null,
     val detail: JsonObject? = null,
@@ -330,22 +331,6 @@ public suspend fun EventBridgeHandlerConfig.type(
     }
 }
 
-@Serializable
-public class EventBusEvent(
-    public val version: String? = null,
-    public val account: String? = null,
-    public val region: String? = null,
-    public val detail: JsonElement,
-
-    @SerialName("detail-type")
-    public val detailType: String? = null,
-
-    public val otherType: String? = null,
-    public val source: String? = null,
-    public val id: String? = null,
-    public val resources: List<String>? = null
-)
-
 public fun JsonElement.string(): String? {
     return this.jsonPrimitive.contentOrNull
 }
@@ -372,10 +357,13 @@ public fun EventBridgeFunction.processEvent(str: String) {
 public fun <T> EventBridgeFunction.processEvent(schema: EventSchema<T>, payload: T, source: String? = null) {
     processEvent(
         Json.encodeToString(
-            EventBusEvent(
+            EventBridgeEvent(
+                id = UUID.randomUUID().toString(),
                 detailType = schema.type,
-                detail = Json.encodeToJsonElement(schema.serializer, payload),
-                source = source ?: "aws-kt"
+                detail = Json.encodeToJsonElement(schema.serializer, payload).jsonObject,
+                source = source ?: "aws-kt",
+                time = Clock.System.now(),
+                version = "0"
             )
         )
     )

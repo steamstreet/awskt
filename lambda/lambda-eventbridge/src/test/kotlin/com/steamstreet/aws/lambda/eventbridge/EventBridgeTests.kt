@@ -13,6 +13,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonObject
 import org.amshove.kluent.coInvoking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldHaveSingleItem
@@ -74,9 +75,9 @@ class EventBridgeTests {
                         recordId,
                         "receipt-1",
                         Json.encodeToString(
-                            EventBusEvent(
+                            EventBridgeEvent(
                                 detailType = schema.type,
-                                detail = Json.encodeToJsonElement(TestData("Deep breath")),
+                                detail = Json.encodeToJsonElement(TestData("Deep breath")).jsonObject,
                                 source = "aws-kt"
                             )
                         ),
