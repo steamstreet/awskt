@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -51,7 +50,7 @@ publishing {
         from(components["java"])
 
         pom {
-            name.set(project.name)
+            name.set("AWSKT: ${project.name}")
             description.set(project.description)
             url.set("https://github.com/steamstreet/awskt")
 

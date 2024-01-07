@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.kotlin
-
 plugins {
     kotlin("multiplatform")
     id("kotlinx-serialization")
@@ -39,7 +37,7 @@ publishing {
         groupId = "com.steamstreet"
 
         pom {
-            name.set(project.name)
+            name.set("AWSKT: ${project.name}")
             description.set(project.description)
             url.set("https://github.com/steamstreet/awskt")
 
