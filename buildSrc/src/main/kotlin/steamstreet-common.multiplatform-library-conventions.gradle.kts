@@ -21,17 +21,6 @@ val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
 }
 
 publishing {
-    repositories {
-        maven {
-            name = "sonatype"
-            setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2")
-            credentials {
-                username = findProperty("sonatypeUsername").toString()
-                password = findProperty("sonatypePassword").toString()
-            }
-        }
-    }
-
     publications.withType<MavenPublication> {
         artifact(tasks.findByName("javadocJar"))
         groupId = "com.steamstreet"
