@@ -7,7 +7,9 @@ import aws.sdk.kotlin.services.dynamodb.paginators.items
 import aws.sdk.kotlin.services.dynamodb.paginators.queryPaginated
 import aws.sdk.kotlin.services.dynamodb.paginators.scanPaginated
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
 import java.util.concurrent.atomic.AtomicInteger
 
 
@@ -259,10 +261,10 @@ public class Query internal constructor(
                 projectionExpression = it.joinToString(", ")
             }
 
-            segment?.let {
+            this@Query.segment?.let {
                 segment = it
             }
-            segments?.let {
+            this@Query.segments?.let {
                 totalSegments = it
             }
 

@@ -349,7 +349,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
             updateExpression = buildUpdateExpression()
             returnValues = this@MutableItem.returnValues
 
-            conditionExpression?.let { expr ->
+            this@MutableItem.conditionExpression?.let { expr ->
                 conditionExpression = expr
             }
             if (attributeNames.isNotEmpty()) {
