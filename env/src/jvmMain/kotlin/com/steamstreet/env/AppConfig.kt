@@ -7,6 +7,7 @@ import aws.sdk.kotlin.services.appconfigdata.model.ResourceNotFoundException
 import aws.sdk.kotlin.services.appconfigdata.startConfigurationSession
 import com.steamstreet.mutableLazy
 import com.steamstreet.strings.isNotNullOrBlank
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.*
@@ -19,7 +20,9 @@ import java.time.Instant
  */
 public object AppConfig {
     private var appConfig: AppConfigDataClient by mutableLazy {
-        AppConfigDataClient {}
+        runBlocking {
+            AppConfigDataClient.fromEnvironment()
+        }
     }
 
     private val configurations = mutableMapOf<String, AppConfigConfiguration>()

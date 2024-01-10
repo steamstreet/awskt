@@ -44,4 +44,3 @@ public expect fun getIntEnvironmentVariable(key: String): Int?
  * This allows other tools to be used to install variables (like the command line).
  */
 public expect fun registerEnvironmentVariable(key: String, value: String)
-

@@ -12,6 +12,7 @@ dependencies {
     api(libs.kotlin.serialization.json)
     implementation(libs.kotlin.date.time)
     api(project(":standards"))
+    implementation(project(":env"))
 
     testImplementation(kotlin("test"))
     testImplementation(libs.kluent)

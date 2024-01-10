@@ -3,6 +3,7 @@ package com.steamstreet.dynamokt
 import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 import aws.smithy.kotlin.runtime.auth.awscredentials.CredentialsProvider
 import com.steamstreet.mutableLazy
+import kotlinx.coroutines.runBlocking
 
 /**
  * The global object that stores the Dynamo configuration. Code to read and
@@ -12,18 +13,14 @@ public class DynamoKt(
     public val table: String,
     public val pkName: String = "pk",
     public val skName: String? = "sk",
-    public val builder: DynamoDbClient.Builder = defaultClientBuilder,
+    public val builder: (CredentialsProvider?) -> DynamoDbClient = defaultClientBuilder,
     public val defaultCredentials: CredentialsProvider? = null,
     public val ttlAttribute: String? = null
 ) {
     internal val indexes = hashMapOf<String, DynamoKtIndex>()
 
     private val defaultClient: DynamoDbClient by lazy {
-        builder.apply {
-            if (defaultCredentials != null) {
-                this.config.credentialsProvider = defaultCredentials
-            }
-        }.build()
+        builder(defaultCredentials)
     }
 
     /**
@@ -33,9 +30,7 @@ public class DynamoKt(
         val client = if (awsCredentialsProvider == null) {
             defaultClient
         } else {
-            builder.apply {
-                config.credentialsProvider = awsCredentialsProvider
-            }.build()
+            builder(awsCredentialsProvider)
         }
         return DynamoKtSession(
             this,
@@ -51,8 +46,16 @@ public class DynamoKt(
     }
 
     public companion object {
-        public var defaultClientBuilder: DynamoDbClient.Builder by mutableLazy {
-            DynamoDbClient.builder()
+        public var defaultClientBuilder: (CredentialsProvider?) -> DynamoDbClient by mutableLazy {
+            return@mutableLazy {
+                runBlocking {
+                    DynamoDbClient.fromEnvironment {
+                        if (it != null) {
+                            this.credentialsProvider = it
+                        }
+                    }
+                }
+            }
         }
     }
 }
