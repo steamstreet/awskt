@@ -23,14 +23,13 @@ class BasicTests {
 
     @BeforeTest
     fun initDynamo() {
-        DynamoKt.defaultClientBuilder = DynamoDbClient.builder().apply {
-            config.apply {
+        DynamoKt.defaultClientBuilder = {
+            DynamoDbClient {
                 endpointUrl = Url.parse("http://localhost:${dynamo.firstMappedPort}")
                 region = "us-east-1"
                 credentialsProvider = StaticCredentialsProvider {
                     accessKeyId = "DummyKey"
                     secretAccessKey = "DummySecret"
-
                 }
             }
         }
@@ -68,7 +67,7 @@ class BasicTests {
     }
 
     suspend fun createTable(tableName: String = "Table"): DynamoKt {
-        val dynamoClient = DynamoKt.defaultClientBuilder.build()
+        val dynamoClient = DynamoKt.defaultClientBuilder(null)
         dynamoClient.createTable {
             this.tableName = tableName
             keySchema = listOf(
