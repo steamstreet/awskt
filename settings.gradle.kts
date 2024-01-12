@@ -63,7 +63,7 @@ dependencyResolutionManagement {
             library("slf4j-jcl", "org.slf4j", "jcl-over-slf4j").versionRef(slf4jVersion)
             library("slf4j-log4j", "org.slf4j", "log4j-over-slf4j").versionRef(slf4jVersion)
 
-            library("slf4j-lambda", "uk.bot-by", "slf4j-aws-lambda").version("3.1.0")
+            library("slf4j-lambda", "org.jlib", "jlib-awslambda-logback").version("1.0.0")
 
             library("logstash-logback-encoder", "net.logstash.logback:logstash-logback-encoder:6.6")
 

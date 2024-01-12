@@ -1,4 +1,3 @@
-@file:Suppress("UNUSED_VARIABLE")
 plugins {
     id("steamstreet-common.multiplatform-library-conventions")
 }
@@ -23,13 +22,6 @@ kotlin {
                 implementation(libs.kotlin.coroutines.slf4j)
             }
         }
-    }
-}
-
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
     }
 }
 
