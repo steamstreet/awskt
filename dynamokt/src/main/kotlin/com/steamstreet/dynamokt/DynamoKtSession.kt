@@ -13,12 +13,14 @@ import kotlinx.coroutines.launch
 public class DynamoKtSession(
     public val dynamoKt: DynamoKt,
     public val dynamo: DynamoDbClient,
-    public val table: String,
-    public val pkName: String,
-    public val skName: String?,
+    public val table: String = dynamoKt.table,
+    public val pkName: String = dynamoKt.pkName,
+    public val skName: String? = dynamoKt.skName,
     private val cache: MutableMap<String, Item>? = null
 ) : ItemUpdater {
-
+    /**
+     * Get the given item, or return null if not available.
+     */
     public suspend fun getOrNull(
         pk: String, sk: String?, attributes: List<String>? = null,
         consistent: Boolean = false
@@ -40,6 +42,10 @@ public class DynamoKtSession(
         }
     }
 
+    /**
+     * Get the item with the given partition and sort key.
+     * @throws NotFoundException if the item isn't found.
+     */
     public suspend fun get(
         pk: String,
         sk: String?,
