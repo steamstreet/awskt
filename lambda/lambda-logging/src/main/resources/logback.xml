@@ -1,5 +1,5 @@
 <configuration>
-    <appender name="awslambda" class="org.jlib.cloud.aws.lambda.logback.AwsLambdaAppender">
+    <appender name="awslambda" class="com.steamstreet.aws.lambda.logging.AwsLambdaAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <fieldNames>
                 <levelValue>[ignore]</levelValue>

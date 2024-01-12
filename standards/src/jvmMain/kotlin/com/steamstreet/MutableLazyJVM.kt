@@ -7,7 +7,7 @@ import kotlin.time.Duration
 /**
  * A version of the lazy delegate that also allows the value to be set at any point.
  */
-public actual class MutableLazy<T> actual constructor(private val timeout: Duration?, initializer: () -> T) :
+public class MutableLazy<T>(private val timeout: Duration?, initializer: () -> T) :
     ReadWriteProperty<Any?, T> {
     private var value: Any? = UninitializedValue
     private var initializer: (() -> T)? = initializer
@@ -54,3 +54,7 @@ public actual class MutableLazy<T> actual constructor(private val timeout: Durat
         }
     }
 }
+
+
+public actual fun <T> cached(timeout: Duration, initializer: () -> T): ReadWriteProperty<Any?, T> =
+    MutableLazy(timeout, initializer)

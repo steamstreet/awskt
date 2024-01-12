@@ -64,6 +64,7 @@ dependencyResolutionManagement {
             library("slf4j-log4j", "org.slf4j", "log4j-over-slf4j").versionRef(slf4jVersion)
 
             library("slf4j-lambda", "org.jlib", "jlib-awslambda-logback").version("1.0.0")
+            library("slf4j-logback-classic", "ch.qos.logback:logback-classic:1.4.14")
 
             library("logstash-logback-encoder", "net.logstash.logback:logstash-logback-encoder:6.6")
 
@@ -80,7 +81,7 @@ dependencyResolutionManagement {
                 "kotlin-coroutines-slf4j", "org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.6.4"
             )
             library("kotlin-date-time", "org.jetbrains.kotlinx", "kotlinx-datetime").version("0.4.0")
-            library("kluent", "org.amshove.kluent:kluent:1.65")
+            library("kluent", "org.amshove.kluent:kluent:1.73")
 
             library("jackson", "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6")
 
