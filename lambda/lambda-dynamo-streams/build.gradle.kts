@@ -7,7 +7,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.kotlin.serialization.json)
     api(project(":lambda:lambda-coroutines"))
     api(project(":dynamokt"))
 }

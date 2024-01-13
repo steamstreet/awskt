@@ -14,7 +14,7 @@ class AwsLambdaAppender : UnsynchronizedAppenderBase<ILoggingEvent?>() {
     private val logger: LambdaLogger = LambdaRuntime.getLogger()
 
     @Suppress("MemberVisibilityCanBePrivate")
-    val encoder: Encoder<ILoggingEvent>? = null
+    var encoder: Encoder<ILoggingEvent>? = null
 
     init {
         LambdaRuntimeInternal.setUseLog4jAppender(true)

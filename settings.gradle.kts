@@ -63,7 +63,6 @@ dependencyResolutionManagement {
             library("slf4j-jcl", "org.slf4j", "jcl-over-slf4j").versionRef(slf4jVersion)
             library("slf4j-log4j", "org.slf4j", "log4j-over-slf4j").versionRef(slf4jVersion)
 
-            library("slf4j-lambda", "org.jlib", "jlib-awslambda-logback").version("1.0.0")
             library("slf4j-logback-classic", "ch.qos.logback:logback-classic:1.4.14")
 
             library("logstash-logback-encoder", "net.logstash.logback:logstash-logback-encoder:6.6")
@@ -102,6 +101,7 @@ include(":lambda:lambda-api-gateway-ktor")
 include(":lambda:lambda-appsync")
 include(":lambda:lambda-core")
 include(":lambda:lambda-coroutines")
+include(":lambda:lambda-default")
 include(":lambda:lambda-dynamo-streams")
 include(":lambda:lambda-eventbridge")
 include(":lambda:lambda-sns")

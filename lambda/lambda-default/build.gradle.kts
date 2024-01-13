@@ -2,21 +2,19 @@ plugins {
     id("steamstreet-common.jvm-library-conventions")
 }
 
-kotlin {
-    explicitApi()
-}
-
 dependencies {
-    api(libs.kotlin.serialization.json)
+    api(project(":env"))
+    api(project(":standards"))
+    api(project(":logging"))
     api(project(":lambda:lambda-core"))
-    api(libs.kotlin.coroutines.core)
+    api(project(":lambda:lambda-logging"))
 }
 
 publishing {
     publications {
         withType<MavenPublication> {
             pom {
-                description.set("Helpers for integrating coroutines into AWS Lambdas in Kotlin")
+                description.set("Provides typical defaults for Lambdas in Kotlin.")
             }
         }
     }
