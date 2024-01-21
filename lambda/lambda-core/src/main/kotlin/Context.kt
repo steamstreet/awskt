@@ -10,9 +10,13 @@ import java.util.*
  * A fake version of the Lambda context that can be useful for some testing or
  * for initializing a function for snap start.
  */
-class MockLambdaContext(private val function: String = "Unknown") : Context {
+class MockLambdaContext(
+    private val function: String = "Unknown",
+    private val requestId: String = UUID.randomUUID().toString()
+) : Context {
+
     override fun getAwsRequestId(): String {
-        return UUID.randomUUID().toString()
+        return requestId
     }
 
     override fun getLogGroupName(): String {
