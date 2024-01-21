@@ -32,6 +32,8 @@ import kotlin.system.measureTimeMillis
  * Callback interface for event bridge handler installation.
  */
 public interface EventBridgeHandlerConfig {
+    public var logEventProcessing: Boolean
+
     /**
      * Get all events of the given type
      */
@@ -73,9 +75,10 @@ public fun eventBridge(
     output: OutputStream? = null,
     tracePerformance: Boolean = true,
     batchSqs: Boolean = false,
+    logRequestPayload: Boolean = false,
     config: suspend EventBridgeHandlerConfig.() -> Unit
 ) {
-    lambdaInput<JsonElement>(input, context) { element ->
+    lambdaInput<JsonElement>(input, context, logInput = logRequestPayload) { element ->
         val obj = element.jsonObject
 
         // check if this is an SQS message. This allows us to use the same handler for event bridge events
@@ -132,6 +135,7 @@ public class DefaultEventBridgeHandlerConfig(
     private val event: EventBridgeEvent
 ) : EventBridgeHandlerConfig {
     public var error: Throwable? = null
+    override var logEventProcessing: Boolean = true
 
     private val detailType: String get() = event.detailType
     private val detail: JsonObject get() = event.detail!!
@@ -211,6 +215,8 @@ private class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
         it.jsonObject
     }
 
+    override var logEventProcessing: Boolean = true
+
     val failures = mutableMapOf<String, Throwable?>()
 
     val events: List<Event> by lazy {
@@ -286,7 +292,9 @@ public suspend fun <T, R> EventBridgeHandlerConfig.typeWithContext(
     handler: suspend context(Event) (T) -> R
 ) {
     eventsOfType(type.type).forEach { event ->
-        logger.logJson("Processing event", "event", event.detail.toString())
+        if (logEventProcessing) {
+            logger.logJson("Processing event", "event", event.detail.toString())
+        }
 
         try {
             val value = lambdaJson.decodeFromJsonElement(type.serializer, event.detail)

@@ -20,7 +20,7 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             val kotlinSerializationVersion = version("kotlin-serialization", "1.5.1")
-            val awsVersion = version("aws", "1.0.18")
+            val awsVersion = version("aws", "1.0.39")
 
             library(
                 "kotlin-serialization-core", "org.jetbrains.kotlinx",
@@ -50,7 +50,7 @@ dependencyResolutionManagement {
             aws("s3")
             aws("appconfigdata")
 
-            val ktorVersion = version("ktor", "2.2.3")
+            val ktorVersion = version("ktor", "2.3.7")
             library("ktor-server-core", "io.ktor", "ktor-server-core").versionRef(ktorVersion)
             library("ktor-server-host-common", "io.ktor", "ktor-server-host-common").versionRef(ktorVersion)
             library("ktor-server-test-host", "io.ktor", "ktor-server-test-host").versionRef(ktorVersion)

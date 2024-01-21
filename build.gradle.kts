@@ -21,3 +21,7 @@ nexusPublishing {
         }
     }
 }
+
+subprojects {
+    this.task<DependencyReportTask>("allDeps")
+}

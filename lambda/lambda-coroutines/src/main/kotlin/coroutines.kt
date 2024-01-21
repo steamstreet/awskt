@@ -8,7 +8,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
@@ -34,15 +33,16 @@ public lateinit var lambdaContext: Context
 /**
  * Read the incoming data stream as text and log if configured to do so.
  */
-public suspend fun InputStream.readIncoming(handler: suspend (String) -> Unit) {
+public suspend fun InputStream.readIncoming(log: Boolean = logIncoming, handler: suspend (String) -> Unit) {
     val text = reader().readText()
     try {
-        if (logIncoming) {
+        if (log) {
             logger.info(Markers.appendRaw("input", text), "Request received")
         }
         handler(text)
     } catch (t: Throwable) {
-        if (!logIncoming) {
+        // we always log failures to read.
+        if (!log) {
             logger.info(Markers.appendRaw("input", text), "Request received")
         }
         throw t
@@ -56,7 +56,7 @@ public fun <T> lambda(context: Context = MockLambdaContext(), handler: suspend C
     return runBlocking {
         lambdaContext = context
         withContext(Dispatchers.Default) {
-            mdcContext("requestId" to context.awsRequestId) {
+            mdcContext("requestId" to context.awsRequestId, "@requestId" to context.awsRequestId) {
                 try {
                     handler()
                 } catch (t: Throwable) {
@@ -74,10 +74,11 @@ public fun <T> lambda(context: Context = MockLambdaContext(), handler: suspend C
 public inline fun <reified T> lambdaInput(
     input: InputStream,
     context: Context,
+    logInput: Boolean = logIncoming,
     crossinline handler: suspend CoroutineScope.(T) -> Unit
 ) {
     lambda(context) {
-        input.readIncoming { text ->
+        input.readIncoming(logInput) { text ->
             if (T::class == JsonElement::class) {
                 val el = lambdaJson.parseToJsonElement(text)
                 handler(el as T)
@@ -167,6 +168,8 @@ public inline fun <reified T, reified R> lambdaIO(
  * Base class for any lambda that wants to suspend.
  */
 public interface SuspendingLambda {
+    public var logIncoming: Boolean
+
     /**
      * The entry point from lambda. Sets up the context and then calls the suspending handle implementation
      */
@@ -186,8 +189,10 @@ public interface SuspendingLambda {
  * An abstract base class for lambdas that receive input but do not produce output.
  */
 public abstract class InputLambda<T>(private val serializer: KSerializer<T>) : SuspendingLambda {
+    override var logIncoming: Boolean = true
+
     override suspend fun handle(input: InputStream, output: OutputStream) {
-        input.readIncoming { text ->
+        input.readIncoming(logIncoming) { text ->
             val parameter = lambdaJson.decodeFromString(serializer, text)
             handle(parameter)
         }
@@ -203,8 +208,10 @@ public abstract class IOLambda<T, R>(
     private val serializer: KSerializer<T>,
     private val out: KSerializer<R>
 ) : SuspendingLambda {
+    override var logIncoming: Boolean = true
+
     override suspend fun handle(input: InputStream, output: OutputStream) {
-        input.readIncoming { text ->
+        input.readIncoming(logIncoming) { text ->
             val parameter = lambdaJson.decodeFromString(serializer, text)
             val result = handle(parameter)
 
