@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -13,6 +14,8 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
         kotlinOptions.jvmTarget = "11"
+
+        explicitApiMode = ExplicitApiMode.Warning
     }
 }
 

@@ -3,14 +3,17 @@ package com.steamstreet.env
 import aws.sdk.kotlin.services.secretsmanager.SecretsManagerClient
 import aws.sdk.kotlin.services.secretsmanager.getSecretValue
 import com.steamstreet.env.Env.optional
+import com.steamstreet.mutableLazy
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-private val secrets: SecretsManagerClient by lazy {
-    SecretsManagerClient {}
+public var secrets: SecretsManagerClient by mutableLazy {
+    runBlocking {
+        SecretsManagerClient.fromEnvironment()
+    }
 }
 
 public actual fun getEnvironmentVariable(key: String): String? = runBlocking {
@@ -21,10 +24,10 @@ public actual fun getEnvironmentVariable(key: String): String? = runBlocking {
         try {
             secretKey = secretKey ?: value.removePrefix("Secret_")
             secrets.getSecretValue {
-                secretId = secretKey.substringBefore(".")
+                secretId = secretKey.substringBeforeLast(".")
             }.secretString?.let {
                 if (secretKey.contains('.')) {
-                    val valueKey = secretKey.substringAfter(".")
+                    val valueKey = secretKey.substringAfterLast(".")
                     Json.parseToJsonElement(it).jsonObject[valueKey]?.jsonPrimitive?.contentOrNull
                 } else {
                     it
