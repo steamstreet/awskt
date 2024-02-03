@@ -8,13 +8,13 @@ import com.amazonaws.services.lambda.runtime.LambdaRuntime
 import com.amazonaws.services.lambda.runtime.LambdaRuntimeInternal
 
 /**
- * SLF4J appender for lambda.
+ * SLF4J appender for AWS Lambda.
  */
-class AwsLambdaAppender : UnsynchronizedAppenderBase<ILoggingEvent?>() {
+public class AwsLambdaAppender : UnsynchronizedAppenderBase<ILoggingEvent?>() {
     private val logger: LambdaLogger = LambdaRuntime.getLogger()
 
     @Suppress("MemberVisibilityCanBePrivate")
-    var encoder: Encoder<ILoggingEvent>? = null
+    public var encoder: Encoder<ILoggingEvent>? = null
 
     init {
         LambdaRuntimeInternal.setUseLog4jAppender(true)
