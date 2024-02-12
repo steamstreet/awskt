@@ -8,4 +8,15 @@ public class NotFoundException(message: String? = null, public val resourceId: S
 /**
  * Thrown when an item is a duplicate
  */
-public class DuplicateItemException(public val id: String? = null, message: String? = null) : Exception(message)
+public open class DuplicateItemException(
+    public val id: String? = null,
+    message: String? = null
+) : Exception(message), MDCException {
+    override val mdcAttributes: Map<String, Any?> = mapOf(
+        "itemId" to id
+    )
+}
+
+public interface MDCException {
+    public val mdcAttributes: Map<String, Any?>? get() = null
+}

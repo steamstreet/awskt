@@ -9,6 +9,10 @@ import kotlinx.datetime.Instant
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.reflect.KProperty1
 
+public class DuplicateDynamoItemException(pk: String, sk: String?, item: Item? = null) : DuplicateItemException(
+    "${pk}${if (sk != null) ":$sk" else ""}"
+)
+
 /**
  * An item that can be updated. Never created directly, this is used when calling update on an item
  * or via the session.
@@ -41,10 +45,16 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     public var replace: Boolean = false
 
     /**
-     * The values that are returned when the update is called. Defaults to all of the new
+     * The values that are returned when the update is called. Defaults to all new
      * values, but might be useful to return only updated values for example.
      */
     public var returnValues: ReturnValue = ReturnValue.AllNew
+
+    /**
+     * Defines whether to return the old item when a conditional check fails.
+     */
+    private var conditionalCheckFailReturn: ReturnValuesOnConditionCheckFailure =
+        ReturnValuesOnConditionCheckFailure.None
 
     /**
      * Get the attribute with the given name. Attempts to use the updated value if it
@@ -69,6 +79,17 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
 
     public fun update(): MutableItem {
         return this
+    }
+
+    /**
+     * Adds a condition to prevent an existing item from being overwritten. Optionally
+     * set a flag to return the old item if this condition fails.
+     */
+    public fun doNoOverwrite(returnValuesInResponse: Boolean = false) {
+        this.doNotOverwrite = true
+        if (returnValuesInResponse) {
+            this.conditionalCheckFailReturn = ReturnValuesOnConditionCheckFailure.AllOld
+        }
     }
 
     /**
@@ -189,11 +210,13 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      */
     public fun condition(
         expression: String, attributeNames: Map<String, String> = emptyMap(),
-        attributeValues: Map<String, AttributeValue> = emptyMap()
+        attributeValues: Map<String, AttributeValue> = emptyMap(),
+        returnValuesOnFail: ReturnValuesOnConditionCheckFailure = ReturnValuesOnConditionCheckFailure.None
     ) {
         conditionExpression = expression
         this.attributeNames.putAll(attributeNames)
         this.attributeValues.putAll(attributeValues)
+        this.conditionalCheckFailReturn = returnValuesOnFail
     }
 
     /**
@@ -313,10 +336,12 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
                 if (doNotOverwrite) {
                     conditionExpression = "attribute_not_exists(#pk)"
                     expressionAttributeNames = mapOf("#pk" to dynamo.pkName)
+                    this.returnValuesOnConditionCheckFailure = this@MutableItem.conditionalCheckFailReturn
                 }
             }
         } catch (cce: ConditionalCheckFailedException) {
-            throw DuplicateItemException("${attributes[dynamo.pkName]?.asS()}:${attributes[dynamo.skName]?.asS()}")
+            throw DuplicateDynamoItemException(attributes[dynamo.pkName]?.asS().orEmpty(),
+                dynamo.skName?.let { attributes[it]?.asS() })
         }
 
         return if (returnValues == ReturnValue.AllNew) {
@@ -351,6 +376,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
 
             this@MutableItem.conditionExpression?.let { expr ->
                 conditionExpression = expr
+                this.returnValuesOnConditionCheckFailure = this@MutableItem.conditionalCheckFailReturn
             }
             if (attributeNames.isNotEmpty()) {
                 expressionAttributeNames = attributeNames
