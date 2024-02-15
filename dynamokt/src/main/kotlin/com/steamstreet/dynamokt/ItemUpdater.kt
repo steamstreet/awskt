@@ -30,7 +30,7 @@ public interface ItemUpdater {
      * Update an item. This will not replace an item, but update individual attributes based on
      * the callback.
      */
-    public suspend fun update(pk: String, sk: String?, block: MutableItem.() -> Unit = {}): Item
+    public suspend fun update(pk: String, sk: String?, block: suspend MutableItem.() -> Unit = {}): Item
 
     /**
      * Update an item
