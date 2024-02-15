@@ -305,6 +305,15 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     }
 
     /**
+     * Clear the ttl.
+     */
+    public fun clearTTL() {
+        dynamo.dynamoKt.ttlAttribute?.let {
+            delete(it)
+        }
+    }
+
+    /**
      * Set the TTL to the current time plus the provided offset.
      */
     public fun setTTL(duration: kotlin.time.Duration) {
