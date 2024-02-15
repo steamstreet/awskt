@@ -127,7 +127,7 @@ public class DynamoKtSession(
         }
     }
 
-    override suspend fun update(pk: String, sk: String?, block: MutableItem.() -> Unit): Item {
+    override suspend fun update(pk: String, sk: String?, block: suspend MutableItem.() -> Unit): Item {
         return MutableItem(this, keyMap(pk, sk)).let {
             it.block()
             it.save()
