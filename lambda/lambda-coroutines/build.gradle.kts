@@ -2,10 +2,6 @@ plugins {
     id("steamstreet-common.jvm-library-conventions")
 }
 
-kotlin {
-    explicitApi()
-}
-
 dependencies {
     api(libs.kotlin.serialization.json)
     api(project(":lambda:lambda-core"))

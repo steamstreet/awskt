@@ -8,34 +8,34 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 @Serializable
-class SnsPayload(
-    val Records: List<SnsRecord> = emptyList()
+public class SnsPayload(
+    public val Records: List<SnsRecord> = emptyList()
 )
 
 @Serializable
-class SnsRecord(
-    val Sns: SnsData,
-    val EventVersion: String,
-    val EventSubscriptionArn: String? = null,
-    val EventSource: String
+public class SnsRecord(
+    public val Sns: SnsData,
+    public val EventVersion: String,
+    public val EventSubscriptionArn: String? = null,
+    public val EventSource: String
 )
 
 @Serializable
-class SnsData(
-    val SignatureVersion: String,
-    val Timestamp: String,
-    val Signature: String,
-    val SigningCertUrl: String? = null,
-    val MessageId: String,
-    val Message: String,
-    val TopicArn: String,
-    val Subject: String? = null
+public class SnsData(
+    public val SignatureVersion: String,
+    public val Timestamp: String,
+    public val Signature: String,
+    public val SigningCertUrl: String? = null,
+    public val MessageId: String,
+    public val Message: String,
+    public val TopicArn: String,
+    public val Subject: String? = null
 )
 
 /**
  * Base class for a lambda function that handles SNS messages.
  */
-abstract class SNSHandler<T>(private val serializer: KSerializer<T>) :
+public abstract class SNSHandler<T>(private val serializer: KSerializer<T>) :
     InputLambda<SnsPayload>(SnsPayload.serializer()) {
     private val json = Json {
         ignoreUnknownKeys = true
@@ -56,5 +56,5 @@ abstract class SNSHandler<T>(private val serializer: KSerializer<T>) :
      * Handle an individual message
      */
     context(SnsRecord)
-    abstract suspend fun handleMessage(message: T)
+    public abstract suspend fun handleMessage(message: T)
 }
