@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 /**
- * Attribute mappings for Java date and time
+ * Attribute mappings for date and times
  */
 
 public fun <R : ItemContainer> R.instantAttribute(attributeName: String? = null): ItemAttributeDelegate<Instant?, R> =
@@ -54,6 +54,19 @@ public fun <R : ItemContainer> R.localDateAttribute(
     }
 }
 
+/**
+ * Get an instant from the given key.
+ */
+public suspend fun Item.getInstant(key: String): Instant? = get(key)?.instant
+
 public val AttributeValue.localDate: java.time.LocalDate? get() = asSOrNull()?.let { java.time.LocalDate.parse(it) }
 public val AttributeValue.localTime: LocalTime? get() = asSOrNull()?.let { LocalTime.parse(it) }
 public val AttributeValue.localDateTime: LocalDateTime? get() = asSOrNull()?.let { LocalDateTime.parse(it) }
+public val AttributeValue.instant: Instant? get() = asSOrNull()?.let { Instant.parse(it) }
+
+
+/**
+ * Attribute value from an Instant
+ */
+public fun Instant.attributeValue(): AttributeValue = AttributeValue.S(this.toString())
+
