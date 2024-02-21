@@ -10,7 +10,7 @@ public interface ApplicationEventPoster {
     /**
      * Post the event as a string
      */
-    public fun post(eventType: String, eventDetail: String, source: String? = null)
+    public suspend fun post(eventType: String, eventDetail: String, source: String? = null)
 
     /**
      * Post a set of events

@@ -2,7 +2,8 @@ package com.steamstreet.events
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.serializer
 
 /**
@@ -22,7 +23,7 @@ public inline fun <reified T> eventSchema(typeName: String): EventSchema<T> =
 /**
  * Send events from this schema
  */
-public fun <T> EventSchema<T>.post(input: T) {
+public suspend fun <T> EventSchema<T>.post(input: T) {
     val obj = Json.encodeToJsonElement(this.serializer, input).jsonObject
     poster.post(this.type, obj.toString())
 }
