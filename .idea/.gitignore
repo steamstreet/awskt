@@ -1,0 +1,8 @@
+# Default ignored files
+*.xml
+*.iml
+.name
+
+!inspectionProfiles/*
+!codeStyles/*
+!vcs.xml
