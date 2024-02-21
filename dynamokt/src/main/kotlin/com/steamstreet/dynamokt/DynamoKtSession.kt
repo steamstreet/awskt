@@ -18,6 +18,16 @@ public class DynamoKtSession(
     public val skName: String? = dynamoKt.skName,
     private val cache: MutableMap<String, Item>? = null
 ) : ItemUpdater {
+
+    /**
+     * Describe the table
+     */
+    public suspend fun describeTable(): TableDescription {
+        return dynamo.describeTable {
+            tableName = table
+        }.table ?: throw IllegalStateException()
+    }
+
     /**
      * Get the given item, or return null if not available.
      */
