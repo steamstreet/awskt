@@ -51,8 +51,9 @@ public fun GlobalSecondaryIndex(name: String, hashKey: String, rangeKey: String?
 
 /**
  * Create a table for testing with some basic defaults that aren't likely useful for testing environments.
+ * @return the name of the newly created table
  */
-public suspend fun DynamoDbClient.defaultTable(envKey: String, block: CreateTableRequest.Builder.() -> Unit) {
+public suspend fun DynamoDbClient.defaultTable(envKey: String, block: CreateTableRequest.Builder.() -> Unit): String {
     val tableName = "${envKey}-${UUID.randomUUID()}"
     createTable {
         this.tableName = tableName
@@ -68,4 +69,6 @@ public suspend fun DynamoDbClient.defaultTable(envKey: String, block: CreateTabl
         block()
     }
     registerEnvironmentVariable(envKey, tableName)
+
+    return tableName
 }
