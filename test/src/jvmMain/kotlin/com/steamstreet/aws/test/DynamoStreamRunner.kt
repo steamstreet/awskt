@@ -89,7 +89,7 @@ public class DynamoStreamRunner(
     private suspend fun processRecord(streamArn: String, record: Record) {
         val event = DynamoStreamEvent(
             record.eventId!!,
-            record.eventName!!.toString(),
+            record.eventName!!.value,
             record.eventVersion!!,
             record.eventSource!!,
             record.awsRegion!!,
@@ -103,7 +103,7 @@ public class DynamoStreamRunner(
                     oldImage?.toModelAttributeValue(),
                     sequenceNumber,
                     sizeBytes,
-                    streamViewType?.toString()
+                    streamViewType?.value
                 )
             },
             streamArn,
