@@ -1,6 +1,9 @@
 package com.steamstreet.dynamokt
 
-import aws.sdk.kotlin.services.dynamodb.model.*
+import aws.sdk.kotlin.services.dynamodb.model.AttributeAction
+import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
+import aws.sdk.kotlin.services.dynamodb.model.TransactWriteItem
+import aws.sdk.kotlin.services.dynamodb.model.TransactWriteItemsRequest
 import kotlinx.coroutines.runBlocking
 import java.io.Closeable
 
@@ -117,7 +120,7 @@ public class Transaction internal constructor(private val mapper: DynamoKtSessio
         }
     }
 
-    override suspend fun update(pk: String, sk: String?, block: MutableItem.() -> Unit): Item {
+    override suspend fun update(pk: String, sk: String?, block: suspend MutableItem.() -> Unit): Item {
         val key = mapper.keyMap(pk, sk)
         return MutableItem(mapper, key).let {
             it.block()
