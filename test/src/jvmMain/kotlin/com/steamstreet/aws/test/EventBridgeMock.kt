@@ -225,7 +225,11 @@ public class EventBridgeMock(
             synchronized(events) {
                 events.add(entry)
             }
-            buses[entry.eventBusName]?.putEvent(entry)
+            val busName = entry.eventBusName?.let {
+                if (it.startsWith("arn:aws")) it.substringAfter("event-bus/")
+                else it
+            }
+            buses[busName]?.putEvent(entry)
             PutEventsResultEntry {}
         }
         return PutEventsResponse {
