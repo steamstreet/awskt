@@ -69,13 +69,13 @@ public fun DynamoStreamEvent.diffs(): List<String> {
 
 public fun DynamoStreamEvent.newItem(session: DynamoKtSession): Item? {
     return dynamodb.new?.let {
-        session.unloaded(dynamodb.keys + it, false)
+        session.facade(dynamodb.keys + it)
     }
 }
 
 public fun DynamoStreamEvent.oldItem(session: DynamoKtSession): Item? {
     return dynamodb.old?.let {
-        session.unloaded(dynamodb.keys + it, false)
+        session.facade(dynamodb.keys + it)
     }
 }
 
