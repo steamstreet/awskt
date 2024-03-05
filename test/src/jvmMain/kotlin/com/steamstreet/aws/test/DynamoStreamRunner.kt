@@ -8,8 +8,10 @@ import aws.sdk.kotlin.services.dynamodbstreams.model.Record
 import aws.sdk.kotlin.services.dynamodbstreams.model.ShardIteratorType
 import aws.sdk.kotlin.services.dynamodbstreams.model.TrimmedDataAccessException
 import aws.smithy.kotlin.runtime.time.epochMilliseconds
+import com.steamstreet.aws.lambda.DynamoStreamHandler
 import com.steamstreet.dynamokt.DynamoStreamEvent
 import com.steamstreet.dynamokt.DynamoStreamEventDetail
+import com.steamstreet.dynamokt.DynamoStreamRecords
 import kotlinx.coroutines.*
 
 public typealias StreamProcessorFunction = (suspend (DynamoStreamEvent) -> Unit)
@@ -163,5 +165,18 @@ internal fun Map<String, aws.sdk.kotlin.services.dynamodbstreams.model.Attribute
         Map<String, AttributeValue> {
     return this.mapValues { (_, value) ->
         value.toModelAttributeValue()
+    }
+}
+
+/**
+ * Create a stream runner that takes a DynamoStreamHandler instance, simplifying setup.
+ */
+public fun DynamoStreamRunner(
+    tableName: String,
+    streamsClient: DynamoDbStreamsClient,
+    streamProcessor: DynamoStreamHandler
+): DynamoStreamRunner {
+    return DynamoStreamRunner(tableName, streamsClient) {
+        streamProcessor.handle(DynamoStreamRecords(listOf(it)))
     }
 }
