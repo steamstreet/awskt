@@ -23,17 +23,17 @@ public inline fun <reified T> eventSchema(typeName: String): EventSchema<T> =
 /**
  * Send events from this schema
  */
-public suspend fun <T> EventSchema<T>.post(input: T) {
+public suspend fun <T> EventSchema<T>.post(input: T, source: String? = null) {
     val obj = Json.encodeToJsonElement(this.serializer, input).jsonObject
-    poster.post(this.type, obj.toString())
+    poster.post(this.type, obj.toString(), source)
 }
 
 /**
  * Post more than one event.
  */
-public suspend fun <T> EventSchema<T>.post(input: Collection<T>) {
+public suspend fun <T> EventSchema<T>.post(input: Collection<T>, source: String? = null) {
     val events = input.map {
-        EventSchemaEvent(this, it)
+        EventSchemaEvent(this, it, source)
     }
     poster.post(events)
 }
