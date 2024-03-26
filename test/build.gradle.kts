@@ -31,6 +31,7 @@ kotlin {
                 api(project(":standards"))
                 api(project(":dynamokt"))
                 api(project(":lambda:lambda-eventbridge"))
+                api(project(":lambda:lambda-dynamo-streams"))
             }
         }
     }
