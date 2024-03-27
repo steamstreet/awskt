@@ -57,3 +57,17 @@ public abstract class DynamoStreamHandler : InputLambda<DynamoStreamRecords>(
      */
     protected open suspend fun onItemUpdate(old: Item?, new: Item?, record: DynamoStreamEvent) {}
 }
+
+/**
+ * DynamoKt specific stream handler. Takes care of session handling.
+ */
+public abstract class DynamoKtStreamHandler(public val dynamoKt: DynamoKt) :
+    DynamoStreamHandler() {
+
+    /**
+     * Constructs the session from the dynamoKt instance.
+     */
+    override fun dynamoKtSession(): DynamoKtSession? {
+        return dynamoKt.session()
+    }
+}
