@@ -169,6 +169,7 @@ public inline fun <reified T, reified R> lambdaIO(
  */
 public interface SuspendingLambda {
     public var logIncoming: Boolean
+    public var logOutgoing: Boolean
 
     /**
      * The entry point from lambda. Sets up the context and then calls the suspending handle implementation
@@ -190,6 +191,7 @@ public interface SuspendingLambda {
  */
 public abstract class InputLambda<T>(private val serializer: KSerializer<T>) : SuspendingLambda {
     override var logIncoming: Boolean = true
+    override var logOutgoing: Boolean = true
 
     override suspend fun handle(input: InputStream, output: OutputStream) {
         input.readIncoming(logIncoming) { text ->
@@ -209,6 +211,7 @@ public abstract class IOLambda<T, R>(
     private val out: KSerializer<R>
 ) : SuspendingLambda {
     override var logIncoming: Boolean = true
+    override var logOutgoing: Boolean = true
 
     override suspend fun handle(input: InputStream, output: OutputStream) {
         input.readIncoming(logIncoming) { text ->
@@ -216,8 +219,17 @@ public abstract class IOLambda<T, R>(
             val result = handle(parameter)
 
             if (result != null) {
-                @OptIn(ExperimentalSerializationApi::class)
-                lambdaJson.encodeToStream(out, result, output)
+                if (logOutgoing) {
+                    val resultData = lambdaJson.encodeToString(out, result)
+                    logger.info(Markers.appendRaw("event", resultData), "Lambda response sent")
+                    output.writer().apply {
+                        write(resultData)
+                        flush()
+                    }
+                } else {
+                    @OptIn(ExperimentalSerializationApi::class)
+                    lambdaJson.encodeToStream(out, result, output)
+                }
             }
         }
     }
