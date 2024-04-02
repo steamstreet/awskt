@@ -67,6 +67,8 @@ dependencyResolutionManagement {
             library("logstash-logback-encoder", "net.logstash.logback:logstash-logback-encoder:6.6")
             library("aws-dynamodb-local", "com.amazonaws:DynamoDBLocal:1.12.0")
 
+            library("log4j-api", "org.apache.logging.log4j", "log4j-api").version("2.23.1")
+
             val coroutineVersion = version("coroutines", "1.7.3")
             library(
                 "kotlin-coroutines-core", "org.jetbrains.kotlinx",
