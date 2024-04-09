@@ -15,6 +15,9 @@ private fun JsonObject.toAttributeMap(): AttributeValue? {
     return this.mapValues {
         it.value.toAttributeValue()
     }.filterNullValues().takeIf { it.isNotEmpty() }?.let {
+        if (it.keys.any { key -> key.isBlank() }) {
+            throw IllegalArgumentException("Object keys cannot be blank.")
+        }
         AttributeValue.M(it)
     }
 }
