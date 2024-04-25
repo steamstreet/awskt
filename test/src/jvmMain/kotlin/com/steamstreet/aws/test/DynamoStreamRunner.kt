@@ -12,6 +12,7 @@ import com.steamstreet.aws.lambda.DynamoStreamHandler
 import com.steamstreet.dynamokt.DynamoStreamEvent
 import com.steamstreet.dynamokt.DynamoStreamEventDetail
 import com.steamstreet.dynamokt.DynamoStreamRecords
+import com.steamstreet.exceptions.retry
 import kotlinx.coroutines.*
 
 public typealias StreamProcessorFunction = (suspend (DynamoStreamEvent) -> Unit)
@@ -32,10 +33,11 @@ public class DynamoStreamRunner(
         }
 
     override suspend fun start() {
-        val stream = streamsClient.listStreams {}.streams?.find {
-            it.tableName == this@DynamoStreamRunner.tableName
-        } ?: throw IllegalArgumentException("Unknown table")
-
+        val stream = retry(5, delay = 100, exceptionType = IllegalArgumentException::class) {
+            streamsClient.listStreams {}.streams?.find {
+                it.tableName == this@DynamoStreamRunner.tableName
+            } ?: throw IllegalArgumentException("Unknown table")
+        }
         processStream(stream.streamArn!!)
     }
 

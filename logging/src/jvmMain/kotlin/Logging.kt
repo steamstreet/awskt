@@ -1,5 +1,6 @@
 package com.steamstreet.awskt.logging
 
+import com.steamstreet.exceptions.MDCException
 import kotlinx.coroutines.slf4j.MDCContext
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
@@ -12,13 +13,6 @@ import net.logstash.logback.marker.Markers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
-
-/**
- * Mixing to use with exceptions to allow mdc values to be logged with the exception.
- */
-public interface MDCException {
-    public val mdcAttributes: Map<String, Any?>? get() = null
-}
 
 /**
  * Create a suspendable context for logging with MDC.

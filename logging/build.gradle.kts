@@ -20,6 +20,7 @@ kotlin {
                 api(libs.logstash.logback.encoder)
                 implementation(libs.kotlin.serialization.json)
                 implementation(libs.kotlin.coroutines.slf4j)
+                implementation(project(":standards"))
             }
         }
     }
