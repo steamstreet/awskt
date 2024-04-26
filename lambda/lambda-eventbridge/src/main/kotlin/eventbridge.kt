@@ -40,6 +40,11 @@ public interface EventBridgeHandlerConfig {
     public fun eventsOfType(type: String): List<Event>
 
     /**
+     * Get all events
+     */
+    public fun allEvents(): List<Event>
+
+    /**
      * The invoke operator allows for a cleaner way to install event handlers,
      * providing only the eventSchema and a lambda to handle the event.
      */
@@ -141,26 +146,30 @@ public class DefaultEventBridgeHandlerConfig(
     private val detail: JsonObject get() = event.detail!!
 
     override fun eventsOfType(type: String): List<Event> {
-        return if (detailType == type) {
-            listOf(object : Event {
-                override val id: String = event.id
-                override val type: String = detailType
-                override val detail: JsonObject = this@DefaultEventBridgeHandlerConfig.detail
-
-                override val source: String? = event.source
-                override val resources: List<String>? = event.resources
-
-                override val time: Instant = event.time
-
-                override fun failed(t: Throwable?) {
-                    error = t
-                }
-
-                override val sourceEvent: Any get() = event
-            })
-        } else {
-            emptyList()
+        return allEvents().filter {
+            it.type == type
         }
+    }
+
+    override fun allEvents(): List<Event> {
+        return listOf(DefaultEvent(event))
+    }
+
+    private inner class DefaultEvent(event: EventBridgeEvent) : Event {
+        override val id: String = event.id
+        override val type: String = detailType
+        override val detail: JsonObject = this@DefaultEventBridgeHandlerConfig.detail
+
+        override val source: String? = event.source
+        override val resources: List<String>? = event.resources
+
+        override val time: Instant = event.time
+
+        override fun failed(t: Throwable?) {
+            error = t
+        }
+
+        override val sourceEvent: Any get() = event
     }
 }
 
@@ -260,6 +269,10 @@ private class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
             it.type == type
         }
     }
+
+    override fun allEvents(): List<Event> {
+        return events
+    }
 }
 
 /**
@@ -303,6 +316,46 @@ public suspend fun <T, R> EventBridgeHandlerConfig.typeWithContext(
             }
         } catch (t: Throwable) {
             event.failed(t)
+        }
+    }
+}
+
+/**
+ * Register a handler for all events. The events will be called one by one.
+ */
+public suspend fun <R> EventBridgeHandlerConfig.any(
+    handler: suspend context(Event) (Event) -> R
+) {
+    allEvents().map { event ->
+        if (logEventProcessing) {
+            logger.logJson("Processing event", "event", event.detail.toString())
+        }
+
+        try {
+            coroutineScope {
+                handler(event, event)
+            }
+        } catch (t: Throwable) {
+            event.failed(t)
+        }
+    }
+}
+
+/**
+ * Register a handler for all events as a list. The callback must return
+ * a list of booleans indicating success or failure for each event.
+ */
+public suspend fun EventBridgeHandlerConfig.any(
+    handler: suspend (List<Event>) -> List<Boolean>
+) {
+    val allEvents = allEvents()
+    val success = handler(allEvents)
+    if (success.size != allEvents.size) {
+        throw IllegalStateException("List of results must match size of events")
+    }
+    allEvents.forEachIndexed { index, event ->
+        if (!success[index]) {
+            event.failed(null)
         }
     }
 }
