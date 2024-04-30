@@ -34,7 +34,9 @@ public class DynamoStreamRunner(
 
     override suspend fun start() {
         val stream = retry(5, delay = 100, exceptionType = IllegalArgumentException::class) {
-            streamsClient.listStreams {}.streams?.find {
+            streamsClient.listStreams {
+                tableName = this@DynamoStreamRunner.tableName
+            }.streams?.find {
                 it.tableName == this@DynamoStreamRunner.tableName
             } ?: throw IllegalArgumentException("Unknown table")
         }
