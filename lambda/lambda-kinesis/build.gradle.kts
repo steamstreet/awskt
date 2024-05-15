@@ -4,15 +4,13 @@ plugins {
 
 dependencies {
     api(project(":lambda:lambda-coroutines"))
-    api(project(":lambda:lambda-kinesis"))
-    api(project(":dynamokt"))
 }
 
 publishing {
     publications {
         withType<MavenPublication> {
             pom {
-                description.set("Help for building Dynamo stream handler lambdas in Kotlin")
+                description.set("Help for building Kinesis stream processing lambdas in Kotlin")
             }
         }
     }

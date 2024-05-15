@@ -20,6 +20,16 @@ val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
     from(dokkaHtml.outputDirectory)
 }
 
+kotlin {
+    jvm {
+        compilations.all {
+            kotlinOptions {
+                freeCompilerArgs += "-Xcontext-receivers"
+            }
+        }
+    }
+}
+
 publishing {
     publications.withType<MavenPublication> {
         artifact(tasks.findByName("javadocJar"))

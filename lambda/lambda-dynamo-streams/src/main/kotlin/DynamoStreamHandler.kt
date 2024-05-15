@@ -1,6 +1,7 @@
 package com.steamstreet.aws.lambda
 
-import com.steamstreet.dynamokt.*
+import com.steamstreet.dynamokt.DynamoStreamEvent
+import com.steamstreet.dynamokt.DynamoStreamRecords
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -10,14 +11,7 @@ import kotlinx.coroutines.launch
  */
 public abstract class DynamoStreamHandler : InputLambda<DynamoStreamRecords>(
     DynamoStreamRecords.serializer()
-) {
-    /**
-     * Get the session to be used. Can be the same session for all. If null is returned,
-     * the onItemUpdate function will NOT be called, and implementations should instead
-     * override handleRecord.
-     */
-    protected open fun dynamoKtSession(): DynamoKtSession? = null
-
+), DynamoEventHandler {
     /**
      * If true, the handleRecord method is called asynchronously for each item.
      */
@@ -39,35 +33,8 @@ public abstract class DynamoStreamHandler : InputLambda<DynamoStreamRecords>(
             }
         }
     }
-
-    /**
-     * Default implementation calls this for each record. Parses the event to old
-     * and new Items and calls onItemUpdate.
-     */
-    protected open suspend fun handleRecord(record: DynamoStreamEvent) {
-        val session = dynamoKtSession()
-        if (session != null) {
-            val (old, new) = record.oldAndNew(session)
-            onItemUpdate(old, new, record)
-        }
-    }
-
-    /**
-     * A database item has been updated.
-     */
-    protected open suspend fun onItemUpdate(old: Item?, new: Item?, record: DynamoStreamEvent) {}
 }
 
-/**
- * DynamoKt specific stream handler. Takes care of session handling.
- */
-public abstract class DynamoKtStreamHandler(public val dynamoKt: DynamoKt) :
-    DynamoStreamHandler() {
-
-    /**
-     * Constructs the session from the dynamoKt instance.
-     */
-    override fun dynamoKtSession(): DynamoKtSession? {
-        return dynamoKt.session()
-    }
+public interface DynamoEventHandler {
+    public suspend fun handleRecord(record: DynamoStreamEvent)
 }

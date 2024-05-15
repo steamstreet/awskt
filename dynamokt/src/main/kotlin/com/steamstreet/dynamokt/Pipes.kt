@@ -8,12 +8,14 @@ import kotlinx.serialization.Serializable
 public class DynamoStreamEvent(
     public val eventID: String,
     public val eventName: String,
-    public val eventVersion: String,
+    public val eventVersion: String? = null,
     public val eventSource: String,
     public val awsRegion: String,
     public val dynamodb: DynamoStreamEventDetail,
-    public val eventSourceARN: String,
-    public val userIdentity: UserIdentity? = null
+    public val eventSourceARN: String? = null,
+    public val userIdentity: UserIdentity? = null,
+    public val tableName: String? = null,
+    public val recordFormat: String? = null,
 )
 
 @Serializable
