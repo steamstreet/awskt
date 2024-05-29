@@ -51,12 +51,18 @@ public class EventBridgeMock(
      * Clear all saved events
      */
     public fun clearSaved() {
-        events.clear()
+        synchronized(events) {
+            events.clear()
+        }
     }
 
-    public fun eventsOfType(detailType: String): List<PutEventsRequestEntry> {
-        return events.filter {
-            it.detailType == detailType
+    public fun eventsOfType(detailType: String, bus: String? = null): List<PutEventsRequestEntry> {
+        synchronized(events) {
+            return events.filter {
+                it.detailType == detailType
+            }.filter {
+                bus == null || it.eventBusName == bus
+            }
         }
     }
 
@@ -242,12 +248,11 @@ public class EventBridgeMock(
 /**
  * Get events of a given type and deserialize
  */
-public fun <T> EventBridgeMock.eventsOfType(type: EventSchema<T>): List<T> {
-    return this.eventsOfType(type.type).map {
+public fun <T> EventBridgeMock.eventsOfType(type: EventSchema<T>, bus: String? = null): List<T> {
+    return this.eventsOfType(type.type, bus).map {
         Json.decodeFromString(type.serializer, it.detail!!)
     }
 }
-
 
 /**
  * Forward all events of the given type to the handler
