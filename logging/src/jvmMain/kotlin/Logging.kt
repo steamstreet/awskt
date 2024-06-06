@@ -1,6 +1,6 @@
 package com.steamstreet.awskt.logging
 
-import com.steamstreet.exceptions.MDCException
+import com.steamstreet.exceptions.MDCExceptionMixin
 import kotlinx.coroutines.slf4j.MDCContext
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
@@ -23,7 +23,20 @@ public suspend inline fun <T> mdcContext(vararg pairs: Pair<String, Any?>, cross
         else it.first to it.second!!.toString()
     }
     return withContext(MDCContext(*notNull.toTypedArray())) {
-        block()
+        try {
+            block()
+        } catch (e: Throwable) {
+            if (e is MDCException) {
+                MDC.getCopyOfContextMap()?.let {
+                    it.filter {
+                        e.mdcAttributes.contains(it.key)
+                    }.let {
+                        e.mdcAttributes.putAll(it)
+                    }
+                }
+            }
+            throw e
+        }
     }
 }
 
@@ -156,12 +169,17 @@ public fun logWarning(message: String, vararg metadata: Pair<String, Any?>) {
     }
 }
 
+public open class MDCException(message: String?, cause: Throwable? = null) : Exception(message, cause),
+    MDCExceptionMixin {
+    override val mdcAttributes: MutableMap<String, Any?> = MDC.getCopyOfContextMap().toMutableMap()
+}
+
 /**
  * Merge MDC data from a throwable.
  */
 private fun mergeMdc(throwable: Throwable?, metadata: Array<out Pair<String, Any?>>): Map<String, Any?> {
-    return if (throwable != null && throwable is MDCException) {
-        throwable.mdcAttributes.orEmpty() + metadata.toMap()
+    return if (throwable != null && throwable is MDCExceptionMixin) {
+        throwable.mdcAttributes + metadata.toMap()
     } else metadata.toMap()
 }
 

@@ -10,7 +10,7 @@ import java.util.*
  * A fake version of the Lambda context that can be useful for some testing or
  * for initializing a function for snap start.
  */
-class MockLambdaContext(
+public class MockLambdaContext(
     private val function: String = "Unknown",
     private val requestId: String = UUID.randomUUID().toString()
 ) : Context {

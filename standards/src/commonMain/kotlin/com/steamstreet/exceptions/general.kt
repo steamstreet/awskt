@@ -11,12 +11,12 @@ public class NotFoundException(message: String? = null, public val resourceId: S
 public open class DuplicateItemException(
     public val id: String? = null,
     message: String? = null
-) : Exception(message), MDCException {
-    override val mdcAttributes: Map<String, Any?> = mapOf(
+) : Exception(message), MDCExceptionMixin {
+    override val mdcAttributes: MutableMap<String, Any?> = hashMapOf(
         "itemId" to id
     )
 }
 
-public interface MDCException {
-    public val mdcAttributes: Map<String, Any?>? get() = null
+public interface MDCExceptionMixin {
+    public val mdcAttributes: MutableMap<String, Any?>
 }
