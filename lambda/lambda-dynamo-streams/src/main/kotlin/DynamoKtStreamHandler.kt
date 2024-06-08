@@ -54,15 +54,22 @@ public abstract class DynamoKtStreamHandler(
                 }
             }.orEmpty()
 
-            coroutineScope {
-                dynamoRecords.forEach {
-                    if (async) {
-                        launch(Dispatchers.IO) {
-                            handleRecord(it)
-                        }
-                    } else {
+            handleRecords(dynamoRecords)
+        }
+    }
+
+    /**
+     * Handle the records in this request.
+     */
+    protected suspend fun handleRecords(dynamoRecords: List<DynamoStreamEvent>) {
+        coroutineScope {
+            dynamoRecords.forEach {
+                if (async) {
+                    launch(Dispatchers.IO) {
                         handleRecord(it)
                     }
+                } else {
+                    handleRecord(it)
                 }
             }
         }
