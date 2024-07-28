@@ -28,4 +28,4 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Gradle Publish
-        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository -Psigning.keyId="${{ secrets.SIGNING_KEYID }}" -Psigning.password="${{ secrets.SIGNING_PASSWORD }}" -Psigning.secretKeyRingFile="${{ steps.nexus_gpg_file.outputs.filePath }}" -PsonatypeUsername="${{ secrets.NEXUS_USERNAME }}" -PsonatypePassword="${{ secrets.NEXUS_PASSWORD }}" -PRELEASE_NAME="${{ github.event.release.name }}"
+        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository -Psigning.keyId="${{ secrets.SIGNING_KEYID }}" -Psigning.password="${{ secrets.SIGNING_PASSWORD }}" -Psigning.secretKeyRingFile="${{ steps.nexus_gpg_file.outputs.filePath }}" -PsonatypeUsername="${{ secrets.MAVEN_CENTRAL_USER }}" -PsonatypePassword="${{ secrets.MAVEN_CENTRAL_PASSWORD }}" -PRELEASE_NAME="${{ github.event.release.name }}"
