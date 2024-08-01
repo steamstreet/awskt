@@ -67,8 +67,14 @@ public data class EventBridgeEvent(
     val region: String? = null,
     val resources: List<String>? = null,
     val detail: JsonObject? = null,
-    val source: String? = null
+    val source: String? = null,
+    @SerialName("replay-name")
+    val replayName: String? = null
 )
+
+private val eventBridgeEventDecoder = Json {
+    ignoreUnknownKeys = true
+}
 
 /**
  * A handler for event bridge events. Also handles event bridge events packaged into an SQS
@@ -115,7 +121,7 @@ public fun eventBridge(
                 }
             }
         } else {
-            val event = Json.decodeFromJsonElement<EventBridgeEvent>(element)
+            val event = eventBridgeEventDecoder.decodeFromJsonElement<EventBridgeEvent>(element)
             mdcContext("event-detail-type" to event.detailType) {
                 val processing = measureTimeMillis {
                     val handlerConfig = DefaultEventBridgeHandlerConfig(event)
@@ -417,7 +423,7 @@ public fun EventBridgeFunction.processEvent(str: String) {
  */
 public fun <T> EventBridgeFunction.processEvent(schema: EventSchema<T>, payload: T, source: String? = null) {
     processEvent(
-        Json.encodeToString(
+        eventBridgeEventDecoder.encodeToString(
             EventBridgeEvent(
                 id = UUID.randomUUID().toString(),
                 detailType = schema.type,
