@@ -175,6 +175,7 @@ public class DefaultEventBridgeHandlerConfig(
             error = t
         }
 
+        override val sourceAccount: String? = event.account
         override val sourceEvent: Any get() = event
     }
 }
@@ -223,6 +224,11 @@ public interface Event {
      * SQS message, etc.
      */
     public val sourceEvent: Any?
+
+    /**
+     * The originating account of the event
+     */
+    public val sourceAccount: String?
 }
 
 private class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
@@ -263,6 +269,7 @@ private class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
                     override val resources: List<String>? = eventBridgeRecord.resources
                     override val sourceEvent: Any = record
                     override val time: Instant = eventBridgeRecord.time
+                    override val sourceAccount: String? = eventBridgeRecord.account
                 }
             } else {
                 null
