@@ -189,7 +189,7 @@ public class Query internal constructor(
         }
 
         token?.let {
-            exclusiveStartKey = it.fromJsonToAttributeValue().asM()
+            exclusiveStartKey = it.fromJsonToItem()
         }
 
         if (this@Query.indexName != null) {
