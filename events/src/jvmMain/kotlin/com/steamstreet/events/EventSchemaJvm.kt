@@ -1,24 +1,7 @@
 package com.steamstreet.events
 
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.serializer
-
-/**
- * Defines an event type and the serializer used for its data.
- */
-public data class EventSchema<T>(
-    val type: String,
-    val serializer: KSerializer<T>
-)
-
-/**
- * Create a schema from a generic type.
- */
-public inline fun <reified T> eventSchema(typeName: String): EventSchema<T> =
-    EventSchema(typeName, Json.serializersModule.serializer())
 
 /**
  * Send events from this schema
@@ -44,11 +27,4 @@ internal class EventSchemaEvent<T>(val schema: EventSchema<T>, payload: T, overr
     override val detail: String? by lazy {
         eventSchemaJson.encodeToString(schema.serializer, payload)
     }
-}
-
-@OptIn(ExperimentalSerializationApi::class)
-public val eventSchemaJson: Json = Json {
-    ignoreUnknownKeys = true
-    encodeDefaults = true
-    explicitNulls = false
 }

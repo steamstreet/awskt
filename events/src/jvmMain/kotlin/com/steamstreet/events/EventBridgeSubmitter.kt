@@ -5,7 +5,6 @@ import aws.sdk.kotlin.services.eventbridge.model.PutEventsRequestEntry
 import aws.sdk.kotlin.services.eventbridge.putEvents
 import kotlinx.coroutines.runBlocking
 
-
 /**
  * Submitter that posts to the event bridge
  */
