@@ -24,6 +24,11 @@ public class DynamoKt(
     }
 
     /**
+     * Get all registered indexes of this table.
+     */
+    public fun indexes(): Collection<DynamoKtIndex> = indexes.values
+
+    /**
      * Create an AWS session, which is just operations linked with specific credentials.
      */
     public fun session(awsCredentialsProvider: CredentialsProvider? = null): DynamoKtSession {
