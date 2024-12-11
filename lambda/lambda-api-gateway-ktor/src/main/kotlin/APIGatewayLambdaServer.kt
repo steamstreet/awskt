@@ -54,9 +54,14 @@ public abstract class APIGatewayLambdaServer : ApiGatewayProxyHandler() {
                 val contentType = responseHeaders["Content-Type"]?.let {
                     ContentType.parse(it)
                 } ?: ContentType.Application.OctetStream
-                body = if (contentType.match(ContentType("application", "json")) ||
-                    contentType.match(ContentType("application", "js")) ||
-                    contentType.contentType == "text"
+
+                val contentEncoding = responseHeaders["Content-Encoding"]
+
+                body = if (contentEncoding == null && (
+                            contentType.match(ContentType("application", "json")) ||
+                                    contentType.match(ContentType("application", "js")) ||
+                                    contentType.contentType == "text"
+                            )
                 ) {
                     String(bytes)
                 } else {
