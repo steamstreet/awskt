@@ -54,7 +54,7 @@ dependencyResolutionManagement {
             library("ktor-server-core", "io.ktor", "ktor-server-core").versionRef(ktorVersion)
             library("ktor-server-host-common", "io.ktor", "ktor-server-host-common").versionRef(ktorVersion)
             library("ktor-server-test-host", "io.ktor", "ktor-server-test-host").versionRef(ktorVersion)
-
+            library("ktor-server-auth-jwt", "io.ktor", "ktor-server-auth-jwt").versionRef(ktorVersion)
 
             val slf4jVersion = version("slf4j", "2.0.9")
 
@@ -95,6 +95,7 @@ include("env")
 include("logging")
 include("dynamokt")
 include("events")
+include("serialization")
 include("test")
 include(":lambda:lambda-api-gateway")
 include(":lambda:lambda-api-gateway-ktor")

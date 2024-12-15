@@ -12,6 +12,7 @@ dependencies {
 
     api(libs.ktor.server.test.host)
     api(libs.ktor.server.host.common)
+    api(libs.ktor.server.auth.jwt)
     api(libs.ktor.server.core)
 
 }
