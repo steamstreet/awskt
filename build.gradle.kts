@@ -32,6 +32,7 @@ tasks.named("snapshot") {
 }
 
 tasks.named("final") {
-    dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "publishToSonatype" } })
-    dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "closeAndReleaseSonatypeStagingRepository" } })
+    dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "publishToMavenLocal" } })
+//    dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "publishToSonatype" } })
+//    dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "closeAndReleaseSonatypeStagingRepository" } })
 }
