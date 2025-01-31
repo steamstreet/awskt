@@ -11,7 +11,7 @@ plugins {
     // https://github.com/gradle/gradle/issues/16345
 }
 
-val kotlinVersion = "2.0.0"
+val kotlinVersion = "2.1.10"
 
 repositories {
     mavenCentral()
@@ -21,5 +21,5 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion")
-    implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.9.20")
+    implementation("org.jetbrains.dokka:dokka-gradle-plugin:2.0.0")
 }

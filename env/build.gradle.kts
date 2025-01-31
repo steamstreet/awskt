@@ -16,7 +16,6 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                compileOnly(libs.kotlin.coroutines.core)
             }
         }
 
