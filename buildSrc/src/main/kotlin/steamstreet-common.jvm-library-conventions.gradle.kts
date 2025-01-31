@@ -11,18 +11,20 @@ plugins {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
-        kotlinOptions.jvmTarget = "11"
-
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-receivers")
         explicitApiMode = ExplicitApiMode.Warning
+    }
+
+}
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
 java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
-    }
     withSourcesJar()
 }
 

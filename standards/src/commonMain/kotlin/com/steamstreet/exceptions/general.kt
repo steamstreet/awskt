@@ -20,3 +20,5 @@ public open class DuplicateItemException(
 public interface MDCExceptionMixin {
     public val mdcAttributes: MutableMap<String, Any?>
 }
+
+public class IllegalAccessException(message: String?, cause: Throwable) : Exception(message, cause)

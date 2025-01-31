@@ -48,6 +48,7 @@ dependencyResolutionManagement {
             aws("lambda")
             aws("eventbridge")
             aws("s3")
+            aws("sqs")
             aws("appconfigdata")
 
             val ktorVersion = version("ktor", "2.3.7")

@@ -17,6 +17,7 @@ kotlin {
                 api(libs.aws.eventbridge)
                 api(libs.aws.s3)
                 api(libs.aws.lambda)
+                compileOnly(libs.aws.sqs)
 
                 implementation(libs.aws.lambda.core)
                 implementation(libs.aws.lambda.events)
