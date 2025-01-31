@@ -26,18 +26,22 @@ kotlin {
 
 java {
     withSourcesJar()
+    withJavadocJar()
 }
 
-val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
-val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
-    dependsOn(dokkaHtml)
-    archiveClassifier.set("javadoc")
-    from(dokkaHtml.outputDirectory)
+//val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
+val javadocJar = tasks.named<Jar>("javadocJar") {
+    from(tasks.named("dokkaJavadoc"))
 }
+//val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
+//    dependsOn(dokkaHtml)
+//    archiveClassifier.set("javadoc")
+//    from(dokkaHtml.outputDirectory)
+//}
 
 publishing {
     publications.create<MavenPublication>("maven") {
-        artifact(tasks.findByName("javadocJar"))
+//        artifact(tasks.findByName("javadocJar"))
         groupId = "com.steamstreet"
         artifactId = "awskt-${artifactId}"
 

@@ -34,3 +34,20 @@ jobs:
 
       - name: Gradle Build
         run: ./gradlew build
+
+      - name: Publish Snapshot
+        run: ./gradlew snapshot
+
+      - name: Get the latest tag
+        id: get_tag
+        run: echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: actions/create-releas@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.tag }}
+          release_name: Release ${{ env.tag }}
+          draft: false
+          prerelease: true

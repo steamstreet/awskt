@@ -1,3 +1,5 @@
+import org.jetbrains.dokka.gradle.DokkaTask
+
 plugins {
     kotlin("multiplatform")
     id("kotlinx-serialization")
@@ -13,11 +15,16 @@ java {
     }
 }
 
-val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
+//val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
+val dokkaOutputDir = project.layout.buildDirectory.dir("dokka")
+tasks.getByName<DokkaTask>("dokkaHtml") {
+    outputDirectory.set(file(dokkaOutputDir))
+}
+
 val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
-    dependsOn(dokkaHtml)
+    dependsOn(tasks.dokkaHtml)
     archiveClassifier.set("javadoc")
-    from(dokkaHtml.outputDirectory)
+    from(dokkaOutputDir)
 }
 
 kotlin {
@@ -32,7 +39,7 @@ kotlin {
 
 publishing {
     publications.withType<MavenPublication> {
-        artifact(tasks.findByName("javadocJar"))
+        artifact(javadocJar)
         groupId = "com.steamstreet"
 
         pom {
