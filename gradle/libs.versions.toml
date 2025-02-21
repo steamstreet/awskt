@@ -1,0 +1,57 @@
+[versions]
+kotlin-serialization = "1.7.3"
+aws = "1.3.112"
+ktor = "2.3.12"
+slf4j = "2.0.9"
+coroutines = "1.7.3"
+
+[libraries]
+# -- Kotlin Serialization
+kotlin-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlin-serialization" }
+kotlin-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlin-serialization" }
+
+# -- AWS Lambda libraries (fixed version)
+aws-lambda-core = "com.amazonaws:aws-lambda-java-core:1.2.0"
+aws-lambda-events = "com.amazonaws:aws-lambda-java-events:3.8.0"
+
+# -- AWS SDK for Kotlin
+aws-secretsmanager = { group = "aws.sdk.kotlin", name = "secretsmanager", version.ref = "aws" }
+aws-dynamodb = { group = "aws.sdk.kotlin", name = "dynamodb", version.ref = "aws" }
+aws-dynamodbstreams = { group = "aws.sdk.kotlin", name = "dynamodbstreams", version.ref = "aws" }
+aws-lambda = { group = "aws.sdk.kotlin", name = "lambda", version.ref = "aws" }
+aws-eventbridge = { group = "aws.sdk.kotlin", name = "eventbridge", version.ref = "aws" }
+aws-s3 = { group = "aws.sdk.kotlin", name = "s3", version.ref = "aws" }
+aws-sqs = { group = "aws.sdk.kotlin", name = "sqs", version.ref = "aws" }
+aws-appconfigdata = { group = "aws.sdk.kotlin", name = "appconfigdata", version.ref = "aws" }
+
+# -- Ktor
+ktor-server-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
+ktor-server-host-common = { group = "io.ktor", name = "ktor-server-host-common", version.ref = "ktor" }
+ktor-server-test-host = { group = "io.ktor", name = "ktor-server-test-host", version.ref = "ktor" }
+ktor-server-auth-jwt = { group = "io.ktor", name = "ktor-server-auth-jwt", version.ref = "ktor" }
+
+# -- SLF4J with shared version
+slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
+slf4j-simple = { group = "org.slf4j", name = "slf4j-simple", version.ref = "slf4j" }
+slf4j-jcl = { group = "org.slf4j", name = "jcl-over-slf4j", version.ref = "slf4j" }
+slf4j-log4j = { group = "org.slf4j", name = "log4j-over-slf4j", version.ref = "slf4j" }
+
+# -- Logback, Logstash, DynamoDB Local (fixed versions)
+slf4j-logback-classic = "ch.qos.logback:logback-classic:1.4.14"
+logstash-logback-encoder = "net.logstash.logback:logstash-logback-encoder:6.6"
+aws-dynamodb-local = "com.amazonaws:DynamoDBLocal:1.12.0"
+
+# -- Log4j (single usage, no shared version)
+log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api", version = "2.23.1" }
+
+# -- Coroutines
+kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlin-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+kotlin-coroutines-slf4j = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-slf4j", version.ref = "coroutines" }
+
+# -- Other fixed-version libraries
+kotlin-date-time = "org.jetbrains.kotlinx:kotlinx-datetime:0.5.0"
+kluent = "org.amshove.kluent:kluent:1.73"
+jackson = "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6"
+mockk = "io.mockk:mockk:1.13.5"
+event-ruler = "software.amazon.event.ruler:event-ruler:1.7.0"

@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 rootProject.name = "aws-kt"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 dependencyResolutionManagement {
     repositories {
@@ -16,81 +17,9 @@ dependencyResolutionManagement {
             mavenCentral()
         }
     }
-
-    versionCatalogs {
-        create("libs") {
-            val kotlinSerializationVersion = version("kotlin-serialization", "1.6.2")
-            val awsVersion = version("aws", "1.0.48")
-
-            library(
-                "kotlin-serialization-core", "org.jetbrains.kotlinx",
-                "kotlinx-serialization-core"
-            ).versionRef(
-                kotlinSerializationVersion
-            )
-            library(
-                "kotlin-serialization-json", "org.jetbrains.kotlinx",
-                "kotlinx-serialization-json"
-            ).versionRef(
-                kotlinSerializationVersion
-            )
-
-            library("aws-lambda-core", "com.amazonaws:aws-lambda-java-core:1.2.0")
-            library("aws-lambda-events", "com.amazonaws:aws-lambda-java-events:3.8.0")
-
-            fun aws(artifact: String) {
-                library("aws-${artifact}", "aws.sdk.kotlin", artifact).versionRef(awsVersion)
-            }
-
-            aws("secretsmanager")
-            aws("dynamodb")
-            aws("dynamodbstreams")
-            aws("lambda")
-            aws("eventbridge")
-            aws("s3")
-            aws("sqs")
-            aws("appconfigdata")
-
-            val ktorVersion = version("ktor", "2.3.7")
-            library("ktor-server-core", "io.ktor", "ktor-server-core").versionRef(ktorVersion)
-            library("ktor-server-host-common", "io.ktor", "ktor-server-host-common").versionRef(ktorVersion)
-            library("ktor-server-test-host", "io.ktor", "ktor-server-test-host").versionRef(ktorVersion)
-
-
-            val slf4jVersion = version("slf4j", "2.0.9")
-
-            library("slf4j-api", "org.slf4j", "slf4j-api").versionRef(slf4jVersion)
-            library("slf4j-simple", "org.slf4j", "slf4j-simple").versionRef(slf4jVersion)
-            library("slf4j-jcl", "org.slf4j", "jcl-over-slf4j").versionRef(slf4jVersion)
-            library("slf4j-log4j", "org.slf4j", "log4j-over-slf4j").versionRef(slf4jVersion)
-
-            library("slf4j-logback-classic", "ch.qos.logback:logback-classic:1.4.14")
-            library("logstash-logback-encoder", "net.logstash.logback:logstash-logback-encoder:6.6")
-            library("aws-dynamodb-local", "com.amazonaws:DynamoDBLocal:1.12.0")
-
-            library("log4j-api", "org.apache.logging.log4j", "log4j-api").version("2.23.1")
-
-            val coroutineVersion = version("coroutines", "1.7.3")
-            library(
-                "kotlin-coroutines-core", "org.jetbrains.kotlinx",
-                "kotlinx-coroutines-core"
-            ).versionRef(coroutineVersion)
-            library("kotlin-coroutines-test", "org.jetbrains.kotlinx", "kotlinx-coroutines-test")
-                .versionRef(coroutineVersion)
-            library(
-                "kotlin-coroutines-slf4j", "org.jetbrains.kotlinx", "kotlinx-coroutines-slf4j"
-            ).versionRef(coroutineVersion)
-            library("kotlin-date-time", "org.jetbrains.kotlinx", "kotlinx-datetime").version("0.5.0")
-            library("kluent", "org.amshove.kluent:kluent:1.73")
-
-            library("jackson", "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6")
-
-            library("mockk", "io.mockk:mockk:1.13.5")
-            library("event-ruler", "software.amazon.event.ruler:event-ruler:1.7.0")
-        }
-    }
 }
 include("appsync")
+include("cognito")
 include("standards")
 include("env")
 include("logging")
