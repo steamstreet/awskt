@@ -82,8 +82,10 @@ public class EventBridgeMock(
 
             thread {
                 runBlocking {
-                    rules.filter {
-                        Ruler.matchesRule(str, it.rule.eventPattern!!)
+                    synchronized(rules) {
+                        rules.filter {
+                            Ruler.matchesRule(str, it.rule.eventPattern!!)
+                        }
                     }.flatMap { it.targets }.forEach {
                         sendToTarget(entry, it)
                     }
@@ -112,10 +114,12 @@ public class EventBridgeMock(
         }
 
         fun putRule(rule: PutRuleRequest) {
-            if (rules.find { it.rule.name == rule.name } != null) {
-                throw AwsServiceException("Duplicate rule name", null)
+            synchronized(rules) {
+                if (rules.find { it.rule.name == rule.name } != null) {
+                    throw AwsServiceException("Duplicate rule name", null)
+                }
+                rules.add(EventRule(rule))
             }
-            rules.add(EventRule(rule))
         }
     }
 
@@ -124,10 +128,12 @@ public class EventBridgeMock(
             ?: throw AwsServiceException(input.eventBusName, null)
 
         return ListRulesResponse {
-            rules =
+            rules = synchronized(bus.rules) {
                 bus.rules.map {
                     Rule { name = it.rule.name }
                 }
+            }
+
         }
     }
 
@@ -206,10 +212,11 @@ public class EventBridgeMock(
     override suspend fun putTargets(input: PutTargetsRequest): PutTargetsResponse {
         val bus = buses[input.eventBusName ?: "default"]
             ?: throw throw AwsServiceException(input.eventBusName, null)
-        val rule =
+        val rule = synchronized(bus.rules) {
             bus.rules.find { it.rule.name == input.rule } ?: throw throw AwsServiceException(
                 input.rule, null
             )
+        }
         rule.targets.addAll(input.targets!!.map {
             LocalTarget()
         })
@@ -219,9 +226,11 @@ public class EventBridgeMock(
     public fun putTarget(eventBus: String, ruleName: String, handler: suspend (InputStream, Context) -> Unit) {
         val bus = buses[eventBus]
             ?: throw throw AwsServiceException(eventBus, null)
-        val rule = bus.rules.find { it.rule.name == ruleName } ?: throw throw AwsServiceException(
-            ruleName, null
-        )
+        val rule = synchronized(bus.rules) {
+            bus.rules.find { it.rule.name == ruleName } ?: throw throw AwsServiceException(
+                ruleName, null
+            )
+        }
 
         rule.targets.add(LocalTarget(handler))
     }
