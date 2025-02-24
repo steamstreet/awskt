@@ -37,12 +37,12 @@ public abstract class DynamoKtStreamHandler(
         input.readIncoming(logIncoming) {
             val payload = jsonDecode.parseToJsonElement(it)
 
-            val records = payload.jsonObject.get("Records")?.jsonArray
+            val records = payload.jsonObject["Records"]?.jsonArray
 
             val dynamoRecords = records?.mapNotNull {
-                val kinesis = it.jsonObject.get("kinesis")
+                val kinesis = it.jsonObject["kinesis"]
                 if (kinesis != null) {
-                    val dataString = kinesis.jsonObject.get("data")?.jsonPrimitive?.contentOrNull
+                    val dataString = kinesis.jsonObject["data"]?.jsonPrimitive?.contentOrNull
                     if (dataString != null) {
                         val decodedData = String(Base64.decode(dataString))
                         jsonDecode.decodeFromString<DynamoStreamEvent>(decodedData)
@@ -61,7 +61,7 @@ public abstract class DynamoKtStreamHandler(
     /**
      * Handle the records in this request.
      */
-    protected suspend fun handleRecords(dynamoRecords: List<DynamoStreamEvent>) {
+    protected open suspend fun handleRecords(dynamoRecords: List<DynamoStreamEvent>) {
         coroutineScope {
             dynamoRecords.forEach {
                 if (async) {
@@ -79,7 +79,7 @@ public abstract class DynamoKtStreamHandler(
      * Default implementation calls this for each record. Parses the event to old
      * and new Items and calls onItemUpdate.
      */
-    protected suspend fun handleRecord(record: DynamoStreamEvent) {
+    protected open suspend fun handleRecord(record: DynamoStreamEvent) {
         val (old, new) = record.oldAndNew(dynamoKtSession)
         onItemUpdate(old, new, record)
     }
