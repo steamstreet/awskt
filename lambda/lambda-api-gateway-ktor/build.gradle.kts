@@ -6,6 +6,7 @@ dependencies {
     implementation(libs.kotlin.serialization.json)
     api(project(":lambda:lambda-coroutines"))
     api(project(":lambda:lambda-api-gateway"))
+    api(projects.cognito)
 
     testImplementation(kotlin("test"))
     testImplementation(libs.kluent)
@@ -14,6 +15,7 @@ dependencies {
     api(libs.ktor.server.host.common)
     api(libs.ktor.server.auth.jwt)
     api(libs.ktor.server.core)
+    api(libs.ktor.server.auth.jwt)
 
 }
 

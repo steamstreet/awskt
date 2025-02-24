@@ -2,11 +2,15 @@ package com.steamstreet.aws.lambda.apigateway.ktor
 
 import com.auth0.jwt.interfaces.Claim
 import com.auth0.jwt.interfaces.Payload
+import com.steamstreet.aws.appsync.cognito.Claims
+import com.steamstreet.aws.appsync.cognito.JsonElementClaim
 import com.steamstreet.aws.lambda.apigateway.ApiGatewayProxyRequest
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonObject
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -14,6 +18,9 @@ import java.util.*
 private val apiGatewayDateFormat: DateTimeFormatter =
     DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
 
+/**
+ * Creates a JWTPrincipal from data in an ApiGatewayProxyRequest.
+ */
 public fun JWTPrincipal(request: ApiGatewayProxyRequest): JWTPrincipal {
     val auth = Claims(request.requestContext.authorizer?.get("claims")?.jsonObject)
 
@@ -82,56 +89,29 @@ public fun JWTPrincipal(request: ApiGatewayProxyRequest): JWTPrincipal {
     })
 }
 
+public class ApiGatewayJWTConfig {
+    /**
+     * If set, will be called to allow for a custom JWTPrincipal in test scenarios.
+     */
+    public var mockPrinciple: (() -> JWTPrincipal?)? = null
+}
+
 /**
- * Install API gateway JWT authentication.
+ * Install the ApiGatewayJWT authentication. This doesn't authenticate (this would be handled by
+ * cognito), but installs the JWTPrincipal based on the data in the ApiGateway request.
  */
-public fun Application.apiGatewayJwtAuth() {
-    install(Authentication) {
-        provider {
-            authenticate {
-                it.principal(JWTPrincipal(it.call.apiGatewayRequest))
+public val ApiGatewayJWT: ApplicationPlugin<ApiGatewayJWTConfig> =
+    createApplicationPlugin("ApiGatewayJWT", ::ApiGatewayJWTConfig) {
+        val config = pluginConfig
+        application.install(Authentication) {
+            provider("api-gateway-jwt") {
+                authenticate { context ->
+                    if (config.mockPrinciple != null) {
+                        config.mockPrinciple?.invoke()
+                    } else {
+                        context.principal(JWTPrincipal(context.call.apiGatewayRequest))
+                    }
+                }
             }
         }
     }
-}
-
-/**
- * Encapsulates JWT claims
- */
-public class Claims(public val data: JsonObject?) {
-    public fun claim(key: String): String? = data?.get(key)?.jsonPrimitive?.contentOrNull
-}
-
-public class JsonElementClaim(private val el: JsonElement?) : Claim {
-    private val asPrimitive: JsonPrimitive? get() = el?.jsonPrimitive
-
-    override fun isNull(): Boolean {
-        return el is JsonNull
-    }
-
-    override fun isMissing(): Boolean = el == null
-    override fun asBoolean(): Boolean? = asPrimitive?.booleanOrNull
-    override fun asInt(): Int? = asPrimitive?.intOrNull
-    override fun asLong(): Long? = asPrimitive?.longOrNull
-    override fun asDouble(): Double? = asPrimitive?.doubleOrNull
-    override fun asString(): String? = asPrimitive?.contentOrNull
-    override fun asDate(): Date? {
-        return null
-    }
-
-    override fun <T : Any?> asArray(p0: Class<T>?): Array<T>? {
-        return null
-    }
-
-    override fun <T : Any?> asList(p0: Class<T>?): MutableList<T>? {
-        return null
-    }
-
-    override fun asMap(): MutableMap<String, Any>? {
-        return null
-    }
-
-    override fun <T : Any?> `as`(p0: Class<T>?): T? {
-        return null
-    }
-}
