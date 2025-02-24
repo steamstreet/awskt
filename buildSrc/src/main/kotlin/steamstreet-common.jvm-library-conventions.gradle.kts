@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm")
     id("kotlinx-serialization")
@@ -10,15 +7,11 @@ plugins {
     signing
 }
 
-tasks.withType<KotlinCompile> {
+kotlin {
+    explicitApiWarning()
     compilerOptions {
         freeCompilerArgs.add("-Xcontext-receivers")
-        explicitApiMode = ExplicitApiMode.Warning
     }
-
-}
-
-kotlin {
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
     }
@@ -29,19 +22,12 @@ java {
     withJavadocJar()
 }
 
-//val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
-val javadocJar = tasks.named<Jar>("javadocJar") {
+tasks.named<Jar>("javadocJar") {
     from(tasks.named("dokkaJavadoc"))
 }
-//val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
-//    dependsOn(dokkaHtml)
-//    archiveClassifier.set("javadoc")
-//    from(dokkaHtml.outputDirectory)
-//}
 
 publishing {
     publications.create<MavenPublication>("maven") {
-//        artifact(tasks.findByName("javadocJar"))
         groupId = "com.steamstreet"
         artifactId = "awskt-${artifactId}"
 
