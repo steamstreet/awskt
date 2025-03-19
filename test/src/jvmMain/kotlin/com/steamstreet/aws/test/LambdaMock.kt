@@ -18,7 +18,11 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
 
-public class LambdaLocalContext(private val name: String = "UnknownFunction") : Context {
+public class LambdaLocalContext(
+    private val name: String = "UnknownFunction",
+    private val region: String = "us-west-2",
+    private val account: String = "1234"
+) : Context {
     private val uuid = UUID.randomUUID().toString()
     override fun getAwsRequestId(): String {
         return uuid
@@ -41,7 +45,7 @@ public class LambdaLocalContext(private val name: String = "UnknownFunction") : 
     }
 
     override fun getInvokedFunctionArn(): String {
-        return "arn:aws:lambda:us-west-2:1234:function:${name}"
+        return "arn:aws:lambda:${region}:${account}:function:${name}"
     }
 
     override fun getIdentity(): CognitoIdentity {
@@ -225,15 +229,15 @@ private val json = jacksonObjectMapper().apply {
 }
 
 public interface LambdaInvocationHandler {
-    public fun invoke(payload: ByteArray): ByteArray
+    public fun invoke(payload: ByteArray, context: Context = LambdaLocalContext()): ByteArray
 }
 
 public class ReflectionHandler(
     public val name: String,
     public val clazz: String,
-    public val methodName: String
+    public val methodName: String,
 ) : LambdaInvocationHandler {
-    override fun invoke(payload: ByteArray): ByteArray {
+    override fun invoke(payload: ByteArray, context: Context): ByteArray {
         val output = ByteArrayOutputStream()
         val parameterValues = method.parameters.map {
             val clz = it.type
@@ -268,7 +272,7 @@ public class ReflectionHandler(
 public class DirectInvocationHandler(
     public val function: (InputStream) -> Unit
 ) : LambdaInvocationHandler {
-    override fun invoke(payload: ByteArray): ByteArray {
+    override fun invoke(payload: ByteArray, context: Context): ByteArray {
         function(payload.inputStream())
         return ByteArray(0)
     }
