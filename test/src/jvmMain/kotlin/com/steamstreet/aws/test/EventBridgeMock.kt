@@ -109,7 +109,12 @@ public class EventBridgeMock(
             }
             val buffer = event.toString().toByteArray()
             if (target.handler != null) {
-                target.handler.invoke(buffer.inputStream(), LambdaLocalContext())
+                target.handler.invoke(
+                    buffer.inputStream(), LambdaLocalContext(
+                        region = this@EventBridgeMock.region,
+                        account = accountId
+                    )
+                )
             }
         }
 
