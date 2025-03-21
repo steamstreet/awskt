@@ -43,7 +43,11 @@ public abstract class APIGatewayLambdaServer : ApiGatewayProxyHandler() {
             }
             this.call.attributes.put(ApiGatewayRequest, input)
             if (input.body != null) {
-                setBody(input.body!!)
+                if (input.isBase64Encoded == true) {
+                    setBody(Base64.getDecoder().decode(input.body))
+                } else {
+                    setBody(input.body!!)
+                }
             }
         }
         var body: String? = null
