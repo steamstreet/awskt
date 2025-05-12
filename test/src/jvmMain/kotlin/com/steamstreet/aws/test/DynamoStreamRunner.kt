@@ -14,6 +14,7 @@ import com.steamstreet.dynamokt.DynamoStreamEventDetail
 import com.steamstreet.dynamokt.DynamoStreamRecords
 import com.steamstreet.exceptions.retry
 import kotlinx.coroutines.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 public typealias StreamProcessorFunction = (suspend (DynamoStreamEvent) -> Unit)
 
@@ -26,13 +27,15 @@ public class DynamoStreamRunner(
     private val streamProcessor: StreamProcessorFunction
 ) : MockService {
     private val iterators = mutableSetOf<String>()
+    private val starting = AtomicBoolean(true)
 
     override val isProcessing: Boolean
         get() {
-            return iterators.isNotEmpty()
+            return starting.get() || iterators.isNotEmpty()
         }
 
     override suspend fun start() {
+        starting.set(true)
         val stream = retry(5, delay = 100, exceptionType = IllegalArgumentException::class) {
             streamsClient.listStreams {
                 tableName = this@DynamoStreamRunner.tableName
@@ -88,6 +91,8 @@ public class DynamoStreamRunner(
                 } catch (e: AwsServiceException) {
                     throw e
                 }
+                // allow a full loop before exiting 'starting' mode.
+                starting.set(false)
             }
         }
     }

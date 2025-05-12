@@ -3,6 +3,8 @@ package com.steamstreet.aws.test
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Creates an AWS local environment
@@ -14,19 +16,29 @@ public class AWSLocal(
     private val services = mutableListOf<MockService>()
     private lateinit var job: Job
 
+    // are we in the startup process. Ensures that for tests that go quickly,
+    // we allow the services to get into a nice processing loop.
+    private val starting = AtomicBoolean(false)
+
     /**
      * Are any of the services currently processing data.
      */
     public val processing: Boolean
-        get() = services.any {
+        get() = starting.get() || services.any {
             it.isProcessing
     }
 
     public suspend fun start() {
+        starting.set(true)
+        val count = AtomicInteger(services.size)
+
         @Suppress("OPT_IN_USAGE")
         job = GlobalScope.launch {
             services.forEach {
                 launch {
+                    if (count.decrementAndGet() == 0) {
+                        starting.set(false)
+                    }
                     it.start()
                 }
             }

@@ -2,6 +2,7 @@ package com.steamstreet.env
 
 import aws.sdk.kotlin.services.secretsmanager.SecretsManagerClient
 import aws.sdk.kotlin.services.secretsmanager.getSecretValue
+import com.steamstreet.awskt.logging.logWarning
 import com.steamstreet.env.Env.optional
 import com.steamstreet.mutableLazy
 import kotlinx.coroutines.runBlocking
@@ -23,9 +24,15 @@ public actual fun getEnvironmentVariable(key: String): String? = runBlocking {
     if (secretKey != null || value?.startsWith("Secret_") == true) {
         try {
             secretKey = secretKey ?: value.removePrefix("Secret_")
-            secrets.getSecretValue {
+            val secretString = secrets.getSecretValue {
                 secretId = secretKey.substringBeforeLast(".")
-            }.secretString?.let {
+            }.secretString
+
+            if (secretString == null) {
+                logWarning("No secret found for $secretKey")
+            }
+
+            secretString?.let {
                 if (secretKey.contains('.')) {
                     val valueKey = secretKey.substringAfterLast(".")
                     Json.parseToJsonElement(it).jsonObject[valueKey]?.jsonPrimitive?.contentOrNull
@@ -34,7 +41,7 @@ public actual fun getEnvironmentVariable(key: String): String? = runBlocking {
                 }
             }
         } catch (e: Throwable) {
-            e.printStackTrace()
+            logWarning("Error retrieving secret", e, "key" to key, "secretKey" to secretKey)
             null
         }
     } else if (value == "_NoValue") {
