@@ -13,7 +13,10 @@ import com.steamstreet.dynamokt.DynamoStreamEvent
 import com.steamstreet.dynamokt.DynamoStreamEventDetail
 import com.steamstreet.dynamokt.DynamoStreamRecords
 import com.steamstreet.exceptions.retry
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 
 public typealias StreamProcessorFunction = (suspend (DynamoStreamEvent) -> Unit)
@@ -46,52 +49,52 @@ public class DynamoStreamRunner(
         processStream(stream.streamArn!!)
     }
 
-    private fun CoroutineScope.processShard(streamArn: String, shardId: String) {
+    private suspend fun processShard(streamArn: String, shardId: String) {
         var lastSequence: String? = null
 
-        launch {
-            while (true) {
-                try {
-                    val shardIteratorResult = streamsClient.getShardIterator {
-                        this.streamArn = streamArn
-                        this.shardId = shardId
-                        if (lastSequence == null) {
-                            shardIteratorType = ShardIteratorType.TrimHorizon
-                        } else {
-                            shardIteratorType = ShardIteratorType.AfterSequenceNumber
-                            sequenceNumber = lastSequence
-                        }
+        while (true) {
+            try {
+                val shardIteratorResult = streamsClient.getShardIterator {
+                    this.streamArn = streamArn
+                    this.shardId = shardId
+                    if (lastSequence == null) {
+                        shardIteratorType = ShardIteratorType.TrimHorizon
+                    } else {
+                        shardIteratorType = ShardIteratorType.AfterSequenceNumber
+                        sequenceNumber = lastSequence
                     }
-                    var currentIterator = shardIteratorResult.shardIterator
-                    while (currentIterator != null) {
-                        val recordsResult: GetRecordsResponse?
-                        try {
-                            recordsResult = streamsClient.getRecords {
-                                shardIterator = currentIterator
-                            }
-                            iterators += currentIterator
-                            recordsResult.records?.forEach {
-                                processRecord(streamArn, it)
-                                lastSequence = it.dynamodb?.sequenceNumber
-                            }
-
-                            if (recordsResult.records.isNullOrEmpty()) {
-                                iterators.remove(currentIterator)
-                                delay(100)
-                            }
-
-                            if (recordsResult.nextShardIterator != currentIterator) {
-                                iterators.remove(currentIterator)
-                                currentIterator = recordsResult.nextShardIterator
-                            }
-                        } catch (t: TrimmedDataAccessException) {
-                            currentIterator = null
-                        }
-                    }
-                } catch (e: AwsServiceException) {
-                    throw e
                 }
-                // allow a full loop before exiting 'starting' mode.
+                var currentIterator = shardIteratorResult.shardIterator
+                while (currentIterator != null) {
+                    val recordsResult: GetRecordsResponse?
+                    try {
+                        recordsResult = streamsClient.getRecords {
+                            shardIterator = currentIterator
+                        }
+                        iterators += currentIterator
+                        recordsResult.records?.forEach {
+                            processRecord(streamArn, it)
+                            lastSequence = it.dynamodb?.sequenceNumber
+                        }
+
+                        if (recordsResult.records.isNullOrEmpty()) {
+                            iterators.remove(currentIterator)
+                            delay(100)
+                        }
+
+                        if (recordsResult.nextShardIterator != currentIterator) {
+                            iterators.remove(currentIterator)
+                            currentIterator = recordsResult.nextShardIterator
+                        }
+                    } catch (_: TrimmedDataAccessException) {
+                        currentIterator = null
+                    }
+                    // allow a full loop before exiting 'starting' mode.
+                    starting.set(false)
+                }
+            } catch (e: AwsServiceException) {
+                throw e
+            } finally {
                 starting.set(false)
             }
         }
