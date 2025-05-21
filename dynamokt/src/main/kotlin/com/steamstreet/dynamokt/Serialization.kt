@@ -9,12 +9,12 @@ import java.util.*
  * replaced with using the AttributeValueSerializer.
  */
 
-private fun JsonObject.toAttributeMap(): AttributeValue? {
-    if (this.isEmpty()) return null
+private fun JsonObject.toAttributeMap(): AttributeValue {
+    if (this.isEmpty()) return AttributeValue.M(emptyMap())
 
     return this.mapValues {
         it.value.toAttributeValue()
-    }.filterNullValues().takeIf { it.isNotEmpty() }?.let {
+    }.filterNullValues().let {
         if (it.keys.any { key -> key.isBlank() }) {
             throw IllegalArgumentException("Object keys cannot be blank.")
         }
@@ -22,8 +22,8 @@ private fun JsonObject.toAttributeMap(): AttributeValue? {
     }
 }
 
-private fun JsonArray.toAttributeList(): AttributeValue? {
-    if (this.isEmpty()) return null
+private fun JsonArray.toAttributeList(): AttributeValue {
+    if (this.isEmpty()) return AttributeValue.L(emptyList())
     return this.mapNotNull {
         it.toAttributeValue()
     }.let {

@@ -45,7 +45,8 @@ public data class AppSyncIdentity(
     val issuer: String? = null,
     val claims: JsonObject? = null,
     val defaultAuthStrategy: String? = null,
-    val groups: List<String>? = null
+    val groups: List<String>? = null,
+    val resolverContext: JsonObject? = null
 )
 
 /**
