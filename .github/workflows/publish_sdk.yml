@@ -44,7 +44,7 @@ jobs:
       - name: Gradle Build
         run: ./gradlew build
 
-      - name: Publish Snapshot
+      - name: Publish to Central
         run: ./gradlew final  -Psigning.keyId="${{ secrets.SIGNING_KEYID }}" -Psigning.password="${{ secrets.SIGNING_PASSWORD }}" -Psigning.secretKeyRingFile="${{ steps.nexus_gpg_file.outputs.filePath }}" -PsonatypeUsername="${{ secrets.MAVEN_CENTRAL_USER }}" -PsonatypePassword="${{ secrets.MAVEN_CENTRAL_PASSWORD }}"
 
       - name: Get the latest tag
