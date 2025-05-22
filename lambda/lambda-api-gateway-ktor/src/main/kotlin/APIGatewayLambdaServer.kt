@@ -5,6 +5,7 @@ import com.steamstreet.aws.lambda.apigateway.ApiGatewayProxyRequest
 import com.steamstreet.aws.lambda.apigateway.ApiGatewayProxyResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.response.*
 import io.ktor.server.testing.*
 import io.ktor.util.*
 import java.net.URLEncoder
@@ -23,6 +24,31 @@ public abstract class APIGatewayLambdaServer : ApiGatewayProxyHandler() {
                 module()
             }
         }
+    }
+
+    /**
+     * Called to determine if the response is text, or if it should be encoded as Base64.
+     */
+    protected open fun isTextContent(contentType: ContentType): Boolean {
+        return contentType.contentType == "text" ||
+                contentType.match(ContentType.Application.Json) ||
+                contentType.match(ContentType.Application.JavaScript) ||
+                contentType.match(ContentType.Application.Xml) ||
+                contentType.match(ContentType.Application.FormUrlEncoded)
+    }
+
+    /**
+     * Should we encode to base 64?
+     */
+    protected open fun encodeBase64(response: ApplicationResponse): Boolean {
+        val responseHeaders = response.headers
+        val contentType = responseHeaders["Content-Type"]?.let {
+            ContentType.parse(it)
+        } ?: ContentType.Application.OctetStream
+
+        val contentEncoding = responseHeaders["Content-Encoding"]
+
+        return contentEncoding != null || !isTextContent(contentType)
     }
 
     override suspend fun handle(input: ApiGatewayProxyRequest): ApiGatewayProxyResponse {
@@ -55,31 +81,20 @@ public abstract class APIGatewayLambdaServer : ApiGatewayProxyHandler() {
         val responseHeaders = call.response.headers
         call.response.byteContent?.let { bytes ->
             if (bytes.isNotEmpty()) {
-                val contentType = responseHeaders["Content-Type"]?.let {
-                    ContentType.parse(it)
-                } ?: ContentType.Application.OctetStream
-
-                val contentEncoding = responseHeaders["Content-Encoding"]
-
-                body = if (contentEncoding == null && (
-                            contentType.match(ContentType("application", "json")) ||
-                                    contentType.match(ContentType("application", "js")) ||
-                                    contentType.contentType == "text"
-                            )
-                ) {
-                    String(bytes)
-                } else {
+                body = if (encodeBase64(call.response)) {
                     isBase64 = true
                     Base64.getEncoder().encodeToString(bytes)
+                } else {
+                    String(bytes)
                 }.ifEmpty { null }
             }
         }
 
         return ApiGatewayProxyResponse(
             call.response.status()?.value ?: 200,
-            multiValueHeaders = responseHeaders.allValues().entries().map {
+            multiValueHeaders = responseHeaders.allValues().entries().associate {
                 it.key to it.value
-            }.toMap(),
+            },
             body = body,
             isBase64Encoded = isBase64
         )
