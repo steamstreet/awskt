@@ -4,19 +4,20 @@ plugins {
 
 dependencies {
     implementation(libs.kotlin.serialization.json)
-    api(project(":lambda:lambda-coroutines"))
-    api(project(":lambda:lambda-api-gateway"))
     api(projects.cognito)
+    api(projects.lambda.lambdaApiGateway)
+    api(projects.lambda.lambdaCoroutines)
 
-    testImplementation(kotlin("test"))
-    testImplementation(libs.kluent)
-
-    api(libs.ktor.server.test.host)
     api(libs.ktor.server.host.common)
     api(libs.ktor.server.auth.jwt)
     api(libs.ktor.server.core)
     api(libs.ktor.server.auth.jwt)
 
+    testImplementation(kotlin("test"))
+    testImplementation(libs.kluent)
+    testImplementation(libs.ktor.server.status.pages)
+    testImplementation(libs.kotlin.coroutines.test)
+    testImplementation(libs.ktor.server.status.pages)
 }
 
 publishing {

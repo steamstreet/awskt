@@ -9,9 +9,9 @@ plugins {
     signing
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 

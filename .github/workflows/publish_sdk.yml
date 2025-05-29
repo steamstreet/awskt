@@ -45,18 +45,17 @@ jobs:
         run: ./gradlew build
 
       - name: Publish to Central
-        run: ./gradlew final  -Psigning.keyId="${{ secrets.SIGNING_KEYID }}" -Psigning.password="${{ secrets.SIGNING_PASSWORD }}" -Psigning.secretKeyRingFile="${{ steps.nexus_gpg_file.outputs.filePath }}" -PsonatypeUsername="${{ secrets.MAVEN_CENTRAL_USER }}" -PsonatypePassword="${{ secrets.MAVEN_CENTRAL_PASSWORD }}"
+        run: ./gradlew final  -Psigning.keyId="${{ secrets.SIGNING_KEYID }}" -Psigning.password="${{ secrets.SIGNING_PASSWORD }}" -Psigning.secretKeyRingFile="${{ steps.nexus_gpg_file.outputs.filePath }}" -PmavenCentralUsername="${{ secrets.MAVEN_CENTRAL_USER }}" -PmavenCentralUsername="${{ secrets.MAVEN_CENTRAL_PASSWORD }}"
 
       - name: Get the latest tag
         id: get_tag
         run: echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
+        uses: elgohr/Github-Release-Action@v5
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.tag }}
-          release_name: ${{ env.tag }}
-          draft: false
+          tag: ${{ env.tag }}
+          title: ${{ env.tag }}
           prerelease: false

@@ -13,8 +13,11 @@ allprojects {
 nexusPublishing {
     repositories {
         sonatype {
-            username = findProperty("sonatypeUsername").toString()
-            password = findProperty("sonatypePassword").toString()
+            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
+
+            username = findProperty("mavenCentralUsername").toString()
+            password = findProperty("mavenCentralPassword").toString()
         }
     }
 }
@@ -31,7 +34,6 @@ tasks.named("snapshot") {
 val closeTask = tasks.named("closeAndReleaseSonatypeStagingRepository")
 
 tasks.named("final") {
-//    dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "publishToMavenLocal" } })
     dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "publishToSonatype" } })
     dependsOn(closeTask)
 }
