@@ -55,5 +55,3 @@ public class EnvIntProperty(private val name: String, private val default: Int) 
         return Env.int(name) ?: default
     }
 }
-
-public val x: EnvProperty = env("SomeName")
