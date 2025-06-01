@@ -45,7 +45,7 @@ jobs:
         run: ./gradlew build
 
       - name: Publish to Central
-        run: ./gradlew final  -Psigning.keyId="${{ secrets.SIGNING_KEYID }}" -Psigning.password="${{ secrets.SIGNING_PASSWORD }}" -Psigning.secretKeyRingFile="${{ steps.nexus_gpg_file.outputs.filePath }}" -PmavenCentralUsername="${{ secrets.MAVEN_CENTRAL_USER }}" -PmavenCentralUsername="${{ secrets.MAVEN_CENTRAL_PASSWORD }}"
+        run: ./gradlew final  -Psigning.keyId="${{ secrets.SIGNING_KEYID }}" -Psigning.password="${{ secrets.SIGNING_PASSWORD }}" -Psigning.secretKeyRingFile="${{ steps.nexus_gpg_file.outputs.filePath }}" -PmavenCentralUsername="${{ secrets.MAVEN_CENTRAL_USER }}" -PmavenCentralPassword="${{ secrets.MAVEN_CENTRAL_PASSWORD }}"
 
       - name: Get the latest tag
         id: get_tag

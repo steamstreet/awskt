@@ -1,7 +1,5 @@
 package com.steamstreet.env
 
-import aws.sdk.kotlin.services.secretsmanager.SecretsManagerClient
-import aws.sdk.kotlin.services.secretsmanager.getSecretValue
 import com.steamstreet.awskt.logging.logWarning
 import com.steamstreet.env.Env.optional
 import com.steamstreet.mutableLazy
@@ -11,10 +9,20 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-public var secrets: SecretsManagerClient by mutableLazy {
-    runBlocking {
-        SecretsManagerClient.fromEnvironment()
-    }
+/**
+ * Get the default secrets provider, which uses reflection to avoid eagerly loading
+ * a class.
+ */
+public var secrets: SecretsProvider by mutableLazy {
+    Class.forName("com.steamstreet.env.SecretsManagerSecretsProvider").getDeclaredConstructor()
+        .newInstance() as SecretsProvider
+}
+
+/**
+ * Interface for a secret provider.
+ */
+public interface SecretsProvider {
+    public suspend fun getSecretValue(secretId: String): String?
 }
 
 public actual fun getEnvironmentVariable(key: String): String? = runBlocking {
@@ -24,9 +32,9 @@ public actual fun getEnvironmentVariable(key: String): String? = runBlocking {
     if (secretKey != null || value?.startsWith("Secret_") == true) {
         try {
             secretKey = secretKey ?: value.removePrefix("Secret_")
-            val secretString = secrets.getSecretValue {
+            val secretString = secrets.getSecretValue(
                 secretId = secretKey.substringBeforeLast(".")
-            }.secretString
+            )
 
             if (secretString == null) {
                 logWarning("No secret found for $secretKey")
