@@ -4,8 +4,7 @@ plugins {
 
 dependencies {
     implementation(libs.kotlin.serialization.json)
-    api(project(":lambda:lambda-coroutines"))
-
+    api(projects.lambda.lambdaCoroutines)
     testImplementation(kotlin("test"))
     testImplementation(libs.kluent)
 }

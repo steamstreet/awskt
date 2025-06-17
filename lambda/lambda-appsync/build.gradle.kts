@@ -4,8 +4,8 @@ plugins {
 
 dependencies {
     implementation(libs.kotlin.serialization.json)
-    api(project(":lambda:lambda-coroutines"))
-    api(project(":appsync"))
+    api(projects.lambda.lambdaCoroutines)
+    api(projects.appsync)
 }
 
 publishing {
