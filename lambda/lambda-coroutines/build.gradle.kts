@@ -4,8 +4,9 @@ plugins {
 
 dependencies {
     api(libs.kotlin.serialization.json)
-    api(project(":lambda:lambda-core"))
     api(libs.kotlin.coroutines.core)
+
+    api(projects.lambda.lambdaCore)
 }
 
 publishing {

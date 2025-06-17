@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     api(libs.aws.lambda.core)
-    api(project(":logging"))
+    api(projects.logging)
 }
 
 publishing {
