@@ -3,10 +3,10 @@ plugins {
 }
 
 dependencies {
-    api(project(":logging"))
+    api(projects.logging)
     implementation(libs.slf4j.logback.classic)
     implementation(libs.aws.lambda.core)
-    runtimeOnly(libs.log4j.api)
+    implementation(libs.log4j.api)
 }
 
 publishing {
