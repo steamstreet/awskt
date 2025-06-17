@@ -47,7 +47,6 @@ kotlin {
 publishing {
     publications {
         withType<MavenPublication> {
-            artifactId = "awskt-${artifactId}"
             pom {
                 description.set("Standard constructs and functions for working with AWS in Kotlin.")
             }

@@ -42,7 +42,6 @@ kotlin {
 publishing {
     publications {
         withType<MavenPublication> {
-            artifactId = "awskt-${artifactId}"
             pom {
                 description.set("Some useful tools for writing local unit tests.")
             }

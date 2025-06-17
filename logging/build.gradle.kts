@@ -7,14 +7,14 @@ kotlin {
 
     jvm {
     }
-
-    js(IR) {
-        useCommonJs()
-        browser()
-    }
+//
+//    js(IR) {
+//        useCommonJs()
+//        browser()
+//    }
 
     sourceSets {
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 api(libs.slf4j.api)
                 api(libs.logstash.logback.encoder)
@@ -29,7 +29,6 @@ kotlin {
 publishing {
     publications {
         withType<MavenPublication> {
-            artifactId = "awskt-${artifactId}"
             pom {
                 description.set("Useful logging tools for Kotlin on AWS")
             }

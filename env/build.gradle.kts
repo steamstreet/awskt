@@ -36,7 +36,6 @@ kotlin {
 publishing {
     publications {
         withType<MavenPublication> {
-            artifactId = "awskt-${artifactId}"
             pom {
                 description.set("Tools for retrieving environment variables from different sources.")
             }

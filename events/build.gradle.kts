@@ -36,7 +36,6 @@ kotlin {
 publishing {
     publications {
         withType<MavenPublication> {
-            artifactId = "awskt-${artifactId}"
             pom {
                 description.set("Helpers for building EventBridge applications in Kotlin")
             }

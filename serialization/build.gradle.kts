@@ -30,7 +30,6 @@ kotlin {
 publishing {
     publications {
         withType<MavenPublication> {
-            artifactId = "awskt-${artifactId}"
             pom {
                 description.set("A library to help when working with Kotlin serialization.")
             }
