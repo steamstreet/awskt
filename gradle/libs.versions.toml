@@ -38,8 +38,8 @@ slf4j-jcl = { group = "org.slf4j", name = "jcl-over-slf4j", version.ref = "slf4j
 slf4j-log4j = { group = "org.slf4j", name = "log4j-over-slf4j", version.ref = "slf4j" }
 
 # -- Logback, Logstash, DynamoDB Local (fixed versions)
-slf4j-logback-classic = "ch.qos.logback:logback-classic:1.4.14"
-logstash-logback-encoder = "net.logstash.logback:logstash-logback-encoder:6.6"
+slf4j-logback-classic = "ch.qos.logback:logback-classic:1.5.18"
+logstash-logback-encoder = "net.logstash.logback:logstash-logback-encoder:8.1"
 aws-dynamodb-local = "com.amazonaws:DynamoDBLocal:1.12.0"
 
 # -- Log4j (single usage, no shared version)
