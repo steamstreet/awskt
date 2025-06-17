@@ -102,9 +102,8 @@ public fun AttributeValue.asJsonElement(): JsonElement {
  * Set the value of a key to a JsonElement.
  */
 public fun MutableItem.set(key: String, value: JsonElement) {
-    value.toAttributeValue()?.let {
-        set(key, it)
-    }
+    val attrValue = value.toAttributeValue()
+    set(key, attrValue)
 }
 
 /**
@@ -136,7 +135,7 @@ public inline fun <reified T> MutableItem.put(value: T) {
  * Set the value of the given key. The value can be an object, list or primitive.
  */
 public inline fun <reified T> MutableItem.setObject(key: String, value: T) {
-    set(key, attributeValueJson.encodeToJsonElement(value))
+    set(key, this.dynamo.dynamoKt.entityJsonEncoder.encodeToJsonElement(value))
 }
 
 public suspend inline fun <reified T> Item.getObject(key: String): T? = deserialize(key)

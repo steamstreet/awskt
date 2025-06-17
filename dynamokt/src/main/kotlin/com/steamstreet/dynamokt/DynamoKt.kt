@@ -4,6 +4,7 @@ import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 import aws.smithy.kotlin.runtime.auth.awscredentials.CredentialsProvider
 import com.steamstreet.mutableLazy
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
 
 /**
  * The global object that stores the Dynamo configuration. Code to read and
@@ -21,6 +22,14 @@ public class DynamoKt(
 
     private val defaultClient: DynamoDbClient by lazy {
         builder(defaultCredentials)
+    }
+
+    /**
+     * Allows configuration of the encoder for serialized types
+     */
+    public var entityJsonEncoder: Json = Json {
+        this.encodeDefaults = false
+        this.ignoreUnknownKeys = true
     }
 
     /**

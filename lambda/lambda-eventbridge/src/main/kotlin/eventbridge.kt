@@ -7,6 +7,7 @@ import com.steamstreet.aws.lambda.lambdaJson
 import com.steamstreet.aws.lambda.logger
 import com.steamstreet.aws.sqs.BatchResponse
 import com.steamstreet.aws.sqs.RecordResponse
+import com.steamstreet.awskt.logging.logError
 import com.steamstreet.awskt.logging.logInfo
 import com.steamstreet.awskt.logging.logJson
 import com.steamstreet.awskt.logging.mdcContext
@@ -19,7 +20,6 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import net.logstash.logback.marker.Markers
 import java.io.ByteArrayOutputStream
@@ -125,7 +125,19 @@ public fun eventBridge(
             mdcContext("event-detail-type" to event.detailType) {
                 val processing = measureTimeMillis {
                     val handlerConfig = DefaultEventBridgeHandlerConfig(event)
-                    handlerConfig.config()
+                    try {
+                        handlerConfig.config()
+                    } catch (t: Throwable) {
+                        logError(
+                            "Failure handling event", t,
+                            "detail-type" to event.detailType,
+                            "source" to event.source,
+                            "time" to event.time.toString(),
+                            "account" to event.account,
+                            "detail" to event.detail?.toString()
+                        )
+                        throw t
+                    }
                     handlerConfig.error?.let { throw it }
                 }
                 if (tracePerformance) {
@@ -302,7 +314,8 @@ public interface EventBridgeFunction {
     }
 
     context(EventBridgeHandlerConfig)
-    public suspend fun onEvent()
+    public suspend fun EventBridgeHandlerConfig.onEvent()
+
 }
 
 
