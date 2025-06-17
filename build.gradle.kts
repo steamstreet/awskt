@@ -28,8 +28,7 @@ tasks.named("snapshot") {
     dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "publishToMavenLocal" } })
 }
 
-val closeTask = tasks.named("closeSonatypeStagingRepository")
-//val closeTask = tasks.named("closeAndReleaseSonatypeStagingRepository")
+val closeTask = tasks.named("closeAndReleaseSonatypeStagingRepository")
 
 tasks.named("final") {
     dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "publishToSonatype" } })
