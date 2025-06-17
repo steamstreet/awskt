@@ -7,11 +7,6 @@ kotlin {
 
     jvm {
     }
-//
-//    js(IR) {
-//        useCommonJs()
-//        browser()
-//    }
 
     sourceSets {
         jvmMain {

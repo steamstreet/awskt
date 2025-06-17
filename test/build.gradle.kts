@@ -5,8 +5,7 @@ plugins {
 kotlin {
     explicitApi()
 
-    jvm {
-    }
+    jvm {}
 
     sourceSets {
         val jvmMain by getting {
