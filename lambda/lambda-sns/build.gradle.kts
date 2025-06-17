@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":lambda:lambda-coroutines"))
+    api(projects.lambda.lambdaCoroutines)
 }
 
 publishing {
