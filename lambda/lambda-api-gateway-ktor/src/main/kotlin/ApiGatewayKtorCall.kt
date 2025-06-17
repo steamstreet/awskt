@@ -10,7 +10,6 @@ import io.ktor.server.response.*
 import io.ktor.util.*
 import io.ktor.util.reflect.*
 import io.ktor.utils.io.*
-import net.logstash.logback.marker.Markers.append
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.CoroutineContext
@@ -89,7 +88,7 @@ public class ApiGatewayKtorCall(
                 }
 
             override val queryParameters: Parameters by lazy {
-                parametersOf().apply {
+                Parameters.build {
                     proxyRequest.queryStringParameters?.forEach { (key, value) ->
                         append(key, value)
                     }
