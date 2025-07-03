@@ -41,6 +41,7 @@ publishing {
     publications.withType<MavenPublication> {
         artifact(javadocJar)
         groupId = "com.steamstreet"
+        artifactId = "awskt-${artifactId}"
 
         pom {
             name.set("AWSKT: ${project.name}")
