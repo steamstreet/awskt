@@ -109,7 +109,7 @@ public class Transaction internal constructor(private val mapper: DynamoKtSessio
         }
     }
 
-    override suspend fun put(pk: AttributeValue, sk: AttributeValue?, block: MutableItem.() -> Unit): Item {
+    override suspend fun put(pk: AttributeValue, sk: AttributeValue?, block: suspend MutableItem.() -> Unit): Item {
         val key = mapper.keyMap(pk, sk)
         return MutableItem(mapper, key).let {
             it.doNotOverwrite = true
@@ -138,7 +138,7 @@ public class Transaction internal constructor(private val mapper: DynamoKtSessio
         }
     }
 
-    override suspend fun delete(pk: String, sk: String?, block: MutableItem.() -> Unit) {
+    override suspend fun delete(pk: String, sk: String?, block: suspend MutableItem.() -> Unit) {
         items.add(buildDelete(pk, sk))
     }
 
