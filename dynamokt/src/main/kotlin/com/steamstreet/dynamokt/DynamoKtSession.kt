@@ -116,7 +116,7 @@ public class DynamoKtSession(
         }
     }
 
-    override suspend fun put(pk: AttributeValue, sk: AttributeValue?, block: MutableItem.() -> Unit): Item {
+    override suspend fun put(pk: AttributeValue, sk: AttributeValue?, block: suspend MutableItem.() -> Unit): Item {
         return MutableItem(
             this, keyMap(pk, sk)
         ).let {
@@ -230,7 +230,7 @@ public class DynamoKtSession(
         }
     }
 
-    override suspend fun delete(pk: String, sk: String?, block: MutableItem.() -> Unit) {
+    override suspend fun delete(pk: String, sk: String?, block: suspend MutableItem.() -> Unit) {
         val item = MutableItem(this, keyMap(pk, sk))
         item.block()
 

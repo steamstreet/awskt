@@ -114,7 +114,7 @@ public open class Item internal constructor(
      * Update the item. Provide a function that makes calls on `MutableItem` to make the actual
      * changes.
      */
-    public suspend fun update(updater: ItemUpdater = dynamo, block: MutableItem.() -> Unit): Item {
+    public suspend fun update(updater: ItemUpdater = dynamo, block: suspend MutableItem.() -> Unit): Item {
         return updater.update(this, block)
     }
 
