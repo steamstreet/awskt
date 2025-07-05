@@ -314,7 +314,7 @@ public interface EventBridgeFunction {
     }
 
     context(EventBridgeHandlerConfig)
-    public suspend fun EventBridgeHandlerConfig.onEvent()
+    public suspend fun onEvent()
 
 }
 
