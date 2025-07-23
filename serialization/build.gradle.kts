@@ -24,6 +24,12 @@ kotlin {
                 api(project(":standards"))
             }
         }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
 }
 
