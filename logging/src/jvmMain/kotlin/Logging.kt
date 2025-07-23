@@ -4,7 +4,6 @@ import com.steamstreet.exceptions.MDCExceptionMixin
 import kotlinx.coroutines.slf4j.MDCContext
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import kotlinx.serialization.serializer
 import net.logstash.logback.marker.Markers
@@ -101,6 +100,47 @@ public inline fun <reified T> Logger.logValue(message: String, field: String, da
 public fun <T> logJson(message: String, key: String, serializer: KSerializer<T>, data: T) {
     defaultLogger.logJson(message, key, loggingEncoder.encodeToString(serializer, data))
 }
+
+/**
+ * Log warning with the given context
+ */
+public fun logWarning(message: String, context: JsonElement, throwable: Throwable? = null) {
+    if (context is JsonObject) {
+        val markers = context.map { (key, value) ->
+            Markers.appendRaw(key, value.toString())
+        }
+        defaultLogger.warn(Markers.aggregate(markers), message, throwable)
+    } else {
+        defaultLogger.warn(Markers.appendRaw("context", context.toString()), message, throwable)
+    }
+}
+
+public inline fun <reified T> logWarningObject(message: String, data: T, throwable: Throwable? = null) {
+    val element = loggingEncoder.encodeToJsonElement(data)
+    logWarning(message, element, throwable)
+}
+
+
+/**
+ * Log an error with the given context
+ */
+public fun logError(message: String, context: JsonElement, throwable: Throwable? = null) {
+    if (context is JsonObject) {
+        val markers = context.map { (key, value) ->
+            Markers.appendRaw(key, value.toString())
+        }
+        defaultLogger.error(Markers.aggregate(markers), message, throwable)
+    } else {
+        defaultLogger.error(Markers.appendRaw("context", context.toString()), message, throwable)
+    }
+}
+
+public inline fun <reified T> logErrorObject(message: String, data: T, throwable: Throwable? = null) {
+    val element = loggingEncoder.encodeToJsonElement(data)
+    logError(message, element, throwable)
+}
+
+
 
 /**
  * Log serialized JSON to the log.
