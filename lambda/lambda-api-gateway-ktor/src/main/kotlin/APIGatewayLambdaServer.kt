@@ -11,8 +11,10 @@ import io.ktor.server.application.*
  * serves many different requests.
  */
 public abstract class APIGatewayLambdaServer : ApiGatewayProxyHandler() {
-    private val server = APIGatewayKtorServer {
-        module()
+    private val server by lazy {
+        APIGatewayKtorServer {
+            module()
+        }
     }
 
     override suspend fun handle(input: ApiGatewayProxyRequest): ApiGatewayProxyResponse {
