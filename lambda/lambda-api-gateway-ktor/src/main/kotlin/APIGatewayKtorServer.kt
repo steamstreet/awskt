@@ -48,8 +48,14 @@ public class APIGatewayKtorServer(module: Application.() -> Unit) {
         ): ApplicationEngine {
             appEnvironment = environment
             appProvider = applicationProvider
-            with(applicationProvider()) {
-                sendPipeline.installDefaultTransformations()
+
+            val created = applicationProvider()
+            created.sendPipeline.installDefaultTransformations()
+            created.receivePipeline.installDefaultTransformations()
+
+            app = created
+            appProvider = {
+                app
             }
             return internalEngine
         }

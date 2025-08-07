@@ -80,11 +80,7 @@ public class ApiGatewayKtorCall(
             }
             override val pipeline: ApplicationReceivePipeline
                 get() {
-                    return ApplicationReceivePipeline(
-                        call.application.developmentMode
-                    ).apply {
-                        resetFrom(call.application.receivePipeline)
-                    }
+                    return application.receivePipeline
                 }
 
             override val queryParameters: Parameters by lazy {
@@ -103,6 +99,7 @@ public class ApiGatewayKtorCall(
                     } else {
                         proxyRequest.body!!.toByteArray(Charsets.UTF_8)
                     }
+                    println("Body: ${String(bodyBytes, Charsets.UTF_8)}")
                     ByteReadChannel(bodyBytes)
                 } else {
                     ByteReadChannel.Empty
