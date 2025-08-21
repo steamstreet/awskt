@@ -99,7 +99,6 @@ public class ApiGatewayKtorCall(
                     } else {
                         proxyRequest.body!!.toByteArray(Charsets.UTF_8)
                     }
-                    println("Body: ${String(bodyBytes, Charsets.UTF_8)}")
                     ByteReadChannel(bodyBytes)
                 } else {
                     ByteReadChannel.Empty

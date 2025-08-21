@@ -129,4 +129,150 @@ class APIGatewayLambdaServerTest {
         }
         response.statusCode.shouldBeEqualTo(500)
     }
+
+    /**
+     * Test form parameter parsing
+     */
+    @Test
+    fun formParameterParsing() = runTest {
+        val formRequest = Json { ignoreUnknownKeys = true }.decodeFromString<ApiGatewayProxyRequest>(formParamsRequest)
+
+        val response = testRoute(formRequest) {
+            val parameters = call.receiveParameters()
+            parameters["grant_type"].shouldNotBeNull()
+            parameters["grant_type"].shouldBeEqualTo("client_credentials")
+            parameters["client_id"].shouldBeEqualTo("kinflix-mobile")
+            parameters["client_secret"].shouldBeEqualTo("kinflix-mobile-secret")
+
+            call.respondText("Form parameters parsed successfully")
+        }
+
+        response.statusCode.shouldBeEqualTo(200)
+        response.body.shouldNotBeNull().shouldBeEqualTo("Form parameters parsed successfully")
+    }
+
+
 }
+
+const val formParamsRequest = """
+    {
+        "resource": "/{proxy+}",
+        "path": "/my/path",
+        "httpMethod": "POST",
+        "headers": {
+            "Accept": "*/*",
+            "Accept-Encoding": "br, deflate, gzip, x-gzip",
+            "CloudFront-Forwarded-Proto": "https",
+            "CloudFront-Is-Desktop-Viewer": "true",
+            "CloudFront-Is-Mobile-Viewer": "false",
+            "CloudFront-Is-SmartTV-Viewer": "false",
+            "CloudFront-Is-Tablet-Viewer": "false",
+            "CloudFront-Viewer-ASN": "22773",
+            "CloudFront-Viewer-Country": "US",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Host": "75z6vj9jr4.execute-api.us-west-2.amazonaws.com",
+            "User-Agent": "IntelliJ HTTP Client/IntelliJ IDEA 2025.1.4.1",
+            "Via": "2.0 7645be6ac68aa5701b850abcb21df526.cloudfront.net (CloudFront)",
+            "X-Amz-Cf-Id": "awCkvVEQff3GJpz46QReu9x93mviAWDUFlqqlhkKLGtU7nGbFsWm9w==",
+            "X-Amzn-Trace-Id": "Root=1-6894fc9b-58f3f30e36e9171e0962b2a6",
+            "X-Forwarded-For": "68.229.51.5, 18.68.47.245",
+            "X-Forwarded-Port": "443",
+            "X-Forwarded-Proto": "https"
+        },
+        "multiValueHeaders": {
+            "Accept": [
+                "*/*"
+            ],
+            "Accept-Encoding": [
+                "br, deflate, gzip, x-gzip"
+            ],
+            "CloudFront-Forwarded-Proto": [
+                "https"
+            ],
+            "CloudFront-Is-Desktop-Viewer": [
+                "true"
+            ],
+            "CloudFront-Is-Mobile-Viewer": [
+                "false"
+            ],
+            "CloudFront-Is-SmartTV-Viewer": [
+                "false"
+            ],
+            "CloudFront-Is-Tablet-Viewer": [
+                "false"
+            ],
+            "CloudFront-Viewer-ASN": [
+                "22773"
+            ],
+            "CloudFront-Viewer-Country": [
+                "US"
+            ],
+            "Content-Type": [
+                "application/x-www-form-urlencoded"
+            ],
+            "Host": [
+                "75z6vj9jr4.execute-api.us-west-2.amazonaws.com"
+            ],
+            "User-Agent": [
+                "IntelliJ HTTP Client/IntelliJ IDEA 2025.1.4.1"
+            ],
+            "Via": [
+                "2.0 7645be6ac68aa5701b850abcb21df526.cloudfront.net (CloudFront)"
+            ],
+            "X-Amz-Cf-Id": [
+                "awCkvVEQff3GJpz46QReu9x93mviAWDUFlqqlhkKLGtU7nGbFsWm9w=="
+            ],
+            "X-Amzn-Trace-Id": [
+                "Root=1-6894fc9b-58f3f30e36e9171e0962b2a6"
+            ],
+            "X-Forwarded-For": [
+                "68.229.51.5, 18.68.47.245"
+            ],
+            "X-Forwarded-Port": [
+                "443"
+            ],
+            "X-Forwarded-Proto": [
+                "https"
+            ]
+        },
+        "queryStringParameters": null,
+        "multiValueQueryStringParameters": null,
+        "pathParameters": {
+            "proxy": "oauth/token"
+        },
+        "stageVariables": null,
+        "requestContext": {
+            "resourceId": "2dqop8",
+            "resourcePath": "/{proxy+}",
+            "httpMethod": "POST",
+            "extendedRequestId": "O8xoXH6DPHcEsfQ=",
+            "requestTime": "07/Aug/2025:19:20:59 +0000",
+            "path": "/live/oauth/token",
+            "accountId": "627754054305",
+            "protocol": "HTTP/1.1",
+            "stage": "live",
+            "domainPrefix": "75z6vj9jr4",
+            "requestTimeEpoch": 1754594459544,
+            "requestId": "13cb05ea-8bc2-4846-a1df-ea6c4e956a76",
+            "identity": {
+                "cognitoIdentityPoolId": null,
+                "accountId": null,
+                "cognitoIdentityId": null,
+                "caller": null,
+                "sourceIp": "68.229.51.5",
+                "principalOrgId": null,
+                "accessKey": null,
+                "cognitoAuthenticationType": null,
+                "cognitoAuthenticationProvider": null,
+                "userArn": null,
+                "userAgent": "IntelliJ HTTP Client/IntelliJ IDEA 2025.1.4.1",
+                "user": null
+            },
+            "domainName": "75z6vj9jr4.execute-api.us-west-2.amazonaws.com",
+            "deploymentId": "y7c6g3",
+            "apiId": "75z6vj9jr4"
+        },
+        "body": "grant_type=client_credentials&client_id=kinflix-mobile&client_secret=kinflix-mobile-secret",
+        "isBase64Encoded": false
+    }
+"""
