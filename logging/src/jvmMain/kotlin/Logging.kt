@@ -211,7 +211,7 @@ public fun logWarning(message: String, vararg metadata: Pair<String, Any?>) {
 
 public open class MDCException(message: String?, cause: Throwable? = null) : Exception(message, cause),
     MDCExceptionMixin {
-    override val mdcAttributes: MutableMap<String, Any?> = MDC.getCopyOfContextMap().toMutableMap()
+    override val mdcAttributes: MutableMap<String, Any?> = MDC.getCopyOfContextMap()?.toMutableMap() ?: mutableMapOf()
 }
 
 /**
