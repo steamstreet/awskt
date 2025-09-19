@@ -65,3 +65,13 @@ public abstract class KinesisHandler : InputLambda<KinesisRecords>(KinesisRecord
 
     protected open suspend fun processRecord(record: KinesisRecord) {}
 }
+
+@Serializable
+public data class BatchItemFailuresResponse(
+    val batchItemFailures: List<BatchItemFailure>
+)
+
+@Serializable
+public data class BatchItemFailure(
+    val itemIdentifier: String
+)
