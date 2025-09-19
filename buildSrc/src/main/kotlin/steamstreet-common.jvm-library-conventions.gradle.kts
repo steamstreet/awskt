@@ -10,7 +10,7 @@ plugins {
 kotlin {
     explicitApiWarning()
     compilerOptions {
-        freeCompilerArgs.add("-Xcontext-receivers")
+        freeCompilerArgs.add("-Xcontext-parameters")
     }
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(17))

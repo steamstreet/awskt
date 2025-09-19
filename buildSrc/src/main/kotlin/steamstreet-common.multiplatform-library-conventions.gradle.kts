@@ -28,12 +28,8 @@ val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
 }
 
 kotlin {
-    jvm {
-        compilations.all {
-            kotlinOptions {
-                freeCompilerArgs += "-Xcontext-receivers"
-            }
-        }
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-parameters")
     }
 }
 

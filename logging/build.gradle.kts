@@ -15,7 +15,15 @@ kotlin {
                 api(libs.logstash.logback.encoder)
                 implementation(libs.kotlin.serialization.json)
                 implementation(libs.kotlin.coroutines.slf4j)
+                implementation(libs.kotlin.date.time)
                 implementation(projects.standards)
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.kotlin.coroutines.test)
+                implementation(libs.kluent)
             }
         }
     }

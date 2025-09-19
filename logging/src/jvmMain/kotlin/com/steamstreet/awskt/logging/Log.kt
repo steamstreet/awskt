@@ -141,13 +141,13 @@ public inline fun <reified T> logErrorObject(message: String, data: T, throwable
 }
 
 
-
 /**
  * Log serialized JSON to the log.
  */
 public inline fun <reified T> logValue(message: String, field: String, data: T) {
     logJson(message, field, loggingEncoder.serializersModule.serializer<T>(), data)
 }
+
 /**
  * Log a value as structured json, setting the data values at the root of the
  * log message.
@@ -178,9 +178,9 @@ public inline fun <reified T> EventLogContext.context(key: String, value: T) {
     context(key, element)
 }
 
-context(EventLogContext)
+context(ctx: EventLogContext)
 public inline operator fun <reified T> String.minus(value: T) {
-    context(this, value)
+    ctx.context(this, value)
 }
 
 /**
