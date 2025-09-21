@@ -313,14 +313,12 @@ public interface EventBridgeFunction {
         }
     }
 
-    context(EventBridgeHandlerConfig)
-    public suspend fun onEvent()
+    public suspend fun EventBridgeHandlerConfig.onEvent()
 
 }
 
 
-context(EventBridgeHandlerConfig)
-public suspend fun <T> on(type: EventSchema<T>, handler: suspend context(Event) (T) -> Any?): Unit =
+public suspend fun <T> EventBridgeHandlerConfig.on(type: EventSchema<T>, handler: suspend context(Event) (T) -> Any?): Unit =
     typeWithContext(type, handler)
 
 /**

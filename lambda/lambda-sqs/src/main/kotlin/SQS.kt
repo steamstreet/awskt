@@ -62,7 +62,7 @@ public abstract class SQSRawHandler : InputLambda<SQSEvent>(SQSEvent.serializer(
         }
     }
 
-    context(SQSRecord)
+    context(record: SQSRecord)
     public abstract suspend fun handleBody(body: String)
 }
 
@@ -74,7 +74,7 @@ public abstract class SQSHandler<T>(private val serializer: KSerializer<T>) : SQ
         ignoreUnknownKeys = true
     }
 
-    context(SQSRecord) override suspend fun handleBody(body: String) {
+    context(record: SQSRecord) override suspend fun handleBody(body: String) {
         val messagePayload = json.decodeFromString(serializer, body)
         handleMessage(messagePayload)
     }
@@ -82,7 +82,7 @@ public abstract class SQSHandler<T>(private val serializer: KSerializer<T>) : SQ
     /**
      * Handle an individual message
      */
-    context(SQSRecord)
+    context(record: SQSRecord)
     public abstract suspend fun handleMessage(message: T)
 }
 
@@ -126,12 +126,12 @@ public abstract class SQSBatchHandler<T>(private val serializer: KSerializer<T>)
      * Handle all events. Returns a list of booleans that must match with the events list.
      * For each event, returning true indicates that the event handling was a success.
      */
-    context(SQSEvent)
+    context(event: SQSEvent)
     public open suspend fun handleEvents(events: List<T>): List<Boolean> {
         return if (async) {
             coroutineScope {
                 events.mapIndexed { index, t ->
-                    val record = Records[index]
+                    val record = event.Records[index]
                     async(Dispatchers.IO) {
                         handleRecord(record, t)
                     }
@@ -139,7 +139,7 @@ public abstract class SQSBatchHandler<T>(private val serializer: KSerializer<T>)
             }
         } else {
             events.mapIndexed { index, t ->
-                handleRecord(Records[index], t)
+                handleRecord(event.Records[index], t)
             }
         }
     }
@@ -164,8 +164,7 @@ public abstract class SQSBatchHandler<T>(private val serializer: KSerializer<T>)
      * Handle a record one at a time. Throw an exception if there is a failure and the batch response
      * will handle it appropriate.
      */
-    context(SQSRecord)
+    context(record: SQSRecord)
     public open suspend fun handleMessage(message: T) {
     }
-
 }

@@ -55,6 +55,6 @@ public abstract class SNSHandler<T>(private val serializer: KSerializer<T>) :
     /**
      * Handle an individual message
      */
-    context(SnsRecord)
+    context(record: SnsRecord)
     public abstract suspend fun handleMessage(message: T)
 }
