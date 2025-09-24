@@ -230,7 +230,7 @@ public class ApiGatewayKtorCall(
                 }
             }
             // if we had content, the result is 200 by default.
-            statusCode.set(it.status?.value ?: 200)
+            statusCode.set(it.status?.value ?: this.statusCode.get())
         }
 
         val responseHeaders = responseHeadersBuilder.build()
