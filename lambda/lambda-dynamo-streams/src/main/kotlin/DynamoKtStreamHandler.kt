@@ -65,9 +65,7 @@ public abstract class DynamoKtStreamHandler(
                 val sequenceNumber = kinesis.jsonObject["sequenceNumber"]?.jsonPrimitive?.contentOrNull
                 if (dataString != null && sequenceNumber != null) {
                     val decodedData = String(Base64.decode(dataString))
-                    if (logRecords) {
-                        logger.info(Markers.appendRaw("input", decodedData), "Record received")
-                    }
+                    logRecord({ decodedData })
                     val dynamoEvent = jsonDecode.decodeFromString<DynamoStreamEvent>(decodedData)
                     RecordInfo(dynamoEvent, sequenceNumber)
                 } else {
@@ -77,9 +75,7 @@ public abstract class DynamoKtStreamHandler(
                 // Direct DynamoDB stream record - use eventID as identifier
                 val eventID = recordElement.jsonObject["eventID"]?.jsonPrimitive?.contentOrNull
                 if (eventID != null) {
-                    if (logRecords) {
-                        logger.info(Markers.appendRaw("input", recordElement.toString()), "Record received")
-                    }
+                    logRecord({ recordElement.toString() })
                     val dynamoEvent = jsonDecode.decodeFromJsonElement<DynamoStreamEvent>(recordElement)
                     RecordInfo(dynamoEvent, eventID)
                 } else {
@@ -110,6 +106,15 @@ public abstract class DynamoKtStreamHandler(
         }
 
         return BatchItemFailuresResponse(batchItemFailures = failedRecords)
+    }
+
+    /**
+     * Log an incoming record.
+     */
+    protected open fun logRecord(record: () -> String) {
+        if (logRecords) {
+            logger.info(Markers.appendRaw("input", record()), "Record received")
+        }
     }
 
     /**

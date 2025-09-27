@@ -1,44 +1,16 @@
 package com.steamstreet.dynamokt
 
-import aws.sdk.kotlin.runtime.auth.credentials.StaticCredentialsProvider
-import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 import aws.sdk.kotlin.services.dynamodb.createTable
 import aws.sdk.kotlin.services.dynamodb.model.*
-import aws.smithy.kotlin.runtime.net.url.Url
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
-import org.testcontainers.containers.GenericContainer
-import org.testcontainers.junit.jupiter.Container
+import org.amshove.kluent.shouldBeNull
 import org.testcontainers.junit.jupiter.Testcontainers
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 
 @Testcontainers
-class BasicTests {
-    @Container
-    val dynamo: GenericContainer<*> = GenericContainer("amazon/dynamodb-local:2.2.0")
-        .withExposedPorts(8000)
-
-    @BeforeTest
-    fun initDynamo() {
-        DynamoKt.defaultClientBuilder = {
-            DynamoDbClient {
-                endpointUrl = Url.parse("http://localhost:${dynamo.firstMappedPort}")
-                region = "us-east-1"
-                credentialsProvider = StaticCredentialsProvider {
-                    accessKeyId = "DummyKey"
-                    secretAccessKey = "DummySecret"
-                }
-            }
-        }
-    }
-
-    @AfterTest
-    fun destroy() {
-    }
-
+class BasicTests : DynamoKtTests() {
     @Test
     fun testBasics() = runTest {
         val db = createTable().session()
@@ -217,6 +189,34 @@ class BasicTests {
 
         val mapping = db.get("person", "123", ::TestMapping)
         mapping.name.shouldBeEqualTo("Jon")
+    }
+
+    @Test
+    fun testNestedDelete() = runTest {
+        val db = createTable().session()
+
+        db.put("person", "123") {
+            set(
+                "name", AttributeValue.M(
+                    mapOf(
+                        "first" to "Jon".attributeValue(),
+                        "last" to "Nichols".attributeValue()
+                    )
+                )
+            )
+        }
+
+        val added = db.get("person", "123")
+        added.get("name")!!.asM().get("first")!!.asS().shouldBeEqualTo("Jon")
+
+        db.update("person", "123") {
+            delete("name.first")
+        }
+
+        db.get("person", "123").also { withoutFirst ->
+            withoutFirst.get("name")!!.asM()["first"].shouldBeNull()
+            withoutFirst.get("name")!!.asM()["last"]!!.asS().shouldBeEqualTo("Nichols")
+        }
     }
 
     class TestMapping(override val entity: Item) : ItemContainer {

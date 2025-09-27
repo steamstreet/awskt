@@ -13,7 +13,9 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(libs.kluent)
     testImplementation(libs.kotlin.coroutines.test)
-    testImplementation("org.testcontainers:junit-jupiter:1.19.3")
+    testImplementation(libs.testcontainers.junit.jupiter)
+    testImplementation(libs.testcontainers.localstack)
+
 }
 
 publishing {

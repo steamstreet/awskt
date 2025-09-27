@@ -30,6 +30,8 @@ ktor-server-host-common = { group = "io.ktor", name = "ktor-server-host-common",
 ktor-server-test-host = { group = "io.ktor", name = "ktor-server-test-host", version.ref = "ktor" }
 ktor-server-auth-jwt = { group = "io.ktor", name = "ktor-server-auth-jwt", version.ref = "ktor" }
 ktor-server-status-pages = { group = "io.ktor", name = "ktor-server-status-pages", version.ref = "ktor" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version = "1.20.4" }
+testcontainers-localstack = { module = "org.testcontainers:localstack", version = "1.20.4" }
 
 # -- SLF4J with shared version
 slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
