@@ -72,7 +72,7 @@ data class OrderEvent(val orderId: String, val status: String)
 eventBridge.putEvent(OrderEvent("123", "completed"))
 ```
 
-## DynamoDB Module
+## DynamoKt
 
 ### dynamokt
 Type-safe DynamoDB client with full coroutine support. Provides a Kotlin-first API for DynamoDB operations with compile-time safety.
@@ -84,25 +84,7 @@ Type-safe DynamoDB client with full coroutine support. Provides a Kotlin-first A
 - Query and scan builders
 - Secondary index support
 
-**Usage:**
-```kotlin
-@Serializable
-data class User(
-    val id: String,
-    val name: String,
-    val email: String
-) : Item
-
-// Type-safe operations
-val user = dynamoKt.get<User>("userId123")
-dynamoKt.put(User("456", "Bob", "bob@example.com"))
-
-// Query builder
-val results = dynamoKt.query<User> {
-    hashKey("id", "123")
-    filter { attribute("name").beginsWith("A") }
-}
-```
+### [Detailed Documentation](docs/dynamokt.md)
 
 ## Lambda Modules
 
