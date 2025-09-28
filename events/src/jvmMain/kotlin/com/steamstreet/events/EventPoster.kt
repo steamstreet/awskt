@@ -9,13 +9,15 @@ import com.steamstreet.mutableLazy
 public interface ApplicationEventPoster {
     /**
      * Post the event as a string
+     * @return the event id
      */
-    public suspend fun post(eventType: String, eventDetail: String, source: String? = null)
+    public suspend fun post(eventType: String, eventDetail: String, source: String? = null): String?
 
     /**
      * Post a set of events
+     * @return a list of event ids. For those that are null, the event was not published.
      */
-    public suspend fun post(events: Collection<Event>)
+    public suspend fun post(events: Collection<Event>): List<String?>
 }
 
 /**

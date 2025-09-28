@@ -8,6 +8,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.json.*
+import net.logstash.logback.marker.Markers
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -49,6 +50,8 @@ public abstract class DynamoKtStreamHandler(
     override var logIncoming: Boolean = false
     override var logOutgoing: Boolean = false
 
+    public var logRecords: Boolean = false
+
     @OptIn(ExperimentalEncodingApi::class)
     override suspend fun handle(input: JsonElement): BatchItemFailuresResponse {
         val records = input.jsonObject["Records"]?.jsonArray
@@ -62,6 +65,7 @@ public abstract class DynamoKtStreamHandler(
                 val sequenceNumber = kinesis.jsonObject["sequenceNumber"]?.jsonPrimitive?.contentOrNull
                 if (dataString != null && sequenceNumber != null) {
                     val decodedData = String(Base64.decode(dataString))
+                    logRecord({ decodedData })
                     val dynamoEvent = jsonDecode.decodeFromString<DynamoStreamEvent>(decodedData)
                     RecordInfo(dynamoEvent, sequenceNumber)
                 } else {
@@ -71,6 +75,7 @@ public abstract class DynamoKtStreamHandler(
                 // Direct DynamoDB stream record - use eventID as identifier
                 val eventID = recordElement.jsonObject["eventID"]?.jsonPrimitive?.contentOrNull
                 if (eventID != null) {
+                    logRecord({ recordElement.toString() })
                     val dynamoEvent = jsonDecode.decodeFromJsonElement<DynamoStreamEvent>(recordElement)
                     RecordInfo(dynamoEvent, eventID)
                 } else {
@@ -101,6 +106,15 @@ public abstract class DynamoKtStreamHandler(
         }
 
         return BatchItemFailuresResponse(batchItemFailures = failedRecords)
+    }
+
+    /**
+     * Log an incoming record.
+     */
+    protected open fun logRecord(record: () -> String) {
+        if (logRecords) {
+            logger.info(Markers.appendRaw("input", record()), "Record received")
+        }
     }
 
     /**

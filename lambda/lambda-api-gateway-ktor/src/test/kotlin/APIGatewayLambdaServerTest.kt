@@ -131,6 +131,25 @@ class APIGatewayLambdaServerTest {
     }
 
     /**
+     * Throw an exception and confirm the response is 500
+     */
+    @Test
+    fun testBodyNon200() = runTest {
+        val response = testRoute(
+            ApiGatewayProxyRequest(
+                resource = "/my/path",
+                path = "/my/path",
+                httpMethod = "POST",
+                body = "Hello from Lambda!",
+                requestContext = ProxyRequestContext()
+            )
+        ) {
+            call.respond(HttpStatusCode.BadRequest, "Something here")
+        }
+        response.statusCode.shouldBeEqualTo(HttpStatusCode.BadRequest.value)
+    }
+
+    /**
      * Test form parameter parsing
      */
     @Test

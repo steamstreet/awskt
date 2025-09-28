@@ -264,9 +264,12 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     }
 
     public fun delete(key: String) {
-        val attr = "attr${attributeIndex.getAndIncrement()}"
-        attributeNames["#$attr"] = key
-        updateExpressions.add(Update("REMOVE", "#$attr"))
+        val newKey = key.split(".").joinToString(".") { keyElement ->
+            "#attr${attributeIndex.getAndIncrement()}".also {
+                attributeNames[it] = keyElement
+            }
+        }
+        updateExpressions.add(Update("REMOVE", "$newKey"))
     }
 
     /**

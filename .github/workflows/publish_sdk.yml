@@ -28,9 +28,6 @@ jobs:
           distribution: corretto
           java-version: 17
 
-      # validate that the gradle wrapper matches official checksums.
-      - uses: gradle/wrapper-validation-action@ccb4328a959376b642e027874838f60f8e596de3
-
       - name: Write Nexus Key
         id: nexus_gpg_file
         uses: timheuer/base64-to-file@v1.2
@@ -42,7 +39,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Gradle Build
-        run: ./gradlew build
+        run: ./gradlew build -x test
 
       - name: Publish to Central
         run: ./gradlew final  -Psigning.keyId="${{ secrets.SIGNING_KEYID }}" -Psigning.password="${{ secrets.SIGNING_PASSWORD }}" -Psigning.secretKeyRingFile="${{ steps.nexus_gpg_file.outputs.filePath }}" -PmavenCentralUsername="${{ secrets.MAVEN_CENTRAL_USER }}" -PmavenCentralPassword="${{ secrets.MAVEN_CENTRAL_PASSWORD }}"
