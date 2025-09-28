@@ -1,6 +1,9 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.steamstreet
 
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 public actual fun epochMillis(): Long {
     // this uses the Kotlin date time library, which we are trying

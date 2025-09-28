@@ -1,8 +1,11 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.steamstreet.dynamokt
 
 import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import aws.sdk.kotlin.services.dynamodb.model.ScanRequest
-import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 /**
  * DynamoDB attribute types for type checking.

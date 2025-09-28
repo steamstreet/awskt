@@ -10,14 +10,15 @@ import kotlinx.serialization.serializer
  */
 public data class EventSchema<T>(
     val type: String,
-    val serializer: KSerializer<T>
+    val serializer: KSerializer<T>,
+    val source: String? = null
 )
 
 /**
  * Create a schema from a generic type.
  */
-public inline fun <reified T> eventSchema(typeName: String): EventSchema<T> =
-    EventSchema(typeName, Json.serializersModule.serializer())
+public inline fun <reified T> eventSchema(typeName: String, source: String? = null): EventSchema<T> =
+    EventSchema(typeName, Json.serializersModule.serializer(), source)
 
 public val eventSchemaJson: Json = Json {
     ignoreUnknownKeys = true

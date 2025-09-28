@@ -9,7 +9,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToJsonElement
@@ -37,7 +36,7 @@ class EventBridgeTests {
         var something: String? = null
         val schema = eventSchema<TestData>("Test Event")
         val function = object : EventBridgeFunction {
-            context(EventBridgeHandlerConfig) override suspend fun onEvent() {
+            override suspend fun EventBridgeHandlerConfig.onEvent() {
                 schema {
                     something = it.something
                 }
@@ -61,7 +60,7 @@ class EventBridgeTests {
              * A failing function.
              */
             class FailingFunction(override val batchRetries: Boolean) : EventBridgeFunction {
-                context(EventBridgeHandlerConfig) override suspend fun onEvent() {
+                override suspend fun EventBridgeHandlerConfig.onEvent() {
                     schema {
                         check(false)
                     }

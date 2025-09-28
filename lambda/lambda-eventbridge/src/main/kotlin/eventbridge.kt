@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.steamstreet.aws.lambda.eventbridge
 
 import com.amazonaws.services.lambda.runtime.Context
@@ -15,8 +17,6 @@ import com.steamstreet.events.EventSchema
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -27,6 +27,9 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.util.*
 import kotlin.system.measureTimeMillis
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 /**
  * Callback interface for event bridge handler installation.

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.steamstreet.dynamokt
 
 import aws.sdk.kotlin.services.dynamodb.model.*
@@ -5,9 +7,11 @@ import aws.sdk.kotlin.services.dynamodb.putItem
 import aws.sdk.kotlin.services.dynamodb.updateItem
 import com.steamstreet.exceptions.DuplicateItemException
 import com.steamstreet.exceptions.NotFoundException
-import kotlinx.datetime.Instant
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.reflect.KProperty1
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 public class DuplicateDynamoItemException(pk: String, sk: String?, item: Item? = null) : DuplicateItemException(
     "${pk}${if (sk != null) ":$sk" else ""}"
@@ -320,7 +324,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      * Set the TTL to the current time plus the provided offset.
      */
     public fun setTTL(duration: kotlin.time.Duration) {
-        setTTL(kotlinx.datetime.Clock.System.now().plus(duration))
+        setTTL(Clock.System.now().plus(duration))
     }
 
     private suspend fun putItem(): Item {

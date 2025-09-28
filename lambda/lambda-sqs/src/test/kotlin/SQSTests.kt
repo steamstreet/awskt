@@ -39,7 +39,8 @@ class SQSTests {
 
         var name: String? = null
         val handler = object : SQSHandler<Payload>(Payload.serializer()) {
-            context(SQSRecord) override suspend fun handleMessage(message: Payload) {
+            context(record: SQSRecord)
+            override suspend fun handleMessage(message: Payload) {
                 name = message.name
             }
         }
