@@ -2,6 +2,9 @@ package com.steamstreet.aws.lambda
 
 import com.steamstreet.aws.lambda.kinesis.BatchItemFailure
 import com.steamstreet.aws.lambda.kinesis.BatchItemFailuresResponse
+import com.steamstreet.awskt.logging.logError
+import com.steamstreet.awskt.logging.logInfo
+import com.steamstreet.awskt.logging.logWarning
 import com.steamstreet.dynamokt.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -9,6 +12,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.json.*
 import net.logstash.logback.marker.Markers
+import java.util.logging.Level
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -46,6 +50,7 @@ public abstract class DynamoKtStreamHandler(
     private val jsonDecode: Json = Json {
         ignoreUnknownKeys = true
     }
+    public var logFailures: Level? = Level.WARNING
 
     override var logIncoming: Boolean = false
     override var logOutgoing: Boolean = false
@@ -103,6 +108,18 @@ public abstract class DynamoKtStreamHandler(
         if (!enableBatchItemFailures && failedRecords.isNotEmpty()) {
             val firstFailure = results.find { it != null }
             throw firstFailure ?: IllegalStateException("Processing failed but batch item failures are not enabled")
+        }
+
+        if (logFailures != null) {
+            failedRecords.forEach {
+                val message = "Dynamo record processing failed"
+                val metadata = "itemIdentifier" to it.itemIdentifier
+                when (logFailures) {
+                    Level.WARNING -> logWarning(message, metadata)
+                    Level.INFO -> logInfo(message, metadata)
+                    Level.SEVERE -> logError(message, metadata)
+                }
+            }
         }
 
         return BatchItemFailuresResponse(batchItemFailures = failedRecords)
