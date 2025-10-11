@@ -3,6 +3,9 @@ package com.steamstreet.aws.lambda
 import com.steamstreet.aws.lambda.kinesis.BatchItemFailure
 import com.steamstreet.aws.lambda.kinesis.BatchItemFailuresResponse
 import com.steamstreet.aws.lambda.kinesis.KinesisRecords
+import com.steamstreet.awskt.logging.logError
+import com.steamstreet.awskt.logging.logInfo
+import com.steamstreet.awskt.logging.logWarning
 import com.steamstreet.dynamokt.DynamoStreamEvent
 import com.steamstreet.dynamokt.DynamoStreamRecords
 import kotlinx.coroutines.Dispatchers
@@ -10,6 +13,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.json.Json
+import java.util.logging.Level
 
 /**
  * Handles changes to the Content Services table that are published as Kinesis records.
@@ -31,6 +35,7 @@ public open class DynamoKinesisStreamHandler(
     private val jsonDecode = Json {
         ignoreUnknownKeys = true
     }
+    public var logFailures: Level? = Level.WARNING
 
     override suspend fun handle(input: KinesisRecords): BatchItemFailuresResponse {
         val dynamoRecords = input.Records.map {
@@ -57,6 +62,18 @@ public open class DynamoKinesisStreamHandler(
         if (!enableBatchItemFailures && failedRecords.isNotEmpty()) {
             val firstFailure = results.find { it != null }
             throw firstFailure ?: IllegalStateException("Processing failed but batch item failures are not enabled")
+        }
+
+        if (logFailures != null) {
+            failedRecords.forEach {
+                val message = "Dynamo record processing failed"
+                val metadata = "itemIdentifier" to it.itemIdentifier
+                when (logFailures) {
+                    Level.WARNING -> logWarning(message, metadata)
+                    Level.INFO -> logInfo(message, metadata)
+                    Level.SEVERE -> logError(message, metadata)
+                }
+            }
         }
 
         return BatchItemFailuresResponse(batchItemFailures = failedRecords)

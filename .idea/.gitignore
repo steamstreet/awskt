@@ -2,6 +2,7 @@
 *.xml
 *.iml
 .name
+shelf
 
 !inspectionProfiles/*
 !codeStyles/*
