@@ -13,6 +13,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.json.*
 import net.logstash.logback.marker.Markers
 import java.util.logging.Level
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -110,14 +111,17 @@ public abstract class DynamoKtStreamHandler(
             throw firstFailure ?: IllegalStateException("Processing failed but batch item failures are not enabled")
         }
 
-        if (logFailures != null) {
-            failedRecords.forEach {
-                val message = "Dynamo record processing failed"
-                val metadata = "itemIdentifier" to it.itemIdentifier
-                when (logFailures) {
-                    Level.WARNING -> logWarning(message, metadata)
-                    Level.INFO -> logInfo(message, metadata)
-                    Level.SEVERE -> logError(message, metadata)
+        if (logFailures != null && failedRecords.isNotEmpty()) {
+            results.forEachIndexed { index, result ->
+                val record = recordInfos[index]
+                if (result != null) {
+                    val message = "Dynamo record processing failed"
+                    val metadata = "itemIdentifier" to record.identifier
+                    when (logFailures) {
+                        Level.WARNING -> logWarning(message, result, metadata)
+                        Level.INFO -> logInfo(message, metadata)
+                        Level.SEVERE -> logError(message, result, metadata)
+                    }
                 }
             }
         }
@@ -146,6 +150,8 @@ public abstract class DynamoKtStreamHandler(
                         try {
                             handleRecord(record)
                             null
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (e: Exception) {
                             e
                         }
