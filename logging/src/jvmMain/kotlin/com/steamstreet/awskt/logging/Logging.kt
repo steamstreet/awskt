@@ -141,13 +141,13 @@ public inline fun <reified T> logErrorObject(message: String, data: T, throwable
 }
 
 
-
 /**
  * Log serialized JSON to the log.
  */
 public inline fun <reified T> logValue(message: String, field: String, data: T) {
     logJson(message, field, loggingEncoder.serializersModule.serializer<T>(), data)
 }
+
 /**
  * Log a value as structured json, setting the data values at the root of the
  * log message.
@@ -207,11 +207,6 @@ public fun logWarning(message: String, vararg metadata: Pair<String, Any?>) {
     mdc(*metadata) {
         defaultLogger.warn(message)
     }
-}
-
-public open class MDCException(message: String?, cause: Throwable? = null) : Exception(message, cause),
-    MDCExceptionMixin {
-    override val mdcAttributes: MutableMap<String, Any?> = MDC.getCopyOfContextMap()?.toMutableMap() ?: mutableMapOf()
 }
 
 /**
