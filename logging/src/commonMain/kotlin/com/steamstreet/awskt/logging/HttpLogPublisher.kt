@@ -82,7 +82,7 @@ public class HttpLogPublisher(
                     // also publish to the local publisher.
                     backupPublisher.publish(level, message, context)
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 // Fallback to the backup publisher if the HTTP request fails
                 backupPublisher.publish(level, message, context)
             }
