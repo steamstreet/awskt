@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
     id("steamstreet-common.multiplatform-library-conventions")
 }
@@ -13,30 +17,29 @@ kotlin {
         browser()
     }
 
-    iosArm64 {
-
-    }
+    iosArm64()
+    iosSimulatorArm64()
 
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 implementation(libs.kotlin.coroutines.core)
             }
         }
 
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(kotlin("test"))
             }
         }
 
-        val jvmMain by getting {
+        jvmMain  {
             dependencies {
                 implementation(libs.kotlin.coroutines.core)
             }
         }
 
-        val iosArm64Main by getting {
+        iosMain {
             dependencies {
                 implementation(libs.kotlin.date.time)
             }

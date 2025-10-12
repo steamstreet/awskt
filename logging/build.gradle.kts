@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
     id("steamstreet-common.multiplatform-library-conventions")
 }
@@ -5,18 +9,25 @@ plugins {
 kotlin {
     explicitApi()
 
-    jvm {
-    }
+    jvm()
+    iosArm64()
+    iosSimulatorArm64()
+    js()
 
     sourceSets {
+        commonMain {
+            dependencies {
+                implementation(libs.kotlin.serialization.json)
+                implementation(libs.kotlin.date.time)
+                implementation(projects.standards)
+                compileOnly(libs.ktor.client.core)
+            }
+        }
         jvmMain {
             dependencies {
                 api(libs.slf4j.api)
                 api(libs.logstash.logback.encoder)
-                implementation(libs.kotlin.serialization.json)
                 implementation(libs.kotlin.coroutines.slf4j)
-                implementation(libs.kotlin.date.time)
-                implementation(projects.standards)
             }
         }
         jvmTest {
