@@ -12,7 +12,9 @@ kotlin {
     jvm()
     iosArm64()
     iosSimulatorArm64()
-    js()
+    js {
+        browser()
+    }
 
     sourceSets {
         commonMain {
@@ -37,6 +39,16 @@ kotlin {
                 implementation(libs.kluent)
                 implementation(libs.slf4j.logback.classic)
                 implementation(libs.logstash.logback.encoder)
+            }
+        }
+        jsMain {
+            dependencies {
+                api(libs.ktor.client.core)
+            }
+        }
+        nativeMain {
+            dependencies {
+                api(libs.ktor.client.core)
             }
         }
     }

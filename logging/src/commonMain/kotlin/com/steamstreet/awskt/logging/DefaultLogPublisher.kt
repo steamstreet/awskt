@@ -1,8 +1,14 @@
 package com.steamstreet.awskt.logging
 
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+
 /**
- * A very simple log publisher that just prints to stdout. Most
- * platforms will provide a more customized version, but this is a
+ * A very simple log publisher that prints to stdout in a structured format.
+ *
+ * Outputs logs in the format: LEVEL: <message> <json of context>
+ *
+ * Most platforms will provide a more customized version, but this is a
  * useful default.
  */
 public class DefaultLogPublisher: LogPublisher {
@@ -11,6 +17,11 @@ public class DefaultLogPublisher: LogPublisher {
         message: String,
         context: Log.LoggingContext
     ) {
-        println(message)
+        val contextJson = if (context.contextMap.isNotEmpty()) {
+            " ${Json.encodeToString(context.contextMap)}"
+        } else {
+            ""
+        }
+        println("${level.name}: $message$contextJson")
     }
 }
