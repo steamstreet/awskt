@@ -1,10 +1,16 @@
 package com.steamstreet.aws.lambda
 
+import aws.sdk.kotlin.services.kinesis.KinesisClient
+import aws.sdk.kotlin.services.kinesis.getRecords
+import aws.sdk.kotlin.services.kinesis.getShardIterator
+import aws.sdk.kotlin.services.kinesis.model.ShardIteratorType
 import com.steamstreet.aws.lambda.kinesis.BatchItemFailure
 import com.steamstreet.aws.lambda.kinesis.BatchItemFailuresResponse
+import com.steamstreet.aws.lambda.kinesis.KinesisBatchInfo
 import com.steamstreet.awskt.logging.logError
 import com.steamstreet.awskt.logging.logInfo
 import com.steamstreet.awskt.logging.logWarning
+import com.steamstreet.awskt.logging.mdcContext
 import com.steamstreet.dynamokt.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -20,7 +26,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 /**
  * Represents a record that could be from either Kinesis or direct DynamoDB stream
  */
-private data class RecordInfo(
+public data class RecordInfo(
     val dynamoEvent: DynamoStreamEvent,
     val identifier: String // either sequenceNumber (Kinesis) or eventID (DynamoDB)
 )
@@ -36,7 +42,11 @@ public abstract class DynamoKtStreamHandler(
      * If true, tracks failed records and returns BatchItemFailures response.
      * When false, throws exceptions immediately.
      */
-    public val enableBatchItemFailures: Boolean = false
+    public val enableBatchItemFailures: Boolean = false,
+    /**
+     * If you want to be able to handle DLQ redrives, you'll need to provide a KinesisClient.
+     */
+    private val kinesis: KinesisClient? = null
 ) : IOLambda<JsonElement, BatchItemFailuresResponse>(
     JsonElement.serializer(),
     BatchItemFailuresResponse.serializer()
@@ -63,8 +73,9 @@ public abstract class DynamoKtStreamHandler(
         val records = input.jsonObject["Records"]?.jsonArray
 
         // Parse records and extract identifiers for both Kinesis and DynamoDB records
-        val recordInfos = records?.mapNotNull { recordElement ->
+        val recordInfos = records?.flatMap { recordElement ->
             val kinesis = recordElement.jsonObject["kinesis"]
+            val eventSource = recordElement.jsonObject["eventSource"]?.jsonPrimitive?.contentOrNull
             if (kinesis != null) {
                 // Kinesis record - use sequenceNumber as identifier
                 val dataString = kinesis.jsonObject["data"]?.jsonPrimitive?.contentOrNull
@@ -73,9 +84,20 @@ public abstract class DynamoKtStreamHandler(
                     val decodedData = String(Base64.decode(dataString))
                     logRecord({ decodedData })
                     val dynamoEvent = jsonDecode.decodeFromString<DynamoStreamEvent>(decodedData)
-                    RecordInfo(dynamoEvent, sequenceNumber)
+                    listOf(RecordInfo(dynamoEvent, sequenceNumber))
                 } else {
-                    null
+                    emptyList()
+                }
+            } else if (eventSource == "aws:sqs") {
+                val bodyString = recordElement.jsonObject["body"]?.jsonPrimitive?.contentOrNull
+                if (bodyString != null) {
+                    val bodyJson = jsonDecode.parseToJsonElement(bodyString).jsonObject
+                    // this is caused by a failure in the Kinesis stream, and the record has been
+                    // placed on an SQS queue. Fetch all records from the batch.
+                    val batchInfo = jsonDecode.decodeFromJsonElement<KinesisBatchInfo>(bodyJson["KinesisBatchInfo"]!!)
+                    processKinesisBatchRecord(batchInfo)
+                } else {
+                    emptyList()
                 }
             } else {
                 // Direct DynamoDB stream record - use eventID as identifier
@@ -83,9 +105,9 @@ public abstract class DynamoKtStreamHandler(
                 if (eventID != null) {
                     logRecord({ recordElement.toString() })
                     val dynamoEvent = jsonDecode.decodeFromJsonElement<DynamoStreamEvent>(recordElement)
-                    RecordInfo(dynamoEvent, eventID)
+                    listOf(RecordInfo(dynamoEvent, eventID))
                 } else {
-                    null
+                    emptyList()
                 }
             }
         }.orEmpty()
@@ -127,6 +149,59 @@ public abstract class DynamoKtStreamHandler(
         }
 
         return BatchItemFailuresResponse(batchItemFailures = failedRecords)
+    }
+
+    /**
+     * A kinesis batch record doesn't have the full payload, just a reference to the stream and the sequence
+     * number. So we'll need to use the kinesis API to get the full payload, and then return it for processing.
+     * Returns a list of RecordInfo for each record in the batch.
+     */
+    protected open suspend fun processKinesisBatchRecord(batchInfo: KinesisBatchInfo): List<RecordInfo> {
+        if (kinesis == null) {
+            logWarning("KinesisClient not provided, cannot process batch record")
+            return emptyList()
+        }
+
+        return mdcContext(
+            "sequenceRange" to "${batchInfo.startSequenceNumber}..${batchInfo.endSequenceNumber}",
+            "shardId" to batchInfo.shardId
+        ) {
+            try {
+                // Get shard iterator starting at the sequence number
+                val shardIterator = kinesis.getShardIterator {
+                    streamArn = batchInfo.streamArn
+                    shardId = batchInfo.shardId
+                    shardIteratorType = ShardIteratorType.AtSequenceNumber
+                    startingSequenceNumber = batchInfo.startSequenceNumber
+                }
+
+                // Get records from Kinesis
+                val response = kinesis.getRecords {
+                    this.shardIterator = shardIterator.shardIterator
+                    limit = batchInfo.batchSize
+                }
+
+                // Find all records that match our sequence range
+                val matchingRecords = response.records.filter { record ->
+                    val seqNum = record.sequenceNumber
+                    seqNum >= batchInfo.startSequenceNumber && seqNum <= batchInfo.endSequenceNumber
+                }
+
+                if (matchingRecords.isEmpty()) {
+                    throw StreamHandlingException("No matching records found in Kinesis batch")
+                }
+
+                // Decode all matching records
+                matchingRecords.map { record ->
+                    val decodedData = record.data.decodeToString()
+                    logRecord { decodedData }
+                    val dynamoEvent = jsonDecode.decodeFromString<DynamoStreamEvent>(decodedData)
+                    RecordInfo(dynamoEvent, record.sequenceNumber)
+                }
+            } catch (e: Exception) {
+                throw StreamHandlingException("Failed to process Kinesis batch record", e)
+            }
+        }
     }
 
     /**
@@ -184,3 +259,6 @@ public abstract class DynamoKtStreamHandler(
      */
     protected open suspend fun onItemUpdate(old: Item?, new: Item?, record: DynamoStreamEvent) {}
 }
+
+public class StreamHandlingException(message: String, cause: Throwable? = null) :
+    Exception(message, cause)

@@ -6,6 +6,12 @@ dependencies {
     api(project(":lambda:lambda-coroutines"))
     api(project(":lambda:lambda-kinesis"))
     api(project(":dynamokt"))
+    implementation(libs.aws.kinesis)
+
+    testImplementation(kotlin("test"))
+    testImplementation(libs.kluent)
+    testImplementation(libs.mockk)
+    testImplementation(project(":test"))
 }
 
 publishing {

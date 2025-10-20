@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     api(project(":lambda:lambda-coroutines"))
+    implementation(libs.kotlin.date.time)
 }
 
 publishing {
