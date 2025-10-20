@@ -2,6 +2,7 @@ package com.steamstreet.awskt.logging
 
 import com.steamstreet.awskt.logging.Log.Level
 import com.steamstreet.awskt.logging.Log.LoggingContextBuilder
+import com.steamstreet.collections.filterNotNullValues
 import com.steamstreet.exceptions.MDCExceptionMixin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.currentCoroutineContext
@@ -239,9 +240,16 @@ public class Log(public var publisher: LogPublisher) {
     }
 
     /**
+     * Get the current logging context.
+     */
+    public suspend fun ctx(): Map<String, JsonElement> {
+        return getLoggingContext().filterNotNullValues()
+    }
+
+    /**
      * Get the current logging context from the coroutine context, if available.
      */
-    internal suspend fun getLoggingContext(): Map<String, Any?> {
+    internal suspend fun getLoggingContext(): Map<String, JsonElement?> {
         return currentCoroutineContext()[LoggingContext]?.contextMap ?: emptyMap()
     }
 

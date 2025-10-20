@@ -22,6 +22,7 @@ aws-lambda = { group = "aws.sdk.kotlin", name = "lambda", version.ref = "aws" }
 aws-eventbridge = { group = "aws.sdk.kotlin", name = "eventbridge", version.ref = "aws" }
 aws-s3 = { group = "aws.sdk.kotlin", name = "s3", version.ref = "aws" }
 aws-sqs = { group = "aws.sdk.kotlin", name = "sqs", version.ref = "aws" }
+aws-kinesis = { group = "aws.sdk.kotlin", name = "kinesis", version.ref = "aws" }
 aws-appconfigdata = { group = "aws.sdk.kotlin", name = "appconfigdata", version.ref = "aws" }
 
 # -- Ktor

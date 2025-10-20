@@ -169,3 +169,4 @@ The project publishes to Maven Central under the `com.steamstreet` group with ar
 
 Current branch: `2.1.x` (development branch)  
 Main branch: `main` (stable releases)
+- Before commit, always optimize imports and format to default Kotlin style any changed files

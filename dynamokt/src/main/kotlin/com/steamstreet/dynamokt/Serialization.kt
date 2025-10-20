@@ -50,7 +50,6 @@ public fun JsonElement.toAttributeValue(): AttributeValue? {
         is JsonObject -> this.toAttributeMap()
         is JsonArray -> this.toAttributeList()
         is JsonPrimitive -> this.toPrimitiveValue()
-        else -> throw IllegalStateException()
     }
 }
 

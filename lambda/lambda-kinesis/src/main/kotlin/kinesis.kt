@@ -8,6 +8,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.Serializable
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
+import kotlin.time.Instant
 
 @Serializable
 public data class KinesisRecords(
@@ -24,6 +25,17 @@ public data class KinesisRecord(
     val invokeIdentityArn: String? = null,
     val awsRegion: String? = null,
     val eventSourceARN: String? = null
+)
+
+@Serializable
+public data class KinesisBatchInfo(
+    val shardId: String,
+    val startSequenceNumber: String,
+    val endSequenceNumber: String,
+    val approximateArrivalOfFirstRecord: Instant? = null,
+    val approximateArrivalOfLastRecord: Instant? = null,
+    val batchSize: Int,
+    val streamArn: String
 )
 
 @Serializable
