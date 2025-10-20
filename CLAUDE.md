@@ -130,7 +130,11 @@ The project follows a multi-module architecture with these key components:
 
 - Explicit API mode is enforced - all public APIs must have explicit visibility
 - Context receivers are enabled for advanced Kotlin patterns
-- No dedicated linting tools (Detekt/Ktlint) are currently configured
+- ktfmt is configured for code formatting (Kotlin default style)
+  - Format all code: `./gradlew ktfmtFormat`
+  - Check formatting: `./gradlew ktfmtCheck`
+  - Format specific module: `./gradlew :module-name:ktfmtFormat`
+  - **Note:** ktfmt does NOT run automatically - must be invoked manually
 - Follow existing patterns in similar modules when adding new functionality
 
 ### Adding New Modules
@@ -167,6 +171,12 @@ The project follows a multi-module architecture with these key components:
 
 The project publishes to Maven Central under the `com.steamstreet` group with artifact IDs prefixed with `awskt-`.
 
-Current branch: `2.1.x` (development branch)  
+Current branch: `2.1.x` (development branch)
 Main branch: `main` (stable releases)
-- Before commit, always optimize imports and format to default Kotlin style any changed files
+
+## Commit Guidelines
+
+Before committing changes:
+- Run `./gradlew ktfmtFormat` to format all changed files to Kotlin default style
+- Optimize imports in changed files
+- Ensure tests pass for affected modules
