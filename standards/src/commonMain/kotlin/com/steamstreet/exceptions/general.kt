@@ -27,9 +27,22 @@ public class IllegalAccessException(message: String?, cause: Throwable) : Except
 
 /**
  * Exception that carries additional state as structured data.
+ * When printed via printStackTrace or logging, the state will be included in the output.
  */
 public open class StatefulException(
     message: String?,
     cause: Throwable? = null,
     public val state: Map<String, JsonElement> = emptyMap()
-) : Exception(message, cause)
+) : Exception(message, cause) {
+    override fun toString(): String {
+        val baseString = super.toString()
+        return if (state.isNotEmpty()) {
+            val stateJson = state.entries.joinToString(", ", prefix = "{", postfix = "}") { (key, value) ->
+                "\"$key\": $value"
+            }
+            "$baseString | State: $stateJson"
+        } else {
+            baseString
+        }
+    }
+}
