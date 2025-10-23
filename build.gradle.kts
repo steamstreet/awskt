@@ -8,12 +8,12 @@ allprojects {
     group = "com.steamstreet"
 
     // Apply ktfmt for code formatting (manual execution only)
-    apply(plugin = "com.ncorti.ktfmt.gradle")
+//    apply(plugin = "com.ncorti.ktfmt.gradle")
 
     // Configure ktfmt to use Kotlin default style
-    configure<com.ncorti.ktfmt.gradle.KtfmtExtension> {
-        kotlinLangStyle()
-    }
+//    configure<com.ncorti.ktfmt.gradle.KtfmtExtension> {
+//        kotlinLangStyle()
+//    }
 
     // Remove ktfmt from automatic execution - it should only run when explicitly invoked
     afterEvaluate {
