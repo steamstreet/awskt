@@ -6,19 +6,19 @@ import kotlinx.serialization.json.jsonObject
 /**
  * Send events from this schema
  */
-public suspend fun <T> EventSchema<T>.post(input: T, source: String? = null) {
+public suspend fun <T> EventSchema<T>.post(input: T, source: String? = null): String? {
     val obj = Json.encodeToJsonElement(this.serializer, input).jsonObject
-    poster.post(this.type, obj.toString(), source)
+    return poster.post(this.type, obj.toString(), source)
 }
 
 /**
  * Post more than one event.
  */
-public suspend fun <T> EventSchema<T>.post(input: Collection<T>, source: String? = null) {
+public suspend fun <T> EventSchema<T>.post(input: Collection<T>, source: String? = null): List<String?> {
     val events = input.map {
         EventSchemaEvent(this, it, source)
     }
-    poster.post(events)
+    return poster.post(events)
 }
 
 internal class EventSchemaEvent<T>(val schema: EventSchema<T>, payload: T, override val source: String? = null) :
