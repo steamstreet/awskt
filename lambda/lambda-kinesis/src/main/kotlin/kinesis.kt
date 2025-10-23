@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
@@ -86,4 +87,15 @@ public data class BatchItemFailuresResponse(
 @Serializable
 public data class BatchItemFailure(
     val itemIdentifier: String
+)
+
+@Serializable
+public data class KinesisBatchInfo(
+    val shardId: String,
+    val startSequenceNumber: String,
+    val endSequenceNumber: String,
+    val approximateArrivalOfFirstRecord: Instant? = null,
+    val approximateArrivalOfLastRecord: Instant? = null,
+    val batchSize: Int,
+    val streamArn: String
 )
