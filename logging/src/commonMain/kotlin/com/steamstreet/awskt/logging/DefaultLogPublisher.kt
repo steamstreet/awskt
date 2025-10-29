@@ -13,7 +13,7 @@ import kotlinx.serialization.json.Json
 public class DefaultLogPublisher: LogPublisher {
     override suspend fun publish(
         level: Log.Level,
-        message: String,
+        message: String?,
         context: Log.LoggingContext
     ) {
         val contextJson = if (context.contextMap.isNotEmpty()) {

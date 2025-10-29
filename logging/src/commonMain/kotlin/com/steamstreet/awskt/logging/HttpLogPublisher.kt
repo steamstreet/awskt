@@ -3,7 +3,6 @@ package com.steamstreet.awskt.logging
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
@@ -51,10 +50,10 @@ public class HttpLogPublisher(
 
     override suspend fun publish(
         level: Log.Level,
-        message: String,
+        message: String?,
         context: Log.LoggingContext
     ) {
-        if (level.ordinal < minimumLevel.ordinal) {
+        if (level.priority < minimumLevel.priority) {
             // Log level is below minimum, use backup publisher
             backupPublisher.publish(level, message, context)
         } else {
@@ -62,23 +61,36 @@ public class HttpLogPublisher(
             // Build JSON object with level and message fields, plus all context fields at root level
             val payload = buildJsonObject {
                 put("level", level.name)
-                put("message", message)
+                put("timestamp", kotlin.time.Clock.System.now().toString())
+                if (message != null) {
+                    put("message", message)
+                }
                 // Merge all context fields at the root level
                 context.contextMap.forEach { (key, value) ->
                     if (value != null) {
                         put(key, value)
                     }
                 }
+
+                if (context.exceptions.isNotEmpty()) {
+                    val first = context.exceptions.first()
+                    put("exception", buildJsonObject {
+                        put("type", first::class.simpleName ?: "Throwable")
+                        put("message", first.message ?: "")
+                        // Optional (JVM only): stack as string (guard size!)
+                        // put("stack", JsonPrimitive(first.stackTraceToString().take(20_000)))
+                    })
+                }
             }
 
-            val jsonString = Json.encodeToString(payload)
+            val jsonString = Log.encoder.encodeToString(payload)
 
             try {
-                httpClient.put(url) {
+                val response = httpClient.put(url) {
                     contentType(ContentType.Application.Json)
                     setBody(jsonString)
                 }
-                if (alsoPublishToBackupPublisher) {
+                if (alsoPublishToBackupPublisher || !response.status.isSuccess()) {
                     // also publish to the local publisher.
                     backupPublisher.publish(level, message, context)
                 }
