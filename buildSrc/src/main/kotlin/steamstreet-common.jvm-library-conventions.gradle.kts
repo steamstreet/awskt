@@ -10,10 +10,8 @@ plugins {
 kotlin {
     explicitApiWarning()
     compilerOptions {
-        freeCompilerArgs.addAll(
-            "-Xcontext-parameters",
-            "-opt-in=kotlin.time.ExperimentalTime"
-        )
+        freeCompilerArgs.addAll("-Xcontext-parameters")
+        optIn.add("kotlin.time.ExperimentalTime")
     }
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(17))

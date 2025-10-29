@@ -3,9 +3,9 @@ package com.steamstreet.awskt.logging
 import com.steamstreet.awskt.logging.Log.Level
 import com.steamstreet.awskt.logging.Log.LoggingContextBuilder
 import com.steamstreet.collections.filterNotNullValues
-import com.steamstreet.exceptions.MDCExceptionMixin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.*
@@ -31,16 +31,9 @@ public interface LogPublisher {
      * @param message The human-readable log message
      * @param context The structured logging context containing metadata and exceptions
      */
-    public suspend fun publish(level: Level, message: String, context: Log.LoggingContext)
+    public suspend fun publish(level: Level, message: String?, context: Log.LoggingContext)
 }
 
-/**
- * The JSON encoder used for serializing structured logging context.
- *
- * This encoder is used to convert Kotlin objects to JsonElement for inclusion
- * in the logging context. Uses kotlinx.serialization for type-safe serialization.
- */
-public val encoder: Json = Json
 
 /**
  * Main logging class providing structured, coroutine-aware logging capabilities.
@@ -82,8 +75,24 @@ public class Log(public var publisher: LogPublisher) {
      * - ERROR: Error conditions
      * - EVENT: Business events (structured event logging)
      */
-    public enum class Level {
-        INFO, WARN, ERROR, EVENT
+    public enum class Level(public val priority: Int) {
+        INFO(10), WARN(20), ERROR(30), EVENT(25)
+    }
+
+    public companion object {
+
+        /**
+         * The JSON encoder used for serializing structured logging context.
+         *
+         * This encoder is used to convert Kotlin objects to JsonElement for inclusion
+         * in the logging context. Uses kotlinx.serialization for type-safe serialization.
+         */
+        public val encoder: Json = Json {
+            encodeDefaults = true
+            explicitNulls = false
+            ignoreUnknownKeys = true
+            prettyPrint = false
+        }
     }
 
     /**
@@ -96,36 +105,20 @@ public class Log(public var publisher: LogPublisher) {
      */
     public class LoggingContext(
         public val contextMap: Map<String, JsonElement?> = emptyMap(),
-        public val exceptions: List<Throwable>? = null
+        public val exceptions: List<Throwable> = emptyList()
     ) : AbstractCoroutineContextElement(LoggingContext) {
         public companion object Key : CoroutineContext.Key<LoggingContext>
 
-        /**
-         * Merge with additional context, with new values taking precedence.
-         */
-        public operator fun plus(other: Map<String, JsonElement>): LoggingContext =
+        public operator fun plus(other: Map<String, JsonElement?>): LoggingContext =
             LoggingContext(contextMap + other, exceptions)
 
-        /**
-         * Merge with another LoggingContext, with other's values taking precedence.
-         */
         public operator fun plus(other: LoggingContext): LoggingContext =
-            LoggingContext(contextMap + other.contextMap, exceptions.orEmpty() + other.exceptions.orEmpty())
+            LoggingContext(contextMap + other.contextMap, exceptions + other.exceptions)
 
+        override fun equals(other: Any?): Boolean =
+            other is LoggingContext && contextMap == other.contextMap && exceptions == other.exceptions
 
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is LoggingContext) return false
-            return contextMap == other.contextMap
-        }
-
-        override fun hashCode(): Int {
-            return contextMap.hashCode()
-        }
-
-        override fun toString(): String {
-            return "LoggingContext($contextMap)"
-        }
+        override fun hashCode(): Int = 31 * contextMap.hashCode() + exceptions.hashCode()
     }
 
     /**
@@ -231,11 +224,9 @@ public class Log(public var publisher: LogPublisher) {
         block: suspend CoroutineScope.() -> T
     ): T {
         val currentContext = currentCoroutineContext()[LoggingContext]
-        val newContext = if (currentContext != null) {
-            currentContext + LoggingContext(map, t)
-        } else {
-            LoggingContext(map)
-        }
+        val newContext = currentContext
+            ?.plus(LoggingContext(map, t))
+            ?: LoggingContext(map, t)
         return withContext(newContext, block)
     }
 
@@ -254,22 +245,6 @@ public class Log(public var publisher: LogPublisher) {
     }
 
     /**
-     * Merge logging context with additional metadata and exception MDC attributes.
-     */
-    private suspend fun mergeLoggingContext(
-        throwable: Throwable?,
-        vararg metadata: Pair<String, Any?>
-    ): Map<String, Any?> {
-        val loggingCtx = getLoggingContext()
-        val exceptionMdc = if (throwable is MDCExceptionMixin) {
-            throwable.mdcAttributes
-        } else {
-            emptyMap()
-        }
-        return loggingCtx + exceptionMdc + metadata.toMap()
-    }
-
-    /**
      * Low-level log method that publishes a message with the current coroutine context.
      *
      * This method retrieves the LoggingContext from the current coroutine context
@@ -280,8 +255,9 @@ public class Log(public var publisher: LogPublisher) {
      * @param message The log message
      * @param t Optional throwable to include (note: currently not used, context should be added via ctx)
      */
-    public suspend fun log(level: Level, message: String, t: Throwable? = null) {
-        val ctx = currentCoroutineContext()[LoggingContext] ?: LoggingContext()
+    public suspend fun log(level: Level, message: String?, t: Throwable? = null) {
+        val ctx0 = currentCoroutineContext()[LoggingContext] ?: LoggingContext()
+        val ctx = if (t != null) ctx0 + LoggingContext(emptyMap(), listOf(t)) else ctx0
         publisher.publish(level, message, ctx)
     }
 
@@ -339,10 +315,10 @@ public class Log(public var publisher: LogPublisher) {
     ) {
         ctx({
             val encoded = encoder.encodeToJsonElement(serializer, data)
-            if (field != null) {
-                put(field, encoded)
-            } else {
-                put(encoded.jsonObject)
+            when {
+                field != null -> put(field, encoded)
+                encoded is JsonObject -> put(encoded)
+                else -> put("data", encoded) // or error("field required for non-object data")
             }
         }) {
             log(level, message)
@@ -381,7 +357,7 @@ public class Log(public var publisher: LogPublisher) {
             put(throwable)
             builder()
         }) {
-            log(Level.ERROR, message, throwable)
+            log(Level.WARN, message, throwable)
         }
     }
 
@@ -444,6 +420,41 @@ public class Log(public var publisher: LogPublisher) {
             log(Level.INFO, message)
         }
     }
+
+    /**
+     * Log an informational message asynchronously within the specified coroutine scope.
+     *
+     * This method launches a new coroutine to perform the logging operation, making it
+     * non-blocking. The logging context from the current coroutine scope will be propagated
+     * to the logging operation.
+     *
+     * @param scope The CoroutineScope in which to launch the logging operation
+     * @param message The info message to log
+     * @param builder Optional lambda to add additional context metadata
+     *
+     * Example:
+     * ```
+     * viewModelScope.info("Background task started") {
+     *     "taskId" `is` id
+     *     "priority" `is` priority
+     * }
+     * ```
+     */
+    public fun info(scope: CoroutineScope, message: String, builder: LoggingContextBuilder.() -> Unit = {}) {
+        scope.launch {
+            info(message, builder)
+        }
+    }
+
+    public suspend fun event(
+        builder: LoggingContextBuilder.() -> Unit = {}
+    ) {
+        this.ctx({
+            builder()
+        }) {
+            log(Level.ERROR, null)
+        }
+    }
 }
 
 /**
@@ -467,7 +478,7 @@ public class Log(public var publisher: LogPublisher) {
  */
 public inline fun <reified T> LoggingContextBuilder.put(key: String, value: T?) {
     if (value != null) {
-        put(key, encoder.encodeToJsonElement(value))
+        put(key, Log.encoder.encodeToJsonElement(value))
     }
 }
 
@@ -485,7 +496,7 @@ public inline fun <reified T> LoggingContextBuilder.put(key: String, value: T?) 
  */
 public fun <T> LoggingContextBuilder.put(key: String, serializer: KSerializer<T>, value: T?) {
     if (value != null) {
-        put(key, encoder.encodeToJsonElement(serializer, value))
+        put(key, Log.encoder.encodeToJsonElement(serializer, value))
     }
 }
 
@@ -618,20 +629,28 @@ public expect var log: Log
 public suspend fun Log.info(message: String, vararg metadata: Pair<String, Any?>) {
     ctx({
         metadata.forEach { (k, v) ->
-            if (v is JsonElement) {
-                put(k, v)
-            } else if (v is Boolean) {
-                k `is` v
-            } else if (v is Number) {
-                k `is` v
-            } else if (v is Collection<*>) {
-                buildJsonArray {
-                    v.forEach {
-                        add(it.toString())
+            when (v) {
+                is JsonElement -> {
+                    put(k, v)
+                }
+
+                is Boolean -> {
+                    k `is` v
+                }
+
+                is Number -> {
+                    k `is` v
+                }
+
+                is Collection<*> -> {
+                    k `is` buildJsonArray {
+                        v.forEach { add(JsonPrimitive(it?.toString() ?: "null")) }
                     }
                 }
-            } else {
-                k `is` v.toString()
+
+                else -> {
+                    k `is` v.toString()
+                }
             }
         }
     }) {
