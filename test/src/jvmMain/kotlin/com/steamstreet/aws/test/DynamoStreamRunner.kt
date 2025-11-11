@@ -13,10 +13,7 @@ import com.steamstreet.dynamokt.DynamoStreamEvent
 import com.steamstreet.dynamokt.DynamoStreamEventDetail
 import com.steamstreet.dynamokt.DynamoStreamRecords
 import com.steamstreet.exceptions.retry
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 public typealias StreamProcessorFunction = (suspend (DynamoStreamEvent) -> Unit)
@@ -31,6 +28,9 @@ public class DynamoStreamRunner(
 ) : MockService {
     private val iterators = mutableSetOf<String>()
     private val starting = AtomicBoolean(true)
+
+    private val running = AtomicBoolean(true)
+    private val completed = AtomicBoolean(false)
 
     override val isProcessing: Boolean
         get() {
@@ -52,7 +52,7 @@ public class DynamoStreamRunner(
     private suspend fun processShard(streamArn: String, shardId: String) {
         var lastSequence: String? = null
 
-        while (true) {
+        while (running.get()) {
             try {
                 val shardIteratorResult = streamsClient.getShardIterator {
                     this.streamArn = streamArn
@@ -65,7 +65,7 @@ public class DynamoStreamRunner(
                     }
                 }
                 var currentIterator = shardIteratorResult.shardIterator
-                while (currentIterator != null) {
+                while (currentIterator != null && running.get()) {
                     val recordsResult: GetRecordsResponse?
                     try {
                         recordsResult = streamsClient.getRecords {
@@ -92,9 +92,10 @@ public class DynamoStreamRunner(
                     // allow a full loop before exiting 'starting' mode.
                     starting.set(false)
                 }
-            } catch (e: AwsServiceException) {
-                throw e
+            } catch (_: AwsServiceException) {
+                // ignored. This should only happen when we're closing, and if not, might just be a temporary thing.
             } finally {
+                completed.set(true)
                 starting.set(false)
             }
         }
@@ -126,10 +127,10 @@ public class DynamoStreamRunner(
         streamProcessor.invoke(event)
     }
 
-    private suspend fun processStream(streamArn: String): Job {
+    private suspend fun processStream(streamArn: String) {
         val shards = HashMap<String, Job>()
         coroutineScope {
-            while (true) {
+            while (running.get()) {
                 streamsClient.describeStream {
                     this.streamArn = streamArn
                 }.streamDescription?.shards?.map {
@@ -147,6 +148,17 @@ public class DynamoStreamRunner(
     }
 
     override suspend fun stop() {
+        val wasCompleted = completed.get()
+        running.set(false)
+
+        // wait for the stream processing to be finished.
+        if (!wasCompleted) {
+            withTimeout(2000) {
+                while (!completed.get()) {
+                    delay(100)
+                }
+            }
+        }
     }
 }
 
