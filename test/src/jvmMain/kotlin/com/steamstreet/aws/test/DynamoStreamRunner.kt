@@ -37,6 +37,9 @@ public class DynamoStreamRunner(
             return starting.get() || iterators.isNotEmpty()
         }
 
+    override val isReady: Boolean
+        get() = (!starting.get())
+
     override suspend fun start() {
         starting.set(true)
         val stream = retry(5, delay = 100, exceptionType = IllegalArgumentException::class) {
@@ -46,7 +49,12 @@ public class DynamoStreamRunner(
                 it.tableName == this@DynamoStreamRunner.tableName
             } ?: throw IllegalArgumentException("Unknown table")
         }
-        processStream(stream.streamArn!!)
+
+        withContext(Dispatchers.IO) {
+            launch {
+                processStream(stream.streamArn!!)
+            }
+        }
     }
 
     private suspend fun processShard(streamArn: String, shardId: String) {
@@ -54,14 +62,16 @@ public class DynamoStreamRunner(
 
         while (running.get()) {
             try {
-                val shardIteratorResult = streamsClient.getShardIterator {
-                    this.streamArn = streamArn
-                    this.shardId = shardId
-                    if (lastSequence == null) {
-                        shardIteratorType = ShardIteratorType.TrimHorizon
-                    } else {
-                        shardIteratorType = ShardIteratorType.AfterSequenceNumber
-                        sequenceNumber = lastSequence
+                val shardIteratorResult = retry(30, delay = 100) {
+                    streamsClient.getShardIterator {
+                        this.streamArn = streamArn
+                        this.shardId = shardId
+                        if (lastSequence == null) {
+                            shardIteratorType = ShardIteratorType.TrimHorizon
+                        } else {
+                            shardIteratorType = ShardIteratorType.AfterSequenceNumber
+                            sequenceNumber = lastSequence
+                        }
                     }
                 }
                 var currentIterator = shardIteratorResult.shardIterator
@@ -89,11 +99,12 @@ public class DynamoStreamRunner(
                     } catch (_: TrimmedDataAccessException) {
                         currentIterator = null
                     }
-                    // allow a full loop before exiting 'starting' mode.
                     starting.set(false)
                 }
-            } catch (_: AwsServiceException) {
+            } catch (e: AwsServiceException) {
                 // ignored. This should only happen when we're closing, and if not, might just be a temporary thing.
+                println("AWS Service Exception in stream processing: ${e.message}")
+                e.printStackTrace()
             } finally {
                 completed.set(true)
                 starting.set(false)
@@ -129,20 +140,20 @@ public class DynamoStreamRunner(
 
     private suspend fun processStream(streamArn: String) {
         val shards = HashMap<String, Job>()
-        coroutineScope {
+        withContext(Dispatchers.IO) {
             while (running.get()) {
                 streamsClient.describeStream {
                     this.streamArn = streamArn
                 }.streamDescription?.shards?.map {
                     if (!shards.containsKey(it.shardId)) {
-                        val shardJob = launch {
+                        val shardJob = launch(Dispatchers.IO) {
                             processShard(streamArn, it.shardId!!)
                         }
                         shards[it.shardId!!] = shardJob
                     }
                     it
                 }.orEmpty()
-                delay(1000)
+                delay(300)
             }
         }
     }
@@ -151,11 +162,13 @@ public class DynamoStreamRunner(
         val wasCompleted = completed.get()
         running.set(false)
 
-        // wait for the stream processing to be finished.
-        if (!wasCompleted) {
-            withTimeout(2000) {
-                while (!completed.get()) {
-                    delay(100)
+        withContext(Dispatchers.IO) {
+            // wait for the stream processing to be finished.
+            if (!wasCompleted) {
+                withTimeout(2000) {
+                    while (!completed.get()) {
+                        delay(100)
+                    }
                 }
             }
         }

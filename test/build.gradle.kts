@@ -8,7 +8,7 @@ kotlin {
     jvm {}
 
     sourceSets {
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 api(libs.aws.dynamodb)
                 api(libs.aws.dynamodb.local)
@@ -34,9 +34,23 @@ kotlin {
                 api(project(":lambda:lambda-dynamo-streams"))
             }
         }
+        jvmTest {
+            dependencies {
+                implementation(libs.testcontainers.junit.jupiter)
+                implementation(libs.testcontainers.localstack)
+                implementation(kotlin("test"))
+                implementation(libs.kotlin.coroutines.test)
+                implementation(libs.slf4j.logback.classic)
+                implementation(libs.kotest.assertions.core)
+                implementation(libs.kotest.runner.junit5)
+            }
+        }
     }
 }
 
+tasks.named<Test>("jvmTest") {
+    useJUnitPlatform()
+}
 
 publishing {
     publications {

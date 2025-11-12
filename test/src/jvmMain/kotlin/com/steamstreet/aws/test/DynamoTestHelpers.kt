@@ -62,10 +62,6 @@ public suspend fun DynamoDbClient.defaultTable(envKey: String, block: CreateTabl
             streamEnabled = true
             streamViewType = StreamViewType.NewAndOldImages
         }
-        provisionedThroughput {
-            readCapacityUnits = 5
-            writeCapacityUnits = 5
-        }
         block()
     }
     registerEnvironmentVariable(envKey, tableName)

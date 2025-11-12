@@ -1,0 +1,21 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Set default log level to INFO -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <!-- Reduce noise from AWS SDK -->
+    <logger name="aws.sdk" level="WARN"/>
+    <logger name="aws.smithy" level="WARN"/>
+
+    <!-- Reduce noise from Testcontainers -->
+    <logger name="org.testcontainers" level="INFO"/>
+    <logger name="com.github.dockerjava" level="WARN"/>
+    <logger name="tc" level="INFO"/>
+</configuration>

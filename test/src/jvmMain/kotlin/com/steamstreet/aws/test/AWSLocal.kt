@@ -1,10 +1,6 @@
 package com.steamstreet.aws.test
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
+import kotlinx.coroutines.*
 
 /**
  * Creates an AWS local environment
@@ -14,33 +10,28 @@ public class AWSLocal(
     public val accountId: String = "123412341234"
 ) {
     private val services = mutableListOf<MockService>()
-    private lateinit var job: Job
-
-    // are we in the startup process. Ensures that for tests that go quickly,
-    // we allow the services to get into a nice processing loop.
-    private val starting = AtomicBoolean(false)
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     /**
      * Are any of the services currently processing data.
      */
     public val processing: Boolean
-        get() = starting.get() || services.any {
+        get() = services.any {
             it.isProcessing
-    }
+        }
 
     public suspend fun start() {
-        starting.set(true)
-        val count = AtomicInteger(services.size)
-
-        @Suppress("OPT_IN_USAGE")
-        job = GlobalScope.launch {
-            services.forEach {
+        scope.launch {
+            services.map {
                 launch {
-                    if (count.decrementAndGet() == 0) {
-                        starting.set(false)
-                    }
                     it.start()
                 }
+            }
+        }
+
+        withTimeout(3000) {
+            while (services.any { !it.isReady }) {
+                delay(50)
             }
         }
     }
@@ -49,9 +40,7 @@ public class AWSLocal(
         services.forEach {
             it.stop()
         }
-        if (this::job.isInitialized) {
-            job.cancel()
-        }
+        scope.cancel()
     }
 
     public fun <T : MockService> addService(service: T): T {
@@ -86,5 +75,6 @@ public interface MockService {
 
     public suspend fun stop() {}
 
+    public val isReady: Boolean get() = true
     public val isProcessing: Boolean get() = false
 }
