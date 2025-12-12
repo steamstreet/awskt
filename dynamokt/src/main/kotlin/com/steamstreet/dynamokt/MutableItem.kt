@@ -33,6 +33,19 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     private val attributeIndex = AtomicInteger(1)
 
     /**
+     * Parse a key component that may contain array indices (e.g., "items[2]" or "name")
+     * Returns a pair of (base name, suffix with brackets)
+     */
+    private fun parseKeyComponent(component: String): Pair<String, String> {
+        val bracketIndex = component.indexOf('[')
+        return if (bracketIndex >= 0) {
+            component.substring(0, bracketIndex) to component.substring(bracketIndex)
+        } else {
+            component to ""
+        }
+    }
+
+    /**
      * A condition expression that is evaluated when updating. If the condition fails,
      * the update will not occur.
      */
@@ -138,11 +151,12 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     }
 
     public operator fun set(key: String, value: AttributeValue?) {
-        val newKey = key.split(".").map { keyElement ->
+        val newKey = key.split(".").joinToString(".") { keyElement ->
+            val (baseName, suffix) = parseKeyComponent(keyElement)
             "#attr${attributeIndex.getAndIncrement()}".also {
-                attributeNames[it] = keyElement
-            }
-        }.joinToString(".")
+                attributeNames[it] = baseName
+            } + suffix
+        }
 
         if (value != null) {
             val attrValue = "attr${attributeIndex.getAndIncrement()}"
@@ -210,6 +224,23 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     }
 
     /**
+     * Update an item in a list at the specified index. Optionally update a nested property within the list item.
+     *
+     * @param key The list attribute name
+     * @param index The index of the item in the list
+     * @param nestedKey Optional nested property path within the list item (e.g., "value", "status.active", "tags[0]")
+     * @param value The new value to set, or null to remove
+     */
+    public fun updateListItem(key: String, index: Int, nestedKey: String? = null, value: AttributeValue?) {
+        val fullKey = if (nestedKey != null) {
+            "$key[$index].$nestedKey"
+        } else {
+            "$key[$index]"
+        }
+        set(fullKey, value)
+    }
+
+    /**
      * Attach a condition to this update.
      */
     public fun condition(
@@ -269,9 +300,10 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
 
     public fun delete(key: String) {
         val newKey = key.split(".").joinToString(".") { keyElement ->
+            val (baseName, suffix) = parseKeyComponent(keyElement)
             "#attr${attributeIndex.getAndIncrement()}".also {
-                attributeNames[it] = keyElement
-            }
+                attributeNames[it] = baseName
+            } + suffix
         }
         updateExpressions.add(Update("REMOVE", "$newKey"))
     }
