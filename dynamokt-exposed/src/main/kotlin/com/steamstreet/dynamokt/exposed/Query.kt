@@ -375,10 +375,34 @@ private fun buildFilterExpression(
     nameIndex: MutableMap<String, String>,
     valueIndex: MutableMap<String, AttributeValue>
 ): String {
+    return buildExpressionInternal(op, nameIndex, valueIndex, "fattr")
+}
+
+/**
+ * Builds a condition expression from an operation tree for conditional writes.
+ * This is used by insert, update, and delete operations.
+ */
+internal fun buildConditionExpression(
+    op: Op<Boolean>,
+    nameIndex: MutableMap<String, String>,
+    valueIndex: MutableMap<String, AttributeValue>
+): String {
+    return buildExpressionInternal(op, nameIndex, valueIndex, "cattr")
+}
+
+/**
+ * Internal implementation for building DynamoDB expressions from Op trees
+ */
+private fun buildExpressionInternal(
+    op: Op<Boolean>,
+    nameIndex: MutableMap<String, String>,
+    valueIndex: MutableMap<String, AttributeValue>,
+    prefix: String
+): String {
     var attrCounter = 0
 
-    fun nextNameKey() = "#fattr${attrCounter++}"
-    fun nextValueKey() = ":fattr${attrCounter++}"
+    fun nextNameKey() = "#${prefix}${attrCounter++}"
+    fun nextValueKey() = ":${prefix}${attrCounter++}"
 
     fun build(operation: Op<Boolean>): String {
         return when (operation) {
@@ -389,6 +413,14 @@ private fun buildFilterExpression(
                 @Suppress("UNCHECKED_CAST")
                 valueIndex[valueKey] = (operation.column as Column<Any?>).toAttributeValue(operation.value)
                 "$nameKey = $valueKey"
+            }
+            is NeOp<*> -> {
+                val nameKey = nextNameKey()
+                val valueKey = nextValueKey()
+                nameIndex[nameKey] = operation.column.name
+                @Suppress("UNCHECKED_CAST")
+                valueIndex[valueKey] = (operation.column as Column<Any?>).toAttributeValue(operation.value)
+                "$nameKey <> $valueKey"
             }
             is GtOp<*> -> {
                 val nameKey = nextNameKey()
@@ -439,6 +471,16 @@ private fun buildFilterExpression(
                 nameIndex[nameKey] = operation.column.name
                 valueIndex[valueKey] = AttributeValue.S(operation.prefix)
                 "begins_with($nameKey, $valueKey)"
+            }
+            is AttributeExistsOp -> {
+                val nameKey = nextNameKey()
+                nameIndex[nameKey] = operation.column.name
+                "attribute_exists($nameKey)"
+            }
+            is AttributeNotExistsOp -> {
+                val nameKey = nextNameKey()
+                nameIndex[nameKey] = operation.column.name
+                "attribute_not_exists($nameKey)"
             }
             is AndOp -> {
                 "(${build(operation.left)}) AND (${build(operation.right)})"

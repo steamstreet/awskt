@@ -36,11 +36,11 @@ class BasicCrudTest : ExposedTestBase() {
 
         // Insert a user
         val inserted = Users.insert(database) {
-            this[Users.id] = "user#123"
-            this[Users.name] = "John Doe"
-            this[Users.email] = "john@example.com"
-            this[Users.age] = 30
-            this[Users.active] = true
+            it[id] = "user#123"
+            it[name] = "John Doe"
+            it[email] = "john@example.com"
+            it[age] = 30
+            it[active] = true
         }
 
         // Verify inserted values
@@ -63,17 +63,17 @@ class BasicCrudTest : ExposedTestBase() {
 
         // Insert initial user
         Users.insert(database) {
-            this[Users.id] = "user#456"
-            this[Users.name] = "Jane Doe"
-            this[Users.age] = 25
-            this[Users.active] = false
+            it[id] = "user#456"
+            it[name] = "Jane Doe"
+            it[age] = 25
+            it[active] = false
         }
 
         // Update the user
         val updated = Users.update(database, { Users.id eq "user#456" }) {
-            this[Users.name] = "Jane Smith"
-            this[Users.age] = 26
-            this[Users.active] = true
+            it[name] = "Jane Smith"
+            it[age] = 26
+            it[active] = true
         }
 
         // Verify updated values
@@ -93,10 +93,10 @@ class BasicCrudTest : ExposedTestBase() {
 
         // Insert a user
         Users.insert(database) {
-            this[Users.id] = "user#789"
-            this[Users.name] = "Bob Smith"
-            this[Users.age] = 40
-            this[Users.active] = true
+            it[id] = "user#789"
+            it[name] = "Bob Smith"
+            it[age] = 40
+            it[active] = true
         }
 
         // Verify it exists
@@ -110,20 +110,20 @@ class BasicCrudTest : ExposedTestBase() {
     }
 
     @Test
-    fun `test increment`() = runTest {
+    fun `test increment with Exposed style syntax`() = runTest {
         createTable(Users)
 
         // Insert user with age
         Users.insert(database) {
-            this[Users.id] = "user#100"
-            this[Users.name] = "Test User"
-            this[Users.age] = 20
-            this[Users.active] = true
+            it[id] = "user#100"
+            it[name] = "Test User"
+            it[age] = 20
+            it[active] = true
         }
 
-        // Increment age
+        // Increment age using Exposed-style syntax: it[column] = column + amount
         Users.update(database, { Users.id eq "user#100" }) {
-            this.increment(Users.age, 5)
+            it[age] = age + 5
         }
 
         // Verify
@@ -132,14 +132,65 @@ class BasicCrudTest : ExposedTestBase() {
     }
 
     @Test
+    fun `test increment by one`() = runTest {
+        createTable(Users)
+
+        // Insert user with age
+        Users.insert(database) {
+            it[id] = "user#101"
+            it[name] = "Counter User"
+            it[age] = 0
+            it[active] = true
+        }
+
+        // Increment by 1 using Exposed-style syntax
+        Users.update(database, { Users.id eq "user#101" }) {
+            it[age] = age + 1
+        }
+
+        val user = Users.get(database) { Users.id eq "user#101" }!!
+        user[Users.age].shouldBeEqualTo(1)
+
+        // Increment again
+        Users.update(database, { Users.id eq "user#101" }) {
+            it[age] = age + 1
+        }
+
+        val user2 = Users.get(database) { Users.id eq "user#101" }!!
+        user2[Users.age].shouldBeEqualTo(2)
+    }
+
+    @Test
+    fun `test increment with legacy method`() = runTest {
+        createTable(Users)
+
+        // Insert user with age
+        Users.insert(database) {
+            it[id] = "user#102"
+            it[name] = "Legacy User"
+            it[age] = 10
+            it[active] = true
+        }
+
+        // Increment using legacy method still works
+        Users.update(database, { Users.id eq "user#102" }) {
+            it.increment(age, 5)
+        }
+
+        // Verify
+        val user = Users.get(database) { Users.id eq "user#102" }!!
+        user[Users.age].shouldBeEqualTo(15)
+    }
+
+    @Test
     fun `test with composite key`() = runTest {
         createTable(Orders)
 
         // Insert order
         Orders.insert(database) {
-            this[Orders.customerId] = "customer#1"
-            this[Orders.orderId] = "order#001"
-            this[Orders.amount] = 100
+            it[customerId] = "customer#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
         }
 
         // Get with composite key
@@ -154,7 +205,7 @@ class BasicCrudTest : ExposedTestBase() {
         Orders.update(database, {
             (Orders.customerId eq "customer#1") and (Orders.orderId eq "order#001")
         }) {
-            this[Orders.amount] = 150
+            it[amount] = 150
         }
 
         val updated = Orders.get(database) {
@@ -177,8 +228,8 @@ class BasicCrudTest : ExposedTestBase() {
 
         // Insert without nullable field
         Products.insert(database) {
-            this[Products.id] = "product#1"
-            this[Products.name] = "Widget"
+            it[id] = "product#1"
+            it[name] = "Widget"
         }
 
         val product1 = Products.get(database) { Products.id eq "product#1" }!!
@@ -186,10 +237,10 @@ class BasicCrudTest : ExposedTestBase() {
 
         // Insert with a nullable field
         Products.insert(database) {
-            this[Products.id] = "product#2"
-            this[Products.name] = "Gadget"
+            it[id] = "product#2"
+            it[name] = "Gadget"
             @Suppress("UNCHECKED_CAST")
-            this[Products.description as Column<String>] = "A cool gadget"
+            it[description as Column<String>] = "A cool gadget"
         }
 
         val product2 = Products.get(database) { Products.id eq "product#2" }!!

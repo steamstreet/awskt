@@ -1,9 +1,7 @@
 package com.steamstreet.dynamokt.exposed
 
-import aws.sdk.kotlin.services.dynamodb.model.ConditionalCheckFailedException
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldThrow
 import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.test.Test
 
@@ -18,15 +16,15 @@ class InsertTest : ExposedTestBase() {
     }
 
     @Test
-    fun `test insert with infix to syntax`() = runTest {
+    fun `test basic insert`() = runTest {
         createTable(Users)
 
-        // Insert using infix 'to' syntax (Exposed style)
+        // Insert using Exposed style syntax
         val inserted = Users.insert(database) {
-            Users.id to "user#123"
-            Users.name to "John Doe"
-            Users.email to "john@example.com"
-            Users.age to 30
+            it[id] = "user#123"
+            it[name] = "John Doe"
+            it[email] = "john@example.com"
+            it[age] = 30
         }
 
         // Verify
@@ -41,34 +39,16 @@ class InsertTest : ExposedTestBase() {
     }
 
     @Test
-    fun `test insert with mixed syntax`() = runTest {
-        createTable(Users)
-
-        // Mix both syntaxes
-        val inserted = Users.insert(database) {
-            this[Users.id] = "user#456"
-            Users.name to "Jane Smith"
-            this[Users.email] = "jane@example.com"
-            Users.age to 25
-        }
-
-        inserted[Users.id].shouldBeEqualTo("user#456")
-        inserted[Users.name].shouldBeEqualTo("Jane Smith")
-        inserted[Users.age].shouldBeEqualTo(25)
-    }
-
-    @Test
     fun `test insert with ifNotExists syntax exists`() = runTest {
         createTable(Users)
 
         // Test that the ifNotExists() API exists and can be called
-        // The actual conditional behavior requires real DynamoDB to test properly
         Users.insert(database) {
-            this[Users.id] = "user#789"
-            this[Users.name] = "Bob"
-            this[Users.email] = "bob@example.com"
-            this[Users.age] = 40
-            ifNotExists()  // API exists
+            it[id] = "user#789"
+            it[name] = "Bob"
+            it[email] = "bob@example.com"
+            it[age] = 40
+            it.ifNotExists()
         }
 
         // Verify item was inserted
@@ -76,21 +56,17 @@ class InsertTest : ExposedTestBase() {
         user[Users.name].shouldBeEqualTo("Bob")
     }
 
-    // Note: Testing ifNotExists on specific columns (non-key attributes) is tricky with putItem
-    // because putItem replaces the entire item. This test is commented out for now.
-    // In production, you'd typically use ifNotExists() on the partition key for preventing duplicates.
-
     @Test
     fun `test insert with ifNotExists allows first insert`() = runTest {
         createTable(Users)
 
         // First insert with ifNotExists should succeed
         val inserted = Users.insert(database) {
-            this[Users.id] = "user#new"
-            this[Users.name] = "New User"
-            this[Users.email] = "new@example.com"
-            this[Users.age] = 22
-            ifNotExists()
+            it[id] = "user#new"
+            it[name] = "New User"
+            it[email] = "new@example.com"
+            it[age] = 22
+            it.ifNotExists()
         }
 
         inserted[Users.name].shouldBeEqualTo("New User")
@@ -100,16 +76,15 @@ class InsertTest : ExposedTestBase() {
         user[Users.name].shouldBeEqualTo("New User")
     }
 
-
     @Test
     fun `test insert returns correct ResultRow`() = runTest {
         createTable(Users)
 
         val result = Users.insert(database) {
-            Users.id to "user#result"
-            Users.name to "Result Test"
-            Users.email to "result@example.com"
-            Users.age to 35
+            it[id] = "user#result"
+            it[name] = "Result Test"
+            it[email] = "result@example.com"
+            it[age] = 35
         }
 
         // Can immediately access values from result

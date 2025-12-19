@@ -16,32 +16,31 @@ public class InsertStatement(
     public val database: Database
 ) {
     private val values = mutableMapOf<Column<*>, Any?>()
-    private var conditionExpression: String? = null
-    private val conditionNames = mutableMapOf<String, String>()
-    private val conditionValues = mutableMapOf<String, AttributeValue>()
-    private var conditionCounter = 0
+    private var conditionOp: Op<Boolean>? = null
 
     /**
-     * Set a column value using indexed access
+     * Set a column value using indexed access (Exposed style)
+     * Example: it[Users.id] = "user#123"
      */
     public operator fun <T> set(column: Column<T>, value: T) {
         values[column] = value
     }
 
     /**
-     * Set a column value using infix 'to' syntax (Exposed style)
-     * Example: Users.id to "user#123"
+     * Add a condition expression for conditional insert.
+     * The insert will only succeed if the condition is met.
+     *
+     * Example:
+     * ```
+     * Users.insert(database) {
+     *     Users.id to "user#123"
+     *     Users.name to "John"
+     *     condition { Users.id.notExists() }
+     * }
+     * ```
      */
-    public infix fun <T> Column<T>.to(value: T) {
-        values[this] = value
-    }
-
-    /**
-     * Add a condition expression to prevent overwriting existing items.
-     * Common use: `ifNotExists(Users.id)` or custom condition expression
-     */
-    public fun condition(expression: String) {
-        this.conditionExpression = expression
+    public fun condition(block: SqlExpressionBuilder.() -> Op<Boolean>) {
+        conditionOp = SqlExpressionBuilder().block()
     }
 
     /**
@@ -49,18 +48,14 @@ public class InsertStatement(
      */
     public fun ifNotExists() {
         val pk = table.partitionKey ?: error("Table ${table.tableName} has no partition key")
-        val nameKey = "#pk"
-        conditionNames[nameKey] = pk.name
-        conditionExpression = "attribute_not_exists($nameKey)"
+        conditionOp = AttributeNotExistsOp(pk)
     }
 
     /**
      * Only insert if the specified column doesn't exist
      */
     public fun ifNotExists(column: Column<*>) {
-        val nameKey = "#attr${conditionCounter++}"
-        conditionNames[nameKey] = column.name
-        conditionExpression = "attribute_not_exists($nameKey)"
+        conditionOp = AttributeNotExistsOp(column)
     }
 
     /**
@@ -72,17 +67,24 @@ public class InsertStatement(
             column.name to (column as Column<Any?>).toAttributeValue(value)
         }
 
+        // Build condition expression if present
+        val nameIndex = mutableMapOf<String, String>()
+        val valueIndex = mutableMapOf<String, AttributeValue>()
+        val conditionExpression = conditionOp?.let { op ->
+            buildConditionExpression(op, nameIndex, valueIndex)
+        }
+
         database.client.putItem {
             tableName = table.tableName
             this.item = item
 
             conditionExpression?.let { expr ->
                 this.conditionExpression = expr
-                if (conditionNames.isNotEmpty()) {
-                    expressionAttributeNames = conditionNames
+                if (nameIndex.isNotEmpty()) {
+                    expressionAttributeNames = nameIndex
                 }
-                if (conditionValues.isNotEmpty()) {
-                    expressionAttributeValues = conditionValues
+                if (valueIndex.isNotEmpty()) {
+                    expressionAttributeValues = valueIndex
                 }
             }
         }
@@ -95,11 +97,11 @@ public class InsertStatement(
  * Insert a new item into the table.
  * Example: Users.insert(db) { it[name] = "John"; it[age] = 30 }
  */
-public suspend fun Table.insert(
+public suspend fun <T : Table> T.insert(
     database: Database,
-    block: InsertStatement.() -> Unit
+    block: T.(InsertStatement) -> Unit
 ): ResultRow {
-    return InsertStatement(this, database).apply(block).execute()
+    return InsertStatement(this, database).also { block(it) }.execute()
 }
 
 /**
@@ -133,11 +135,22 @@ public class UpdateStatement(
     private val valueIndex = mutableMapOf<String, AttributeValue>()
     private var attrCounter = 0
 
+    private var conditionOp: Op<Boolean>? = null
+
     /**
      * Set a column value
      */
     public operator fun <T> set(column: Column<T>, value: T) {
         sets[column] = value
+    }
+
+    /**
+     * Set a column to an increment expression.
+     * Enables Exposed-style syntax: it[count] = count + 1
+     */
+    public operator fun <T : Number> set(column: Column<T>, expr: IncrementExpr<T>) {
+        require(column == expr.column) { "Increment expression column must match the target column" }
+        adds[column] = expr.amount
     }
 
     /**
@@ -152,6 +165,22 @@ public class UpdateStatement(
      */
     public fun increment(column: Column<Int>, amount: Int = 1) {
         adds[column] = amount
+    }
+
+    /**
+     * Add a condition expression for conditional update.
+     * The update will only succeed if the condition is met.
+     *
+     * Example:
+     * ```
+     * Users.update(database, { Users.id eq "user#123" }) {
+     *     this[Users.version] = 2
+     *     condition { Users.version eq 1 }
+     * }
+     * ```
+     */
+    public fun condition(block: SqlExpressionBuilder.() -> Op<Boolean>) {
+        conditionOp = SqlExpressionBuilder().block()
     }
 
     /**
@@ -208,10 +237,16 @@ public class UpdateStatement(
 
         val updateExpression = updateParts.joinToString(" ")
 
+        // Build condition expression if present
+        val conditionExpression = conditionOp?.let { op ->
+            buildConditionExpression(op, nameIndex, valueIndex)
+        }
+
         val result = database.client.updateItem {
             tableName = table.tableName
             this.key = key
             this.updateExpression = updateExpression
+            conditionExpression?.let { this.conditionExpression = it }
             if (nameIndex.isNotEmpty()) {
                 expressionAttributeNames = nameIndex
             }
@@ -229,10 +264,10 @@ public class UpdateStatement(
  * Update an item in the table using a where clause.
  * Example: Users.update(database, { Users.id eq "user#123" }) { it[age] = 31 }
  */
-public suspend fun Table.update(
+public suspend fun <T : Table> T.update(
     database: Database,
     where: SqlExpressionBuilder.() -> Op<Boolean>,
-    block: UpdateStatement.() -> Unit
+    block: T.(UpdateStatement) -> Unit
 ): ResultRow {
     val op = SqlExpressionBuilder().where()
     val keyValues = extractKeyValues(op)
@@ -243,7 +278,73 @@ public suspend fun Table.update(
     val pk = keyValues[pkColumn] ?: error("Partition key ${pkColumn.name} not specified in where clause")
     val sk = skColumn?.let { keyValues[it] }
 
-    return UpdateStatement(this, database, pk, sk).apply(block).execute()
+    return UpdateStatement(this, database, pk, sk).also { block(it) }.execute()
+}
+
+/**
+ * Delete statement builder for type-safe DynamoDB delete operations with conditional support.
+ */
+public class DeleteStatement(
+    public val table: Table,
+    public val database: Database,
+    public val pk: Any,
+    public val sk: Any? = null
+) {
+    private var conditionOp: Op<Boolean>? = null
+
+    /**
+     * Add a condition expression for conditional delete.
+     * The delete will only succeed if the condition is met.
+     *
+     * Example:
+     * ```
+     * Users.delete(database, { Users.id eq "user#123" }) {
+     *     condition { Users.status eq "inactive" }
+     * }
+     * ```
+     */
+    public fun condition(block: SqlExpressionBuilder.() -> Op<Boolean>) {
+        conditionOp = SqlExpressionBuilder().block()
+    }
+
+    /**
+     * Execute the delete operation
+     */
+    public suspend fun execute(): Boolean {
+        val pkColumn = table.partitionKey ?: error("Table ${table.tableName} has no partition key")
+        val skColumn = table.sortKey
+
+        val key = buildMap {
+            @Suppress("UNCHECKED_CAST")
+            put(pkColumn.name, (pkColumn as Column<Any?>).toAttributeValue(pk))
+
+            if (sk != null && skColumn != null) {
+                @Suppress("UNCHECKED_CAST")
+                put(skColumn.name, (skColumn as Column<Any?>).toAttributeValue(sk))
+            }
+        }
+
+        // Build condition expression if present
+        val nameIndex = mutableMapOf<String, String>()
+        val valueIndex = mutableMapOf<String, AttributeValue>()
+        val conditionExpression = conditionOp?.let { op ->
+            buildConditionExpression(op, nameIndex, valueIndex)
+        }
+
+        database.client.deleteItem {
+            tableName = table.tableName
+            this.key = key
+            conditionExpression?.let { this.conditionExpression = it }
+            if (nameIndex.isNotEmpty()) {
+                expressionAttributeNames = nameIndex
+            }
+            if (valueIndex.isNotEmpty()) {
+                expressionAttributeValues = valueIndex
+            }
+        }
+
+        return true
+    }
 }
 
 /**
@@ -263,20 +364,26 @@ public suspend fun Table.delete(
     val pk = keyValues[pkColumn] ?: error("Partition key ${pkColumn.name} not specified in where clause")
     val sk = skColumn?.let { keyValues[it] }
 
-    val key = buildMap {
-        @Suppress("UNCHECKED_CAST")
-        put(pkColumn.name, (pkColumn as Column<Any?>).toAttributeValue(pk))
+    return DeleteStatement(this, database, pk, sk).execute()
+}
 
-        if (sk != null && skColumn != null) {
-            @Suppress("UNCHECKED_CAST")
-            put(skColumn.name, (skColumn as Column<Any?>).toAttributeValue(sk))
-        }
-    }
+/**
+ * Delete an item from the table using a where clause with optional condition.
+ * Example: Users.delete(database, { Users.id eq "user#123" }) { it.condition { status eq "inactive" } }
+ */
+public suspend fun <T : Table> T.delete(
+    database: Database,
+    where: SqlExpressionBuilder.() -> Op<Boolean>,
+    block: T.(DeleteStatement) -> Unit
+): Boolean {
+    val op = SqlExpressionBuilder().where()
+    val keyValues = extractKeyValues(op)
 
-    database.client.deleteItem {
-        tableName = this@delete.tableName
-        this.key = key
-    }
+    val pkColumn = partitionKey ?: error("Table $tableName has no partition key")
+    val skColumn = sortKey
 
-    return true
+    val pk = keyValues[pkColumn] ?: error("Partition key ${pkColumn.name} not specified in where clause")
+    val sk = skColumn?.let { keyValues[it] }
+
+    return DeleteStatement(this, database, pk, sk).also { block(it) }.execute()
 }

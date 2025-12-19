@@ -32,10 +32,10 @@ class DatabaseScopeTest : ExposedTestBase() {
 
         // Use without passing database each time
         usersDb.insert {
-            this[Users.id] = "user#123"
-            this[Users.name] = "John Doe"
-            this[Users.email] = "john@example.com"
-            this[Users.age] = 30
+            it[id] = "user#123"
+            it[name] = "John Doe"
+            it[email] = "john@example.com"
+            it[age] = 30
         }
 
         // Get
@@ -46,8 +46,8 @@ class DatabaseScopeTest : ExposedTestBase() {
 
         // Update
         usersDb.update({ Users.id eq "user#123" }) {
-            this[Users.age] = 31
-            this[Users.email] = "john.doe@example.com"
+            it[age] = 31
+            it[email] = "john.doe@example.com"
         }
 
         val updated = usersDb.get { Users.id eq "user#123" }!!
@@ -69,23 +69,23 @@ class DatabaseScopeTest : ExposedTestBase() {
         database.withTables {
             // Insert user
             insert(Users) {
-                this[Users.id] = "user#456"
-                this[Users.name] = "Jane Smith"
-                this[Users.email] = "jane@example.com"
-                this[Users.age] = 28
+                it[id] = "user#456"
+                it[name] = "Jane Smith"
+                it[email] = "jane@example.com"
+                it[age] = 28
             }
 
             // Insert order for that user
             insert(Orders) {
-                this[Orders.orderId] = "order#789"
-                this[Orders.userId] = "user#456"
-                this[Orders.total] = 15000
-                this[Orders.status] = "PENDING"
+                it[orderId] = "order#789"
+                it[userId] = "user#456"
+                it[total] = 15000
+                it[status] = "PENDING"
             }
 
             // Update order status
             update(Orders, { Orders.orderId eq "order#789" }) {
-                this[Orders.status] = "SHIPPED"
+                it[status] = "SHIPPED"
             }
 
             // Verify user exists
@@ -108,9 +108,9 @@ class DatabaseScopeTest : ExposedTestBase() {
             val usersScoped = Users.inScope()
 
             usersScoped.insert {
-                this[Users.id] = "user#999"
-                this[Users.name] = "Bob"
-                this[Users.age] = 40
+                it[id] = "user#999"
+                it[name] = "Bob"
+                it[age] = 40
             }
 
             val user = usersScoped.get { Users.id eq "user#999" }
@@ -118,7 +118,7 @@ class DatabaseScopeTest : ExposedTestBase() {
             user[Users.name].shouldBeEqualTo("Bob")
 
             usersScoped.update({ Users.id eq "user#999" }) {
-                this[Users.age] = 41
+                it[age] = 41
             }
 
             val updated = usersScoped.get { Users.id eq "user#999" }!!
@@ -134,9 +134,9 @@ class DatabaseScopeTest : ExposedTestBase() {
 
         // Scoped operation
         usersDb.insert {
-            this[Users.id] = "user#111"
-            this[Users.name] = "Alice"
-            this[Users.age] = 25
+            it[id] = "user#111"
+            it[name] = "Alice"
+            it[age] = 25
         }
 
         // Traditional non-scoped operation still works
@@ -146,7 +146,7 @@ class DatabaseScopeTest : ExposedTestBase() {
 
         // Update with scoped
         usersDb.update({ Users.id eq "user#111" }) {
-            this[Users.age] = 26
+            it[age] = 26
         }
 
         // Verify with non-scoped
@@ -164,24 +164,24 @@ class DatabaseScopeTest : ExposedTestBase() {
 
         // Insert user
         usersDb.insert {
-            this[Users.id] = "user#777"
-            this[Users.name] = "Charlie"
-            this[Users.age] = 35
+            it[id] = "user#777"
+            it[name] = "Charlie"
+            it[age] = 35
         }
 
         // Insert orders for user
         ordersDb.insert {
-            this[Orders.orderId] = "order#001"
-            this[Orders.userId] = "user#777"
-            this[Orders.total] = 5000
-            this[Orders.status] = "PENDING"
+            it[orderId] = "order#001"
+            it[userId] = "user#777"
+            it[total] = 5000
+            it[status] = "PENDING"
         }
 
         ordersDb.insert {
-            this[Orders.orderId] = "order#002"
-            this[Orders.userId] = "user#777"
-            this[Orders.total] = 8000
-            this[Orders.status] = "COMPLETED"
+            it[orderId] = "order#002"
+            it[userId] = "user#777"
+            it[total] = 8000
+            it[status] = "COMPLETED"
         }
 
         // Verify
@@ -195,21 +195,4 @@ class DatabaseScopeTest : ExposedTestBase() {
         order2[Orders.status].shouldBeEqualTo("COMPLETED")
     }
 
-    @Test
-    fun `test infix to syntax works in scoped context`() = runTest {
-        createTable(Users)
-
-        val usersDb = Users.inDatabase(database)
-
-        usersDb.insert {
-            Users.id to "user#infix"
-            Users.name to "Infix Test"
-            Users.email to "infix@example.com"
-            Users.age to 33
-        }
-
-        val user = usersDb.get { Users.id eq "user#infix" }!!
-        user[Users.name].shouldBeEqualTo("Infix Test")
-        user[Users.age].shouldBeEqualTo(33)
-    }
 }

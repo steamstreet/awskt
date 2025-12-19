@@ -8,12 +8,12 @@ package com.steamstreet.dynamokt.exposed
  * ```
  * database.withTables {
  *     Users.insert {
- *         this[Users.id] = "user#123"
- *         this[Users.name] = "John"
+ *         it[Users.id] = "user#123"
+ *         it[Users.name] = "John"
  *     }
  *
  *     Orders.update("order#456") {
- *         this[Orders.status] = "SHIPPED"
+ *         it[Orders.status] = "SHIPPED"
  *     }
  * }
  * ```
@@ -35,7 +35,7 @@ public class TableInScope<T : Table>(
     /**
      * Insert a new item
      */
-    public suspend fun insert(block: InsertStatement.() -> Unit): ResultRow {
+    public suspend fun insert(block: T.(InsertStatement) -> Unit): ResultRow {
         return table.insert(database, block)
     }
 
@@ -49,7 +49,7 @@ public class TableInScope<T : Table>(
     /**
      * Update an item using a where clause
      */
-    public suspend fun update(where: SqlExpressionBuilder.() -> Op<Boolean>, block: UpdateStatement.() -> Unit): ResultRow {
+    public suspend fun update(where: SqlExpressionBuilder.() -> Op<Boolean>, block: T.(UpdateStatement) -> Unit): ResultRow {
         return table.update(database, where, block)
     }
 
@@ -70,7 +70,7 @@ public class TableInScope<T : Table>(
  * database.withTables {
  *     val usersInScope = Users.inScope()
  *     usersInScope.insert {
- *         this[Users.id] = "user#123"
+ *         it[Users.id] = "user#123"
  *     }
  * }
  * ```
@@ -86,10 +86,10 @@ public suspend fun <T> Database.withTables(block: suspend DatabaseScope.() -> T)
  * ```
  * val usersDb = Users.inDatabase(database)
  * usersDb.insert {
- *     this[Users.id] = "user#123"
+ *     it[Users.id] = "user#123"
  * }
- * usersDb.update("user#123") {
- *     this[Users.age] = 31
+ * usersDb.update({ Users.id eq "user#123" }) {
+ *     it[Users.age] = 31
  * }
  * ```
  */
@@ -103,7 +103,7 @@ public fun <T : Table> T.inDatabase(database: Database): TableInScope<T> {
  */
 public suspend fun <T : Table> DatabaseScope.insert(
     table: T,
-    block: InsertStatement.() -> Unit
+    block: T.(InsertStatement) -> Unit
 ): ResultRow {
     return table.insert(database, block)
 }
@@ -118,7 +118,7 @@ public suspend fun <T : Table> DatabaseScope.get(
 public suspend fun <T : Table> DatabaseScope.update(
     table: T,
     where: SqlExpressionBuilder.() -> Op<Boolean>,
-    block: UpdateStatement.() -> Unit
+    block: T.(UpdateStatement) -> Unit
 ): ResultRow {
     return table.update(database, where, block)
 }

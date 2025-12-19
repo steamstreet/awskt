@@ -51,6 +51,42 @@ public class BeginsWithOp(public val column: Column<String>, public val prefix: 
 public class AndOp(public val left: Op<Boolean>, public val right: Op<Boolean>) : Op<Boolean>()
 
 /**
+ * Not equal operation
+ */
+public class NeOp<T>(public val column: Column<T>, public val value: T) : Op<Boolean>()
+
+/**
+ * Attribute exists check (for conditional writes)
+ */
+public class AttributeExistsOp(public val column: Column<*>) : Op<Boolean>()
+
+/**
+ * Attribute not exists check (for conditional writes)
+ */
+public class AttributeNotExistsOp(public val column: Column<*>) : Op<Boolean>()
+
+/**
+ * Represents an arithmetic increment expression for update operations.
+ * Used to support Exposed-style syntax: it[column] = column + 1
+ */
+public class IncrementExpr<T : Number>(
+    public val column: Column<T>,
+    public val amount: T
+)
+
+/**
+ * Plus operator for Int columns to create increment expressions.
+ * Enables syntax: it[count] = count + 1
+ */
+public operator fun Column<Int>.plus(amount: Int): IncrementExpr<Int> = IncrementExpr(this, amount)
+
+/**
+ * Plus operator for Long columns to create increment expressions.
+ * Enables syntax: it[count] = count + 1L
+ */
+public operator fun Column<Long>.plus(amount: Long): IncrementExpr<Long> = IncrementExpr(this, amount)
+
+/**
  * Expression builder for where clauses.
  * Provides context for building conditional expressions.
  */
@@ -94,6 +130,21 @@ public open class SqlExpressionBuilder {
      * AND operator for combining conditions
      */
     public infix fun Op<Boolean>.and(other: Op<Boolean>): Op<Boolean> = AndOp(this, other)
+
+    /**
+     * Not equal operator
+     */
+    public infix fun <T> Column<T>.neq(value: T): Op<Boolean> = NeOp(this, value)
+
+    /**
+     * Check if attribute exists
+     */
+    public fun Column<*>.exists(): Op<Boolean> = AttributeExistsOp(this)
+
+    /**
+     * Check if attribute does not exist
+     */
+    public fun Column<*>.notExists(): Op<Boolean> = AttributeNotExistsOp(this)
 }
 
 /**
@@ -135,6 +186,8 @@ internal sealed class ColumnCondition {
 
 /**
  * Extract all conditions from a where clause operation.
+ * Note: This is primarily used for key condition extraction for queries,
+ * so attribute existence operations and neq are not included.
  */
 internal fun extractConditions(op: Op<Boolean>): List<ColumnCondition> {
     val conditions = mutableListOf<ColumnCondition>()
@@ -152,6 +205,10 @@ internal fun extractConditions(op: Op<Boolean>): List<ColumnCondition> {
                 collect(operation.left)
                 collect(operation.right)
             }
+            // These are used for condition expressions, not key/filter conditions
+            is NeOp<*> -> { /* Not used for key conditions */ }
+            is AttributeExistsOp -> { /* Not used for key conditions */ }
+            is AttributeNotExistsOp -> { /* Not used for key conditions */ }
         }
     }
 

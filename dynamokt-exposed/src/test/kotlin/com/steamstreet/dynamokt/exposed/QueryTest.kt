@@ -132,9 +132,9 @@ class QueryTest : ExposedTestBase() {
         createOrdersTable()
 
         Orders.insert(database) {
-            this[Orders.customerId] = "cust#1"
-            this[Orders.orderId] = "order#001"
-            this[Orders.amount] = 100
+            it[customerId] = "cust#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
         }
 
         val results = Orders.select(database) {
@@ -151,19 +151,19 @@ class QueryTest : ExposedTestBase() {
 
         // Insert multiple orders for same customer
         Orders.insert(database) {
-            this[Orders.customerId] = "cust#1"
-            this[Orders.orderId] = "order#001"
-            this[Orders.amount] = 100
+            it[customerId] = "cust#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
         }
         Orders.insert(database) {
-            this[Orders.customerId] = "cust#1"
-            this[Orders.orderId] = "order#002"
-            this[Orders.amount] = 200
+            it[customerId] = "cust#1"
+            it[orderId] = "order#002"
+            it[amount] = 200
         }
         Orders.insert(database) {
-            this[Orders.customerId] = "cust#2"
-            this[Orders.orderId] = "order#003"
-            this[Orders.amount] = 300
+            it[customerId] = "cust#2"
+            it[orderId] = "order#003"
+            it[amount] = 300
         }
 
         val results = Orders.select(database) {
@@ -178,19 +178,19 @@ class QueryTest : ExposedTestBase() {
         createOrdersTable()
 
         Orders.insert(database) {
-            this[Orders.customerId] = "cust#1"
-            this[Orders.orderId] = "2023#001"
-            this[Orders.amount] = 100
+            it[customerId] = "cust#1"
+            it[orderId] = "2023#001"
+            it[amount] = 100
         }
         Orders.insert(database) {
-            this[Orders.customerId] = "cust#1"
-            this[Orders.orderId] = "2023#002"
-            this[Orders.amount] = 200
+            it[customerId] = "cust#1"
+            it[orderId] = "2023#002"
+            it[amount] = 200
         }
         Orders.insert(database) {
-            this[Orders.customerId] = "cust#1"
-            this[Orders.orderId] = "2024#001"
-            this[Orders.amount] = 300
+            it[customerId] = "cust#1"
+            it[orderId] = "2024#001"
+            it[amount] = 300
         }
 
         val results = Orders.select(database) {
@@ -207,19 +207,19 @@ class QueryTest : ExposedTestBase() {
 
         // Insert events at different timestamps
         Events.insert(database) {
-            this[Events.pk] = "stream#1"
-            this[Events.sk] = 1000L
-            this[Events.type] = "created"
+            it[pk] = "stream#1"
+            it[sk] = 1000L
+            it[type] = "created"
         }
         Events.insert(database) {
-            this[Events.pk] = "stream#1"
-            this[Events.sk] = 2000L
-            this[Events.type] = "updated"
+            it[pk] = "stream#1"
+            it[sk] = 2000L
+            it[type] = "updated"
         }
         Events.insert(database) {
-            this[Events.pk] = "stream#1"
-            this[Events.sk] = 3000L
-            this[Events.type] = "deleted"
+            it[pk] = "stream#1"
+            it[sk] = 3000L
+            it[type] = "deleted"
         }
 
         // Greater than
@@ -247,14 +247,14 @@ class QueryTest : ExposedTestBase() {
         createUsersTableWithGsi()
 
         Users.insert(database) {
-            this[Users.id] = "user#1"
-            this[Users.name] = "Alice"
-            this[Users.email] = "alice@example.com"
+            it[id] = "user#1"
+            it[name] = "Alice"
+            it[email] = "alice@example.com"
         }
         Users.insert(database) {
-            this[Users.id] = "user#2"
-            this[Users.name] = "Bob"
-            this[Users.email] = "bob@example.com"
+            it[id] = "user#2"
+            it[name] = "Bob"
+            it[email] = "bob@example.com"
         }
 
         // Query by email (uses GSI automatically)
@@ -271,9 +271,9 @@ class QueryTest : ExposedTestBase() {
         createUsersTableWithGsi()
 
         Users.insert(database) {
-            this[Users.id] = "user#1"
-            this[Users.name] = "Alice"
-            this[Users.email] = "alice@example.com"
+            it[id] = "user#1"
+            it[name] = "Alice"
+            it[email] = "alice@example.com"
         }
 
         // Query by name (no index) should throw
@@ -289,14 +289,14 @@ class QueryTest : ExposedTestBase() {
         createOrdersTable()
 
         Orders.insert(database) {
-            this[Orders.customerId] = "cust#1"
-            this[Orders.orderId] = "order#001"
-            this[Orders.amount] = 100
+            it[customerId] = "cust#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
         }
         Orders.insert(database) {
-            this[Orders.customerId] = "cust#2"
-            this[Orders.orderId] = "order#002"
-            this[Orders.amount] = 200
+            it[customerId] = "cust#2"
+            it[orderId] = "order#002"
+            it[amount] = 200
         }
 
         val results = Orders.scan(database).toList()
@@ -308,16 +308,16 @@ class QueryTest : ExposedTestBase() {
         createOrdersTable()
 
         Orders.insert(database) {
-            this[Orders.customerId] = "cust#1"
-            this[Orders.orderId] = "order#001"
-            this[Orders.amount] = 100
-            this[Orders.status] = "pending"
+            it[customerId] = "cust#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
+            it[status] = "pending"
         }
         Orders.insert(database) {
-            this[Orders.customerId] = "cust#2"
-            this[Orders.orderId] = "order#002"
-            this[Orders.amount] = 200
-            this[Orders.status] = "completed"
+            it[customerId] = "cust#2"
+            it[orderId] = "order#002"
+            it[amount] = 200
+            it[status] = "completed"
         }
 
         val results = Orders.scan(database) {
@@ -333,19 +333,19 @@ class QueryTest : ExposedTestBase() {
         createOrdersTable()
 
         Orders.insert(database) {
-            this[Orders.customerId] = "cust#1"
-            this[Orders.orderId] = "order#001"
-            this[Orders.amount] = 100
+            it[customerId] = "cust#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
         }
         Orders.insert(database) {
-            this[Orders.customerId] = "cust#1"
-            this[Orders.orderId] = "order#002"
-            this[Orders.amount] = 200
+            it[customerId] = "cust#1"
+            it[orderId] = "order#002"
+            it[amount] = 200
         }
         Orders.insert(database) {
-            this[Orders.customerId] = "cust#2"
-            this[Orders.orderId] = "order#003"
-            this[Orders.amount] = 300
+            it[customerId] = "cust#2"
+            it[orderId] = "order#003"
+            it[amount] = 300
         }
 
         val results = Orders.selectAll(
