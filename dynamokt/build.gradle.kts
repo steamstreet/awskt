@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    api(project(":dynamo"))
     api(libs.aws.dynamodb)
     api(libs.kotlin.coroutines.core)
     api(libs.kotlin.serialization.json)
