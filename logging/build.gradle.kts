@@ -15,6 +15,9 @@ kotlin {
     js {
         browser()
     }
+    wasmJs {
+        browser()
+    }
 
     sourceSets {
         commonMain {
@@ -42,6 +45,11 @@ kotlin {
             }
         }
         jsMain {
+            dependencies {
+                api(libs.ktor.client.core)
+            }
+        }
+        wasmJsMain {
             dependencies {
                 api(libs.ktor.client.core)
             }
