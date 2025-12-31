@@ -1,5 +1,7 @@
 package com.steamstreet.dynamokt.exposed
 
+import kotlin.time.ExperimentalTime
+
 /**
  * Base class for defining DynamoDB tables in an Exposed-style API.
  * Tables should be declared as objects extending this class.
@@ -15,7 +17,7 @@ package com.steamstreet.dynamokt.exposed
  */
 public abstract class Table(public val tableName: String) {
     @PublishedApi
-    internal val _columns = mutableListOf<Column<*>>()
+    internal val _columns: MutableList<Column<*>> = mutableListOf<Column<*>>()
 
     /**
      * All columns defined in this table
@@ -83,6 +85,13 @@ public abstract class Table(public val tableName: String) {
      */
     public fun map(name: String): MapColumn =
         MapColumn(this, name).also { _columns.add(it) }
+
+    /**
+     * Define a timestamp column storing Instant values as ISO-8601 strings
+     */
+    @OptIn(ExperimentalTime::class)
+    public fun timestamp(name: String): TimestampColumn =
+        TimestampColumn(this, name).also { _columns.add(it) }
 
     // Key designation methods
 

@@ -2,6 +2,8 @@ package com.steamstreet.dynamokt.exposed
 
 import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import kotlin.reflect.KClass
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 /**
  * Base interface for all column types in DynamoDB tables.
@@ -82,6 +84,18 @@ public class BoolColumn(
 ) : Column<Boolean> {
     override fun toAttributeValue(value: Boolean): AttributeValue = AttributeValue.Bool(value)
     override fun fromAttributeValue(value: AttributeValue): Boolean = value.asBool()
+}
+
+/**
+ * Column storing Instant values as DynamoDB String (S) type in ISO-8601 format
+ */
+@OptIn(ExperimentalTime::class)
+public class TimestampColumn(
+    override val table: Table,
+    override val name: String
+) : Column<Instant> {
+    override fun toAttributeValue(value: Instant): AttributeValue = AttributeValue.S(value.toString())
+    override fun fromAttributeValue(value: AttributeValue): Instant = Instant.parse(value.asS())
 }
 
 /**

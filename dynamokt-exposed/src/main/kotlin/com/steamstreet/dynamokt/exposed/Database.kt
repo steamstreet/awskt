@@ -21,15 +21,11 @@ public class Database(
          * Connect to DynamoDB.
          * Similar to Exposed's Database.connect()
          */
-        public fun connect(
-            region: String = "us-east-1",
-            endpoint: String? = null,
+        public suspend fun connect(
             configure: DynamoDbClient.Config.Builder.() -> Unit = {}
         ): Database {
-            val client = DynamoDbClient {
-                this.region = region
-                endpoint?.let { endpointUrl = Url.parse(it) }
-                apply(configure)
+            val client = DynamoDbClient.fromEnvironment {
+                configure()
             }
             return Database(client)
         }
