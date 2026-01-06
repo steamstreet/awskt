@@ -22,14 +22,16 @@ abstract class ExposedTestBase {
 
     @BeforeTest
     fun setup() {
-        val endpoint = localstack.getEndpointOverride(LocalStackContainer.Service.DYNAMODB).toString()
-        database = Database.connect(endpoint = endpoint) {
+        val endpoint = localstack.getEndpointOverride(LocalStackContainer.Service.DYNAMODB)
+        val client = DynamoDbClient {
             region = "us-east-1"
+            endpointUrl = Url.parse(endpoint.toString())
             credentialsProvider = StaticCredentialsProvider {
                 accessKeyId = "DummyKey"
                 secretAccessKey = "DummySecret"
             }
         }
+        database = Database(client)
     }
 
     @AfterTest

@@ -66,6 +66,12 @@ public class AttributeExistsOp(public val column: Column<*>) : Op<Boolean>()
 public class AttributeNotExistsOp(public val column: Column<*>) : Op<Boolean>()
 
 /**
+ * Batch keys operation - signals that the query should use BatchGetItem
+ * with the specified list of primary key values.
+ */
+public class KeysOp(public val keys: List<Pair<Any, Any?>>) : Op<Boolean>()
+
+/**
  * Represents an arithmetic increment expression for update operations.
  * Used to support Exposed-style syntax: it[column] = column + 1
  */
@@ -145,6 +151,17 @@ public open class SqlExpressionBuilder {
      * Check if attribute does not exist
      */
     public fun Column<*>.notExists(): Op<Boolean> = AttributeNotExistsOp(this)
+
+    /**
+     * Specify exact keys to retrieve using BatchGetItem.
+     * Each pair is (partitionKey, sortKey) - sortKey is null for tables without one.
+     *
+     * Example:
+     * ```
+     * Users.selectAll(database).where { keys(listOf("user#1" to null, "user#2" to null)) }
+     * ```
+     */
+    public fun keys(keys: List<Pair<Any, Any?>>): Op<Boolean> = KeysOp(keys)
 }
 
 /**
@@ -209,6 +226,7 @@ internal fun extractConditions(op: Op<Boolean>): List<ColumnCondition> {
             is NeOp<*> -> { /* Not used for key conditions */ }
             is AttributeExistsOp -> { /* Not used for key conditions */ }
             is AttributeNotExistsOp -> { /* Not used for key conditions */ }
+            is KeysOp -> { /* Handled separately in Query */ }
         }
     }
 

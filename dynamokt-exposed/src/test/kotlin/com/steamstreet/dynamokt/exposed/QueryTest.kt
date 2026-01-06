@@ -348,6 +348,7 @@ class QueryTest : ExposedTestBase() {
             it[amount] = 300
         }
 
+        @Suppress("DEPRECATION")
         val results = Orders.selectAll(
             database,
             listOf(
@@ -358,5 +359,255 @@ class QueryTest : ExposedTestBase() {
 
         results.shouldHaveSize(2)
         results.sumOf { it[Orders.amount] }.shouldBeEqualTo(400)
+    }
+
+    // =========================================================================
+    // New Query API tests
+    // =========================================================================
+
+    @Test
+    fun `selectAll with where returns Query`() = runTest {
+        createOrdersTable()
+
+        Orders.insert(database) {
+            it[customerId] = "cust#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
+        }
+
+        val results = Orders.selectAll(database)
+            .where { (Orders.customerId eq "cust#1") and (Orders.orderId eq "order#001") }
+            .toList()
+
+        results.shouldHaveSize(1)
+        results[0][Orders.amount].shouldBeEqualTo(100)
+    }
+
+    @Test
+    fun `select with specific columns returns projected results`() = runTest {
+        createOrdersTable()
+
+        Orders.insert(database) {
+            it[customerId] = "cust#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
+            it[status] = "pending"
+        }
+
+        val results = Orders.select(database, Orders.customerId, Orders.amount)
+            .where { (Orders.customerId eq "cust#1") and (Orders.orderId eq "order#001") }
+            .toList()
+
+        results.shouldHaveSize(1)
+        results[0][Orders.customerId].shouldBeEqualTo("cust#1")
+        results[0][Orders.amount].shouldBeEqualTo(100)
+        // Note: status won't be in the result since we only projected customerId and amount
+    }
+
+    @Test
+    fun `Query firstOrNull returns first result`() = runTest {
+        createOrdersTable()
+
+        Orders.insert(database) {
+            it[customerId] = "cust#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
+        }
+
+        val result = Orders.selectAll(database)
+            .where { Orders.customerId eq "cust#1" }
+            .firstOrNull()
+
+        result.shouldBeEqualTo(result)
+        result!![Orders.amount].shouldBeEqualTo(100)
+    }
+
+    @Test
+    fun `Query firstOrNull returns null when no results`() = runTest {
+        createOrdersTable()
+
+        val result = Orders.selectAll(database)
+            .where { Orders.customerId eq "nonexistent" }
+            .firstOrNull()
+
+        result.shouldBeEqualTo(null)
+    }
+
+    @Test
+    fun `Query single returns exactly one result`() = runTest {
+        createOrdersTable()
+
+        Orders.insert(database) {
+            it[customerId] = "cust#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
+        }
+
+        val result = Orders.selectAll(database)
+            .where { (Orders.customerId eq "cust#1") and (Orders.orderId eq "order#001") }
+            .single()
+
+        result[Orders.amount].shouldBeEqualTo(100)
+    }
+
+    @Test
+    fun `Query single throws when no results`() = runTest {
+        createOrdersTable()
+
+        assertFailsWith<NoSuchElementException> {
+            Orders.selectAll(database)
+                .where { Orders.customerId eq "nonexistent" }
+                .single()
+        }
+    }
+
+    @Test
+    fun `Query single throws when multiple results`() = runTest {
+        createOrdersTable()
+
+        Orders.insert(database) {
+            it[customerId] = "cust#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
+        }
+        Orders.insert(database) {
+            it[customerId] = "cust#1"
+            it[orderId] = "order#002"
+            it[amount] = 200
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            Orders.selectAll(database)
+                .where { Orders.customerId eq "cust#1" }
+                .single()
+        }
+    }
+
+    @Test
+    fun `Query singleOrNull returns null when no results`() = runTest {
+        createOrdersTable()
+
+        val result = Orders.selectAll(database)
+            .where { Orders.customerId eq "nonexistent" }
+            .singleOrNull()
+
+        result.shouldBeEqualTo(null)
+    }
+
+    @Test
+    fun `scan with new Query API`() = runTest {
+        createOrdersTable()
+
+        Orders.insert(database) {
+            it[customerId] = "cust#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
+            it[status] = "pending"
+        }
+        Orders.insert(database) {
+            it[customerId] = "cust#2"
+            it[orderId] = "order#002"
+            it[amount] = 200
+            it[status] = "completed"
+        }
+
+        val results = Orders.scan(database)
+            .where { Orders.status eq "pending" }
+            .toList()
+
+        results.shouldHaveSize(1)
+        results[0][Orders.amount].shouldBeEqualTo(100)
+    }
+
+    @Test
+    fun `keys function for batch get`() = runTest {
+        createOrdersTable()
+
+        Orders.insert(database) {
+            it[customerId] = "cust#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
+        }
+        Orders.insert(database) {
+            it[customerId] = "cust#1"
+            it[orderId] = "order#002"
+            it[amount] = 200
+        }
+        Orders.insert(database) {
+            it[customerId] = "cust#2"
+            it[orderId] = "order#003"
+            it[amount] = 300
+        }
+
+        val results = Orders.selectAll(database)
+            .where {
+                keys(listOf(
+                    "cust#1" to "order#001",
+                    "cust#2" to "order#003"
+                ))
+            }
+            .toList()
+
+        results.shouldHaveSize(2)
+        results.sumOf { it[Orders.amount] }.shouldBeEqualTo(400)
+    }
+
+    @Test
+    fun `keys with projection selects specific columns`() = runTest {
+        createOrdersTable()
+
+        Orders.insert(database) {
+            it[customerId] = "cust#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
+            it[status] = "pending"
+        }
+
+        val results = Orders.select(database, Orders.customerId, Orders.amount)
+            .where { keys(listOf("cust#1" to "order#001")) }
+            .toList()
+
+        results.shouldHaveSize(1)
+        results[0][Orders.customerId].shouldBeEqualTo("cust#1")
+        results[0][Orders.amount].shouldBeEqualTo(100)
+    }
+
+    @Test
+    fun `BoundTable select operations`() = runTest {
+        createOrdersTable()
+
+        Orders.insert(database) {
+            it[customerId] = "cust#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
+        }
+
+        val orders = database.bind(Orders)
+
+        val result = orders.selectAll()
+            .where { (Orders.customerId eq "cust#1") and (Orders.orderId eq "order#001") }
+            .firstOrNull()
+
+        result!![Orders.amount].shouldBeEqualTo(100)
+    }
+
+    @Test
+    fun `BoundTable scan operations`() = runTest {
+        createOrdersTable()
+
+        Orders.insert(database) {
+            it[customerId] = "cust#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
+            it[status] = "pending"
+        }
+
+        val orders = database.bind(Orders)
+
+        val results = orders.scan()
+            .where { Orders.status eq "pending" }
+            .toList()
+
+        results.shouldHaveSize(1)
     }
 }

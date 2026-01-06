@@ -106,16 +106,14 @@ public suspend fun <T : Table> T.insert(
 
 /**
  * Get a single item using a where clause.
- * Delegates to select() which automatically chooses GetItem or Query.
+ * Delegates to selectAll() which automatically chooses GetItem or Query.
  * Example: Users.get(database) { Users.id eq "user#123" }
  */
 public suspend fun Table.get(
     database: Database,
     where: SqlExpressionBuilder.() -> Op<Boolean>
 ): ResultRow? {
-    var result: ResultRow? = null
-    select(database, where).collect { result = it }
-    return result
+    return selectAll(database).where(where).firstOrNull()
 }
 
 /**
