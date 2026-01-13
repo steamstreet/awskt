@@ -75,7 +75,7 @@ public class InsertStatement(
         }
 
         database.client.putItem {
-            tableName = table.tableName
+            tableName = database.resolveTableName(table)
             this.item = item
 
             conditionExpression?.let { expr ->
@@ -241,7 +241,7 @@ public class UpdateStatement(
         }
 
         val result = database.client.updateItem {
-            tableName = table.tableName
+            tableName = database.resolveTableName(table)
             this.key = key
             this.updateExpression = updateExpression
             conditionExpression?.let { this.conditionExpression = it }
@@ -330,7 +330,7 @@ public class DeleteStatement(
         }
 
         database.client.deleteItem {
-            tableName = table.tableName
+            tableName = database.resolveTableName(table)
             this.key = key
             conditionExpression?.let { this.conditionExpression = it }
             if (nameIndex.isNotEmpty()) {

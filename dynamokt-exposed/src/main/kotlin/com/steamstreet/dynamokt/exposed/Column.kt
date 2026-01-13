@@ -99,9 +99,27 @@ public class TimestampColumn(
 }
 
 /**
- * Column storing Enum values as DynamoDB String (S) type using the enum's name
+ * Column storing Enum values as DynamoDB Number (N) type using the enum's ordinal.
+ * This matches Exposed's enumeration() API.
  */
 public class EnumerationColumn<T : Enum<T>>(
+    override val table: Table,
+    override val name: String,
+    public val enumClass: KClass<T>
+) : Column<T> {
+    override fun toAttributeValue(value: T): AttributeValue = AttributeValue.N(value.ordinal.toString())
+
+    override fun fromAttributeValue(value: AttributeValue): T {
+        val ordinal = value.asN().toInt()
+        return enumClass.java.enumConstants[ordinal]
+    }
+}
+
+/**
+ * Column storing Enum values as DynamoDB String (S) type using the enum's name.
+ * This matches Exposed's enumerationByName() API.
+ */
+public class EnumerationByNameColumn<T : Enum<T>>(
     override val table: Table,
     override val name: String,
     public val enumClass: KClass<T>
@@ -112,6 +130,24 @@ public class EnumerationColumn<T : Enum<T>>(
         val enumName = value.asS()
         return enumClass.java.enumConstants.first { it.name == enumName }
     }
+}
+
+/**
+ * Column storing Enum values with custom serialization/deserialization.
+ * This matches Exposed's customEnumeration() API.
+ *
+ * @param fromDb converts the stored string value to the enum type
+ * @param toDb converts the enum value to a string for storage
+ */
+public class CustomEnumerationColumn<T : Enum<T>>(
+    override val table: Table,
+    override val name: String,
+    private val fromDb: (String) -> T,
+    private val toDb: (T) -> String
+) : Column<T> {
+    override fun toAttributeValue(value: T): AttributeValue = AttributeValue.S(toDb(value))
+
+    override fun fromAttributeValue(value: AttributeValue): T = fromDb(value.asS())
 }
 
 /**

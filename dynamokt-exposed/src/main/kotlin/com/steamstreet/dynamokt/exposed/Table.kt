@@ -69,10 +69,33 @@ public abstract class Table(public val tableName: String) {
         BoolColumn(this, name).also { _columns.add(it) }
 
     /**
-     * Define an enumeration column
+     * Define an enumeration column storing the enum's ordinal as a number.
+     * This matches Exposed's enumeration() API.
      */
     public inline fun <reified T : Enum<T>> enumeration(name: String): EnumerationColumn<T> =
         EnumerationColumn(this, name, T::class).also { _columns.add(it) }
+
+    /**
+     * Define an enumeration column storing the enum's name as a string.
+     * This matches Exposed's enumerationByName() API.
+     */
+    public inline fun <reified T : Enum<T>> enumerationByName(name: String): EnumerationByNameColumn<T> =
+        EnumerationByNameColumn(this, name, T::class).also { _columns.add(it) }
+
+    /**
+     * Define an enumeration column with custom serialization/deserialization.
+     * This matches Exposed's customEnumeration() API.
+     *
+     * @param name the column name
+     * @param fromDb converts the stored string value to the enum type
+     * @param toDb converts the enum value to a string for storage
+     */
+    public fun <T : Enum<T>> customEnumeration(
+        name: String,
+        fromDb: (String) -> T,
+        toDb: (T) -> String
+    ): CustomEnumerationColumn<T> =
+        CustomEnumerationColumn(this, name, fromDb, toDb).also { _columns.add(it) }
 
     /**
      * Define a list column

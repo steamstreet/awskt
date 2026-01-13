@@ -344,7 +344,7 @@ public class Query(
         }
 
         val result = database.client.getItem {
-            tableName = table.tableName
+            tableName = database.resolveTableName(table)
             this.key = key
             consistentRead = database.defaultConsistentRead
             if (projectionExpression != null) {
@@ -378,7 +378,7 @@ public class Query(
         projectionNames?.let { nameIndex.putAll(it) }
 
         val result = database.client.query {
-            tableName = table.tableName
+            tableName = database.resolveTableName(table)
             match.index?.let { indexName = it.name }
             this.keyConditionExpression = keyConditionExpression
             if (projectionExpression != null) {
@@ -415,7 +415,7 @@ public class Query(
         projectionNames?.let { nameIndex.putAll(it) }
 
         val result = database.client.dynamoScan {
-            tableName = table.tableName
+            tableName = database.resolveTableName(table)
             if (projectionExpression != null) {
                 this.projectionExpression = projectionExpression
             }
@@ -464,11 +464,12 @@ public class Query(
                 }
             }
 
+            val resolvedTableName = database.resolveTableName(table)
             val result = database.client.batchGetItem {
-                requestItems = mapOf(table.tableName to keysAndAttributes)
+                requestItems = mapOf(resolvedTableName to keysAndAttributes)
             }
 
-            result.responses?.get(table.tableName)?.forEach { item ->
+            result.responses?.get(resolvedTableName)?.forEach { item ->
                 emit(ResultRow(table, item))
             }
         }
@@ -552,11 +553,12 @@ public fun Table.batchGet(
             consistentRead = database.defaultConsistentRead
         }
 
+        val resolvedTableName = database.resolveTableName(this@batchGet)
         val result = database.client.batchGetItem {
-            requestItems = mapOf(tableName to keysAndAttributes)
+            requestItems = mapOf(resolvedTableName to keysAndAttributes)
         }
 
-        result.responses?.get(tableName)?.forEach { item ->
+        result.responses?.get(resolvedTableName)?.forEach { item ->
             emit(ResultRow(this@batchGet, item))
         }
     }
