@@ -115,6 +115,13 @@ public fun eventBridge(
                     RecordResponse(it.key)
                 })
 
+                sqs.failures.forEach {
+                    val t = it.value
+                    if (t != null) {
+                        logError("Batch response error", t, "messageId" to it.key)
+                    }
+                }
+
                 val responseString = lambdaJson.encodeToString(response)
                 if (response.batchItemFailures.isNotEmpty()) {
                     logger.info(Markers.appendRaw("batch-response", responseString), "Batch response partial failure")
