@@ -1,22 +1,36 @@
 plugins {
-    id("steamstreet-common.jvm-library-conventions")
+    id("steamstreet-common.multiplatform-library-conventions")
 }
 
-dependencies {
-    api(project(":dynamo"))
-    api(libs.aws.dynamodb)
-    api(libs.kotlin.coroutines.core)
-    api(libs.kotlin.serialization.json)
-    implementation(libs.kotlin.date.time)
-    api(project(":standards"))
-    implementation(project(":env"))
+kotlin {
+    explicitApi()
 
-    testImplementation(kotlin("test"))
-    testImplementation(libs.kluent)
-    testImplementation(libs.kotlin.coroutines.test)
-    testImplementation(libs.testcontainers.junit.jupiter)
-    testImplementation(libs.testcontainers.localstack)
+    jvm()
+    linuxArm64()
 
+    sourceSets {
+        commonMain {
+            dependencies {
+                api(project(":dynamo"))
+                api(libs.aws.dynamodb)
+                api(libs.kotlin.coroutines.core)
+                api(libs.kotlin.serialization.json)
+                implementation(libs.kotlin.date.time)
+                api(project(":standards"))
+                implementation(project(":env"))
+            }
+        }
+
+        jvmTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.kluent)
+                implementation(libs.kotlin.coroutines.test)
+                implementation(libs.testcontainers.junit.jupiter)
+                implementation(libs.testcontainers.localstack)
+            }
+        }
+    }
 }
 
 publishing {
@@ -29,7 +43,7 @@ publishing {
     }
 }
 
-tasks.test {
+tasks.named<Test>("jvmTest") {
     useJUnitPlatform()
 
     val libsDir = File(projectDir, "dynamo_libs")

@@ -13,6 +13,8 @@ kotlin {
         browser()
     }
 
+    linuxArm64()
+
     sourceSets {
         val commonMain by getting {
             dependencies {

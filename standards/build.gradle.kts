@@ -23,6 +23,8 @@ kotlin {
 
     iosArm64()
     iosSimulatorArm64()
+    linuxArm64()
+    macosArm64()
 
     sourceSets {
         commonMain {
@@ -44,7 +46,7 @@ kotlin {
             }
         }
 
-        iosMain {
+        nativeMain {
             dependencies {
                 implementation(libs.kotlin.date.time)
             }

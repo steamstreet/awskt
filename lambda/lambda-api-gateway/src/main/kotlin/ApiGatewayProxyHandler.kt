@@ -3,7 +3,7 @@ package com.steamstreet.aws.lambda.apigateway
 import com.steamstreet.aws.lambda.IOLambda
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
-import java.util.*
+import kotlin.io.encoding.Base64
 
 @Serializable
 public data class ApiGatewayProxyRequest(
@@ -25,7 +25,7 @@ public data class ApiGatewayProxyRequest(
      */
     public fun decodedBody(): ByteArray {
         return if (isBase64Encoded == true && body != null) {
-            Base64.getDecoder().decode(body)
+            Base64.decode(body)
         } else {
             body?.toByteArray(Charsets.UTF_8) ?: ByteArray(0)
         }

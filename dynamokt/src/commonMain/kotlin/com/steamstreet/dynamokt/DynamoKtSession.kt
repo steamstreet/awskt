@@ -203,7 +203,7 @@ public class DynamoKtSession(
         }
         return channelFlow {
             actualSegmentNumbers.forEach { index ->
-                launch(Dispatchers.IO) {
+                launch(Dispatchers.Default) {
                     scan {
                         block()
                         this.segments = segments

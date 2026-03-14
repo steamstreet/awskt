@@ -7,7 +7,6 @@ import aws.sdk.kotlin.services.dynamodb.putItem
 import aws.sdk.kotlin.services.dynamodb.updateItem
 import com.steamstreet.exceptions.DuplicateItemException
 import com.steamstreet.exceptions.NotFoundException
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.reflect.KProperty1
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -30,7 +29,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     internal val attributeValues = HashMap<String, AttributeValue>()
     internal var updateExpressions = ArrayList<Update>()
 
-    private val attributeIndex = AtomicInteger(1)
+    private var attributeIndex = 1
 
     /**
      * Parse a key component that may contain array indices (e.g., "items[2]" or "name")
@@ -153,13 +152,13 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     public operator fun set(key: String, value: AttributeValue?) {
         val newKey = key.split(".").joinToString(".") { keyElement ->
             val (baseName, suffix) = parseKeyComponent(keyElement)
-            "#attr${attributeIndex.getAndIncrement()}".also {
+            "#attr${attributeIndex++}".also {
                 attributeNames[it] = baseName
             } + suffix
         }
 
         if (value != null) {
-            val attrValue = "attr${attributeIndex.getAndIncrement()}"
+            val attrValue = "attr${attributeIndex++}"
             updateExpressions.add(Update("SET", "$newKey = :$attrValue"))
             attributeValues[":$attrValue"] = value
         } else {
@@ -174,7 +173,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      */
     public fun increment(key: String, amount: Int = 1) {
         if (amount != 0) {
-            val attr = "attr${attributeIndex.getAndIncrement()}"
+            val attr = "attr${attributeIndex++}"
             attributeNames["#$attr"] = key
             attributeValues[":$attr"] = AttributeValue.N(amount.toString())
             updateExpressions.add(Update("ADD", "#$attr :$attr"))
@@ -188,7 +187,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
         // look for a key with the same value. If the list already exists, we need to add it to that one
         // instead of adding a new expression.
         val existingAttr = attributeNames.entries.find { it.value == key }?.key?.drop(1)
-        val attr = existingAttr ?: "attr${attributeIndex.getAndIncrement()}"
+        val attr = existingAttr ?: "attr${attributeIndex++}"
         val existingList = attributeValues[":$attr"]
         var list = existingList ?: AttributeValue.L(emptyList())
 
@@ -207,7 +206,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      * Add the given string to a string set attribute.
      */
     public fun addToSet(key: String, value: String) {
-        val attr = "attr${attributeIndex.getAndIncrement()}"
+        val attr = "attr${attributeIndex++}"
         attributeNames["#$attr"] = key
         attributeValues[":$attr"] = value.attributeValue()
         updateExpressions.add(Update("ADD", "#$attr :$attr"))
@@ -218,7 +217,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      * Remove an item from a list
      */
     public fun removeFromList(key: String, index: Int) {
-        val attr = "attr${attributeIndex.getAndIncrement()}"
+        val attr = "attr${attributeIndex++}"
         attributeNames["#$attr"] = key
         updateExpressions.add(Update("REMOVE", """#$attr[$index]"""))
     }
@@ -258,7 +257,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      * Add a condition that checks that an attribute has the given value.
      */
     public fun conditionAttributeEquals(name: String, value: AttributeValue) {
-        val attr = "attr${attributeIndex.getAndIncrement()}"
+        val attr = "attr${attributeIndex++}"
         condition(
             "#$attr = :$attr",
             mapOf("#$attr" to name),
@@ -270,7 +269,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      * Require that an attribute exists as a condition of the update.
      */
     public fun requireAttributeExists(name: String) {
-        val attr = "attr${attributeIndex.getAndIncrement()}"
+        val attr = "attr${attributeIndex++}"
         condition(
             "attribute_exists(#$attr)",
             mapOf("#$attr" to name)
@@ -281,7 +280,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      * Require that an attribute exists as a condition of the update.
      */
     public fun requireAttributeNotExists(name: String) {
-        val attr = "attr${attributeIndex.getAndIncrement()}"
+        val attr = "attr${attributeIndex++}"
         condition(
             "attribute_not_exists(#$attr)",
             mapOf("#$attr" to name)
@@ -301,7 +300,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     public fun delete(key: String) {
         val newKey = key.split(".").joinToString(".") { keyElement ->
             val (baseName, suffix) = parseKeyComponent(keyElement)
-            "#attr${attributeIndex.getAndIncrement()}".also {
+            "#attr${attributeIndex++}".also {
                 attributeNames[it] = baseName
             } + suffix
         }

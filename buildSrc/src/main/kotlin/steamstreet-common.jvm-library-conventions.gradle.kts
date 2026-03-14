@@ -12,6 +12,7 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xcontext-parameters")
         optIn.add("kotlin.time.ExperimentalTime")
+        optIn.add("kotlin.uuid.ExperimentalUuidApi")
     }
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(17))

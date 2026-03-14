@@ -19,7 +19,7 @@ public suspend fun <R> retry(
         try {
             return block()
         } catch (e: Throwable) {
-            if ((exceptionType == null || e.javaClass.kotlin == exceptionType) && i < times - 1) {
+            if ((exceptionType == null || e::class == exceptionType) && i < times - 1) {
                 throwHandler(e)
                 if (delay > 0) {
                     delay(delay)

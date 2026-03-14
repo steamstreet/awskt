@@ -2,7 +2,7 @@ package com.steamstreet.dynamokt
 
 import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import kotlinx.serialization.json.*
-import java.util.*
+import kotlin.io.encoding.Base64
 
 /**
  * Some helpers for saving serializable objects to Dynamo. Much of this code should be
@@ -76,19 +76,19 @@ public fun AttributeValue.asJsonElement(): JsonElement {
             JsonArray(attribute.asSs().map { JsonPrimitive(it) })
         }
         attribute.asNsOrNull() != null -> {
-            JsonArray(attribute.asNs().map { JsonPrimitive(it.toBigDecimal()) })
+            JsonArray(attribute.asNs().map { JsonPrimitive(it.toDouble()) })
         }
         attribute.asBsOrNull() != null -> {
-            JsonArray(attribute.asBs().map { JsonPrimitive(String(Base64.getEncoder().encode(it))) })
+            JsonArray(attribute.asBs().map { JsonPrimitive(Base64.encode(it)) })
         }
         attribute.asNOrNull() != null -> {
-            JsonPrimitive(attribute.asN().toBigDecimal())
+            JsonPrimitive(attribute.asN().toDouble())
         }
         attribute.asBoolOrNull() != null -> {
             JsonPrimitive(attribute.asBool())
         }
         attribute.asBOrNull() != null -> {
-            JsonPrimitive(String(Base64.getEncoder().encode(attribute.asB())))
+            JsonPrimitive(Base64.encode(attribute.asB()))
         }
         attribute.asSOrNull() != null -> {
             JsonPrimitive(attribute.asS())

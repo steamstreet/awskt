@@ -1,10 +1,21 @@
 plugins {
-    id("steamstreet-common.jvm-library-conventions")
+    id("steamstreet-common.multiplatform-library-conventions")
 }
 
-dependencies {
-    api(libs.aws.dynamodb)
-    api(libs.kotlin.serialization.json)
+kotlin {
+    explicitApi()
+
+    jvm()
+    linuxArm64()
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                api(libs.aws.dynamodb)
+                api(libs.kotlin.serialization.json)
+            }
+        }
+    }
 }
 
 publishing {

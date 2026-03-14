@@ -5,14 +5,13 @@ import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import aws.sdk.kotlin.services.dynamodb.model.TransactWriteItem
 import aws.sdk.kotlin.services.dynamodb.model.TransactWriteItemsRequest
 import kotlinx.coroutines.runBlocking
-import java.io.Closeable
 
 /**
  * An item updater that batches changes into a transaction. This implementation does not
  * attempt to control the size of the transaction, so too many updates could result in
  * exceptions from DynamoDB, which limits the number of updates in a transaction.
  */
-public class Transaction internal constructor(private val mapper: DynamoKtSession) : ItemUpdater, Closeable {
+public class Transaction internal constructor(private val mapper: DynamoKtSession) : ItemUpdater, AutoCloseable {
     private val items = ArrayList<TransactWriteItem>()
 
     /**

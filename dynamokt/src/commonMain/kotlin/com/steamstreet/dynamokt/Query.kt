@@ -10,7 +10,6 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
-import java.util.concurrent.atomic.AtomicInteger
 
 
 public class Query internal constructor(
@@ -32,7 +31,7 @@ public class Query internal constructor(
     private var attributeNames: MutableMap<String, String>? = null
     private var attributeValues: MutableMap<String, AttributeValue>? = null
 
-    private var attributeIndex = AtomicInteger(1)
+    private var attributeIndex = 1
 
     // Segment information used for scans only.
     internal var segments: Int? = null
@@ -49,7 +48,7 @@ public class Query internal constructor(
 
     private fun processAttributeName(name: String): String {
         return name.split(".").map { keyElement ->
-            "#attr${attributeIndex.getAndIncrement()}".also {
+            "#attr${attributeIndex++}".also {
                 if (attributeNames == null) {
                     attributeNames = HashMap()
                 }

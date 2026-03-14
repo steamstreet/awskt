@@ -1,6 +1,6 @@
 [versions]
 kotlin-serialization = "1.9.0"
-aws = "1.5.123"
+aws = "1.5.79"
 ktor = "3.3.3"
 slf4j = "2.0.9"
 coroutines = "1.10.2"
@@ -15,16 +15,16 @@ kotlin-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-s
 aws-lambda-core = "com.amazonaws:aws-lambda-java-core:1.2.0"
 aws-lambda-events = "com.amazonaws:aws-lambda-java-events:3.8.0"
 
-# -- AWS SDK for Kotlin
-aws-secretsmanager = { group = "aws.sdk.kotlin", name = "secretsmanager", version.ref = "aws" }
-aws-dynamodb = { group = "aws.sdk.kotlin", name = "dynamodb", version.ref = "aws" }
-aws-dynamodbstreams = { group = "aws.sdk.kotlin", name = "dynamodbstreams", version.ref = "aws" }
-aws-lambda = { group = "aws.sdk.kotlin", name = "lambda", version.ref = "aws" }
-aws-eventbridge = { group = "aws.sdk.kotlin", name = "eventbridge", version.ref = "aws" }
-aws-kinesis = { group = "aws.sdk.kotlin", name = "kinesis", version.ref = "aws" }
-aws-s3 = { group = "aws.sdk.kotlin", name = "s3", version.ref = "aws" }
-aws-sqs = { group = "aws.sdk.kotlin", name = "sqs", version.ref = "aws" }
-aws-appconfigdata = { group = "aws.sdk.kotlin", name = "appconfigdata", version.ref = "aws" }
+# -- AWS SDK for Kotlin (using pre-release test namespace for Native support)
+aws-secretsmanager = { group = "com.sonatype.central.testing.amazon", name = "secretsmanager", version.ref = "aws" }
+aws-dynamodb = { group = "com.sonatype.central.testing.amazon", name = "dynamodb", version.ref = "aws" }
+aws-dynamodbstreams = { group = "com.sonatype.central.testing.amazon", name = "dynamodbstreams", version.ref = "aws" }
+aws-lambda = { group = "com.sonatype.central.testing.amazon", name = "lambda", version.ref = "aws" }
+aws-eventbridge = { group = "com.sonatype.central.testing.amazon", name = "eventbridge", version.ref = "aws" }
+aws-kinesis = { group = "com.sonatype.central.testing.amazon", name = "kinesis", version.ref = "aws" }
+aws-s3 = { group = "com.sonatype.central.testing.amazon", name = "s3", version.ref = "aws" }
+aws-sqs = { group = "com.sonatype.central.testing.amazon", name = "sqs", version.ref = "aws" }
+aws-appconfigdata = { group = "com.sonatype.central.testing.amazon", name = "appconfigdata", version.ref = "aws" }
 
 # -- Ktor
 ktor-server-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
@@ -59,7 +59,7 @@ kotlin-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coro
 kotlin-coroutines-slf4j = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-slf4j", version.ref = "coroutines" }
 
 # -- Other fixed-version libraries
-kotlin-date-time = "org.jetbrains.kotlinx:kotlinx-datetime:0.7.1"
+kotlin-date-time = "org.jetbrains.kotlinx:kotlinx-datetime:0.7.1-0.6.x-compat"
 kluent = "org.amshove.kluent:kluent:1.73"
 jackson = "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6"
 mockk = "io.mockk:mockk:1.13.5"

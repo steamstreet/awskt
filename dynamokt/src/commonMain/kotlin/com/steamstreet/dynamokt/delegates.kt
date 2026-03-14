@@ -1,10 +1,10 @@
 package com.steamstreet.dynamokt
 
 import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
+import kotlin.enums.enumEntries
 import kotlinx.coroutines.runBlocking
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 
@@ -232,34 +232,34 @@ public inline fun <reified T : Enum<T>, R : ItemContainer> enumAttribute(
     default: T,
     attributeName: String? = null
 ): ItemAttributeDelegate<T, R> {
-    return ItemAttributeDelegate(EnumSerializer<T>(T::class, default), attributeName)
+    return ItemAttributeDelegate(EnumSerializer<T>(enumEntries<T>(), default), attributeName)
 }
 
 public inline fun <reified T : Enum<T>, R : ItemContainer> enumAttribute(): ItemAttributeDelegate<T?, R> {
-    return ItemAttributeDelegate(NullableEnumSerializer(T::class))
+    return ItemAttributeDelegate(NullableEnumSerializer(enumEntries<T>()))
 }
 
-public class EnumSerializer<T : Enum<T>>(private val cls: KClass<T>, private val default: T) : AttributeSerializer<T> {
+public class EnumSerializer<T : Enum<T>>(private val entries: List<T>, private val default: T) : AttributeSerializer<T> {
     override fun serialize(container: ItemContainer, value: T): AttributeValue? {
         return value.name.attributeValue()
     }
 
     override fun deserialize(container: ItemContainer, attribute: AttributeValue?): T {
         return attribute?.let { attr ->
-            cls.java.enumConstants.find { it.name == attr.asSOrNull() }
+            entries.find { it.name == attr.asSOrNull() }
         } ?: default
     }
 }
 
 
-public class NullableEnumSerializer<T : Enum<T>>(private val cls: KClass<T>) : AttributeSerializer<T?> {
+public class NullableEnumSerializer<T : Enum<T>>(private val entries: List<T>) : AttributeSerializer<T?> {
     override fun serialize(container: ItemContainer, value: T?): AttributeValue? {
         return value?.name?.attributeValue()
     }
 
     override fun deserialize(container: ItemContainer, attribute: AttributeValue?): T? {
         return attribute?.let { attr ->
-            cls.java.enumConstants.find { it.name == attr.asSOrNull() }
+            entries.find { it.name == attr.asSOrNull() }
         }
     }
 }

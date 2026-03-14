@@ -4,7 +4,7 @@ import com.amazonaws.services.lambda.runtime.ClientContext
 import com.amazonaws.services.lambda.runtime.CognitoIdentity
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.LambdaLogger
-import java.util.*
+import kotlin.uuid.Uuid
 
 /**
  * A fake version of the Lambda context that can be useful for some testing or
@@ -12,7 +12,7 @@ import java.util.*
  */
 public class MockLambdaContext(
     private val function: String = "Unknown",
-    private val requestId: String = UUID.randomUUID().toString()
+    private val requestId: String = Uuid.random().toString()
 ) : Context {
 
     override fun getAwsRequestId(): String {

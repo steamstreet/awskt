@@ -16,7 +16,7 @@ import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
-import java.util.*
+import kotlin.io.encoding.Base64
 
 /**
  * Serializer for attributes. Uses the format of EventBridge Pipes from a dynamodb stream.
@@ -40,7 +40,7 @@ public class AttributeValueSerializer : KSerializer<AttributeValue> {
                 0 -> AttributeValue.S(decodeStringElement(descriptor, index))
                 1 -> AttributeValue.N(decodeStringElement(descriptor, index))
                 2 -> AttributeValue.B(
-                    Base64.getDecoder().decode(decodeStringElement(descriptor, index))
+                    Base64.decode(decodeStringElement(descriptor, index))
                 )
 
                 3 -> AttributeValue.Bool(decodeBooleanElement(descriptor, index))
@@ -90,7 +90,7 @@ public class AttributeValueSerializer : KSerializer<AttributeValue> {
                 is AttributeValue.B -> encodeStringElement(
                     descriptor,
                     2,
-                    Base64.getEncoder().encodeToString(value.asB())
+                    Base64.encode(value.asB())
                 )
 
                 is AttributeValue.Bool -> encodeBooleanElement(descriptor, 3, value.asBool())
@@ -122,7 +122,7 @@ public class AttributeValueSerializer : KSerializer<AttributeValue> {
                     encodeSerializableElement(descriptor, 8,
                         ListSerializer(String.serializer()),
                         value.asBs().map {
-                            Base64.getEncoder().encodeToString(it)
+                            Base64.encode(it)
                         }
                     )
                 }
