@@ -13,9 +13,9 @@ kotlin {
         browser()
     }
 
-    iosArm64 {
-
-    }
+    iosArm64()
+    linuxArm64()
+    macosArm64()
 
     sourceSets {
         val commonMain by getting {

@@ -1,12 +1,32 @@
 plugins {
-    id("steamstreet-common.jvm-library-conventions")
+    id("steamstreet-common.multiplatform-library-conventions")
 }
 
-dependencies {
-    api(libs.kotlin.serialization.json)
-    api(libs.kotlin.coroutines.core)
+kotlin {
+    explicitApi()
 
-    api(projects.lambda.lambdaCore)
+    jvm()
+    linuxArm64()
+    macosArm64()
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                api(libs.kotlin.serialization.json)
+                api(libs.kotlin.coroutines.core)
+                api(projects.env)
+            }
+        }
+        jvmMain {
+            dependencies {
+                api(projects.lambda.lambdaCore)
+                implementation(projects.logging)
+                implementation(libs.slf4j.api)
+                implementation(libs.logstash.logback.encoder)
+                implementation(libs.kotlin.coroutines.slf4j)
+            }
+        }
+    }
 }
 
 publishing {

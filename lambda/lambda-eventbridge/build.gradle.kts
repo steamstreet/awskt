@@ -1,19 +1,39 @@
 plugins {
-    id("steamstreet-common.jvm-library-conventions")
+    id("steamstreet-common.multiplatform-library-conventions")
 }
 
-dependencies {
-    api(libs.kotlin.date.time)
+kotlin {
+    explicitApi()
 
-    api(project(":events"))
-    api(project(":logging"))
-    api(project(":lambda:lambda-coroutines"))
-    api(project(":lambda:lambda-sqs"))
+    jvm()
+    linuxArm64()
+    macosArm64()
 
-    testImplementation(kotlin("test"))
-    testImplementation(libs.kotlin.coroutines.test)
-    testImplementation(libs.kluent)
-    testImplementation(project(":lambda:lambda-logging"))
+    sourceSets {
+        commonMain {
+            dependencies {
+                api(libs.kotlin.date.time)
+                api(projects.events)
+                api(projects.logging)
+                api(projects.lambda.lambdaCoroutines)
+                api(projects.lambda.lambdaSqs)
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation(libs.slf4j.api)
+                implementation(libs.logstash.logback.encoder)
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.kotlin.coroutines.test)
+                implementation(libs.kluent)
+                implementation(projects.lambda.lambdaLogging)
+            }
+        }
+    }
 }
 
 publishing {
