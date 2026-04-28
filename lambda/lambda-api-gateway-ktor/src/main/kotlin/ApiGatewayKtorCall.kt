@@ -62,7 +62,13 @@ public class ApiGatewayKtorCall(
                         get() = "HTTP/1.1"
 
                     override val uri: String
-                        get() = proxyRequest.path
+                        get() {
+                            val params = proxyRequest.multiValueQueryStringParameters
+                                ?: proxyRequest.queryStringParameters?.mapValues { (_, v) -> listOf(v) }
+                            if (params.isNullOrEmpty()) return proxyRequest.path
+                            val query = parametersOf(params).formUrlEncode()
+                            return "${proxyRequest.path}?$query"
+                        }
 
                     override val method: HttpMethod
                         get() = HttpMethod.parse(proxyRequest.httpMethod)
@@ -259,9 +265,7 @@ public class ApiGatewayKtorCall(
 
         val multiValueHeaders = mutableMapOf<String, List<String>>()
         responseHeaders.forEach { name, values ->
-            multiValueHeaders[name] = values.flatMap { value ->
-                value.split(",").map { it.trim() }
-            }
+            multiValueHeaders[name] = values.toList()
         }
 
         val resolvedStatusCode = statusCode.get().let {

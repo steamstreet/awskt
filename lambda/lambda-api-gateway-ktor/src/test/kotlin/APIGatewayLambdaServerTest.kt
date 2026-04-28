@@ -150,6 +150,68 @@ class APIGatewayLambdaServerTest {
     }
 
     /**
+     * RequestConnectionPoint.uri must include the query string, matching what
+     * other Ktor engines (Netty, testApplication) populate. Code that hashes
+     * request.uri to distinguish URL variants depends on this.
+     */
+    @Test
+    fun uriIncludesQueryString() = runTest {
+        var observedUri: String? = null
+        val response = testRoute(
+            ApiGatewayProxyRequest(
+                resource = "/my/path",
+                path = "/my/path",
+                httpMethod = "POST",
+                body = "",
+                requestContext = ProxyRequestContext(),
+                queryStringParameters = mapOf("a" to "1", "useAltUrl" to "true"),
+                multiValueQueryStringParameters = mapOf(
+                    "a" to listOf("1"),
+                    "useAltUrl" to listOf("true")
+                )
+            )
+        ) {
+            observedUri = call.request.uri
+            call.respond(HttpStatusCode.OK)
+        }
+
+        response.statusCode.shouldBeEqualTo(200)
+        observedUri.shouldNotBeNull()
+        observedUri!!.startsWith("/my/path?").shouldBeEqualTo(true)
+        observedUri!!.contains("a=1").shouldBeEqualTo(true)
+        observedUri!!.contains("useAltUrl=true").shouldBeEqualTo(true)
+    }
+
+    /**
+     * Headers whose value legitimately contains a comma (e.g. IMF-fixdate Last-Modified,
+     * comma-list Cache-Control) must round-trip through response() as a single
+     * multiValueHeaders entry — not be split on commas.
+     */
+    @Test
+    fun headerValuesWithCommasArePreserved() = runTest {
+        val lastModified = "Sun, 06 Nov 2026 15:00:00 GMT"
+        val cacheControl = "no-store, max-age=0, private"
+        val response = testRoute(
+            ApiGatewayProxyRequest(
+                resource = "/my/path",
+                path = "/my/path",
+                httpMethod = "POST",
+                body = "",
+                requestContext = ProxyRequestContext()
+            )
+        ) {
+            call.response.header(HttpHeaders.LastModified, lastModified)
+            call.response.header(HttpHeaders.CacheControl, cacheControl)
+            call.respond(HttpStatusCode.OK)
+        }
+
+        response.statusCode.shouldBeEqualTo(200)
+        response.multiValueHeaders.shouldNotBeNull()
+        response.multiValueHeaders!![HttpHeaders.LastModified].shouldBeEqualTo(listOf(lastModified))
+        response.multiValueHeaders!![HttpHeaders.CacheControl].shouldBeEqualTo(listOf(cacheControl))
+    }
+
+    /**
      * Test form parameter parsing
      */
     @Test
