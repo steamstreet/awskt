@@ -34,4 +34,15 @@ tasks.test {
 
     val libsDir = File(projectDir, "dynamo_libs")
     this.systemProperty("java.library.path", libsDir.canonicalPath)
+
+    // OrbStack on macOS: Testcontainers' auto-detect can't find the daemon and
+    // its bundled docker-java defaults to an API version OrbStack rejects
+    // ("client version 1.32 is too old; minimum 1.40"). Point at the OrbStack
+    // socket and tell Testcontainers to negotiate a newer API.
+    val orbstackSocket = File(System.getProperty("user.home"), ".orbstack/run/docker.sock")
+    if (orbstackSocket.exists()) {
+        environment("DOCKER_HOST", "unix://${orbstackSocket.absolutePath}")
+        environment("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", "/var/run/docker.sock")
+        systemProperty("api.version", "1.43")
+    }
 }

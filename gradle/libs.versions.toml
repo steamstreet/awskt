@@ -38,8 +38,8 @@ ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref =
 ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
 ktor-client-js = { group = "io.ktor", name = "ktor-client-js", version.ref = "ktor" }
 ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
-testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version = "1.20.4" }
-testcontainers-localstack = { module = "org.testcontainers:localstack", version = "1.20.4" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version = "1.21.4" }
+testcontainers-localstack = { module = "org.testcontainers:localstack", version = "1.21.4" }
 
 # -- SLF4J with shared version
 slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
@@ -61,7 +61,7 @@ kotlin-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coro
 kotlin-coroutines-slf4j = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-slf4j", version.ref = "coroutines" }
 
 # -- Other fixed-version libraries
-kotlin-date-time = "org.jetbrains.kotlinx:kotlinx-datetime:0.7.1"
+kotlin-date-time = "org.jetbrains.kotlinx:kotlinx-datetime:0.7.1-0.6.x-compat"
 kluent = "org.amshove.kluent:kluent:1.73"
 jackson = "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6"
 mockk = "io.mockk:mockk:1.13.5"
