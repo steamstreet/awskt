@@ -17,6 +17,9 @@ dependencies {
     testImplementation(libs.ktor.server.status.pages)
     testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.ktor.server.status.pages)
+    testImplementation(libs.ktor.server.content.negotiation)
+    testImplementation(libs.ktor.serialization.kotlinx.json)
+    testImplementation(projects.standards)
 }
 
 publishing {

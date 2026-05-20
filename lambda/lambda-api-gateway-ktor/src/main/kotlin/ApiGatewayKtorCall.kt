@@ -11,6 +11,7 @@ import io.ktor.util.*
 import io.ktor.util.reflect.*
 import io.ktor.utils.io.*
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -125,6 +126,12 @@ public class ApiGatewayKtorCall(
     private val responseHeadersBuilder = HeadersBuilder()
     private val statusCode = AtomicInteger(0)
     private var responseContent: OutgoingContent? = null
+    // isCommitted/isSent must survive across calls to the `response` getter (which
+    // returns a fresh anonymous PipelineResponse each access). Ktor's CallFailed
+    // hook reads `call.response.isSent` after the StatusPages handler runs and
+    // re-throws the original exception if it sees false — so per-instance state
+    // wouldn't work.
+    private val isSentFlag = AtomicBoolean(false)
 
     override val response: PipelineResponse
         get() = object : PipelineResponse {
@@ -144,8 +151,12 @@ public class ApiGatewayKtorCall(
             override val call: PipelineCall
                 get() = this@ApiGatewayKtorCall
             override val cookies: ResponseCookies by lazy { ResponseCookies(this) }
-            override val isCommitted: Boolean = responseContent != null
-            override var isSent: Boolean = false
+            override val isCommitted: Boolean get() = responseContent != null
+            override var isSent: Boolean
+                get() = isSentFlag.get()
+                set(value) {
+                    isSentFlag.set(value)
+                }
             override val pipeline: ApplicationSendPipeline
                 get() {
                     return ApplicationSendPipeline(application.sendPipeline.developmentMode).apply {

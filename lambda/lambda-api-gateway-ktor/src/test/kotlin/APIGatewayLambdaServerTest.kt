@@ -5,15 +5,19 @@ import com.steamstreet.aws.lambda.apigateway.ProxyRequestContext
 import com.steamstreet.aws.lambda.apigateway.ktor.APIGatewayLambdaServer
 import com.steamstreet.aws.lambda.apigateway.ktor.apiGatewayRequest
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.*
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
+import kotlinx.serialization.json.put
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeNull
 import java.io.ByteArrayOutputStream
@@ -150,6 +154,33 @@ class APIGatewayLambdaServerTest {
     }
 
     /**
+     * call.response.isCommitted must reflect whether respond has been called.
+     * Ktor plugins (and Ktor itself) read it across re-accesses of `call.response`,
+     * so it must not be snapshotted at construction.
+     */
+    @Test
+    fun isCommittedReflectsRespondState() = runTest {
+        var committedBefore: Boolean? = null
+        var committedAfter: Boolean? = null
+        val response = testRoute(
+            ApiGatewayProxyRequest(
+                resource = "/my/path",
+                path = "/my/path",
+                httpMethod = "POST",
+                body = "",
+                requestContext = ProxyRequestContext()
+            )
+        ) {
+            committedBefore = call.response.isCommitted
+            call.respondText("hi")
+            committedAfter = call.response.isCommitted
+        }
+        response.statusCode.shouldBeEqualTo(200)
+        committedBefore.shouldBeEqualTo(false)
+        committedAfter.shouldBeEqualTo(true)
+    }
+
+    /**
      * RequestConnectionPoint.uri must include the query string, matching what
      * other Ktor engines (Netty, testApplication) populate. Code that hashes
      * request.uri to distinguish URL variants depends on this.
@@ -177,9 +208,9 @@ class APIGatewayLambdaServerTest {
 
         response.statusCode.shouldBeEqualTo(200)
         observedUri.shouldNotBeNull()
-        observedUri!!.startsWith("/my/path?").shouldBeEqualTo(true)
-        observedUri!!.contains("a=1").shouldBeEqualTo(true)
-        observedUri!!.contains("useAltUrl=true").shouldBeEqualTo(true)
+        observedUri.startsWith("/my/path?").shouldBeEqualTo(true)
+        observedUri.contains("a=1").shouldBeEqualTo(true)
+        observedUri.contains("useAltUrl=true").shouldBeEqualTo(true)
     }
 
     /**
@@ -209,6 +240,112 @@ class APIGatewayLambdaServerTest {
         response.multiValueHeaders.shouldNotBeNull()
         response.multiValueHeaders!![HttpHeaders.LastModified].shouldBeEqualTo(listOf(lastModified))
         response.multiValueHeaders!![HttpHeaders.CacheControl].shouldBeEqualTo(listOf(cacheControl))
+    }
+
+    /**
+     * Reproduces a bug report: a route throwing NotFoundException should be
+     * converted to a 404 by the StatusPages plugin, but is reportedly returning 500.
+     *
+     * This variant installs ContentNegotiation so the JsonObject body can be
+     * serialized — which mirrors the user's actual app configuration.
+     */
+    @Test
+    fun statusPagesMapsNotFoundExceptionTo404_withContentNegotiation() = runTest {
+        val server = object : APIGatewayLambdaServer() {
+            override fun Application.module() {
+                install(ContentNegotiation) {
+                    json()
+                }
+                install(StatusPages) {
+                    exception<com.steamstreet.exceptions.NotFoundException> { call, cause ->
+                        call.respond(
+                            HttpStatusCode.NotFound,
+                            buildJsonObject {
+                                put("message", cause.message ?: "Not Found")
+                                cause.resourceId?.let { put("resourceId", it) }
+                            }
+                        )
+                    }
+                }
+
+                routing {
+                    get("/missing") {
+                        throw com.steamstreet.exceptions.NotFoundException(
+                            "thing was not found",
+                            resourceId = "abc-123"
+                        )
+                    }
+                }
+            }
+        }
+
+        val request = ApiGatewayProxyRequest(
+            resource = "/missing",
+            path = "/missing",
+            httpMethod = "GET",
+            requestContext = ProxyRequestContext()
+        )
+
+        val output = ByteArrayOutputStream()
+        val requestBytes = ByteArrayOutputStream()
+
+        @Suppress("OPT_IN_USAGE")
+        Json.encodeToStream(request, requestBytes)
+        server.execute(requestBytes.toByteArray().inputStream(), output, MockLambdaContext())
+
+        @Suppress("OPT_IN_USAGE")
+        val response: ApiGatewayProxyResponse =
+            Json.decodeFromStream(output.toByteArray().inputStream())
+
+        response.statusCode.shouldBeEqualTo(HttpStatusCode.NotFound.value)
+        response.body.shouldNotBeNull()
+        val parsedBody = Json.parseToJsonElement(response.body!!)
+        parsedBody.toString().contains("\"message\":\"thing was not found\"")
+            .shouldBeEqualTo(true)
+        parsedBody.toString().contains("\"resourceId\":\"abc-123\"")
+            .shouldBeEqualTo(true)
+    }
+
+    /**
+     * Same as above but without a body — confirms that StatusPages itself can
+     * map the exception to 404. If this passes while the JSON-body variant
+     * fails, the regression is in body transformation, not the exception
+     * mapping.
+     */
+    @Test
+    fun statusPagesMapsNotFoundExceptionTo404_noBody() = runTest {
+        val server = object : APIGatewayLambdaServer() {
+            override fun Application.module() {
+                install(StatusPages) {
+                    exception<com.steamstreet.exceptions.NotFoundException> { call, _ ->
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                }
+                routing {
+                    get("/missing") {
+                        throw com.steamstreet.exceptions.NotFoundException("nope")
+                    }
+                }
+            }
+        }
+        val output = ByteArrayOutputStream()
+        val requestBytes = ByteArrayOutputStream()
+        @Suppress("OPT_IN_USAGE")
+        Json.encodeToStream(
+            ApiGatewayProxyRequest(
+                resource = "/missing",
+                path = "/missing",
+                httpMethod = "GET",
+                requestContext = ProxyRequestContext()
+            ),
+            requestBytes
+        )
+        server.execute(requestBytes.toByteArray().inputStream(), output, MockLambdaContext())
+
+        @Suppress("OPT_IN_USAGE")
+        val response: ApiGatewayProxyResponse =
+            Json.decodeFromStream(output.toByteArray().inputStream())
+        response.statusCode.shouldBeEqualTo(HttpStatusCode.NotFound.value)
     }
 
     /**
