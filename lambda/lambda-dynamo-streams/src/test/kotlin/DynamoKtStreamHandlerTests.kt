@@ -162,4 +162,92 @@ class DynamoKtStreamHandlerTests {
         record.eventName.shouldBeEqualTo("INSERT")
         record.eventSource.shouldBeEqualTo("aws:dynamodb")
     }
+
+    /**
+     * Tests that a direct Kinesis record's sequence number, which lives on the Kinesis
+     * envelope rather than the embedded DynamoDB payload, is copied into the decoded
+     * DynamoStreamEvent's dynamodb detail.
+     *
+     * When DynamoDB streams are forwarded through Kinesis, the base64-encoded payload does
+     * not carry a SequenceNumber - only the surrounding Kinesis record does. The handler is
+     * expected to copy that value onto the record so downstream consumers can rely on it.
+     */
+    @OptIn(ExperimentalEncodingApi::class)
+    @Test
+    fun testKinesisSequenceNumberCopiedToRecord() {
+        val sequenceNumber = "49667874840842633204508412862208444494450743854959165570"
+
+        // The embedded DynamoDB payload intentionally omits SequenceNumber - it only exists
+        // on the Kinesis envelope.
+        @Language("JSON")
+        val dynamoStreamEvent = """{
+            "eventID": "1",
+            "eventName": "INSERT",
+            "eventVersion": "1.1",
+            "eventSource": "aws:dynamodb",
+            "awsRegion": "us-east-1",
+            "dynamodb": {
+                "ApproximateCreationDateTime": 1445470140.000,
+                "Keys": {
+                    "Id": {
+                        "N": "101"
+                    }
+                },
+                "NewImage": {
+                    "Id": {
+                        "N": "101"
+                    },
+                    "Name": {
+                        "S": "Test Item"
+                    }
+                },
+                "SizeBytes": 26,
+                "StreamViewType": "NEW_AND_OLD_IMAGES"
+            },
+            "eventSourceARN": "arn:aws:dynamodb:us-east-1:123456789012:table/TestTable/stream/2015-06-27T00:48:05.899"
+        }"""
+
+        // Wrap the payload in a Kinesis Lambda event. The sequence number sits on the
+        // envelope, and the data is base64-encoded as it would be in a real event.
+        val encodedData = Base64.encode(dynamoStreamEvent.toByteArray())
+        @Language("JSON")
+        val kinesisEvent = """{
+            "Records": [
+                {
+                    "eventSource": "aws:kinesis",
+                    "kinesis": {
+                        "kinesisSchemaVersion": "1.0",
+                        "partitionKey": "test-partition-key",
+                        "sequenceNumber": "$sequenceNumber",
+                        "data": "$encodedData",
+                        "approximateArrivalTimestamp": 1545084650.987
+                    }
+                }
+            ]
+        }"""
+
+        val mockDynamoKt = mockk<DynamoKt>()
+        val mockSession = mockk<com.steamstreet.dynamokt.DynamoKtSession>(relaxed = true)
+        coEvery { mockDynamoKt.session(any()) } returns mockSession
+
+        val processedRecords = mutableListOf<DynamoStreamEvent>()
+
+        val handler = object : DynamoKtStreamHandler(
+            mockDynamoKt,
+            async = false,
+            enableBatchItemFailures = true
+        ) {
+            override suspend fun handleRecord(record: DynamoStreamEvent) {
+                processedRecords.add(record)
+            }
+        }
+
+        handler.execute(kinesisEvent.byteInputStream(), ByteArrayOutputStream(), MockLambdaContext())
+
+        processedRecords.size.shouldBeEqualTo(1)
+        val record = processedRecords.first()
+        record.eventName.shouldBeEqualTo("INSERT")
+        // The sequence number from the Kinesis envelope should now be on the dynamodb detail.
+        record.dynamodb.sequenceNumber.shouldBeEqualTo(sequenceNumber)
+    }
 }

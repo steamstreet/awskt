@@ -82,7 +82,12 @@ public abstract class DynamoKtStreamHandler(
                     val decodedData = String(Base64.decode(dataString))
                     logRecord({ decodedData })
                     val dynamoEvent = jsonDecode.decodeFromString<DynamoStreamEvent>(decodedData)
-                    listOf(RecordInfo(dynamoEvent, sequenceNumber))
+                    // The DynamoDB record in the Kinesis payload doesn't carry a sequence number,
+                    // so copy it from the Kinesis envelope.
+                    val withSequenceNumber = dynamoEvent.copy(
+                        dynamodb = dynamoEvent.dynamodb.copy(sequenceNumber = sequenceNumber)
+                    )
+                    listOf(RecordInfo(withSequenceNumber, sequenceNumber))
                 } else {
                     emptyList()
                 }

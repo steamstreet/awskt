@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  * This is the format received from DynamoDB Streams via Lambda or EventBridge Pipes.
  */
 @Serializable
-public class DynamoStreamEvent(
+public data class DynamoStreamEvent(
     public val eventID: String,
     public val eventName: String,
     public val eventVersion: String? = null,
@@ -35,7 +35,7 @@ public class UserIdentity(
  * The detail portion of a DynamoDB stream event containing the actual data changes.
  */
 @Serializable
-public class DynamoStreamEventDetail(
+public data class DynamoStreamEventDetail(
     @SerialName("ApproximateCreationDateTime")
     private val approximateCreationDateTime: Double,
 
