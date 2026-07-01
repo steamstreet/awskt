@@ -742,6 +742,9 @@ private fun buildExpressionInternal(
             is AndOp -> {
                 "(${build(operation.left)}) AND (${build(operation.right)})"
             }
+            is OrOp -> {
+                "(${build(operation.left)}) OR (${build(operation.right)})"
+            }
             is KeysOp -> {
                 error("KeysOp cannot be used in condition expressions")
             }

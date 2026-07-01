@@ -200,6 +200,57 @@ class ConditionalWriteTest : ExposedTestBase() {
     }
 
     @Test
+    fun `test conditional update with attribute_not_exists OR comparison`() = runTest {
+        createTable(Users)
+
+        // Insert an item with an existing version (acts as a timestamp for last-writer-wins).
+        Users.insert(database) {
+            it[id] = "user#123"
+            it[name] = "John"
+            it[version] = 5
+        }
+
+        // A newer write (incoming version 10) should win: attribute_not_exists(version) OR version <= 10.
+        val updated = Users.update(database, { Users.id eq "user#123" }) {
+            it[name] = "John Newer"
+            it[version] = 10
+            it.condition { version.notExists() or (version le 10) }
+        }
+        updated[Users.name].shouldBeEqualTo("John Newer")
+        updated[Users.version].shouldBeEqualTo(10)
+
+        // A stale write (incoming version 7) should be rejected: 10 is not <= 7 and the attribute exists.
+        assertFailsWith<ConditionalCheckFailedException> {
+            Users.update(database, { Users.id eq "user#123" }) {
+                it[name] = "John Stale"
+                it[version] = 7
+                it.condition { version.notExists() or (version le 7) }
+            }
+        }
+
+        // Verify the stale write did not take effect.
+        val user = Users.get(database) { Users.id eq "user#123" }!!
+        user[Users.name].shouldBeEqualTo("John Newer")
+        user[Users.version].shouldBeEqualTo(10)
+    }
+
+    @Test
+    fun `test conditional insert with attribute_not_exists OR succeeds on first write`() = runTest {
+        createTable(Users)
+
+        // First write: item does not exist yet, so attribute_not_exists(version) is satisfied.
+        Users.insert(database) {
+            it[id] = "user#123"
+            it[name] = "John"
+            it[version] = 3
+            it.condition { version.notExists() or (version le 3) }
+        }
+
+        val user = Users.get(database) { Users.id eq "user#123" }!!
+        user[Users.version].shouldBeEqualTo(3)
+    }
+
+    @Test
     fun `test conditional update with neq operator`() = runTest {
         createTable(Users)
 

@@ -51,6 +51,12 @@ public class BeginsWithOp(public val column: Column<String>, public val prefix: 
 public class AndOp(public val left: Op<Boolean>, public val right: Op<Boolean>) : Op<Boolean>()
 
 /**
+ * OR operation to combine multiple conditions.
+ * Primarily useful for conditional writes, e.g. `attribute_not_exists(ts) OR ts <= :incoming`.
+ */
+public class OrOp(public val left: Op<Boolean>, public val right: Op<Boolean>) : Op<Boolean>()
+
+/**
  * Not equal operation
  */
 public class NeOp<T>(public val column: Column<T>, public val value: T) : Op<Boolean>()
@@ -138,6 +144,12 @@ public open class SqlExpressionBuilder {
     public infix fun Op<Boolean>.and(other: Op<Boolean>): Op<Boolean> = AndOp(this, other)
 
     /**
+     * OR operator for combining conditions.
+     * Useful for conditional writes such as `attribute_not_exists(ts) OR ts <= incoming`.
+     */
+    public infix fun Op<Boolean>.or(other: Op<Boolean>): Op<Boolean> = OrOp(this, other)
+
+    /**
      * Not equal operator
      */
     public infix fun <T> Column<T>.neq(value: T): Op<Boolean> = NeOp(this, value)
@@ -223,6 +235,7 @@ internal fun extractConditions(op: Op<Boolean>): List<ColumnCondition> {
                 collect(operation.right)
             }
             // These are used for condition expressions, not key/filter conditions
+            is OrOp -> { /* Not used for key conditions */ }
             is NeOp<*> -> { /* Not used for key conditions */ }
             is AttributeExistsOp -> { /* Not used for key conditions */ }
             is AttributeNotExistsOp -> { /* Not used for key conditions */ }
