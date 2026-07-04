@@ -245,6 +245,10 @@ class BasicCrudTest : ExposedTestBase() {
 
         val product2 = Products.get(database) { Products.id eq "product#2" }!!
         product2[Products.description].shouldBeEqualTo("A cool gadget")
+
+        // getOrNull on a present, non-null nullable column must not throw (previously a
+        // ClassCastException from calling asNull() on a non-Null AttributeValue).
+        product2.getOrNull(Products.description).shouldBeEqualTo("A cool gadget")
     }
 }
 

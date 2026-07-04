@@ -237,6 +237,6 @@ public class NullableColumn<T : Any>(
     }
 
     override fun fromAttributeValue(value: AttributeValue): T? {
-        return if (value.asNull() == true) null else wrapped.fromAttributeValue(value)
+        return if (value.asNullOrNull() == true) null else wrapped.fromAttributeValue(value)
     }
 }
