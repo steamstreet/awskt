@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldHaveSize
+import org.amshove.kluent.shouldNotBeNull
 import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -34,6 +35,22 @@ class QueryTest : ExposedTestBase() {
         val pk = varchar("pk").partitionKey()
         val sk = long("sk").sortKey()
         val type = varchar("type")
+    }
+
+    // Container-style GSI: many rows share the same GSI partition key (artistType)
+    // and are ordered by a GSI sort key (position). Exercises limit / ordering /
+    // pagination on the IndexMatch.Query path.
+    object Tracks : Table("tracks") {
+        val trackId = varchar("trackId").partitionKey()
+        val artistType = varchar("artistType")
+        val position = varchar("position")
+        val title = varchar("title")
+        val blob = varchar("blob")
+
+        val byArtist = gsi("byArtist") {
+            partitionKey(artistType)
+            sortKey(position)
+        }
     }
 
     private suspend fun createOrdersTable() {
@@ -97,6 +114,61 @@ class QueryTest : ExposedTestBase() {
                 }
             )
             billingMode = BillingMode.PayPerRequest
+        }
+    }
+
+    private suspend fun createTracksTableWithGsi() {
+        database.client.createTable {
+            tableName = Tracks.tableName
+            keySchema = listOf(
+                KeySchemaElement {
+                    attributeName = Tracks.trackId.name
+                    keyType = KeyType.Hash
+                }
+            )
+            attributeDefinitions = listOf(
+                AttributeDefinition {
+                    attributeName = Tracks.trackId.name
+                    attributeType = ScalarAttributeType.S
+                },
+                AttributeDefinition {
+                    attributeName = Tracks.artistType.name
+                    attributeType = ScalarAttributeType.S
+                },
+                AttributeDefinition {
+                    attributeName = Tracks.position.name
+                    attributeType = ScalarAttributeType.S
+                }
+            )
+            globalSecondaryIndexes = listOf(
+                GlobalSecondaryIndex {
+                    indexName = "byArtist"
+                    keySchema = listOf(
+                        KeySchemaElement {
+                            attributeName = Tracks.artistType.name
+                            keyType = KeyType.Hash
+                        },
+                        KeySchemaElement {
+                            attributeName = Tracks.position.name
+                            keyType = KeyType.Range
+                        }
+                    )
+                    projection = Projection {
+                        projectionType = aws.sdk.kotlin.services.dynamodb.model.ProjectionType.All
+                    }
+                }
+            )
+            billingMode = BillingMode.PayPerRequest
+        }
+    }
+
+    private suspend fun insertTrack(artist: String, pos: String, blobBytes: Int = 0) {
+        Tracks.insert(database) {
+            it[trackId] = "$artist#$pos"
+            it[artistType] = artist
+            it[position] = pos
+            it[title] = "Track $pos"
+            it[blob] = if (blobBytes > 0) "x".repeat(blobBytes) else ""
         }
     }
 
@@ -609,5 +681,130 @@ class QueryTest : ExposedTestBase() {
             .toList()
 
         results.shouldHaveSize(1)
+    }
+
+    // =========================================================================
+    // limit / ordering / pagination
+    // =========================================================================
+
+    @Test
+    fun `GSI query with limit returns a bounded page and a resumable token`() = runTest {
+        createTracksTableWithGsi()
+
+        (1..5).forEach { insertTrack("artist#1", "%02d".format(it)) }
+
+        // First bounded page.
+        val first = Tracks.selectAll(database)
+            .where { Tracks.artistType eq "artist#1" }
+            .limit(2)
+            .page()
+
+        first.rows.shouldHaveSize(2)
+        first.rows.map { it[Tracks.position] }.shouldBeEqualTo(listOf("01", "02"))
+        first.nextToken.shouldNotBeNull()
+
+        // Resume from the token: walk the rest of the pages.
+        val collected = first.rows.map { it[Tracks.position] }.toMutableList()
+        var token = first.nextToken
+        while (token != null) {
+            val next = Tracks.selectAll(database)
+                .where { Tracks.artistType eq "artist#1" }
+                .limit(2)
+                .startAfter(token)
+                .page()
+            collected += next.rows.map { it[Tracks.position] }
+            token = next.nextToken
+        }
+
+        // Round-trips through every page, no rows dropped or duplicated.
+        collected.shouldBeEqualTo(listOf("01", "02", "03", "04", "05"))
+    }
+
+    @Test
+    fun `GSI query can be returned in reverse sort order`() = runTest {
+        createTracksTableWithGsi()
+
+        (1..4).forEach { insertTrack("artist#1", "%02d".format(it)) }
+
+        val ascending = Tracks.selectAll(database)
+            .where { Tracks.artistType eq "artist#1" }
+            .toList()
+            .map { it[Tracks.position] }
+        ascending.shouldBeEqualTo(listOf("01", "02", "03", "04"))
+
+        val descending = Tracks.selectAll(database)
+            .where { Tracks.artistType eq "artist#1" }
+            .orderBy(descending = true)
+            .toList()
+            .map { it[Tracks.position] }
+        descending.shouldBeEqualTo(listOf("04", "03", "02", "01"))
+    }
+
+    @Test
+    fun `unbounded GSI query returns all rows across page boundaries`() = runTest {
+        createTracksTableWithGsi()
+
+        // ~180 KB per row over 8 rows (~1.4 MB) forces DynamoDB's 1 MB query page
+        // boundary, so a single query response cannot hold them all.
+        (1..8).forEach { insertTrack("artist#1", "%02d".format(it), blobBytes = 180_000) }
+
+        val positions = Tracks.selectAll(database)
+            .where { Tracks.artistType eq "artist#1" }
+            .toList()
+            .map { it[Tracks.position] }
+
+        // No silent first-page truncation: asFlow follows lastEvaluatedKey.
+        positions.shouldHaveSize(8)
+        positions.shouldBeEqualTo((1..8).map { "%02d".format(it) })
+    }
+
+    @Test
+    fun `table-PK query supports limit and cursor round-trip`() = runTest {
+        createOrdersTable()
+
+        (1..5).forEach { i ->
+            Orders.insert(database) {
+                it[customerId] = "cust#1"
+                it[orderId] = "order#%02d".format(i)
+                it[amount] = i * 10
+            }
+        }
+
+        val first = Orders.selectAll(database)
+            .where { Orders.customerId eq "cust#1" }
+            .limit(2)
+            .page()
+
+        first.rows.shouldHaveSize(2)
+        first.nextToken.shouldNotBeNull()
+
+        val collected = first.rows.map { it[Orders.orderId] }.toMutableList()
+        var token = first.nextToken
+        while (token != null) {
+            val next = Orders.selectAll(database)
+                .where { Orders.customerId eq "cust#1" }
+                .limit(2)
+                .startAfter(token)
+                .page()
+            collected += next.rows.map { it[Orders.orderId] }
+            token = next.nextToken
+        }
+
+        collected.shouldBeEqualTo((1..5).map { "order#%02d".format(it) })
+    }
+
+    @Test
+    fun `limit caps total rows emitted by asFlow across pages`() = runTest {
+        createTracksTableWithGsi()
+
+        (1..10).forEach { insertTrack("artist#1", "%02d".format(it)) }
+
+        val positions = Tracks.selectAll(database)
+            .where { Tracks.artistType eq "artist#1" }
+            .limit(3)
+            .toList()
+            .map { it[Tracks.position] }
+
+        positions.shouldBeEqualTo(listOf("01", "02", "03"))
     }
 }

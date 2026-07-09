@@ -8,6 +8,7 @@ import aws.sdk.kotlin.services.dynamodb.batchGetItem
 import aws.sdk.kotlin.services.dynamodb.model.KeysAndAttributes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.toList
 
 /**
  * Result of index matching - determines which DynamoDB operation to use
@@ -214,12 +215,52 @@ public class Query(
 ) {
     private var whereOp: Op<Boolean>? = null
     private var isScan: Boolean = false
+    private var limitValue: Int? = null
+    private var scanForward: Boolean = true
+    private var startKey: Map<String, AttributeValue>? = null
 
     /**
      * Add a where clause to the query.
      */
     public fun where(op: SqlExpressionBuilder.() -> Op<Boolean>): Query {
         whereOp = SqlExpressionBuilder().op()
+        return this
+    }
+
+    /**
+     * Limit the maximum number of rows returned.
+     *
+     * For [page] this bounds the single page. For [asFlow] (and the terminal
+     * operators built on it) this caps the total number of rows emitted across
+     * all pages.
+     */
+    public fun limit(n: Int): Query {
+        limitValue = n
+        return this
+    }
+
+    /**
+     * Control sort order for query (and index query) operations, mapping to
+     * DynamoDB's `ScanIndexForward`. Defaults to ascending.
+     *
+     * Has no effect on scans or [IndexMatch.GetItem]-routed lookups.
+     */
+    public fun orderBy(descending: Boolean = false): Query {
+        scanForward = !descending
+        return this
+    }
+
+    /**
+     * Resume a query after a previous page by supplying the opaque token
+     * returned as [PageResult.nextToken]. Passing `null` is a no-op, so a
+     * nullable request cursor can be forwarded directly.
+     *
+     * The token encoding matches the base `dynamokt` library
+     * (`toJsonItemString()` / `fromJsonToItem()`), so tokens interoperate
+     * between the two layers.
+     */
+    public fun startAfter(token: String?): Query {
+        startKey = token?.decodePageToken()
         return this
     }
 
@@ -232,18 +273,39 @@ public class Query(
     }
 
     /**
-     * Execute the query and return results as a Flow.
+     * Build the projection expression and attribute-name map for the selected
+     * columns, or `null`/`null` when all columns are selected.
      */
-    public fun asFlow(): Flow<ResultRow> {
-        val op = whereOp
-
-        // Build projection expression if specific columns selected
+    private fun buildProjection(): Pair<String?, Map<String, String>?> {
         val projectionExpression = selectedColumns?.let { cols ->
             cols.mapIndexed { index, _ -> "#proj$index" }.joinToString(", ")
         }
         val projectionNames = selectedColumns?.let { cols ->
             cols.mapIndexed { index, col -> "#proj$index" to col.name }.toMap()
         }
+        return projectionExpression to projectionNames
+    }
+
+    private fun noIndexMatch(op: Op<Boolean>): Nothing {
+        val conditionColumns = extractAllConditionColumns(op).map { it.name }
+        throw NoIndexMatchException(
+            "No index found for query on table '${table.tableName}'. " +
+            "Columns in condition: $conditionColumns. " +
+            "Use selectAll() without where for full table scans."
+        )
+    }
+
+    /**
+     * Execute the query and return results as a Flow.
+     *
+     * Query and scan operations automatically follow `LastEvaluatedKey` across
+     * every page, so unbounded reads return all matching rows without silent
+     * first-page truncation. When [limit] is set it caps the total number of
+     * rows emitted across all pages.
+     */
+    public fun asFlow(): Flow<ResultRow> {
+        val op = whereOp
+        val (projectionExpression, projectionNames) = buildProjection()
 
         // Check for batch get (KeysOp)
         if (op is KeysOp) {
@@ -258,16 +320,49 @@ public class Query(
         val match = table.findIndexMatch(op)
 
         return when (match) {
-            is IndexMatch.NoMatch -> {
-                val conditionColumns = extractAllConditionColumns(op).map { it.name }
-                throw NoIndexMatchException(
-                    "No index found for query on table '${table.tableName}'. " +
-                    "Columns in condition: $conditionColumns. " +
-                    "Use selectAll() without where for full table scans."
-                )
-            }
+            is IndexMatch.NoMatch -> noIndexMatch(op)
             is IndexMatch.GetItem -> executeGetItem(op, match, projectionExpression, projectionNames)
             is IndexMatch.Query -> executeQuery(op, match, projectionExpression, projectionNames)
+        }
+    }
+
+    /**
+     * Execute a single bounded page of this query and return the rows along
+     * with an opaque [PageResult.nextToken] for resuming.
+     *
+     * Exactly one DynamoDB request is issued. The `nextToken` is surfaced
+     * faithfully from `LastEvaluatedKey`: it may be non-null even on a short or
+     * empty page (DynamoDB's 1 MB cap), and `null` only when the underlying
+     * request reports no more pages.
+     *
+     * For [IndexMatch.GetItem]-routed lookups (full key supplied) and batch-get
+     * (`keys(...)`) reads there is no cursor concept, so `nextToken` is always
+     * `null`; [limit] and ordering are ignored on those paths.
+     */
+    public suspend fun page(): PageResult {
+        val op = whereOp
+        val (projectionExpression, projectionNames) = buildProjection()
+
+        if (op is KeysOp) {
+            val rows = executeBatchGet(op.keys, projectionExpression, projectionNames).toList()
+            return PageResult(rows, null)
+        }
+
+        if (op == null || isScan) {
+            val (items, last) = scanPage(op, projectionExpression, projectionNames, startKey, limitValue)
+            return PageResult(items.map { ResultRow(table, it) }, last?.encodePageToken())
+        }
+
+        return when (val match = table.findIndexMatch(op)) {
+            is IndexMatch.NoMatch -> noIndexMatch(op)
+            is IndexMatch.GetItem -> {
+                val rows = executeGetItem(op, match, projectionExpression, projectionNames).toList()
+                PageResult(rows, null)
+            }
+            is IndexMatch.Query -> {
+                val (items, last) = queryPage(op, match, projectionExpression, projectionNames, startKey, limitValue)
+                PageResult(items.map { ResultRow(table, it) }, last?.encodePageToken())
+            }
         }
     }
 
@@ -356,12 +451,18 @@ public class Query(
         result.item?.let { emit(ResultRow(table, it)) }
     }
 
-    private fun executeQuery(
+    /**
+     * Issue a single query (or index query) request, returning the page's items
+     * and the raw `LastEvaluatedKey` (null when there are no more pages).
+     */
+    private suspend fun queryPage(
         op: Op<Boolean>,
         match: IndexMatch.Query,
         projectionExpression: String?,
-        projectionNames: Map<String, String>?
-    ): Flow<ResultRow> = flow {
+        projectionNames: Map<String, String>?,
+        exclusiveStart: Map<String, AttributeValue>?,
+        pageLimit: Int?
+    ): Pair<List<Map<String, AttributeValue>>, Map<String, AttributeValue>?> {
         val conditions = extractConditions(op)
         val nameIndex = mutableMapOf<String, String>()
         val valueIndex = mutableMapOf<String, AttributeValue>()
@@ -391,18 +492,50 @@ public class Query(
                 expressionAttributeValues = valueIndex
             }
             consistentRead = if (match.index == null) database.defaultConsistentRead else false
+            if (!scanForward) {
+                scanIndexForward = false
+            }
+            exclusiveStart?.let { exclusiveStartKey = it }
+            pageLimit?.let { limit = it }
         }
 
-        result.items?.forEach { item ->
-            emit(ResultRow(table, item))
-        }
+        return (result.items ?: emptyList()) to result.lastEvaluatedKey
     }
 
-    private fun executeScan(
-        filterOp: Op<Boolean>?,
+    private fun executeQuery(
+        op: Op<Boolean>,
+        match: IndexMatch.Query,
         projectionExpression: String?,
         projectionNames: Map<String, String>?
     ): Flow<ResultRow> = flow {
+        var exclusiveStart = startKey
+        var remaining = limitValue
+        while (true) {
+            val (items, last) = queryPage(op, match, projectionExpression, projectionNames, exclusiveStart, remaining)
+            for (item in items) {
+                emit(ResultRow(table, item))
+                if (remaining != null) {
+                    val next = remaining - 1
+                    remaining = next
+                    if (next <= 0) return@flow
+                }
+            }
+            if (last == null) break
+            exclusiveStart = last
+        }
+    }
+
+    /**
+     * Issue a single scan request, returning the page's items and the raw
+     * `LastEvaluatedKey` (null when there are no more pages).
+     */
+    private suspend fun scanPage(
+        filterOp: Op<Boolean>?,
+        projectionExpression: String?,
+        projectionNames: Map<String, String>?,
+        exclusiveStart: Map<String, AttributeValue>?,
+        pageLimit: Int?
+    ): Pair<List<Map<String, AttributeValue>>, Map<String, AttributeValue>?> {
         val nameIndex = mutableMapOf<String, String>()
         val valueIndex = mutableMapOf<String, AttributeValue>()
         var filterExpression: String? = null
@@ -428,10 +561,32 @@ public class Query(
             if (valueIndex.isNotEmpty()) {
                 expressionAttributeValues = valueIndex
             }
+            exclusiveStart?.let { exclusiveStartKey = it }
+            pageLimit?.let { limit = it }
         }
 
-        result.items?.forEach { item ->
-            emit(ResultRow(table, item))
+        return (result.items ?: emptyList()) to result.lastEvaluatedKey
+    }
+
+    private fun executeScan(
+        filterOp: Op<Boolean>?,
+        projectionExpression: String?,
+        projectionNames: Map<String, String>?
+    ): Flow<ResultRow> = flow {
+        var exclusiveStart = startKey
+        var remaining = limitValue
+        while (true) {
+            val (items, last) = scanPage(filterOp, projectionExpression, projectionNames, exclusiveStart, remaining)
+            for (item in items) {
+                emit(ResultRow(table, item))
+                if (remaining != null) {
+                    val next = remaining - 1
+                    remaining = next
+                    if (next <= 0) return@flow
+                }
+            }
+            if (last == null) break
+            exclusiveStart = last
         }
     }
 
@@ -475,6 +630,19 @@ public class Query(
         }
     }
 }
+
+/**
+ * The result of a single bounded [Query.page] read.
+ *
+ * @property rows the rows in this page
+ * @property nextToken an opaque, serializable cursor for fetching the next page
+ *   via [Query.startAfter], or `null` when there are no more pages. The encoding
+ *   is compatible with the base `dynamokt` library's pagination tokens.
+ */
+public class PageResult(
+    public val rows: List<ResultRow>,
+    public val nextToken: String?
+)
 
 /**
  * Select specific columns from the table.
