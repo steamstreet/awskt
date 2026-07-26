@@ -33,6 +33,12 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     private val attributeIndex = AtomicInteger(1)
 
     /**
+     * The attribute placeholder allocated for each attribute that is having values added to it as a
+     * set, so that repeated additions to the same attribute share a single ADD expression.
+     */
+    private val setAdditions = HashMap<String, String>()
+
+    /**
      * Parse a key component that may contain array indices (e.g., "items[2]" or "name")
      * Returns a pair of (base name, suffix with brackets)
      */
@@ -204,14 +210,31 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     }
 
     /**
-     * Add the given string to a string set attribute.
+     * Add the given string to a string set attribute, creating the attribute if it doesn't exist.
      */
     public fun addToSet(key: String, value: String) {
-        val attr = "attr${attributeIndex.getAndIncrement()}"
-        attributeNames["#$attr"] = key
-        attributeValues[":$attr"] = value.attributeValue()
-        updateExpressions.add(Update("ADD", "#$attr :$attr"))
+        addToSet(key, listOf(value))
+    }
 
+    /**
+     * Add the given strings to a string set attribute, creating the attribute if it doesn't exist.
+     */
+    public fun addToSet(key: String, values: Collection<String>) {
+        if (values.isEmpty()) return
+
+        // DynamoDB rejects an update expression that operates on the same path twice, so repeated
+        // additions to an attribute are merged into the single ADD expression for that attribute.
+        val attr = setAdditions.getOrPut(key) {
+            "attr${attributeIndex.getAndIncrement()}".also {
+                attributeNames["#$it"] = key
+                updateExpressions.add(Update("ADD", "#$it :$it"))
+            }
+        }
+
+        // The ADD operator only accepts a number or a set as its operand, so the values must be
+        // encoded as a string set rather than as scalar strings.
+        val existing = attributeValues[":$attr"]?.asSs().orEmpty()
+        attributeValues[":$attr"] = (existing + values).toSet().attributeValue()
     }
 
     /**

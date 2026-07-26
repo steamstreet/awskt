@@ -4,6 +4,7 @@ import aws.sdk.kotlin.services.dynamodb.createTable
 import aws.sdk.kotlin.services.dynamodb.model.*
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldBeNull
 import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.test.Test
@@ -253,6 +254,129 @@ class UpdateTests : DynamoKtTests() {
         val values = data[0].asM()["values"]!!.asL()
         values[0].asN().shouldBeEqualTo("1")
         values[1].asN().shouldBeEqualTo("99")
+    }
+
+    @Test
+    fun testAddToSetEncodesOperandAsStringSet() = runTest {
+        val db = createTable().session()
+
+        db.put("person", "123") {
+            set("name", "John")
+        }
+
+        db.update("person", "123") {
+            addToSet("tags", "tag1")
+
+            // ADD only accepts a number or a set as an operand, so the value must be a string set.
+            attributeValues.values.single().shouldBeInstanceOf<AttributeValue.Ss>()
+                .value.shouldBeEqualTo(listOf("tag1"))
+        }
+
+        db.get("person", "123").get("tags")!!.asSs().shouldBeEqualTo(listOf("tag1"))
+    }
+
+    @Test
+    fun testAddToSetCreatesAndUnionsWithExistingSet() = runTest {
+        val db = createTable().session()
+
+        db.put("person", "123") {
+            set("name", "John")
+        }
+
+        // The attribute doesn't exist yet, so the ADD creates it.
+        db.update("person", "123") {
+            addToSet("tags", "tag1")
+        }
+
+        // A different value is added to the existing set.
+        db.update("person", "123") {
+            addToSet("tags", "tag2")
+        }
+
+        // Adding an existing member is a no-op.
+        db.update("person", "123") {
+            addToSet("tags", "tag1")
+        }
+
+        val tags = db.get("person", "123").get("tags")!!.asSs()
+        tags.sorted().shouldBeEqualTo(listOf("tag1", "tag2"))
+    }
+
+    @Test
+    fun testAddMultipleValuesToSetInOneUpdate() = runTest {
+        val db = createTable().session()
+
+        db.put("person", "123") {
+            set("name", "John")
+        }
+
+        db.update("person", "123") {
+            addToSet("tags", listOf("tag1", "tag2", "tag3"))
+        }
+
+        db.get("person", "123").get("tags")!!.asSs().sorted()
+            .shouldBeEqualTo(listOf("tag1", "tag2", "tag3"))
+    }
+
+    @Test
+    fun testRepeatedAddToSetOnSameAttributeSharesOneExpression() = runTest {
+        val db = createTable().session()
+
+        db.put("person", "123") {
+            set("name", "John")
+        }
+
+        db.update("person", "123") {
+            addToSet("tags", "tag1")
+            addToSet("tags", listOf("tag2", "tag3"))
+            addToSet("tags", "tag1")
+
+            // DynamoDB rejects an expression that touches the same path twice, so the additions
+            // must be merged into a single ADD with a single operand.
+            updateExpressions.single().type.shouldBeEqualTo("ADD")
+            attributeNames.values.single().shouldBeEqualTo("tags")
+            attributeValues.values.single().shouldBeInstanceOf<AttributeValue.Ss>()
+                .value.shouldBeEqualTo(listOf("tag1", "tag2", "tag3"))
+        }
+
+        db.get("person", "123").get("tags")!!.asSs().sorted()
+            .shouldBeEqualTo(listOf("tag1", "tag2", "tag3"))
+    }
+
+    @Test
+    fun testAddToSetForDistinctAttributesInOneUpdate() = runTest {
+        val db = createTable().session()
+
+        db.put("person", "123") {
+            set("name", "John")
+        }
+
+        db.update("person", "123") {
+            addToSet("tags", "tag1")
+            addToSet("roles", "admin")
+        }
+
+        val result = db.get("person", "123")
+        result.get("tags")!!.asSs().shouldBeEqualTo(listOf("tag1"))
+        result.get("roles")!!.asSs().shouldBeEqualTo(listOf("admin"))
+    }
+
+    @Test
+    fun testAddToSetWithNoValuesIsANoOp() = runTest {
+        val db = createTable().session()
+
+        db.put("person", "123") {
+            set("name", "John")
+        }
+
+        db.update("person", "123") {
+            addToSet("tags", emptyList())
+            set("name", "Jane")
+        }
+
+        val result = db.get("person", "123")
+        result.get("tags").shouldBeNull()
+        result.getString("name").shouldBeEqualTo("Jane")
     }
 
     private suspend fun createTable(tableName: String = "Table"): DynamoKt {
