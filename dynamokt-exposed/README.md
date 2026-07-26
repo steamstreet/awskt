@@ -291,6 +291,83 @@ Users.update(database, { Users.id eq "user#123" }) {
 }
 ```
 
+## Transactions
+
+Writes can be committed atomically with `transaction`, which maps to DynamoDB's
+`TransactWriteItems`. Operations may span multiple tables; either all of them apply or
+none do.
+
+```kotlin
+database.transaction {
+    Accounts.update({ Accounts.id eq "account#1" }) {
+        it.increment(Accounts.balance, -100)
+        it.condition { Accounts.balance ge 100 }
+    }
+    Accounts.update({ Accounts.id eq "account#2" }) {
+        it.increment(Accounts.balance, 100)
+    }
+    Transfers.insert {
+        it[Transfers.id] = "transfer#1"
+        it[Transfers.amount] = 100
+    }
+}
+```
+
+Inserts, updates and deletes take the same conditions as their non-transactional
+counterparts. Because DynamoDB doesn't return attributes from a transaction, the
+operations return nothing - the block's own value is returned instead.
+
+### Condition Checks
+
+`conditionCheck` asserts something about an item without writing to it. If the
+assertion fails, the whole transaction is cancelled.
+
+```kotlin
+database.transaction {
+    Accounts.conditionCheck({ Accounts.id eq "account#1" }) {
+        Accounts.status eq "ACTIVE"
+    }
+    Transfers.insert {
+        it[Transfers.id] = "transfer#1"
+        it[Transfers.amount] = 25
+    }
+}
+```
+
+### Idempotent Retries
+
+Pass a `clientRequestToken` so that a retry after an ambiguous failure doesn't apply
+the writes twice. DynamoDB honours the token for roughly ten minutes.
+
+```kotlin
+database.transaction(clientRequestToken = requestId) {
+    Orders.insert { it[Orders.id] = orderId }
+}
+```
+
+### Transactional Reads
+
+`transactionGet` reads several items as a single consistent snapshot
+(`TransactGetItems`). Results come back in the order the reads were added, with `null`
+for items that don't exist.
+
+```kotlin
+val (user, order) = database.transactionGet {
+    Users.get { Users.id eq "user#123" }
+    Orders.get { Orders.id eq "order#456" }
+}
+```
+
+### Transaction Rules
+
+- Both transaction types are limited to 100 operations.
+- A transaction may contain at most one operation per item; a duplicate raises
+  `IllegalArgumentException` before any request is sent.
+- Where clauses must specify the full primary key with equality conditions.
+- A cancelled transaction throws `TransactionCanceledException`, whose
+  `cancellationReasons` identify the operation that failed.
+- If the block throws, nothing is committed.
+
 ## Database Scope
 
 For cleaner code when performing multiple operations on the same table:
@@ -378,7 +455,7 @@ Users.update(database, { Users.id eq "user#123" }) {
 
 3. **Limited filter expressions**: Filters are applied after data is read from DynamoDB, so they don't reduce read capacity consumption.
 
-4. **No transactions in this version**: TransactWriteItems/TransactGetItems are not yet implemented.
+4. **Transactions are limited to 100 operations**: DynamoDB caps both TransactWriteItems and TransactGetItems at 100 items, and a transaction may touch each item only once.
 
 5. **No automatic pagination**: Large result sets need manual pagination handling.
 
@@ -410,6 +487,7 @@ Users.update(database, { Users.id eq "user#123" }) {
 
 ```kotlin
 import aws.sdk.kotlin.services.dynamodb.model.ConditionalCheckFailedException
+import aws.sdk.kotlin.services.dynamodb.model.TransactionCanceledException
 import com.steamstreet.dynamokt.exposed.NoIndexMatchException
 
 try {
@@ -425,6 +503,17 @@ try {
     Users.select(database) { Users.name eq "John" }  // No index on name
 } catch (e: NoIndexMatchException) {
     // Use scan instead or add a GSI
+}
+
+try {
+    database.transaction {
+        Accounts.update({ Accounts.id eq "account#1" }) {
+            it.increment(Accounts.balance, -100)
+            it.condition { Accounts.balance ge 100 }
+        }
+    }
+} catch (e: TransactionCanceledException) {
+    // Nothing was written; e.cancellationReasons says which operation failed
 }
 ```
 

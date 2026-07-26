@@ -8,6 +8,73 @@ import aws.sdk.kotlin.services.dynamodb.deleteItem
 import aws.sdk.kotlin.services.dynamodb.query as dynamoQuery
 
 /**
+ * A put operation that has been rendered into the pieces DynamoDB needs.
+ * Shared by [InsertStatement.execute] and the transactional put builder.
+ */
+internal class BuiltPut(
+    val item: Map<String, AttributeValue>,
+    val conditionExpression: String?,
+    val attributeNames: Map<String, String>,
+    val attributeValues: Map<String, AttributeValue>
+)
+
+/**
+ * An update operation that has been rendered into the pieces DynamoDB needs.
+ */
+internal class BuiltUpdate(
+    val key: Map<String, AttributeValue>,
+    val updateExpression: String,
+    val conditionExpression: String?,
+    val attributeNames: Map<String, String>,
+    val attributeValues: Map<String, AttributeValue>
+)
+
+/**
+ * A delete operation that has been rendered into the pieces DynamoDB needs.
+ */
+internal class BuiltDelete(
+    val key: Map<String, AttributeValue>,
+    val conditionExpression: String?,
+    val attributeNames: Map<String, String>,
+    val attributeValues: Map<String, AttributeValue>
+)
+
+/**
+ * Build the primary key map for this table from partition/sort key values.
+ */
+internal fun Table.buildKey(pk: Any?, sk: Any?): Map<String, AttributeValue> {
+    val pkColumn = partitionKey ?: error("Table $tableName has no partition key")
+    val skColumn = sortKey
+
+    return buildMap {
+        @Suppress("UNCHECKED_CAST")
+        put(pkColumn.name, (pkColumn as Column<Any?>).toAttributeValue(pk))
+
+        if (sk != null && skColumn != null) {
+            @Suppress("UNCHECKED_CAST")
+            put(skColumn.name, (skColumn as Column<Any?>).toAttributeValue(sk))
+        }
+    }
+}
+
+/**
+ * Extract the partition and sort key values from a where clause.
+ * Throws if the partition key isn't specified with an equality condition.
+ */
+internal fun Table.extractKeyValues(where: SqlExpressionBuilder.() -> Op<Boolean>): Pair<Any, Any?> {
+    val op = SqlExpressionBuilder().where()
+    val keyValues = extractKeyValues(op)
+
+    val pkColumn = partitionKey ?: error("Table $tableName has no partition key")
+    val skColumn = sortKey
+
+    val pk = keyValues[pkColumn] ?: error("Partition key ${pkColumn.name} not specified in where clause")
+    val sk = skColumn?.let { keyValues[it] }
+
+    return pk to sk
+}
+
+/**
  * Insert statement builder for type-safe DynamoDB put operations.
  * Similar to Exposed's insert.
  */
@@ -59,9 +126,9 @@ public class InsertStatement(
     }
 
     /**
-     * Build the item and execute the put operation
+     * Render the statement into the item and expressions DynamoDB needs.
      */
-    public suspend fun execute(): ResultRow {
+    internal fun build(): BuiltPut {
         val item = values.entries.associate { (column, value) ->
             @Suppress("UNCHECKED_CAST")
             column.name to (column as Column<Any?>).toAttributeValue(value)
@@ -74,22 +141,31 @@ public class InsertStatement(
             buildConditionExpression(op, nameIndex, valueIndex)
         }
 
+        return BuiltPut(item, conditionExpression, nameIndex, valueIndex)
+    }
+
+    /**
+     * Build the item and execute the put operation
+     */
+    public suspend fun execute(): ResultRow {
+        val built = build()
+
         database.client.putItem {
             tableName = database.resolveTableName(table)
-            this.item = item
+            this.item = built.item
 
-            conditionExpression?.let { expr ->
+            built.conditionExpression?.let { expr ->
                 this.conditionExpression = expr
-                if (nameIndex.isNotEmpty()) {
-                    expressionAttributeNames = nameIndex
+                if (built.attributeNames.isNotEmpty()) {
+                    expressionAttributeNames = built.attributeNames
                 }
-                if (valueIndex.isNotEmpty()) {
-                    expressionAttributeValues = valueIndex
+                if (built.attributeValues.isNotEmpty()) {
+                    expressionAttributeValues = built.attributeValues
                 }
             }
         }
 
-        return ResultRow(table, item)
+        return ResultRow(table, built.item)
     }
 }
 
@@ -128,10 +204,6 @@ public class UpdateStatement(
     private val sets = mutableMapOf<Column<*>, Any?>()
     private val removes = mutableSetOf<Column<*>>()
     private val adds = mutableMapOf<Column<*>, Number>()
-
-    private val nameIndex = mutableMapOf<String, String>()
-    private val valueIndex = mutableMapOf<String, AttributeValue>()
-    private var attrCounter = 0
 
     private var conditionOp: Op<Boolean>? = null
 
@@ -182,21 +254,14 @@ public class UpdateStatement(
     }
 
     /**
-     * Build and execute the update operation
+     * Render the statement into the key, update expression and condition DynamoDB needs.
      */
-    public suspend fun execute(): ResultRow {
-        val pkColumn = table.partitionKey ?: error("Table ${table.tableName} has no partition key")
-        val skColumn = table.sortKey
+    internal fun build(): BuiltUpdate {
+        val key = table.buildKey(pk, sk)
 
-        val key = buildMap {
-            @Suppress("UNCHECKED_CAST")
-            put(pkColumn.name, (pkColumn as Column<Any>).toAttributeValue(pk))
-
-            if (sk != null && skColumn != null) {
-                @Suppress("UNCHECKED_CAST")
-                put(skColumn.name, (skColumn as Column<Any>).toAttributeValue(sk))
-            }
-        }
+        val nameIndex = mutableMapOf<String, String>()
+        val valueIndex = mutableMapOf<String, AttributeValue>()
+        var attrCounter = 0
 
         // Build update expression
         val updateParts = mutableListOf<String>()
@@ -233,6 +298,11 @@ public class UpdateStatement(
             updateParts.add("REMOVE ${removeParts.joinToString(", ")}")
         }
 
+        require(updateParts.isNotEmpty()) {
+            "Update on table ${table.tableName} has no changes. " +
+                "Set, increment or remove at least one column, or use conditionCheck for a condition-only operation."
+        }
+
         val updateExpression = updateParts.joinToString(" ")
 
         // Build condition expression if present
@@ -240,16 +310,25 @@ public class UpdateStatement(
             buildConditionExpression(op, nameIndex, valueIndex)
         }
 
+        return BuiltUpdate(key, updateExpression, conditionExpression, nameIndex, valueIndex)
+    }
+
+    /**
+     * Build and execute the update operation
+     */
+    public suspend fun execute(): ResultRow {
+        val built = build()
+
         val result = database.client.updateItem {
             tableName = database.resolveTableName(table)
-            this.key = key
-            this.updateExpression = updateExpression
-            conditionExpression?.let { this.conditionExpression = it }
-            if (nameIndex.isNotEmpty()) {
-                expressionAttributeNames = nameIndex
+            this.key = built.key
+            this.updateExpression = built.updateExpression
+            built.conditionExpression?.let { this.conditionExpression = it }
+            if (built.attributeNames.isNotEmpty()) {
+                expressionAttributeNames = built.attributeNames
             }
-            if (valueIndex.isNotEmpty()) {
-                expressionAttributeValues = valueIndex
+            if (built.attributeValues.isNotEmpty()) {
+                expressionAttributeValues = built.attributeValues
             }
             returnValues = aws.sdk.kotlin.services.dynamodb.model.ReturnValue.AllNew
         }
@@ -267,15 +346,7 @@ public suspend fun <T : Table> T.update(
     where: SqlExpressionBuilder.() -> Op<Boolean>,
     block: T.(UpdateStatement) -> Unit
 ): ResultRow {
-    val op = SqlExpressionBuilder().where()
-    val keyValues = extractKeyValues(op)
-
-    val pkColumn = partitionKey ?: error("Table $tableName has no partition key defined")
-    val skColumn = sortKey
-
-    val pk = keyValues[pkColumn] ?: error("Partition key ${pkColumn.name} not specified in where clause")
-    val sk = skColumn?.let { keyValues[it] }
-
+    val (pk, sk) = extractKeyValues(where)
     return UpdateStatement(this, database, pk, sk).also { block(it) }.execute()
 }
 
@@ -306,21 +377,10 @@ public class DeleteStatement(
     }
 
     /**
-     * Execute the delete operation
+     * Render the statement into the key and condition DynamoDB needs.
      */
-    public suspend fun execute(): Boolean {
-        val pkColumn = table.partitionKey ?: error("Table ${table.tableName} has no partition key")
-        val skColumn = table.sortKey
-
-        val key = buildMap {
-            @Suppress("UNCHECKED_CAST")
-            put(pkColumn.name, (pkColumn as Column<Any?>).toAttributeValue(pk))
-
-            if (sk != null && skColumn != null) {
-                @Suppress("UNCHECKED_CAST")
-                put(skColumn.name, (skColumn as Column<Any?>).toAttributeValue(sk))
-            }
-        }
+    internal fun build(): BuiltDelete {
+        val key = table.buildKey(pk, sk)
 
         // Build condition expression if present
         val nameIndex = mutableMapOf<String, String>()
@@ -329,15 +389,24 @@ public class DeleteStatement(
             buildConditionExpression(op, nameIndex, valueIndex)
         }
 
+        return BuiltDelete(key, conditionExpression, nameIndex, valueIndex)
+    }
+
+    /**
+     * Execute the delete operation
+     */
+    public suspend fun execute(): Boolean {
+        val built = build()
+
         database.client.deleteItem {
             tableName = database.resolveTableName(table)
-            this.key = key
-            conditionExpression?.let { this.conditionExpression = it }
-            if (nameIndex.isNotEmpty()) {
-                expressionAttributeNames = nameIndex
+            this.key = built.key
+            built.conditionExpression?.let { this.conditionExpression = it }
+            if (built.attributeNames.isNotEmpty()) {
+                expressionAttributeNames = built.attributeNames
             }
-            if (valueIndex.isNotEmpty()) {
-                expressionAttributeValues = valueIndex
+            if (built.attributeValues.isNotEmpty()) {
+                expressionAttributeValues = built.attributeValues
             }
         }
 
@@ -353,15 +422,7 @@ public suspend fun Table.delete(
     database: Database,
     where: SqlExpressionBuilder.() -> Op<Boolean>
 ): Boolean {
-    val op = SqlExpressionBuilder().where()
-    val keyValues = extractKeyValues(op)
-
-    val pkColumn = partitionKey ?: error("Table $tableName has no partition key")
-    val skColumn = sortKey
-
-    val pk = keyValues[pkColumn] ?: error("Partition key ${pkColumn.name} not specified in where clause")
-    val sk = skColumn?.let { keyValues[it] }
-
+    val (pk, sk) = extractKeyValues(where)
     return DeleteStatement(this, database, pk, sk).execute()
 }
 
@@ -374,14 +435,6 @@ public suspend fun <T : Table> T.delete(
     where: SqlExpressionBuilder.() -> Op<Boolean>,
     block: T.(DeleteStatement) -> Unit
 ): Boolean {
-    val op = SqlExpressionBuilder().where()
-    val keyValues = extractKeyValues(op)
-
-    val pkColumn = partitionKey ?: error("Table $tableName has no partition key")
-    val skColumn = sortKey
-
-    val pk = keyValues[pkColumn] ?: error("Partition key ${pkColumn.name} not specified in where clause")
-    val sk = skColumn?.let { keyValues[it] }
-
+    val (pk, sk) = extractKeyValues(where)
     return DeleteStatement(this, database, pk, sk).also { block(it) }.execute()
 }
