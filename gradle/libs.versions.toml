@@ -1,6 +1,8 @@
 [versions]
 kotlin-serialization = "1.9.0"
 aws = "1.5.123"
+kotlincrypto-macs = "0.8.0"
+kotlincrypto-hash = "0.8.0"
 ktor = "3.3.3"
 slf4j = "2.0.9"
 coroutines = "1.10.2"
@@ -38,6 +40,8 @@ ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref =
 ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
 ktor-client-js = { group = "io.ktor", name = "ktor-client-js", version.ref = "ktor" }
 ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
+ktor-client-curl = { group = "io.ktor", name = "ktor-client-curl", version.ref = "ktor" }
+ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version = "1.21.4" }
 testcontainers-localstack = { module = "org.testcontainers:localstack", version = "1.21.4" }
 
@@ -66,6 +70,10 @@ kluent = "org.amshove.kluent:kluent:1.73"
 jackson = "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6"
 mockk = "io.mockk:mockk:1.13.5"
 event-ruler = "software.amazon.event.ruler:event-ruler:1.8.1"
+
+# -- Crypto for SigV4 (pure Kotlin, no JCA/OpenSSL/CRT backing — see plan Decision 8)
+kotlincrypto-hmac-sha2 = { group = "org.kotlincrypto.macs", name = "hmac-sha2", version.ref = "kotlincrypto-macs" }
+kotlincrypto-hash-sha2 = { group = "org.kotlincrypto.hash", name = "sha2", version.ref = "kotlincrypto-hash" }
 
 # -- Kotest
 kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }

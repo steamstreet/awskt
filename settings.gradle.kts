@@ -18,6 +18,9 @@ dependencyResolutionManagement {
         }
     }
 }
+include(":aws:aws-signing")
+include(":aws:aws-core")
+include(":aws:aws-dynamodb")
 include("appsync")
 include("cognito")
 include("standards")
