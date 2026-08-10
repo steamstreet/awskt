@@ -40,8 +40,11 @@ nexusPublishing {
             nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
             snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
 
-            username = findProperty("mavenCentralUsername").toString()
-            password = findProperty("mavenCentralPassword").toString()
+            // Left null when the properties are absent so that the publishing tasks report missing
+            // credentials. Reading them with toString() would send the literal string "null" and
+            // surface as an authentication failure instead.
+            username = findProperty("mavenCentralUsername") as String?
+            password = findProperty("mavenCentralPassword") as String?
         }
     }
 }
@@ -55,7 +58,12 @@ tasks.named("snapshot") {
     dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "publishToMavenLocal" } })
 }
 
-val closeTask = tasks.named("closeAndReleaseSonatypeStagingRepository")
+// Only close the staging repository. The Central Portal is configured to publish automatically once
+// a deployment validates, and its OSSRH compatibility API never reports the 'released' state that
+// closeAndReleaseSonatypeStagingRepository waits for. Releasing here therefore failed after the
+// artifacts had already been published, which left the release untagged and forced the next build to
+// reuse the version.
+val closeTask = tasks.named("closeSonatypeStagingRepository")
 
 tasks.named("final") {
     dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "publishToSonatype" } })
