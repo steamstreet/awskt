@@ -1,0 +1,497 @@
+public abstract interface class com/steamstreet/dynamokt/AttributeSerializer {
+	public fun attribute (Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static synthetic fun attribute$default (Lcom/steamstreet/dynamokt/AttributeSerializer;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public abstract fun deserialize (Lcom/steamstreet/dynamokt/ItemContainer;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
+	public abstract fun serialize (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+}
+
+public final class com/steamstreet/dynamokt/AttributeSerializer$DefaultImpls {
+	public static fun attribute (Lcom/steamstreet/dynamokt/AttributeSerializer;Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static synthetic fun attribute$default (Lcom/steamstreet/dynamokt/AttributeSerializer;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+}
+
+public final class com/steamstreet/dynamokt/AttributeSerializerBuilder {
+	public fun <init> ()V
+	public final fun build ()Lcom/steamstreet/dynamokt/AttributeSerializer;
+	public final fun from (Lkotlin/jvm/functions/Function1;)V
+	public final fun getF ()Lkotlin/jvm/functions/Function1;
+	public final fun getT ()Lkotlin/jvm/functions/Function1;
+	public final fun setF (Lkotlin/jvm/functions/Function1;)V
+	public final fun setT (Lkotlin/jvm/functions/Function1;)V
+	public final fun to (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class com/steamstreet/dynamokt/AttributeType : java/lang/Enum {
+	public static final field BINARY Lcom/steamstreet/dynamokt/AttributeType;
+	public static final field BINARY_SET Lcom/steamstreet/dynamokt/AttributeType;
+	public static final field BOOLEAN Lcom/steamstreet/dynamokt/AttributeType;
+	public static final field LIST Lcom/steamstreet/dynamokt/AttributeType;
+	public static final field MAP Lcom/steamstreet/dynamokt/AttributeType;
+	public static final field NULL Lcom/steamstreet/dynamokt/AttributeType;
+	public static final field NUMBER Lcom/steamstreet/dynamokt/AttributeType;
+	public static final field NUMBER_SET Lcom/steamstreet/dynamokt/AttributeType;
+	public static final field STRING Lcom/steamstreet/dynamokt/AttributeType;
+	public static final field STRING_SET Lcom/steamstreet/dynamokt/AttributeType;
+	public final fun getDynamoType ()Ljava/lang/String;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/dynamokt/AttributeType;
+	public static fun values ()[Lcom/steamstreet/dynamokt/AttributeType;
+}
+
+public final class com/steamstreet/dynamokt/AttributesKt {
+	public static final fun AttributeValue (Ljava/lang/String;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public static final fun AttributeValueUpdate (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;Laws/sdk/kotlin/services/dynamodb/model/AttributeAction;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValueUpdate;
+	public static final fun attributeMap ([Lkotlin/Pair;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public static final fun attributeValue (Ljava/lang/Number;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public static final fun attributeValue (Ljava/lang/String;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public static final fun attributeValue (Ljava/util/List;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public static final fun attributeValue (Ljava/util/Map;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public static final fun attributeValue (Ljava/util/Set;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public static final fun attributeValue (Z)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public static final fun delete (Ljava/util/HashMap;Ljava/lang/String;)V
+	public static final fun diff (Lcom/steamstreet/dynamokt/Item;Lcom/steamstreet/dynamokt/Item;)Ljava/util/List;
+	public static final fun diff (Ljava/util/Map;Ljava/util/Map;)Ljava/util/List;
+	public static final fun findDifferences (Ljava/util/Map;Ljava/util/Map;)Ljava/util/List;
+	public static final fun update (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;Laws/sdk/kotlin/services/dynamodb/model/AttributeAction;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValueUpdate;
+	public static final fun update (Ljava/util/Map;Ljava/lang/String;Ljava/lang/Object;)V
+	public static synthetic fun update$default (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;Laws/sdk/kotlin/services/dynamodb/model/AttributeAction;ILjava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValueUpdate;
+}
+
+public final class com/steamstreet/dynamokt/Converter {
+	public fun <init> ()V
+	public final fun from (Lkotlin/jvm/functions/Function1;)V
+	public final fun to (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class com/steamstreet/dynamokt/DatesKt {
+	public static final fun attributeValue (Lkotlin/time/Instant;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public static final fun getInstant (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Lkotlin/time/Instant;
+	public static final fun getInstant (Lcom/steamstreet/dynamokt/Item;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun getLocalDate (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/time/LocalDate;
+	public static final fun getLocalDateTime (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/time/LocalDateTime;
+	public static final fun getLocalTime (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/time/LocalTime;
+	public static final fun instantAttribute (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static final fun instantAttribute (Lcom/steamstreet/dynamokt/ItemContainer;Lkotlin/time/Instant;Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static synthetic fun instantAttribute$default (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static synthetic fun instantAttribute$default (Lcom/steamstreet/dynamokt/ItemContainer;Lkotlin/time/Instant;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static final fun localDateAttribute (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static final fun localDateAttribute (Lcom/steamstreet/dynamokt/ItemContainer;Lkotlinx/datetime/LocalDate;Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static synthetic fun localDateAttribute$default (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static synthetic fun localDateAttribute$default (Lcom/steamstreet/dynamokt/ItemContainer;Lkotlinx/datetime/LocalDate;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+}
+
+public final class com/steamstreet/dynamokt/DelegatesKt {
+	public static final fun attribute (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static synthetic fun attribute$default (Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static final fun boolAttribute (Lcom/steamstreet/dynamokt/ItemContainer;ZLjava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static synthetic fun boolAttribute$default (Lcom/steamstreet/dynamokt/ItemContainer;ZLjava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static final fun intAttribute (Lcom/steamstreet/dynamokt/ItemContainer;ILjava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static final fun intAttribute (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static synthetic fun intAttribute$default (Lcom/steamstreet/dynamokt/ItemContainer;ILjava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static synthetic fun intAttribute$default (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static final fun stringAttribute (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static synthetic fun stringAttribute$default (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static final fun stringBacked (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static synthetic fun stringBacked$default (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static final fun stringListAttribute (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/util/List;Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static synthetic fun stringListAttribute$default (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static final fun stringSetAttribute (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/util/Set;Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public static synthetic fun stringSetAttribute$default (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/util/Set;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+}
+
+public final class com/steamstreet/dynamokt/DuplicateDynamoItemException : com/steamstreet/exceptions/DuplicateItemException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/dynamokt/Item;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/dynamokt/Item;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/dynamokt/DynamoKt {
+	public static final field Companion Lcom/steamstreet/dynamokt/DynamoKt$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Laws/smithy/kotlin/runtime/auth/awscredentials/CredentialsProvider;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Laws/smithy/kotlin/runtime/auth/awscredentials/CredentialsProvider;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getBuilder ()Lkotlin/jvm/functions/Function1;
+	public final fun getDefaultCredentials ()Laws/smithy/kotlin/runtime/auth/awscredentials/CredentialsProvider;
+	public final fun getEntityJsonEncoder ()Lkotlinx/serialization/json/Json;
+	public final fun getPkName ()Ljava/lang/String;
+	public final fun getSkName ()Ljava/lang/String;
+	public final fun getTable ()Ljava/lang/String;
+	public final fun getTtlAttribute ()Ljava/lang/String;
+	public final fun indexes ()Ljava/util/Collection;
+	public final fun registerIndex (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/dynamokt/DynamoKtIndex;
+	public final fun session (Laws/smithy/kotlin/runtime/auth/awscredentials/CredentialsProvider;)Lcom/steamstreet/dynamokt/DynamoKtSession;
+	public static synthetic fun session$default (Lcom/steamstreet/dynamokt/DynamoKt;Laws/smithy/kotlin/runtime/auth/awscredentials/CredentialsProvider;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/DynamoKtSession;
+	public final fun setEntityJsonEncoder (Lkotlinx/serialization/json/Json;)V
+}
+
+public final class com/steamstreet/dynamokt/DynamoKt$Companion {
+	public final fun getDefaultClientBuilder ()Lkotlin/jvm/functions/Function1;
+	public final fun setDefaultClientBuilder (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class com/steamstreet/dynamokt/DynamoKtIndex {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getName ()Ljava/lang/String;
+	public final fun getPk ()Ljava/lang/String;
+	public final fun getSk ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/DynamoKtSession : com/steamstreet/dynamokt/ItemUpdater {
+	public fun <init> (Lcom/steamstreet/dynamokt/DynamoKt;Laws/sdk/kotlin/services/dynamodb/DynamoDbClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
+	public synthetic fun <init> (Lcom/steamstreet/dynamokt/DynamoKt;Laws/sdk/kotlin/services/dynamodb/DynamoDbClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun commit (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun delete (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun describeTable (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun facade (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lcom/steamstreet/dynamokt/Item;
+	public final fun facade (Ljava/util/Map;)Lcom/steamstreet/dynamokt/Item;
+	public static synthetic fun facade$default (Lcom/steamstreet/dynamokt/DynamoKtSession;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/Item;
+	public final fun get (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun get (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun get$default (Lcom/steamstreet/dynamokt/DynamoKtSession;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun getAll (Ljava/util/List;Ljava/util/Collection;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun getAll$default (Lcom/steamstreet/dynamokt/DynamoKtSession;Ljava/util/List;Ljava/util/Collection;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun getDynamo ()Laws/sdk/kotlin/services/dynamodb/DynamoDbClient;
+	public final fun getDynamoKt ()Lcom/steamstreet/dynamokt/DynamoKt;
+	public final fun getOrNull (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun getOrNull$default (Lcom/steamstreet/dynamokt/DynamoKtSession;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun getPkName ()Ljava/lang/String;
+	public final fun getSkName ()Ljava/lang/String;
+	public final fun getTable ()Ljava/lang/String;
+	public final fun parallelScan (ILjava/util/List;Lkotlin/jvm/functions/Function1;)Lkotlinx/coroutines/flow/Flow;
+	public static synthetic fun parallelScan$default (Lcom/steamstreet/dynamokt/DynamoKtSession;ILjava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
+	public fun put (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun put (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun put (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun query (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun query$default (Lcom/steamstreet/dynamokt/DynamoKtSession;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun queryDelete (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun queryDelete$default (Lcom/steamstreet/dynamokt/DynamoKtSession;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun queryIndex (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun queryIndex$default (Lcom/steamstreet/dynamokt/DynamoKtSession;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun scan (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun transaction ()Lcom/steamstreet/dynamokt/Transaction;
+	public final fun unloaded (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Z)Lcom/steamstreet/dynamokt/Item;
+	public final fun unloaded (Ljava/util/Map;Z)Lcom/steamstreet/dynamokt/Item;
+	public fun update (Lcom/steamstreet/dynamokt/Item;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun update (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/dynamokt/DynamoKtSessionKt {
+	public static final fun facade (Ljava/util/Map;Lcom/steamstreet/dynamokt/DynamoKtSession;)Lcom/steamstreet/dynamokt/Item;
+}
+
+public final class com/steamstreet/dynamokt/EnumSerializer : com/steamstreet/dynamokt/AttributeSerializer {
+	public fun <init> (Lkotlin/reflect/KClass;Ljava/lang/Enum;)V
+	public fun attribute (Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public fun deserialize (Lcom/steamstreet/dynamokt/ItemContainer;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Enum;
+	public synthetic fun deserialize (Lcom/steamstreet/dynamokt/ItemContainer;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
+	public fun serialize (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/Enum;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public synthetic fun serialize (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+}
+
+public final class com/steamstreet/dynamokt/ExpressionBuilder {
+	public fun <init> ()V
+	public final fun addExpression (Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;)V
+	public static synthetic fun addExpression$default (Lcom/steamstreet/dynamokt/ExpressionBuilder;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Object;)V
+	public final fun attribute (Ljava/lang/String;)Lcom/steamstreet/dynamokt/ExpressionBuilder$FilterAttribute;
+	public final fun attributeExists (Ljava/lang/String;)V
+	public final fun attributeNotExists (Ljava/lang/String;)V
+	public final fun attributeType (Ljava/lang/String;Lcom/steamstreet/dynamokt/AttributeType;)V
+	public final fun between (Ljava/lang/String;Ljava/lang/Number;Ljava/lang/Number;)V
+	public final fun between (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun contains (Ljava/lang/String;Ljava/lang/Number;)V
+	public final fun contains (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun equalTo (Ljava/lang/String;Ljava/lang/Number;)V
+	public final fun equalTo (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun expression ()Ljava/lang/String;
+	public final fun greaterThan (Ljava/lang/String;Ljava/lang/Number;)V
+	public final fun greaterThan (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun greaterThan (Ljava/lang/String;Lkotlin/time/Instant;)V
+	public final fun greaterThanOrEqualTo (Ljava/lang/String;Ljava/lang/Number;)V
+	public final fun isEmpty (Ljava/lang/String;)V
+	public final fun isNotEmpty (Ljava/lang/String;)V
+	public final fun isNotNull (Ljava/lang/String;)V
+	public final fun isNull (Ljava/lang/String;)V
+	public final fun lessThan (Ljava/lang/String;Ljava/lang/Number;)V
+	public final fun lessThan (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun lessThan (Ljava/lang/String;Lkotlin/time/Instant;)V
+	public final fun lessThanOrEqualTo (Ljava/lang/String;Ljava/lang/Number;)V
+	public final fun notEqualTo (Ljava/lang/String;Ljava/lang/Number;)V
+	public final fun notEqualTo (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun or (Lkotlin/jvm/functions/Function1;)V
+	public final fun size (Ljava/lang/String;)Lcom/steamstreet/dynamokt/ExpressionBuilder$SizeAttribute;
+	public final fun startsWith (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun valueIn (Ljava/lang/String;Ljava/util/List;)V
+	public final fun valueInNumbers (Ljava/lang/String;Ljava/util/List;)V
+}
+
+public final class com/steamstreet/dynamokt/ExpressionBuilder$FilterAttribute {
+	public fun <init> (Lcom/steamstreet/dynamokt/ExpressionBuilder;Ljava/lang/String;)V
+	public final fun between (Ljava/lang/Number;Ljava/lang/Number;)V
+	public final fun between (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun contains (Ljava/lang/Number;)V
+	public final fun contains (Ljava/lang/String;)V
+	public final fun equalTo (Ljava/lang/Number;)V
+	public final fun equalTo (Ljava/lang/String;)V
+	public final fun exists ()V
+	public final fun getName ()Ljava/lang/String;
+	public final fun greaterThan (Ljava/lang/Number;)V
+	public final fun greaterThanOrEqualTo (Ljava/lang/Number;)V
+	public final fun hasType (Lcom/steamstreet/dynamokt/AttributeType;)V
+	public final fun isEmpty ()V
+	public final fun isNotEmpty ()V
+	public final fun isNotNull ()V
+	public final fun isNull ()V
+	public final fun isOneOf (Ljava/util/List;)V
+	public final fun isOneOfNumbers (Ljava/util/List;)V
+	public final fun lessThan (Ljava/lang/Number;)V
+	public final fun lessThanOrEqualTo (Ljava/lang/Number;)V
+	public final fun notEqualTo (Ljava/lang/Number;)V
+	public final fun notEqualTo (Ljava/lang/String;)V
+	public final fun size ()Lcom/steamstreet/dynamokt/ExpressionBuilder$SizeAttribute;
+}
+
+public final class com/steamstreet/dynamokt/ExpressionBuilder$SizeAttribute {
+	public fun <init> (Lcom/steamstreet/dynamokt/ExpressionBuilder;Ljava/lang/String;)V
+	public final fun equalTo (Ljava/lang/Number;)V
+	public final fun greaterThan (Ljava/lang/Number;)V
+	public final fun greaterThanOrEqualTo (Ljava/lang/Number;)V
+	public final fun lessThan (Ljava/lang/Number;)V
+	public final fun lessThanOrEqualTo (Ljava/lang/Number;)V
+}
+
+public final class com/steamstreet/dynamokt/ExpressionBuilderKt {
+	public static final fun apply (Lcom/steamstreet/dynamokt/ExpressionBuilder;Laws/sdk/kotlin/services/dynamodb/model/ScanRequest$Builder;)V
+	public static final fun buildFilter (Lcom/steamstreet/dynamokt/Query;Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class com/steamstreet/dynamokt/IdAttribute : kotlin/properties/ReadOnlyProperty {
+	public fun <init> ()V
+	public fun getValue (Lcom/steamstreet/dynamokt/ItemContainer;Lkotlin/reflect/KProperty;)Ljava/lang/String;
+	public synthetic fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+}
+
+public class com/steamstreet/dynamokt/Item {
+	public final fun allAttributes (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun get (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getAllAttributes ()Ljava/util/Map;
+	public final fun getBoolean (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDynamo ()Lcom/steamstreet/dynamokt/DynamoKtSession;
+	public final fun getFailOnLoading ()Z
+	public final fun getInt (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getLoaded ()Z
+	public final fun getLong (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPk ()Ljava/lang/String;
+	public final fun getSk ()Ljava/lang/String;
+	public final fun getString (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun setLoaded (Z)V
+	public final fun update (Lcom/steamstreet/dynamokt/ItemUpdater;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun update$default (Lcom/steamstreet/dynamokt/Item;Lcom/steamstreet/dynamokt/ItemUpdater;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public class com/steamstreet/dynamokt/ItemAttributeDelegate : kotlin/properties/ReadWriteProperty {
+	public fun <init> (Lcom/steamstreet/dynamokt/AttributeSerializer;Ljava/lang/String;)V
+	public synthetic fun <init> (Lcom/steamstreet/dynamokt/AttributeSerializer;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getValue (Lcom/steamstreet/dynamokt/ItemContainer;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+	public synthetic fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+	public fun setValue (Lcom/steamstreet/dynamokt/ItemContainer;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
+	public synthetic fun setValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
+	public final fun withDefault (Ljava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+}
+
+public abstract interface class com/steamstreet/dynamokt/ItemContainer {
+	public abstract fun getEntity ()Lcom/steamstreet/dynamokt/Item;
+}
+
+public abstract interface class com/steamstreet/dynamokt/ItemUpdater {
+	public abstract fun commit (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun delete (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun delete$default (Lcom/steamstreet/dynamokt/ItemUpdater;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun put (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun put (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun put (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun put$default (Lcom/steamstreet/dynamokt/ItemUpdater;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun put$default (Lcom/steamstreet/dynamokt/ItemUpdater;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public fun update (Lcom/steamstreet/dynamokt/Item;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun update (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun update$default (Lcom/steamstreet/dynamokt/ItemUpdater;Lcom/steamstreet/dynamokt/Item;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun update$default (Lcom/steamstreet/dynamokt/ItemUpdater;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/dynamokt/ItemUpdater$DefaultImpls {
+	public static synthetic fun delete$default (Lcom/steamstreet/dynamokt/ItemUpdater;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static fun put (Lcom/steamstreet/dynamokt/ItemUpdater;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun put$default (Lcom/steamstreet/dynamokt/ItemUpdater;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun put$default (Lcom/steamstreet/dynamokt/ItemUpdater;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static fun update (Lcom/steamstreet/dynamokt/ItemUpdater;Lcom/steamstreet/dynamokt/Item;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun update$default (Lcom/steamstreet/dynamokt/ItemUpdater;Lcom/steamstreet/dynamokt/Item;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun update$default (Lcom/steamstreet/dynamokt/ItemUpdater;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/dynamokt/Items {
+	public fun <init> (Lcom/steamstreet/dynamokt/Item;Lcom/steamstreet/dynamokt/Item;)V
+	public synthetic fun <init> (Lcom/steamstreet/dynamokt/Item;Lcom/steamstreet/dynamokt/Item;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/dynamokt/Item;
+	public final fun component2 ()Lcom/steamstreet/dynamokt/Item;
+	public final fun copy (Lcom/steamstreet/dynamokt/Item;Lcom/steamstreet/dynamokt/Item;)Lcom/steamstreet/dynamokt/Items;
+	public static synthetic fun copy$default (Lcom/steamstreet/dynamokt/Items;Lcom/steamstreet/dynamokt/Item;Lcom/steamstreet/dynamokt/Item;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/Items;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNew ()Lcom/steamstreet/dynamokt/Item;
+	public final fun getOld ()Lcom/steamstreet/dynamokt/Item;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/JsonKt {
+	public static final fun fromJsonToAttributeValue (Ljava/lang/String;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public static final fun fromJsonToItem (Ljava/lang/String;)Ljava/util/Map;
+	public static final fun fromJsonToItem (Lkotlinx/serialization/json/JsonElement;)Ljava/util/Map;
+	public static final fun getAttributeValueJson ()Lkotlinx/serialization/json/Json;
+	public static final fun toJsonItemString (Ljava/util/Map;)Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/MutableItem : com/steamstreet/dynamokt/Item {
+	public final fun addToList (Ljava/lang/String;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)V
+	public final fun addToSet (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun addToSet (Ljava/lang/String;Ljava/util/Collection;)V
+	public final fun clearTTL ()V
+	public final fun condition (Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Laws/sdk/kotlin/services/dynamodb/model/ReturnValuesOnConditionCheckFailure;)V
+	public static synthetic fun condition$default (Lcom/steamstreet/dynamokt/MutableItem;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Laws/sdk/kotlin/services/dynamodb/model/ReturnValuesOnConditionCheckFailure;ILjava/lang/Object;)V
+	public final fun conditionAttributeEquals (Ljava/lang/String;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)V
+	public final fun delete (Ljava/lang/String;)V
+	public final fun doNoOverwrite (Z)V
+	public static synthetic fun doNoOverwrite$default (Lcom/steamstreet/dynamokt/MutableItem;ZILjava/lang/Object;)V
+	public fun get (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getAllUpdates ()Ljava/util/Map;
+	public final fun getDoNotOverwrite ()Z
+	public final fun getReplace ()Z
+	public final fun getReturnValues ()Laws/sdk/kotlin/services/dynamodb/model/ReturnValue;
+	public final fun increment (Ljava/lang/String;I)V
+	public static synthetic fun increment$default (Lcom/steamstreet/dynamokt/MutableItem;Ljava/lang/String;IILjava/lang/Object;)V
+	public final fun mustExist ()V
+	public final fun removeFromList (Ljava/lang/String;I)V
+	public final fun requireAttributeExists (Ljava/lang/String;)V
+	public final fun requireAttributeNotExists (Ljava/lang/String;)V
+	public final fun save (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun set (Ljava/lang/String;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)V
+	public final fun set (Ljava/lang/String;Ljava/lang/Enum;)V
+	public final fun set (Ljava/lang/String;Ljava/lang/Integer;)V
+	public final fun set (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun set (Ljava/lang/String;Lkotlin/time/Instant;)V
+	public final fun set (Lkotlin/reflect/KProperty1;Ljava/lang/Object;)V
+	public final fun setBoolean (Ljava/lang/String;Ljava/lang/Boolean;)V
+	public final fun setDoNotOverwrite (Z)V
+	public final fun setGSI (ILjava/lang/String;Ljava/lang/String;)V
+	public final fun setLong (Ljava/lang/String;Ljava/lang/Long;)V
+	public final fun setReplace (Z)V
+	public final fun setReturnValues (Laws/sdk/kotlin/services/dynamodb/model/ReturnValue;)V
+	public final fun setTTL (Lkotlin/time/Instant;)V
+	public final fun setTTL-LRDsOJo (J)V
+	public final fun update ()Lcom/steamstreet/dynamokt/MutableItem;
+	public final fun updateListItem (Ljava/lang/String;ILjava/lang/String;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)V
+	public static synthetic fun updateListItem$default (Lcom/steamstreet/dynamokt/MutableItem;Ljava/lang/String;ILjava/lang/String;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;ILjava/lang/Object;)V
+}
+
+public final class com/steamstreet/dynamokt/MutableItem$Update {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getExpression ()Ljava/lang/String;
+	public final fun getType ()Ljava/lang/String;
+}
+
+public abstract interface class com/steamstreet/dynamokt/MutableItemContainer : com/steamstreet/dynamokt/ItemContainer {
+	public fun decorate (Lcom/steamstreet/dynamokt/MutableItem;)V
+	public abstract fun getEntity ()Lcom/steamstreet/dynamokt/Item;
+	public abstract fun mutable (Lcom/steamstreet/dynamokt/MutableItem;)Lcom/steamstreet/dynamokt/ItemContainer;
+	public abstract fun setEntity (Lcom/steamstreet/dynamokt/Item;)V
+	public fun update (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/dynamokt/MutableItemContainer$DefaultImpls {
+	public static fun decorate (Lcom/steamstreet/dynamokt/MutableItemContainer;Lcom/steamstreet/dynamokt/MutableItem;)V
+	public static fun update (Lcom/steamstreet/dynamokt/MutableItemContainer;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/dynamokt/NullableEnumSerializer : com/steamstreet/dynamokt/AttributeSerializer {
+	public fun <init> (Lkotlin/reflect/KClass;)V
+	public fun attribute (Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
+	public fun deserialize (Lcom/steamstreet/dynamokt/ItemContainer;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Enum;
+	public synthetic fun deserialize (Lcom/steamstreet/dynamokt/ItemContainer;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
+	public fun serialize (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/Enum;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public synthetic fun serialize (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+}
+
+public final class com/steamstreet/dynamokt/PipesKt {
+	public static final fun diffs (Lcom/steamstreet/dynamokt/DynamoStreamEvent;)Ljava/util/List;
+	public static final fun items (Lcom/steamstreet/dynamokt/DynamoStreamEvent;Lcom/steamstreet/dynamokt/DynamoKtSession;)Lcom/steamstreet/dynamokt/Items;
+	public static final fun newItem (Lcom/steamstreet/dynamokt/DynamoStreamEvent;Lcom/steamstreet/dynamokt/DynamoKtSession;)Lcom/steamstreet/dynamokt/Item;
+	public static final fun oldAndNew (Lcom/steamstreet/dynamokt/DynamoStreamEvent;Lcom/steamstreet/dynamokt/DynamoKtSession;)Lcom/steamstreet/dynamokt/Items;
+	public static final fun oldItem (Lcom/steamstreet/dynamokt/DynamoStreamEvent;Lcom/steamstreet/dynamokt/DynamoKtSession;)Lcom/steamstreet/dynamokt/Item;
+}
+
+public final class com/steamstreet/dynamokt/Query {
+	public final fun attributes ([Ljava/lang/String;)V
+	public final fun filter (Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;)V
+	public static synthetic fun filter$default (Lcom/steamstreet/dynamokt/Query;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Object;)V
+	public final fun getConsistent ()Z
+	public final fun getDynamo ()Lcom/steamstreet/dynamokt/DynamoKtSession;
+	public final fun getForward ()Z
+	public final fun getIndexName ()Ljava/lang/String;
+	public final fun getLimit ()Ljava/lang/Integer;
+	public final fun getLoadAll ()Z
+	public final fun getPk ()Ljava/lang/String;
+	public final fun getPkName ()Ljava/lang/String;
+	public final fun getSk ()Lcom/steamstreet/dynamokt/Query$SortKey;
+	public final fun getSkName ()Ljava/lang/String;
+	public final fun getToken ()Ljava/lang/String;
+	public final fun index (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun reversed ()V
+	public final fun segment (II)V
+	public final fun setConsistent (Z)V
+	public final fun setForward (Z)V
+	public final fun setIndexName (Ljava/lang/String;)V
+	public final fun setLimit (Ljava/lang/Integer;)V
+	public final fun setLoadAll (Z)V
+	public final fun setPkName (Ljava/lang/String;)V
+	public final fun setSkName (Ljava/lang/String;)V
+	public final fun setToken (Ljava/lang/String;)V
+}
+
+public final class com/steamstreet/dynamokt/Query$SortKey {
+	public fun <init> ()V
+	public final fun between (Lkotlin/ranges/ClosedRange;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getExpression ()Ljava/lang/String;
+	public final fun getValues ()Ljava/util/HashMap;
+	public final fun greaterThan (Ljava/lang/String;)V
+	public final fun greaterThanOrEqualTo (Ljava/lang/String;)V
+	public fun hashCode ()I
+	public final fun isEqual (Ljava/lang/String;)V
+	public final fun lessThan (Ljava/lang/String;)V
+	public final fun lessThanOrEqualTo (Ljava/lang/String;)V
+	public final fun setExpression (Ljava/lang/String;)V
+	public final fun startsWith (Ljava/lang/String;)V
+}
+
+public abstract interface class com/steamstreet/dynamokt/QueryResult {
+	public abstract fun getItems ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun getPaginationToken ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/SerializationKt {
+	public static final fun asJsonElement (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Lkotlinx/serialization/json/JsonElement;
+	public static final fun getJson (Lcom/steamstreet/dynamokt/Item;)Lkotlinx/serialization/json/JsonObject;
+	public static final fun putJson (Lcom/steamstreet/dynamokt/MutableItem;Lkotlinx/serialization/json/JsonObject;)V
+	public static final fun set (Lcom/steamstreet/dynamokt/MutableItem;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)V
+	public static final fun toAttributeValue (Lkotlinx/serialization/json/JsonElement;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+}
+
+public final class com/steamstreet/dynamokt/Transaction : com/steamstreet/dynamokt/ItemUpdater, java/io/Closeable {
+	public fun close ()V
+	public fun commit (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun condition (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;)V
+	public fun delete (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun put (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun put (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun put (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun update (Lcom/steamstreet/dynamokt/Item;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun update (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

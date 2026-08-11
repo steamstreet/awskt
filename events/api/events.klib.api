@@ -1,0 +1,45 @@
+// Klib ABI Dump
+// Targets: [js]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:events>
+abstract interface com.steamstreet.events/ApplicationEventPoster { // com.steamstreet.events/ApplicationEventPoster|null[0]
+    abstract suspend fun post(kotlin.collections/Collection<com.steamstreet.events/Event>): kotlin.collections/List<kotlin/String?> // com.steamstreet.events/ApplicationEventPoster.post|post(kotlin.collections.Collection<com.steamstreet.events.Event>){}[0]
+    abstract suspend fun post(kotlin/String, kotlin/String, kotlin/String? = ...): kotlin/String? // com.steamstreet.events/ApplicationEventPoster.post|post(kotlin.String;kotlin.String;kotlin.String?){}[0]
+}
+
+abstract interface com.steamstreet.events/Event { // com.steamstreet.events/Event|null[0]
+    abstract val detail // com.steamstreet.events/Event.detail|{}detail[0]
+        abstract fun <get-detail>(): kotlin/String? // com.steamstreet.events/Event.detail.<get-detail>|<get-detail>(){}[0]
+    abstract val source // com.steamstreet.events/Event.source|{}source[0]
+        abstract fun <get-source>(): kotlin/String? // com.steamstreet.events/Event.source.<get-source>|<get-source>(){}[0]
+    abstract val type // com.steamstreet.events/Event.type|{}type[0]
+        abstract fun <get-type>(): kotlin/String // com.steamstreet.events/Event.type.<get-type>|<get-type>(){}[0]
+}
+
+final class <#A: kotlin/Any?> com.steamstreet.events/EventSchema { // com.steamstreet.events/EventSchema|null[0]
+    constructor <init>(kotlin/String, kotlinx.serialization/KSerializer<#A>, kotlin/String? = ...) // com.steamstreet.events/EventSchema.<init>|<init>(kotlin.String;kotlinx.serialization.KSerializer<1:0>;kotlin.String?){}[0]
+
+    final val serializer // com.steamstreet.events/EventSchema.serializer|{}serializer[0]
+        final fun <get-serializer>(): kotlinx.serialization/KSerializer<#A> // com.steamstreet.events/EventSchema.serializer.<get-serializer>|<get-serializer>(){}[0]
+    final val source // com.steamstreet.events/EventSchema.source|{}source[0]
+        final fun <get-source>(): kotlin/String? // com.steamstreet.events/EventSchema.source.<get-source>|<get-source>(){}[0]
+    final val type // com.steamstreet.events/EventSchema.type|{}type[0]
+        final fun <get-type>(): kotlin/String // com.steamstreet.events/EventSchema.type.<get-type>|<get-type>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.events/EventSchema.component1|component1(){}[0]
+    final fun component2(): kotlinx.serialization/KSerializer<#A> // com.steamstreet.events/EventSchema.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.events/EventSchema.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlinx.serialization/KSerializer<#A> = ..., kotlin/String? = ...): com.steamstreet.events/EventSchema<#A> // com.steamstreet.events/EventSchema.copy|copy(kotlin.String;kotlinx.serialization.KSerializer<1:0>;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.events/EventSchema.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.events/EventSchema.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.events/EventSchema.toString|toString(){}[0]
+}
+
+final val com.steamstreet.events/eventSchemaJson // com.steamstreet.events/eventSchemaJson|{}eventSchemaJson[0]
+    final fun <get-eventSchemaJson>(): kotlinx.serialization.json/Json // com.steamstreet.events/eventSchemaJson.<get-eventSchemaJson>|<get-eventSchemaJson>(){}[0]
+
+final inline fun <#A: reified kotlin/Any?> com.steamstreet.events/eventSchema(kotlin/String, kotlin/String? = ...): com.steamstreet.events/EventSchema<#A> // com.steamstreet.events/eventSchema|eventSchema(kotlin.String;kotlin.String?){0§<kotlin.Any?>}[0]

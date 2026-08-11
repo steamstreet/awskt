@@ -1,0 +1,177 @@
+public final class com/steamstreet/awskt/core/AwsConfigurationException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/steamstreet/awskt/core/AwsCredentialsNotFoundException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public abstract interface class com/steamstreet/awskt/core/AwsCredentialsProvider {
+	public abstract fun resolve (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/core/AwsEndpoint {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/ktor/http/URLProtocol;Ljava/lang/String;I)V
+	public final fun getAuthority ()Ljava/lang/String;
+	public final fun getHost ()Ljava/lang/String;
+	public final fun getPort ()I
+	public final fun getProtocol ()Lio/ktor/http/URLProtocol;
+	public final fun getUrl ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/steamstreet/awskt/core/AwsErrorParser {
+	public abstract fun parse (ILjava/util/Map;[B)Lcom/steamstreet/awskt/core/ErrorDetails;
+}
+
+public final class com/steamstreet/awskt/core/AwsHttpResponse {
+	public fun <init> (ILjava/util/Map;[B)V
+	public final fun getBody ()[B
+	public final fun getHeaders ()Ljava/util/Map;
+	public final fun getStatus ()I
+	public final fun isSuccess ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/core/AwsJsonErrorParser : com/steamstreet/awskt/core/AwsErrorParser {
+	public static final field INSTANCE Lcom/steamstreet/awskt/core/AwsJsonErrorParser;
+	public fun parse (ILjava/util/Map;[B)Lcom/steamstreet/awskt/core/ErrorDetails;
+}
+
+public final class com/steamstreet/awskt/core/AwsProtocol {
+	public static final field Companion Lcom/steamstreet/awskt/core/AwsProtocol$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/core/AwsErrorParser;)V
+	public final fun getContentType ()Ljava/lang/String;
+	public final fun getEndpointPrefix ()Ljava/lang/String;
+	public final fun getErrorParser ()Lcom/steamstreet/awskt/core/AwsErrorParser;
+	public final fun getSigningName ()Ljava/lang/String;
+	public final fun getTargetPrefix ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/core/AwsProtocol$Companion {
+	public final fun awsJson1_0 (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/core/AwsProtocol;
+	public static synthetic fun awsJson1_0$default (Lcom/steamstreet/awskt/core/AwsProtocol$Companion;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/core/AwsProtocol;
+	public final fun awsJson1_1 (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/core/AwsProtocol;
+	public static synthetic fun awsJson1_1$default (Lcom/steamstreet/awskt/core/AwsProtocol$Companion;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/core/AwsProtocol;
+	public final fun restXml (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/core/AwsProtocol;
+	public static synthetic fun restXml$default (Lcom/steamstreet/awskt/core/AwsProtocol$Companion;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/core/AwsProtocol;
+}
+
+public final class com/steamstreet/awskt/core/AwsRedirectException : com/steamstreet/awskt/core/AwsServiceException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getBucketRegion ()Ljava/lang/String;
+	public final fun getLocation ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/core/AwsServiceClient {
+	public fun <init> (Lio/ktor/client/HttpClient;Lcom/steamstreet/awskt/core/AwsCredentialsProvider;Lcom/steamstreet/awskt/core/AwsEndpoint;Ljava/lang/String;Lcom/steamstreet/awskt/core/AwsProtocol;Lcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lio/ktor/client/HttpClient;Lcom/steamstreet/awskt/core/AwsCredentialsProvider;Lcom/steamstreet/awskt/core/AwsEndpoint;Ljava/lang/String;Lcom/steamstreet/awskt/core/AwsProtocol;Lcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun callRaw (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;[BLjava/lang/String;Lcom/steamstreet/awskt/core/OperationSafety;Lcom/steamstreet/awskt/signing/PayloadHash;Lcom/steamstreet/awskt/signing/SignedBodyHeader;ZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun callRaw$default (Lcom/steamstreet/awskt/core/AwsServiceClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;[BLjava/lang/String;Lcom/steamstreet/awskt/core/OperationSafety;Lcom/steamstreet/awskt/signing/PayloadHash;Lcom/steamstreet/awskt/signing/SignedBodyHeader;ZZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public class com/steamstreet/awskt/core/AwsServiceException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;[B)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;[BILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCode ()Ljava/lang/String;
+	public final fun getExtendedRequestId ()Ljava/lang/String;
+	public final fun getRawErrorBody ()[B
+	public final fun getRequestId ()Ljava/lang/String;
+	public final fun getStatusCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/core/CachedCredentialsProvider : com/steamstreet/awskt/core/AwsCredentialsProvider {
+	public synthetic fun <init> (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;JJLkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;JJLkotlin/jvm/functions/Function0;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun resolve (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/core/CredentialsKt {
+	public static final fun defaultCredentialsProvider ()Lcom/steamstreet/awskt/core/AwsCredentialsProvider;
+}
+
+public final class com/steamstreet/awskt/core/CredentialsProviderChain : com/steamstreet/awskt/core/AwsCredentialsProvider {
+	public fun <init> (Ljava/util/List;)V
+	public fun <init> ([Lcom/steamstreet/awskt/core/AwsCredentialsProvider;)V
+	public fun resolve (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/core/EndpointsKt {
+	public static final fun resolveEndpoint (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lcom/steamstreet/awskt/core/AwsEndpoint;
+	public static synthetic fun resolveEndpoint$default (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/steamstreet/awskt/core/AwsEndpoint;
+	public static final fun resolveRegion (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/lang/String;
+	public static synthetic fun resolveRegion$default (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/core/EnvironmentCredentialsProvider : com/steamstreet/awskt/core/AwsCredentialsProvider {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun resolve (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/core/ErrorDetails {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getCode ()Ljava/lang/String;
+	public final fun getMessage ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/core/ErrorsKt {
+	public static final fun transactionCancellationReasons ([B)Ljava/util/List;
+}
+
+public final class com/steamstreet/awskt/core/HttpClient_jvmKt {
+	public static final fun awsHttpClient (Ljava/lang/String;)Lio/ktor/client/HttpClient;
+	public static synthetic fun awsHttpClient$default (Ljava/lang/String;ILjava/lang/Object;)Lio/ktor/client/HttpClient;
+}
+
+public final class com/steamstreet/awskt/core/OperationSafety : java/lang/Enum {
+	public static final field IDEMPOTENT Lcom/steamstreet/awskt/core/OperationSafety;
+	public static final field NOT_IDEMPOTENT Lcom/steamstreet/awskt/core/OperationSafety;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/core/OperationSafety;
+	public static fun values ()[Lcom/steamstreet/awskt/core/OperationSafety;
+}
+
+public final class com/steamstreet/awskt/core/RestXmlErrorParser : com/steamstreet/awskt/core/AwsErrorParser {
+	public static final field INSTANCE Lcom/steamstreet/awskt/core/RestXmlErrorParser;
+	public fun parse (ILjava/util/Map;[B)Lcom/steamstreet/awskt/core/ErrorDetails;
+}
+
+public final class com/steamstreet/awskt/core/RetryConfig {
+	public synthetic fun <init> (IJJJJZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (IJJJJZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getMaxAttempts ()I
+	public final fun getMaxBackoffMillis ()J
+	public final fun getMaxTotalRetryDuration-UwyO8pc ()J
+	public final fun getRetryAmbiguousWrites ()Z
+	public final fun getThrottlingBaseDelayMillis ()J
+	public final fun getTransientBaseDelayMillis ()J
+}
+
+public final class com/steamstreet/awskt/core/RetryErrorType : java/lang/Enum {
+	public static final field THROTTLING Lcom/steamstreet/awskt/core/RetryErrorType;
+	public static final field TRANSIENT Lcom/steamstreet/awskt/core/RetryErrorType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/core/RetryErrorType;
+	public static fun values ()[Lcom/steamstreet/awskt/core/RetryErrorType;
+}
+
+public final class com/steamstreet/awskt/core/StaticCredentialsProvider : com/steamstreet/awskt/core/AwsCredentialsProvider {
+	public fun <init> (Lcom/steamstreet/awskt/signing/AwsCredentials;)V
+	public fun resolve (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/core/TypedCallsKt {
+	public static final fun callJson (Lcom/steamstreet/awskt/core/AwsServiceClient;Ljava/lang/String;Ljava/lang/Object;Lkotlinx/serialization/SerializationStrategy;Lkotlinx/serialization/DeserializationStrategy;Lkotlinx/serialization/json/Json;Lcom/steamstreet/awskt/core/OperationSafety;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun callJson$default (Lcom/steamstreet/awskt/core/AwsServiceClient;Ljava/lang/String;Ljava/lang/Object;Lkotlinx/serialization/SerializationStrategy;Lkotlinx/serialization/DeserializationStrategy;Lkotlinx/serialization/json/Json;Lcom/steamstreet/awskt/core/OperationSafety;Ljava/util/List;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun getAwsJson ()Lkotlinx/serialization/json/Json;
+}
+

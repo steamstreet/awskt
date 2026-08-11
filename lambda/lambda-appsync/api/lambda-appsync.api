@@ -1,0 +1,19 @@
+public final class com/steamstreet/aws/appsync/AppSyncFieldHandler {
+	public fun <init> (Ljava/lang/String;Lcom/steamstreet/aws/appsync/AppSyncTypeHandler;)V
+	public final fun getTypeHandler ()Lcom/steamstreet/aws/appsync/AppSyncTypeHandler;
+}
+
+public abstract interface class com/steamstreet/aws/appsync/AppSyncTypeHandler {
+	public abstract fun getContext ()Lcom/steamstreet/aws/appsync/AppSyncContext;
+	public abstract fun getOutput ()Ljava/io/OutputStream;
+	public abstract fun write (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/aws/appsync/LambdaAppSyncKt {
+	public static final fun appSync (Ljava/io/InputStream;Ljava/io/OutputStream;Lcom/amazonaws/services/lambda/runtime/Context;Lkotlin/jvm/functions/Function2;)V
+	public static final fun field (Lcom/steamstreet/aws/appsync/AppSyncFieldHandler;Ljava/lang/String;Lkotlinx/serialization/KSerializer;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun field (Lcom/steamstreet/aws/appsync/AppSyncFieldHandler;Ljava/lang/String;Lkotlinx/serialization/KSerializer;Lkotlinx/serialization/KSerializer;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun type (Lcom/steamstreet/aws/appsync/AppSyncTypeHandler;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun typeAndField (Lcom/steamstreet/aws/appsync/AppSyncTypeHandler;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/KSerializer;Lkotlinx/serialization/KSerializer;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

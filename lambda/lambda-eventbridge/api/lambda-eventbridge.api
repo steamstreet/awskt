@@ -1,0 +1,112 @@
+public final class com/steamstreet/aws/lambda/eventbridge/DefaultEventBridgeHandlerConfig : com/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig {
+	public fun <init> (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeEvent;)V
+	public fun allEvents ()Ljava/util/List;
+	public fun eventsOfType (Ljava/lang/String;)Ljava/util/List;
+	public final fun getError ()Ljava/lang/Throwable;
+	public fun getLogEventProcessing ()Z
+	public fun invoke (Lcom/steamstreet/events/EventSchema;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun setError (Ljava/lang/Throwable;)V
+	public fun setLogEventProcessing (Z)V
+}
+
+public abstract interface class com/steamstreet/aws/lambda/eventbridge/Event {
+	public abstract fun failed (Ljava/lang/Throwable;)V
+	public abstract fun getDetail ()Lkotlinx/serialization/json/JsonObject;
+	public abstract fun getId ()Ljava/lang/String;
+	public abstract fun getResources ()Ljava/util/List;
+	public abstract fun getSource ()Ljava/lang/String;
+	public abstract fun getSourceAccount ()Ljava/lang/String;
+	public abstract fun getSourceEvent ()Ljava/lang/Object;
+	public abstract fun getTime ()Lkotlin/time/Instant;
+	public abstract fun getType ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/aws/lambda/eventbridge/EventBridgeEvent {
+	public static final field Companion Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeEvent$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/time/Instant;Ljava/lang/String;Ljava/util/List;Lkotlinx/serialization/json/JsonObject;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/time/Instant;Ljava/lang/String;Ljava/util/List;Lkotlinx/serialization/json/JsonObject;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Lkotlin/time/Instant;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/util/List;
+	public final fun component8 ()Lkotlinx/serialization/json/JsonObject;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/time/Instant;Ljava/lang/String;Ljava/util/List;Lkotlinx/serialization/json/JsonObject;Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeEvent;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeEvent;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/time/Instant;Ljava/lang/String;Ljava/util/List;Lkotlinx/serialization/json/JsonObject;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAccount ()Ljava/lang/String;
+	public final fun getDetail ()Lkotlinx/serialization/json/JsonObject;
+	public final fun getDetailType ()Ljava/lang/String;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getRegion ()Ljava/lang/String;
+	public final fun getReplayName ()Ljava/lang/String;
+	public final fun getResources ()Ljava/util/List;
+	public final fun getSource ()Ljava/lang/String;
+	public final fun getTime ()Lkotlin/time/Instant;
+	public final fun getVersion ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/lambda/eventbridge/EventBridgeEvent$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeEvent$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeEvent;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeEvent;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/eventbridge/EventBridgeEvent$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public abstract interface class com/steamstreet/aws/lambda/eventbridge/EventBridgeFunction {
+	public fun execute (Ljava/io/InputStream;Ljava/io/OutputStream;Lcom/amazonaws/services/lambda/runtime/Context;)V
+	public fun getBatchRetries ()Z
+	public fun getTracePerformance ()Z
+	public abstract fun onEvent (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/aws/lambda/eventbridge/EventBridgeFunction$DefaultImpls {
+	public static fun execute (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Ljava/io/InputStream;Ljava/io/OutputStream;Lcom/amazonaws/services/lambda/runtime/Context;)V
+	public static fun getBatchRetries (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;)Z
+	public static fun getTracePerformance (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;)Z
+}
+
+public abstract interface class com/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig {
+	public abstract fun allEvents ()Ljava/util/List;
+	public abstract fun eventsOfType (Ljava/lang/String;)Ljava/util/List;
+	public abstract fun getLogEventProcessing ()Z
+	public fun invoke (Lcom/steamstreet/events/EventSchema;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun setLogEventProcessing (Z)V
+}
+
+public final class com/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig$DefaultImpls {
+	public static fun invoke (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Lcom/steamstreet/events/EventSchema;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/aws/lambda/eventbridge/EventbridgeKt {
+	public static final fun any (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun any (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun eventBridge (Ljava/io/InputStream;Lcom/amazonaws/services/lambda/runtime/Context;Ljava/io/OutputStream;ZZZLkotlin/jvm/functions/Function2;)V
+	public static synthetic fun eventBridge$default (Ljava/io/InputStream;Lcom/amazonaws/services/lambda/runtime/Context;Ljava/io/OutputStream;ZZZLkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
+	public static final fun on (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Lcom/steamstreet/events/EventSchema;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun processEvent (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lcom/steamstreet/events/EventSchema;Ljava/lang/Object;Ljava/lang/String;)V
+	public static final fun processEvent (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Ljava/lang/String;)V
+	public static synthetic fun processEvent$default (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lcom/steamstreet/events/EventSchema;Ljava/lang/Object;Ljava/lang/String;ILjava/lang/Object;)V
+	public static final fun string (Lkotlinx/serialization/json/JsonElement;)Ljava/lang/String;
+	public static final fun string (Lkotlinx/serialization/json/JsonElement;Ljava/lang/String;)Ljava/lang/String;
+	public static final fun strings (Lkotlinx/serialization/json/JsonElement;)Ljava/util/List;
+	public static final fun type (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Lcom/steamstreet/events/EventSchema;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun type (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Lcom/steamstreet/events/EventSchema;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun type (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun typeWithContext (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Lcom/steamstreet/events/EventSchema;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

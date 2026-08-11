@@ -1,0 +1,163 @@
+public final class com/steamstreet/aws/appsync/AppSyncContext {
+	public static final field Companion Lcom/steamstreet/aws/appsync/AppSyncContext$Companion;
+	public fun <init> (Lkotlinx/serialization/json/JsonObject;Lkotlinx/serialization/json/JsonObject;Lcom/steamstreet/aws/appsync/AppSyncIdentity;Lcom/steamstreet/aws/appsync/AppSyncInfo;Lcom/steamstreet/aws/appsync/AppSyncRequest;Lkotlinx/serialization/json/JsonObject;)V
+	public synthetic fun <init> (Lkotlinx/serialization/json/JsonObject;Lkotlinx/serialization/json/JsonObject;Lcom/steamstreet/aws/appsync/AppSyncIdentity;Lcom/steamstreet/aws/appsync/AppSyncInfo;Lcom/steamstreet/aws/appsync/AppSyncRequest;Lkotlinx/serialization/json/JsonObject;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lkotlinx/serialization/json/JsonObject;
+	public final fun component2 ()Lkotlinx/serialization/json/JsonObject;
+	public final fun component3 ()Lcom/steamstreet/aws/appsync/AppSyncIdentity;
+	public final fun component4 ()Lcom/steamstreet/aws/appsync/AppSyncInfo;
+	public final fun component5 ()Lcom/steamstreet/aws/appsync/AppSyncRequest;
+	public final fun component6 ()Lkotlinx/serialization/json/JsonObject;
+	public final fun copy (Lkotlinx/serialization/json/JsonObject;Lkotlinx/serialization/json/JsonObject;Lcom/steamstreet/aws/appsync/AppSyncIdentity;Lcom/steamstreet/aws/appsync/AppSyncInfo;Lcom/steamstreet/aws/appsync/AppSyncRequest;Lkotlinx/serialization/json/JsonObject;)Lcom/steamstreet/aws/appsync/AppSyncContext;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/appsync/AppSyncContext;Lkotlinx/serialization/json/JsonObject;Lkotlinx/serialization/json/JsonObject;Lcom/steamstreet/aws/appsync/AppSyncIdentity;Lcom/steamstreet/aws/appsync/AppSyncInfo;Lcom/steamstreet/aws/appsync/AppSyncRequest;Lkotlinx/serialization/json/JsonObject;ILjava/lang/Object;)Lcom/steamstreet/aws/appsync/AppSyncContext;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArguments ()Lkotlinx/serialization/json/JsonObject;
+	public final fun getIdentity ()Lcom/steamstreet/aws/appsync/AppSyncIdentity;
+	public final fun getInfo ()Lcom/steamstreet/aws/appsync/AppSyncInfo;
+	public final fun getRequest ()Lcom/steamstreet/aws/appsync/AppSyncRequest;
+	public final fun getSource ()Lkotlinx/serialization/json/JsonObject;
+	public final fun getStash ()Lkotlinx/serialization/json/JsonObject;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/appsync/AppSyncContext$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/appsync/AppSyncContext$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/appsync/AppSyncContext;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/appsync/AppSyncContext;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/appsync/AppSyncContext$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/appsync/AppSyncIdentity {
+	public static final field Companion Lcom/steamstreet/aws/appsync/AppSyncIdentity$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;Ljava/lang/String;Ljava/util/List;Lkotlinx/serialization/json/JsonObject;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;Ljava/lang/String;Ljava/util/List;Lkotlinx/serialization/json/JsonObject;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/lang/String;
+	public final fun component11 ()Lkotlinx/serialization/json/JsonObject;
+	public final fun component12 ()Ljava/lang/String;
+	public final fun component13 ()Ljava/util/List;
+	public final fun component14 ()Lkotlinx/serialization/json/JsonObject;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ljava/util/List;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;Ljava/lang/String;Ljava/util/List;Lkotlinx/serialization/json/JsonObject;)Lcom/steamstreet/aws/appsync/AppSyncIdentity;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/appsync/AppSyncIdentity;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;Ljava/lang/String;Ljava/util/List;Lkotlinx/serialization/json/JsonObject;ILjava/lang/Object;)Lcom/steamstreet/aws/appsync/AppSyncIdentity;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAccountId ()Ljava/lang/String;
+	public final fun getClaims ()Lkotlinx/serialization/json/JsonObject;
+	public final fun getCognitoIdentityAuthProvider ()Ljava/lang/String;
+	public final fun getCognitoIdentityAuthType ()Ljava/lang/String;
+	public final fun getCognitoIdentityId ()Ljava/lang/String;
+	public final fun getCognitoIdentityPoolId ()Ljava/lang/String;
+	public final fun getDefaultAuthStrategy ()Ljava/lang/String;
+	public final fun getGroups ()Ljava/util/List;
+	public final fun getIssuer ()Ljava/lang/String;
+	public final fun getResolverContext ()Lkotlinx/serialization/json/JsonObject;
+	public final fun getSourceIp ()Ljava/util/List;
+	public final fun getSub ()Ljava/lang/String;
+	public final fun getUserArn ()Ljava/lang/String;
+	public final fun getUsername ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/appsync/AppSyncIdentity$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/appsync/AppSyncIdentity$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/appsync/AppSyncIdentity;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/appsync/AppSyncIdentity;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/appsync/AppSyncIdentity$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/appsync/AppSyncInfo {
+	public static final field Companion Lcom/steamstreet/aws/appsync/AppSyncInfo$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;Ljava/util/List;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;Ljava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lkotlinx/serialization/json/JsonObject;
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;Ljava/util/List;Ljava/lang/String;)Lcom/steamstreet/aws/appsync/AppSyncInfo;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/appsync/AppSyncInfo;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/aws/appsync/AppSyncInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFieldName ()Ljava/lang/String;
+	public final fun getParentTypeName ()Ljava/lang/String;
+	public final fun getSelectionSetGraphQL ()Ljava/lang/String;
+	public final fun getSelectionSetList ()Ljava/util/List;
+	public final fun getVariables ()Lkotlinx/serialization/json/JsonObject;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/appsync/AppSyncInfo$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/appsync/AppSyncInfo$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/appsync/AppSyncInfo;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/appsync/AppSyncInfo;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/appsync/AppSyncInfo$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/appsync/AppSyncKt {
+	public static final fun appSyncContext (Ljava/io/InputStream;)Lcom/steamstreet/aws/appsync/AppSyncContext;
+	public static final fun appSyncContext (Ljava/lang/String;)Lcom/steamstreet/aws/appsync/AppSyncContext;
+}
+
+public final class com/steamstreet/aws/appsync/AppSyncRequest {
+	public static final field Companion Lcom/steamstreet/aws/appsync/AppSyncRequest$Companion;
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/serialization/json/JsonObject;)V
+	public synthetic fun <init> (Lkotlinx/serialization/json/JsonObject;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lkotlinx/serialization/json/JsonObject;
+	public final fun copy (Lkotlinx/serialization/json/JsonObject;)Lcom/steamstreet/aws/appsync/AppSyncRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/appsync/AppSyncRequest;Lkotlinx/serialization/json/JsonObject;ILjava/lang/Object;)Lcom/steamstreet/aws/appsync/AppSyncRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHeaders ()Lkotlinx/serialization/json/JsonObject;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/appsync/AppSyncRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/appsync/AppSyncRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/appsync/AppSyncRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/appsync/AppSyncRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/appsync/AppSyncRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+

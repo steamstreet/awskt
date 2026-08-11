@@ -1,0 +1,20 @@
+public final class com/steamstreet/awskt/dynamodb/sdk/SdkBackedDynamoDb : com/steamstreet/awskt/dynamodb/DynamoDb {
+	public fun <init> (Laws/sdk/kotlin/services/dynamodb/DynamoDbClient;Lcom/steamstreet/awskt/core/AwsServiceClient;Lcom/steamstreet/awskt/core/RetryConfig;)V
+	public synthetic fun <init> (Laws/sdk/kotlin/services/dynamodb/DynamoDbClient;Lcom/steamstreet/awskt/core/AwsServiceClient;Lcom/steamstreet/awskt/core/RetryConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun batchGetItem (Lcom/steamstreet/awskt/dynamodb/BatchGetItemRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun batchWriteItem (Lcom/steamstreet/awskt/dynamodb/BatchWriteItemRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun close ()V
+	public fun createTable (Lcom/steamstreet/awskt/dynamodb/CreateTableRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteItem (Lcom/steamstreet/awskt/dynamodb/DeleteItemRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteTable (Lcom/steamstreet/awskt/dynamodb/DeleteTableRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun describeTable (Lcom/steamstreet/awskt/dynamodb/DescribeTableRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getClient ()Lcom/steamstreet/awskt/core/AwsServiceClient;
+	public fun getItem (Lcom/steamstreet/awskt/dynamodb/GetItemRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putItem (Lcom/steamstreet/awskt/dynamodb/PutItemRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun query (Lcom/steamstreet/awskt/dynamodb/QueryRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun scan (Lcom/steamstreet/awskt/dynamodb/ScanRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun transactGetItems (Lcom/steamstreet/awskt/dynamodb/TransactGetItemsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun transactWriteItems (Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateItem (Lcom/steamstreet/awskt/dynamodb/UpdateItemRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

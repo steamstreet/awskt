@@ -1,0 +1,7 @@
+public final class com/steamstreet/aws/lambda/logging/AwsLambdaAppender : ch/qos/logback/core/UnsynchronizedAppenderBase {
+	public fun <init> ()V
+	public synthetic fun append (Ljava/lang/Object;)V
+	public final fun getEncoder ()Lch/qos/logback/core/encoder/Encoder;
+	public final fun setEncoder (Lch/qos/logback/core/encoder/Encoder;)V
+}
+

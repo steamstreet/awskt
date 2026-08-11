@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+
 plugins {
     kotlin("jvm")
     id("kotlinx-serialization")
@@ -15,6 +17,19 @@ kotlin {
     }
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
+    }
+
+    /**
+     * ABI dumps — see the fuller note in the multiplatform conventions. `updateLegacyAbi`
+     * regenerates, `checkLegacyAbi` verifies and is wired into `check`.
+     *
+     * This is what makes the 3.0 break reviewable: the `dynamo` / `dynamokt` / `dynamokt-exposed`
+     * dumps taken *before* M5a are the baseline the migration diff is read against, and that
+     * artifact does not exist today.
+     */
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled.set(true)
     }
 }
 

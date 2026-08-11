@@ -1,0 +1,101 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, js, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:logging>
+abstract interface com.steamstreet.awskt.logging/LogPublisher { // com.steamstreet.awskt.logging/LogPublisher|null[0]
+    abstract suspend fun publish(com.steamstreet.awskt.logging/Log.Level, kotlin/String?, com.steamstreet.awskt.logging/Log.LoggingContext) // com.steamstreet.awskt.logging/LogPublisher.publish|publish(com.steamstreet.awskt.logging.Log.Level;kotlin.String?;com.steamstreet.awskt.logging.Log.LoggingContext){}[0]
+}
+
+final class com.steamstreet.awskt.logging/DefaultLogPublisher : com.steamstreet.awskt.logging/LogPublisher { // com.steamstreet.awskt.logging/DefaultLogPublisher|null[0]
+    constructor <init>() // com.steamstreet.awskt.logging/DefaultLogPublisher.<init>|<init>(){}[0]
+
+    final suspend fun publish(com.steamstreet.awskt.logging/Log.Level, kotlin/String?, com.steamstreet.awskt.logging/Log.LoggingContext) // com.steamstreet.awskt.logging/DefaultLogPublisher.publish|publish(com.steamstreet.awskt.logging.Log.Level;kotlin.String?;com.steamstreet.awskt.logging.Log.LoggingContext){}[0]
+}
+
+final class com.steamstreet.awskt.logging/HttpLogPublisher : com.steamstreet.awskt.logging/LogPublisher { // com.steamstreet.awskt.logging/HttpLogPublisher|null[0]
+    constructor <init>(kotlin/String, com.steamstreet.awskt.logging/Log.Level = ..., com.steamstreet.awskt.logging/LogPublisher = ..., io.ktor.client/HttpClient = ...) // com.steamstreet.awskt.logging/HttpLogPublisher.<init>|<init>(kotlin.String;com.steamstreet.awskt.logging.Log.Level;com.steamstreet.awskt.logging.LogPublisher;io.ktor.client.HttpClient){}[0]
+
+    final var alsoPublishToBackupPublisher // com.steamstreet.awskt.logging/HttpLogPublisher.alsoPublishToBackupPublisher|{}alsoPublishToBackupPublisher[0]
+        final fun <get-alsoPublishToBackupPublisher>(): kotlin/Boolean // com.steamstreet.awskt.logging/HttpLogPublisher.alsoPublishToBackupPublisher.<get-alsoPublishToBackupPublisher>|<get-alsoPublishToBackupPublisher>(){}[0]
+        final fun <set-alsoPublishToBackupPublisher>(kotlin/Boolean) // com.steamstreet.awskt.logging/HttpLogPublisher.alsoPublishToBackupPublisher.<set-alsoPublishToBackupPublisher>|<set-alsoPublishToBackupPublisher>(kotlin.Boolean){}[0]
+
+    final fun close() // com.steamstreet.awskt.logging/HttpLogPublisher.close|close(){}[0]
+    final suspend fun publish(com.steamstreet.awskt.logging/Log.Level, kotlin/String?, com.steamstreet.awskt.logging/Log.LoggingContext) // com.steamstreet.awskt.logging/HttpLogPublisher.publish|publish(com.steamstreet.awskt.logging.Log.Level;kotlin.String?;com.steamstreet.awskt.logging.Log.LoggingContext){}[0]
+}
+
+final class com.steamstreet.awskt.logging/Log { // com.steamstreet.awskt.logging/Log|null[0]
+    constructor <init>(com.steamstreet.awskt.logging/LogPublisher) // com.steamstreet.awskt.logging/Log.<init>|<init>(com.steamstreet.awskt.logging.LogPublisher){}[0]
+
+    final var publisher // com.steamstreet.awskt.logging/Log.publisher|{}publisher[0]
+        final fun <get-publisher>(): com.steamstreet.awskt.logging/LogPublisher // com.steamstreet.awskt.logging/Log.publisher.<get-publisher>|<get-publisher>(){}[0]
+        final fun <set-publisher>(com.steamstreet.awskt.logging/LogPublisher) // com.steamstreet.awskt.logging/Log.publisher.<set-publisher>|<set-publisher>(com.steamstreet.awskt.logging.LogPublisher){}[0]
+
+    final fun info(kotlinx.coroutines/CoroutineScope, kotlin/String, kotlin/Function1<com.steamstreet.awskt.logging/Log.LoggingContextBuilder, kotlin/Unit> = ...) // com.steamstreet.awskt.logging/Log.info|info(kotlinx.coroutines.CoroutineScope;kotlin.String;kotlin.Function1<com.steamstreet.awskt.logging.Log.LoggingContextBuilder,kotlin.Unit>){}[0]
+    final suspend fun <#A1: kotlin/Any?> ctx(kotlin/Function1<com.steamstreet.awskt.logging/Log.LoggingContextBuilder, kotlin/Unit>, kotlin.coroutines/SuspendFunction1<kotlinx.coroutines/CoroutineScope, #A1>): #A1 // com.steamstreet.awskt.logging/Log.ctx|ctx(kotlin.Function1<com.steamstreet.awskt.logging.Log.LoggingContextBuilder,kotlin.Unit>;kotlin.coroutines.SuspendFunction1<kotlinx.coroutines.CoroutineScope,0:0>){0§<kotlin.Any?>}[0]
+    final suspend fun ctx(): kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement> // com.steamstreet.awskt.logging/Log.ctx|ctx(){}[0]
+    final suspend fun error(kotlin/String, kotlin/Throwable? = ..., kotlin/Function1<com.steamstreet.awskt.logging/Log.LoggingContextBuilder, kotlin/Unit> = ...) // com.steamstreet.awskt.logging/Log.error|error(kotlin.String;kotlin.Throwable?;kotlin.Function1<com.steamstreet.awskt.logging.Log.LoggingContextBuilder,kotlin.Unit>){}[0]
+    final suspend fun event(kotlin/Function1<com.steamstreet.awskt.logging/Log.LoggingContextBuilder, kotlin/Unit> = ...) // com.steamstreet.awskt.logging/Log.event|event(kotlin.Function1<com.steamstreet.awskt.logging.Log.LoggingContextBuilder,kotlin.Unit>){}[0]
+    final suspend fun info(kotlin/String, kotlin/Function1<com.steamstreet.awskt.logging/Log.LoggingContextBuilder, kotlin/Unit> = ...) // com.steamstreet.awskt.logging/Log.info|info(kotlin.String;kotlin.Function1<com.steamstreet.awskt.logging.Log.LoggingContextBuilder,kotlin.Unit>){}[0]
+    final suspend fun log(com.steamstreet.awskt.logging/Log.Level, kotlin/String?, kotlin/Throwable? = ...) // com.steamstreet.awskt.logging/Log.log|log(com.steamstreet.awskt.logging.Log.Level;kotlin.String?;kotlin.Throwable?){}[0]
+    final suspend fun warning(kotlin/String, kotlin/Throwable? = ..., kotlin/Function1<com.steamstreet.awskt.logging/Log.LoggingContextBuilder, kotlin/Unit> = ...) // com.steamstreet.awskt.logging/Log.warning|warning(kotlin.String;kotlin.Throwable?;kotlin.Function1<com.steamstreet.awskt.logging.Log.LoggingContextBuilder,kotlin.Unit>){}[0]
+    final suspend inline fun <#A1: reified kotlin/Any?> data(kotlin/String, #A1, com.steamstreet.awskt.logging/Log.Level = ..., kotlin/String? = ...) // com.steamstreet.awskt.logging/Log.data|data(kotlin.String;0:0;com.steamstreet.awskt.logging.Log.Level;kotlin.String?){0§<kotlin.Any?>}[0]
+    final suspend inline fun <#A1: reified kotlin/Any?> data(kotlin/String, kotlinx.serialization/KSerializer<#A1>, #A1, com.steamstreet.awskt.logging/Log.Level = ..., kotlin/String? = ...) // com.steamstreet.awskt.logging/Log.data|data(kotlin.String;kotlinx.serialization.KSerializer<0:0>;0:0;com.steamstreet.awskt.logging.Log.Level;kotlin.String?){0§<kotlin.Any?>}[0]
+
+    final enum class Level : kotlin/Enum<com.steamstreet.awskt.logging/Log.Level> { // com.steamstreet.awskt.logging/Log.Level|null[0]
+        enum entry ERROR // com.steamstreet.awskt.logging/Log.Level.ERROR|null[0]
+        enum entry EVENT // com.steamstreet.awskt.logging/Log.Level.EVENT|null[0]
+        enum entry INFO // com.steamstreet.awskt.logging/Log.Level.INFO|null[0]
+        enum entry WARN // com.steamstreet.awskt.logging/Log.Level.WARN|null[0]
+
+        final val entries // com.steamstreet.awskt.logging/Log.Level.entries|#static{}entries[0]
+            final fun <get-entries>(): kotlin.enums/EnumEntries<com.steamstreet.awskt.logging/Log.Level> // com.steamstreet.awskt.logging/Log.Level.entries.<get-entries>|<get-entries>#static(){}[0]
+        final val priority // com.steamstreet.awskt.logging/Log.Level.priority|{}priority[0]
+            final fun <get-priority>(): kotlin/Int // com.steamstreet.awskt.logging/Log.Level.priority.<get-priority>|<get-priority>(){}[0]
+
+        final fun valueOf(kotlin/String): com.steamstreet.awskt.logging/Log.Level // com.steamstreet.awskt.logging/Log.Level.valueOf|valueOf#static(kotlin.String){}[0]
+        final fun values(): kotlin/Array<com.steamstreet.awskt.logging/Log.Level> // com.steamstreet.awskt.logging/Log.Level.values|values#static(){}[0]
+    }
+
+    abstract interface LoggingContextBuilder { // com.steamstreet.awskt.logging/Log.LoggingContextBuilder|null[0]
+        abstract fun put(kotlin/String, kotlinx.serialization.json/JsonElement?) // com.steamstreet.awskt.logging/Log.LoggingContextBuilder.put|put(kotlin.String;kotlinx.serialization.json.JsonElement?){}[0]
+        abstract fun put(kotlin/Throwable?) // com.steamstreet.awskt.logging/Log.LoggingContextBuilder.put|put(kotlin.Throwable?){}[0]
+        abstract fun put(kotlinx.serialization.json/JsonObject) // com.steamstreet.awskt.logging/Log.LoggingContextBuilder.put|put(kotlinx.serialization.json.JsonObject){}[0]
+    }
+
+    final class LoggingContext : kotlin.coroutines/AbstractCoroutineContextElement { // com.steamstreet.awskt.logging/Log.LoggingContext|null[0]
+        constructor <init>(kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement?> = ..., kotlin.collections/List<kotlin/Throwable> = ...) // com.steamstreet.awskt.logging/Log.LoggingContext.<init>|<init>(kotlin.collections.Map<kotlin.String,kotlinx.serialization.json.JsonElement?>;kotlin.collections.List<kotlin.Throwable>){}[0]
+
+        final val contextMap // com.steamstreet.awskt.logging/Log.LoggingContext.contextMap|{}contextMap[0]
+            final fun <get-contextMap>(): kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement?> // com.steamstreet.awskt.logging/Log.LoggingContext.contextMap.<get-contextMap>|<get-contextMap>(){}[0]
+        final val exceptions // com.steamstreet.awskt.logging/Log.LoggingContext.exceptions|{}exceptions[0]
+            final fun <get-exceptions>(): kotlin.collections/List<kotlin/Throwable> // com.steamstreet.awskt.logging/Log.LoggingContext.exceptions.<get-exceptions>|<get-exceptions>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.logging/Log.LoggingContext.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.logging/Log.LoggingContext.hashCode|hashCode(){}[0]
+        final fun plus(com.steamstreet.awskt.logging/Log.LoggingContext): com.steamstreet.awskt.logging/Log.LoggingContext // com.steamstreet.awskt.logging/Log.LoggingContext.plus|plus(com.steamstreet.awskt.logging.Log.LoggingContext){}[0]
+        final fun plus(kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement?>): com.steamstreet.awskt.logging/Log.LoggingContext // com.steamstreet.awskt.logging/Log.LoggingContext.plus|plus(kotlin.collections.Map<kotlin.String,kotlinx.serialization.json.JsonElement?>){}[0]
+
+        final object Key : kotlin.coroutines/CoroutineContext.Key<com.steamstreet.awskt.logging/Log.LoggingContext> // com.steamstreet.awskt.logging/Log.LoggingContext.Key|null[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.logging/Log.Companion|null[0]
+        final val encoder // com.steamstreet.awskt.logging/Log.Companion.encoder|{}encoder[0]
+            final fun <get-encoder>(): kotlinx.serialization.json/Json // com.steamstreet.awskt.logging/Log.Companion.encoder.<get-encoder>|<get-encoder>(){}[0]
+    }
+}
+
+final var com.steamstreet.awskt.logging/log // com.steamstreet.awskt.logging/log|{}log[0]
+    final fun <get-log>(): com.steamstreet.awskt.logging/Log // com.steamstreet.awskt.logging/log.<get-log>|<get-log>(){}[0]
+    final fun <set-log>(com.steamstreet.awskt.logging/Log) // com.steamstreet.awskt.logging/log.<set-log>|<set-log>(com.steamstreet.awskt.logging.Log){}[0]
+
+final fun (context(com.steamstreet.awskt.logging/Log.LoggingContextBuilder), kotlin/String).com.steamstreet.awskt.logging/is(kotlin/Boolean?) // com.steamstreet.awskt.logging/is|is(com.steamstreet.awskt.logging.Log.LoggingContextBuilder)@kotlin.String(kotlin.Boolean?){}[0]
+final fun (context(com.steamstreet.awskt.logging/Log.LoggingContextBuilder), kotlin/String).com.steamstreet.awskt.logging/is(kotlin/Number?) // com.steamstreet.awskt.logging/is|is(com.steamstreet.awskt.logging.Log.LoggingContextBuilder)@kotlin.String(kotlin.Number?){}[0]
+final fun (context(com.steamstreet.awskt.logging/Log.LoggingContextBuilder), kotlin/String).com.steamstreet.awskt.logging/is(kotlin/String?) // com.steamstreet.awskt.logging/is|is(com.steamstreet.awskt.logging.Log.LoggingContextBuilder)@kotlin.String(kotlin.String?){}[0]
+final fun <#A: kotlin/Any?> (com.steamstreet.awskt.logging/Log.LoggingContextBuilder).com.steamstreet.awskt.logging/put(kotlin/String, kotlinx.serialization/KSerializer<#A>, #A?) // com.steamstreet.awskt.logging/put|put@com.steamstreet.awskt.logging.Log.LoggingContextBuilder(kotlin.String;kotlinx.serialization.KSerializer<0:0>;0:0?){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (com.steamstreet.awskt.logging/Log.LoggingContextBuilder).com.steamstreet.awskt.logging/put(kotlin/String, #A?) // com.steamstreet.awskt.logging/put|put@com.steamstreet.awskt.logging.Log.LoggingContextBuilder(kotlin.String;0:0?){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (context(com.steamstreet.awskt.logging/Log.LoggingContextBuilder), kotlin/String).com.steamstreet.awskt.logging/is(#A) // com.steamstreet.awskt.logging/is|is(com.steamstreet.awskt.logging.Log.LoggingContextBuilder)@kotlin.String(0:0){0§<kotlin.Any?>}[0]
+final suspend fun (com.steamstreet.awskt.logging/Log).com.steamstreet.awskt.logging/info(kotlin/String, kotlin/Array<out kotlin/Pair<kotlin/String, kotlin/Any?>>...) // com.steamstreet.awskt.logging/info|info@com.steamstreet.awskt.logging.Log(kotlin.String;kotlin.Array<out|kotlin.Pair<kotlin.String,kotlin.Any?>>...){}[0]

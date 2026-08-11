@@ -1,0 +1,8 @@
+public final class com/steamstreet/serialization/JsonKt {
+	public static final fun comprehensiveDiff (Lkotlinx/serialization/json/JsonObject;Lkotlinx/serialization/json/JsonObject;)Lkotlinx/serialization/json/JsonObject;
+	public static final fun copy (Lkotlinx/serialization/json/JsonObject;Lkotlin/jvm/functions/Function1;)Lkotlinx/serialization/json/JsonObject;
+	public static final fun copyOrBuild (Lkotlinx/serialization/json/JsonObject;Lkotlin/jvm/functions/Function1;)Lkotlinx/serialization/json/JsonObject;
+	public static final fun deepEquals (Lkotlinx/serialization/json/JsonObject;Lkotlinx/serialization/json/JsonObject;)Z
+	public static final fun diff (Lkotlinx/serialization/json/JsonObject;Lkotlinx/serialization/json/JsonObject;)Lkotlinx/serialization/json/JsonObject;
+}
+

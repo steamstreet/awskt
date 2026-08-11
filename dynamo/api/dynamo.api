@@ -1,0 +1,144 @@
+public final class com/steamstreet/dynamokt/AttributeValueSerializer : kotlinx/serialization/KSerializer {
+	public fun <init> ()V
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class com/steamstreet/dynamokt/DynamoStreamEvent {
+	public static final field Companion Lcom/steamstreet/dynamokt/DynamoStreamEvent$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/dynamokt/DynamoStreamEventDetail;Ljava/lang/String;Lcom/steamstreet/dynamokt/UserIdentity;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/dynamokt/DynamoStreamEventDetail;Ljava/lang/String;Lcom/steamstreet/dynamokt/UserIdentity;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Lcom/steamstreet/dynamokt/DynamoStreamEventDetail;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Lcom/steamstreet/dynamokt/UserIdentity;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/dynamokt/DynamoStreamEventDetail;Ljava/lang/String;Lcom/steamstreet/dynamokt/UserIdentity;Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/dynamokt/DynamoStreamEvent;
+	public static synthetic fun copy$default (Lcom/steamstreet/dynamokt/DynamoStreamEvent;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/dynamokt/DynamoStreamEventDetail;Ljava/lang/String;Lcom/steamstreet/dynamokt/UserIdentity;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/DynamoStreamEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAwsRegion ()Ljava/lang/String;
+	public final fun getDynamodb ()Lcom/steamstreet/dynamokt/DynamoStreamEventDetail;
+	public final fun getEventID ()Ljava/lang/String;
+	public final fun getEventName ()Ljava/lang/String;
+	public final fun getEventSource ()Ljava/lang/String;
+	public final fun getEventSourceARN ()Ljava/lang/String;
+	public final fun getEventVersion ()Ljava/lang/String;
+	public final fun getRecordFormat ()Ljava/lang/String;
+	public final fun getTableName ()Ljava/lang/String;
+	public final fun getUserIdentity ()Lcom/steamstreet/dynamokt/UserIdentity;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/dynamokt/DynamoStreamEvent$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/dynamokt/DynamoStreamEvent$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/dynamokt/DynamoStreamEvent;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/dynamokt/DynamoStreamEvent;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/dynamokt/DynamoStreamEvent$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/dynamokt/DynamoStreamEventDetail {
+	public static final field Companion Lcom/steamstreet/dynamokt/DynamoStreamEventDetail$Companion;
+	public fun <init> (DLjava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Long;Ljava/lang/String;)V
+	public synthetic fun <init> (DLjava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Long;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/util/Map;
+	public final fun component4 ()Ljava/util/Map;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/Long;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun copy (DLjava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Long;Ljava/lang/String;)Lcom/steamstreet/dynamokt/DynamoStreamEventDetail;
+	public static synthetic fun copy$default (Lcom/steamstreet/dynamokt/DynamoStreamEventDetail;DLjava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Long;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/DynamoStreamEventDetail;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCreateDateTime ()J
+	public final fun getKeys ()Ljava/util/Map;
+	public final fun getNew ()Ljava/util/Map;
+	public final fun getOld ()Ljava/util/Map;
+	public final fun getSequenceNumber ()Ljava/lang/String;
+	public final fun getSize ()Ljava/lang/Long;
+	public final fun getViewType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/dynamokt/DynamoStreamEventDetail$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/dynamokt/DynamoStreamEventDetail$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/dynamokt/DynamoStreamEventDetail;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/dynamokt/DynamoStreamEventDetail;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/dynamokt/DynamoStreamEventDetail$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/dynamokt/DynamoStreamEventKt {
+	public static final fun eventBridgeKeyRule (Ljava/lang/String;Ljava/util/List;)Ljava/util/Map;
+	public static final fun valuePair (Lcom/steamstreet/dynamokt/DynamoStreamEventDetail;Ljava/lang/String;)Lkotlin/Pair;
+}
+
+public final class com/steamstreet/dynamokt/DynamoStreamRecords {
+	public static final field Companion Lcom/steamstreet/dynamokt/DynamoStreamRecords$Companion;
+	public fun <init> (Ljava/util/List;)V
+	public final fun getRecords ()Ljava/util/List;
+}
+
+public final synthetic class com/steamstreet/dynamokt/DynamoStreamRecords$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/dynamokt/DynamoStreamRecords$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/dynamokt/DynamoStreamRecords;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/dynamokt/DynamoStreamRecords;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/dynamokt/DynamoStreamRecords$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/dynamokt/UserIdentity {
+	public static final field Companion Lcom/steamstreet/dynamokt/UserIdentity$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getPrincipalId ()Ljava/lang/String;
+	public final fun getType ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/dynamokt/UserIdentity$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/dynamokt/UserIdentity$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/dynamokt/UserIdentity;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/dynamokt/UserIdentity;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/dynamokt/UserIdentity$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+

@@ -1,0 +1,113 @@
+public final class com/steamstreet/awskt/signing/AwsCredentials {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getAccessKeyId ()Ljava/lang/String;
+	public final fun getExpiresAtEpochMillis ()Ljava/lang/Long;
+	public final fun getSecretAccessKey ()Ljava/lang/String;
+	public final fun getSessionToken ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/signing/EncodingKt {
+	public static final fun sigV4UriEncode (Ljava/lang/String;Z)Ljava/lang/String;
+	public static synthetic fun sigV4UriEncode$default (Ljava/lang/String;ZILjava/lang/Object;)Ljava/lang/String;
+}
+
+public abstract class com/steamstreet/awskt/signing/PayloadHash {
+}
+
+public final class com/steamstreet/awskt/signing/PayloadHash$Compute : com/steamstreet/awskt/signing/PayloadHash {
+	public static final field INSTANCE Lcom/steamstreet/awskt/signing/PayloadHash$Compute;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/signing/PayloadHash$EmptyBody : com/steamstreet/awskt/signing/PayloadHash {
+	public static final field INSTANCE Lcom/steamstreet/awskt/signing/PayloadHash$EmptyBody;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/signing/PayloadHash$Precomputed : com/steamstreet/awskt/signing/PayloadHash {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getHex ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/signing/PayloadHash$Unsigned : com/steamstreet/awskt/signing/PayloadHash {
+	public static final field INSTANCE Lcom/steamstreet/awskt/signing/PayloadHash$Unsigned;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/signing/SigV4 {
+	public static final field INSTANCE Lcom/steamstreet/awskt/signing/SigV4;
+	public final fun sign (Lcom/steamstreet/awskt/signing/SigningRequest;Lcom/steamstreet/awskt/signing/AwsCredentials;Lcom/steamstreet/awskt/signing/SigV4Config;J)Lcom/steamstreet/awskt/signing/SignedRequest;
+}
+
+public final class com/steamstreet/awskt/signing/SigV4Config {
+	public static final field Companion Lcom/steamstreet/awskt/signing/SigV4Config$Companion;
+	public static final field MAX_PRESIGN_EXPIRY_SECONDS J
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/signing/SignatureLocation;Ljava/lang/Long;Lcom/steamstreet/awskt/signing/PayloadHash;Lcom/steamstreet/awskt/signing/SignedBodyHeader;ZZZ)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/signing/SignatureLocation;Ljava/lang/Long;Lcom/steamstreet/awskt/signing/PayloadHash;Lcom/steamstreet/awskt/signing/SignedBodyHeader;ZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDoubleUriEncode ()Z
+	public final fun getExpiresInSeconds ()Ljava/lang/Long;
+	public final fun getLocation ()Lcom/steamstreet/awskt/signing/SignatureLocation;
+	public final fun getNormalizeUriPath ()Z
+	public final fun getOmitSessionToken ()Z
+	public final fun getPayloadHash ()Lcom/steamstreet/awskt/signing/PayloadHash;
+	public final fun getRegion ()Ljava/lang/String;
+	public final fun getService ()Ljava/lang/String;
+	public final fun getSignedBodyHeader ()Lcom/steamstreet/awskt/signing/SignedBodyHeader;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/signing/SigV4Config$Companion {
+}
+
+public final class com/steamstreet/awskt/signing/SigV4ConfigKt {
+	public static final fun signingNameFor (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/signing/SignatureLocation : java/lang/Enum {
+	public static final field HEADERS Lcom/steamstreet/awskt/signing/SignatureLocation;
+	public static final field QUERY_STRING Lcom/steamstreet/awskt/signing/SignatureLocation;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/signing/SignatureLocation;
+	public static fun values ()[Lcom/steamstreet/awskt/signing/SignatureLocation;
+}
+
+public final class com/steamstreet/awskt/signing/SignedBodyHeader : java/lang/Enum {
+	public static final field NONE Lcom/steamstreet/awskt/signing/SignedBodyHeader;
+	public static final field X_AMZ_CONTENT_SHA256 Lcom/steamstreet/awskt/signing/SignedBodyHeader;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/signing/SignedBodyHeader;
+	public static fun values ()[Lcom/steamstreet/awskt/signing/SignedBodyHeader;
+}
+
+public final class com/steamstreet/awskt/signing/SignedRequest {
+	public fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun encodedQueryString ()Ljava/lang/String;
+	public final fun getCanonicalRequest ()Ljava/lang/String;
+	public final fun getHeaders ()Ljava/util/List;
+	public final fun getQueryParameters ()Ljava/util/List;
+	public final fun getSignature ()Ljava/lang/String;
+	public final fun getSignedHeaderNames ()Ljava/util/List;
+	public final fun getStringToSign ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/signing/SigningRequest {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;[B)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;[BILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getBody ()[B
+	public final fun getHeaders ()Ljava/util/List;
+	public final fun getHost ()Ljava/lang/String;
+	public final fun getMethod ()Ljava/lang/String;
+	public final fun getPath ()Ljava/lang/String;
+	public final fun getQueryParameters ()Ljava/util/List;
+	public fun toString ()Ljava/lang/String;
+}
+

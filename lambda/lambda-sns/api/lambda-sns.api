@@ -1,0 +1,84 @@
+public abstract class com/steamstreet/aws/sns/SNSHandler : com/steamstreet/aws/lambda/InputLambda {
+	public fun <init> (Lkotlinx/serialization/KSerializer;)V
+	public fun handle (Lcom/steamstreet/aws/sns/SnsPayload;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun handle (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun handleMessage (Lcom/steamstreet/aws/sns/SnsRecord;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/aws/sns/SnsData {
+	public static final field Companion Lcom/steamstreet/aws/sns/SnsData$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getMessage ()Ljava/lang/String;
+	public final fun getMessageId ()Ljava/lang/String;
+	public final fun getSignature ()Ljava/lang/String;
+	public final fun getSignatureVersion ()Ljava/lang/String;
+	public final fun getSigningCertUrl ()Ljava/lang/String;
+	public final fun getSubject ()Ljava/lang/String;
+	public final fun getTimestamp ()Ljava/lang/String;
+	public final fun getTopicArn ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/sns/SnsData$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/sns/SnsData$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/sns/SnsData;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/sns/SnsData;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/sns/SnsData$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/sns/SnsPayload {
+	public static final field Companion Lcom/steamstreet/aws/sns/SnsPayload$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getRecords ()Ljava/util/List;
+}
+
+public final synthetic class com/steamstreet/aws/sns/SnsPayload$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/sns/SnsPayload$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/sns/SnsPayload;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/sns/SnsPayload;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/sns/SnsPayload$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/sns/SnsRecord {
+	public static final field Companion Lcom/steamstreet/aws/sns/SnsRecord$Companion;
+	public fun <init> (Lcom/steamstreet/aws/sns/SnsData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Lcom/steamstreet/aws/sns/SnsData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getEventSource ()Ljava/lang/String;
+	public final fun getEventSubscriptionArn ()Ljava/lang/String;
+	public final fun getEventVersion ()Ljava/lang/String;
+	public final fun getSns ()Lcom/steamstreet/aws/sns/SnsData;
+}
+
+public final synthetic class com/steamstreet/aws/sns/SnsRecord$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/sns/SnsRecord$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/sns/SnsRecord;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/sns/SnsRecord;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/sns/SnsRecord$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+

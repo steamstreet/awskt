@@ -1,0 +1,20 @@
+public abstract interface annotation class com/steamstreet/aws/lambda/AWSLambdaConstructor : java/lang/annotation/Annotation {
+}
+
+public final class com/steamstreet/aws/lambda/MockLambdaContext : com/amazonaws/services/lambda/runtime/Context {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getAwsRequestId ()Ljava/lang/String;
+	public fun getClientContext ()Lcom/amazonaws/services/lambda/runtime/ClientContext;
+	public fun getFunctionName ()Ljava/lang/String;
+	public fun getFunctionVersion ()Ljava/lang/String;
+	public fun getIdentity ()Lcom/amazonaws/services/lambda/runtime/CognitoIdentity;
+	public fun getInvokedFunctionArn ()Ljava/lang/String;
+	public fun getLogGroupName ()Ljava/lang/String;
+	public fun getLogStreamName ()Ljava/lang/String;
+	public fun getLogger ()Lcom/amazonaws/services/lambda/runtime/LambdaLogger;
+	public fun getMemoryLimitInMB ()I
+	public fun getRemainingTimeInMillis ()I
+}
+

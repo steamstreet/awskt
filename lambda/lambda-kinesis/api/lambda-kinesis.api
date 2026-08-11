@@ -1,0 +1,208 @@
+public final class com/steamstreet/aws/lambda/kinesis/BatchItemFailure {
+	public static final field Companion Lcom/steamstreet/aws/lambda/kinesis/BatchItemFailure$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/aws/lambda/kinesis/BatchItemFailure;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/lambda/kinesis/BatchItemFailure;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/aws/lambda/kinesis/BatchItemFailure;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getItemIdentifier ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/lambda/kinesis/BatchItemFailure$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/lambda/kinesis/BatchItemFailure$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/lambda/kinesis/BatchItemFailure;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/lambda/kinesis/BatchItemFailure;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/kinesis/BatchItemFailure$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/kinesis/BatchItemFailuresResponse {
+	public static final field Companion Lcom/steamstreet/aws/lambda/kinesis/BatchItemFailuresResponse$Companion;
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/steamstreet/aws/lambda/kinesis/BatchItemFailuresResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/lambda/kinesis/BatchItemFailuresResponse;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/aws/lambda/kinesis/BatchItemFailuresResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBatchItemFailures ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/lambda/kinesis/BatchItemFailuresResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/lambda/kinesis/BatchItemFailuresResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/lambda/kinesis/BatchItemFailuresResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/lambda/kinesis/BatchItemFailuresResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/kinesis/BatchItemFailuresResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/kinesis/KinesisBatchInfo {
+	public static final field Companion Lcom/steamstreet/aws/lambda/kinesis/KinesisBatchInfo$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/time/Instant;Lkotlin/time/Instant;ILjava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/time/Instant;Lkotlin/time/Instant;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lkotlin/time/Instant;
+	public final fun component5 ()Lkotlin/time/Instant;
+	public final fun component6 ()I
+	public final fun component7 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/time/Instant;Lkotlin/time/Instant;ILjava/lang/String;)Lcom/steamstreet/aws/lambda/kinesis/KinesisBatchInfo;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/lambda/kinesis/KinesisBatchInfo;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/time/Instant;Lkotlin/time/Instant;ILjava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/aws/lambda/kinesis/KinesisBatchInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getApproximateArrivalOfFirstRecord ()Lkotlin/time/Instant;
+	public final fun getApproximateArrivalOfLastRecord ()Lkotlin/time/Instant;
+	public final fun getBatchSize ()I
+	public final fun getEndSequenceNumber ()Ljava/lang/String;
+	public final fun getShardId ()Ljava/lang/String;
+	public final fun getStartSequenceNumber ()Ljava/lang/String;
+	public final fun getStreamArn ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/lambda/kinesis/KinesisBatchInfo$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/lambda/kinesis/KinesisBatchInfo$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/lambda/kinesis/KinesisBatchInfo;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/lambda/kinesis/KinesisBatchInfo;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/kinesis/KinesisBatchInfo$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/kinesis/KinesisDetails {
+	public static final field Companion Lcom/steamstreet/aws/lambda/kinesis/KinesisDetails$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;D)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()D
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;D)Lcom/steamstreet/aws/lambda/kinesis/KinesisDetails;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/lambda/kinesis/KinesisDetails;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;DILjava/lang/Object;)Lcom/steamstreet/aws/lambda/kinesis/KinesisDetails;
+	public final fun decodedData ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getApproximateArrivalTimestamp ()D
+	public final fun getData ()Ljava/lang/String;
+	public final fun getKinesisSchemaVersion ()Ljava/lang/String;
+	public final fun getPartitionKey ()Ljava/lang/String;
+	public final fun getSequenceNumber ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/lambda/kinesis/KinesisDetails$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/lambda/kinesis/KinesisDetails$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/lambda/kinesis/KinesisDetails;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/lambda/kinesis/KinesisDetails;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/kinesis/KinesisDetails$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public abstract class com/steamstreet/aws/lambda/kinesis/KinesisHandler : com/steamstreet/aws/lambda/InputLambda {
+	public fun <init> ()V
+	protected final fun getAsync ()Z
+	public fun handle (Lcom/steamstreet/aws/lambda/kinesis/KinesisRecords;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun handle (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	protected fun processRecord (Lcom/steamstreet/aws/lambda/kinesis/KinesisRecord;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	protected final fun setAsync (Z)V
+}
+
+public final class com/steamstreet/aws/lambda/kinesis/KinesisRecord {
+	public static final field Companion Lcom/steamstreet/aws/lambda/kinesis/KinesisRecord$Companion;
+	public fun <init> (Lcom/steamstreet/aws/lambda/kinesis/KinesisDetails;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Lcom/steamstreet/aws/lambda/kinesis/KinesisDetails;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/aws/lambda/kinesis/KinesisDetails;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ljava/lang/String;
+	public final fun copy (Lcom/steamstreet/aws/lambda/kinesis/KinesisDetails;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/aws/lambda/kinesis/KinesisRecord;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/lambda/kinesis/KinesisRecord;Lcom/steamstreet/aws/lambda/kinesis/KinesisDetails;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/aws/lambda/kinesis/KinesisRecord;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAwsRegion ()Ljava/lang/String;
+	public final fun getEventID ()Ljava/lang/String;
+	public final fun getEventName ()Ljava/lang/String;
+	public final fun getEventSource ()Ljava/lang/String;
+	public final fun getEventSourceARN ()Ljava/lang/String;
+	public final fun getEventVersion ()Ljava/lang/String;
+	public final fun getInvokeIdentityArn ()Ljava/lang/String;
+	public final fun getKinesis ()Lcom/steamstreet/aws/lambda/kinesis/KinesisDetails;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/lambda/kinesis/KinesisRecord$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/lambda/kinesis/KinesisRecord$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/lambda/kinesis/KinesisRecord;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/lambda/kinesis/KinesisRecord;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/kinesis/KinesisRecord$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/kinesis/KinesisRecords {
+	public static final field Companion Lcom/steamstreet/aws/lambda/kinesis/KinesisRecords$Companion;
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/steamstreet/aws/lambda/kinesis/KinesisRecords;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/lambda/kinesis/KinesisRecords;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/aws/lambda/kinesis/KinesisRecords;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getRecords ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/lambda/kinesis/KinesisRecords$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/lambda/kinesis/KinesisRecords$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/lambda/kinesis/KinesisRecords;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/lambda/kinesis/KinesisRecords;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/kinesis/KinesisRecords$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+

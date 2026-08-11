@@ -1,0 +1,22 @@
+public final class com/steamstreet/aws/appsync/cognito/Claims {
+	public fun <init> (Lkotlinx/serialization/json/JsonObject;)V
+	public final fun claim (Ljava/lang/String;)Ljava/lang/String;
+	public final fun getData ()Lkotlinx/serialization/json/JsonObject;
+}
+
+public final class com/steamstreet/aws/appsync/cognito/JsonElementClaim : com/auth0/jwt/interfaces/Claim {
+	public fun <init> (Lkotlinx/serialization/json/JsonElement;)V
+	public fun as (Ljava/lang/Class;)Ljava/lang/Object;
+	public fun asArray (Ljava/lang/Class;)[Ljava/lang/Object;
+	public fun asBoolean ()Ljava/lang/Boolean;
+	public fun asDate ()Ljava/util/Date;
+	public fun asDouble ()Ljava/lang/Double;
+	public fun asInt ()Ljava/lang/Integer;
+	public fun asList (Ljava/lang/Class;)Ljava/util/List;
+	public fun asLong ()Ljava/lang/Long;
+	public fun asMap ()Ljava/util/Map;
+	public fun asString ()Ljava/lang/String;
+	public fun isMissing ()Z
+	public fun isNull ()Z
+}
+

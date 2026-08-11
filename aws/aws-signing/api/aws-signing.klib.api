@@ -1,0 +1,147 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:aws-signing>
+final enum class com.steamstreet.awskt.signing/SignatureLocation : kotlin/Enum<com.steamstreet.awskt.signing/SignatureLocation> { // com.steamstreet.awskt.signing/SignatureLocation|null[0]
+    enum entry HEADERS // com.steamstreet.awskt.signing/SignatureLocation.HEADERS|null[0]
+    enum entry QUERY_STRING // com.steamstreet.awskt.signing/SignatureLocation.QUERY_STRING|null[0]
+
+    final val entries // com.steamstreet.awskt.signing/SignatureLocation.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.steamstreet.awskt.signing/SignatureLocation> // com.steamstreet.awskt.signing/SignatureLocation.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.steamstreet.awskt.signing/SignatureLocation // com.steamstreet.awskt.signing/SignatureLocation.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.steamstreet.awskt.signing/SignatureLocation> // com.steamstreet.awskt.signing/SignatureLocation.values|values#static(){}[0]
+}
+
+final enum class com.steamstreet.awskt.signing/SignedBodyHeader : kotlin/Enum<com.steamstreet.awskt.signing/SignedBodyHeader> { // com.steamstreet.awskt.signing/SignedBodyHeader|null[0]
+    enum entry NONE // com.steamstreet.awskt.signing/SignedBodyHeader.NONE|null[0]
+    enum entry X_AMZ_CONTENT_SHA256 // com.steamstreet.awskt.signing/SignedBodyHeader.X_AMZ_CONTENT_SHA256|null[0]
+
+    final val entries // com.steamstreet.awskt.signing/SignedBodyHeader.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.steamstreet.awskt.signing/SignedBodyHeader> // com.steamstreet.awskt.signing/SignedBodyHeader.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.steamstreet.awskt.signing/SignedBodyHeader // com.steamstreet.awskt.signing/SignedBodyHeader.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.steamstreet.awskt.signing/SignedBodyHeader> // com.steamstreet.awskt.signing/SignedBodyHeader.values|values#static(){}[0]
+}
+
+final class com.steamstreet.awskt.signing/AwsCredentials { // com.steamstreet.awskt.signing/AwsCredentials|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String? = ..., kotlin/Long? = ...) // com.steamstreet.awskt.signing/AwsCredentials.<init>|<init>(kotlin.String;kotlin.String;kotlin.String?;kotlin.Long?){}[0]
+
+    final val accessKeyId // com.steamstreet.awskt.signing/AwsCredentials.accessKeyId|{}accessKeyId[0]
+        final fun <get-accessKeyId>(): kotlin/String // com.steamstreet.awskt.signing/AwsCredentials.accessKeyId.<get-accessKeyId>|<get-accessKeyId>(){}[0]
+    final val expiresAtEpochMillis // com.steamstreet.awskt.signing/AwsCredentials.expiresAtEpochMillis|{}expiresAtEpochMillis[0]
+        final fun <get-expiresAtEpochMillis>(): kotlin/Long? // com.steamstreet.awskt.signing/AwsCredentials.expiresAtEpochMillis.<get-expiresAtEpochMillis>|<get-expiresAtEpochMillis>(){}[0]
+    final val secretAccessKey // com.steamstreet.awskt.signing/AwsCredentials.secretAccessKey|{}secretAccessKey[0]
+        final fun <get-secretAccessKey>(): kotlin/String // com.steamstreet.awskt.signing/AwsCredentials.secretAccessKey.<get-secretAccessKey>|<get-secretAccessKey>(){}[0]
+    final val sessionToken // com.steamstreet.awskt.signing/AwsCredentials.sessionToken|{}sessionToken[0]
+        final fun <get-sessionToken>(): kotlin/String? // com.steamstreet.awskt.signing/AwsCredentials.sessionToken.<get-sessionToken>|<get-sessionToken>(){}[0]
+
+    final fun toString(): kotlin/String // com.steamstreet.awskt.signing/AwsCredentials.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.signing/SigV4Config { // com.steamstreet.awskt.signing/SigV4Config|null[0]
+    constructor <init>(kotlin/String, kotlin/String, com.steamstreet.awskt.signing/SignatureLocation = ..., kotlin/Long? = ..., com.steamstreet.awskt.signing/PayloadHash = ..., com.steamstreet.awskt.signing/SignedBodyHeader = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ...) // com.steamstreet.awskt.signing/SigV4Config.<init>|<init>(kotlin.String;kotlin.String;com.steamstreet.awskt.signing.SignatureLocation;kotlin.Long?;com.steamstreet.awskt.signing.PayloadHash;com.steamstreet.awskt.signing.SignedBodyHeader;kotlin.Boolean;kotlin.Boolean;kotlin.Boolean){}[0]
+
+    final val doubleUriEncode // com.steamstreet.awskt.signing/SigV4Config.doubleUriEncode|{}doubleUriEncode[0]
+        final fun <get-doubleUriEncode>(): kotlin/Boolean // com.steamstreet.awskt.signing/SigV4Config.doubleUriEncode.<get-doubleUriEncode>|<get-doubleUriEncode>(){}[0]
+    final val expiresInSeconds // com.steamstreet.awskt.signing/SigV4Config.expiresInSeconds|{}expiresInSeconds[0]
+        final fun <get-expiresInSeconds>(): kotlin/Long? // com.steamstreet.awskt.signing/SigV4Config.expiresInSeconds.<get-expiresInSeconds>|<get-expiresInSeconds>(){}[0]
+    final val location // com.steamstreet.awskt.signing/SigV4Config.location|{}location[0]
+        final fun <get-location>(): com.steamstreet.awskt.signing/SignatureLocation // com.steamstreet.awskt.signing/SigV4Config.location.<get-location>|<get-location>(){}[0]
+    final val normalizeUriPath // com.steamstreet.awskt.signing/SigV4Config.normalizeUriPath|{}normalizeUriPath[0]
+        final fun <get-normalizeUriPath>(): kotlin/Boolean // com.steamstreet.awskt.signing/SigV4Config.normalizeUriPath.<get-normalizeUriPath>|<get-normalizeUriPath>(){}[0]
+    final val omitSessionToken // com.steamstreet.awskt.signing/SigV4Config.omitSessionToken|{}omitSessionToken[0]
+        final fun <get-omitSessionToken>(): kotlin/Boolean // com.steamstreet.awskt.signing/SigV4Config.omitSessionToken.<get-omitSessionToken>|<get-omitSessionToken>(){}[0]
+    final val payloadHash // com.steamstreet.awskt.signing/SigV4Config.payloadHash|{}payloadHash[0]
+        final fun <get-payloadHash>(): com.steamstreet.awskt.signing/PayloadHash // com.steamstreet.awskt.signing/SigV4Config.payloadHash.<get-payloadHash>|<get-payloadHash>(){}[0]
+    final val region // com.steamstreet.awskt.signing/SigV4Config.region|{}region[0]
+        final fun <get-region>(): kotlin/String // com.steamstreet.awskt.signing/SigV4Config.region.<get-region>|<get-region>(){}[0]
+    final val service // com.steamstreet.awskt.signing/SigV4Config.service|{}service[0]
+        final fun <get-service>(): kotlin/String // com.steamstreet.awskt.signing/SigV4Config.service.<get-service>|<get-service>(){}[0]
+    final val signedBodyHeader // com.steamstreet.awskt.signing/SigV4Config.signedBodyHeader|{}signedBodyHeader[0]
+        final fun <get-signedBodyHeader>(): com.steamstreet.awskt.signing/SignedBodyHeader // com.steamstreet.awskt.signing/SigV4Config.signedBodyHeader.<get-signedBodyHeader>|<get-signedBodyHeader>(){}[0]
+
+    final fun toString(): kotlin/String // com.steamstreet.awskt.signing/SigV4Config.toString|toString(){}[0]
+
+    final object Companion { // com.steamstreet.awskt.signing/SigV4Config.Companion|null[0]
+        final const val MAX_PRESIGN_EXPIRY_SECONDS // com.steamstreet.awskt.signing/SigV4Config.Companion.MAX_PRESIGN_EXPIRY_SECONDS|{}MAX_PRESIGN_EXPIRY_SECONDS[0]
+            final fun <get-MAX_PRESIGN_EXPIRY_SECONDS>(): kotlin/Long // com.steamstreet.awskt.signing/SigV4Config.Companion.MAX_PRESIGN_EXPIRY_SECONDS.<get-MAX_PRESIGN_EXPIRY_SECONDS>|<get-MAX_PRESIGN_EXPIRY_SECONDS>(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.signing/SignedRequest { // com.steamstreet.awskt.signing/SignedRequest|null[0]
+    constructor <init>(kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>>, kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>>, kotlin.collections/List<kotlin/String>, kotlin/String, kotlin/String, kotlin/String) // com.steamstreet.awskt.signing/SignedRequest.<init>|<init>(kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>;kotlin.collections.List<kotlin.String>;kotlin.String;kotlin.String;kotlin.String){}[0]
+
+    final val canonicalRequest // com.steamstreet.awskt.signing/SignedRequest.canonicalRequest|{}canonicalRequest[0]
+        final fun <get-canonicalRequest>(): kotlin/String // com.steamstreet.awskt.signing/SignedRequest.canonicalRequest.<get-canonicalRequest>|<get-canonicalRequest>(){}[0]
+    final val headers // com.steamstreet.awskt.signing/SignedRequest.headers|{}headers[0]
+        final fun <get-headers>(): kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> // com.steamstreet.awskt.signing/SignedRequest.headers.<get-headers>|<get-headers>(){}[0]
+    final val queryParameters // com.steamstreet.awskt.signing/SignedRequest.queryParameters|{}queryParameters[0]
+        final fun <get-queryParameters>(): kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> // com.steamstreet.awskt.signing/SignedRequest.queryParameters.<get-queryParameters>|<get-queryParameters>(){}[0]
+    final val signature // com.steamstreet.awskt.signing/SignedRequest.signature|{}signature[0]
+        final fun <get-signature>(): kotlin/String // com.steamstreet.awskt.signing/SignedRequest.signature.<get-signature>|<get-signature>(){}[0]
+    final val signedHeaderNames // com.steamstreet.awskt.signing/SignedRequest.signedHeaderNames|{}signedHeaderNames[0]
+        final fun <get-signedHeaderNames>(): kotlin.collections/List<kotlin/String> // com.steamstreet.awskt.signing/SignedRequest.signedHeaderNames.<get-signedHeaderNames>|<get-signedHeaderNames>(){}[0]
+    final val stringToSign // com.steamstreet.awskt.signing/SignedRequest.stringToSign|{}stringToSign[0]
+        final fun <get-stringToSign>(): kotlin/String // com.steamstreet.awskt.signing/SignedRequest.stringToSign.<get-stringToSign>|<get-stringToSign>(){}[0]
+
+    final fun encodedQueryString(): kotlin/String // com.steamstreet.awskt.signing/SignedRequest.encodedQueryString|encodedQueryString(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.signing/SignedRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.signing/SigningRequest { // com.steamstreet.awskt.signing/SigningRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String, kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ..., kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ..., kotlin/ByteArray = ...) // com.steamstreet.awskt.signing/SigningRequest.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>;kotlin.ByteArray){}[0]
+
+    final val body // com.steamstreet.awskt.signing/SigningRequest.body|{}body[0]
+        final fun <get-body>(): kotlin/ByteArray // com.steamstreet.awskt.signing/SigningRequest.body.<get-body>|<get-body>(){}[0]
+    final val headers // com.steamstreet.awskt.signing/SigningRequest.headers|{}headers[0]
+        final fun <get-headers>(): kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> // com.steamstreet.awskt.signing/SigningRequest.headers.<get-headers>|<get-headers>(){}[0]
+    final val host // com.steamstreet.awskt.signing/SigningRequest.host|{}host[0]
+        final fun <get-host>(): kotlin/String // com.steamstreet.awskt.signing/SigningRequest.host.<get-host>|<get-host>(){}[0]
+    final val method // com.steamstreet.awskt.signing/SigningRequest.method|{}method[0]
+        final fun <get-method>(): kotlin/String // com.steamstreet.awskt.signing/SigningRequest.method.<get-method>|<get-method>(){}[0]
+    final val path // com.steamstreet.awskt.signing/SigningRequest.path|{}path[0]
+        final fun <get-path>(): kotlin/String // com.steamstreet.awskt.signing/SigningRequest.path.<get-path>|<get-path>(){}[0]
+    final val queryParameters // com.steamstreet.awskt.signing/SigningRequest.queryParameters|{}queryParameters[0]
+        final fun <get-queryParameters>(): kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> // com.steamstreet.awskt.signing/SigningRequest.queryParameters.<get-queryParameters>|<get-queryParameters>(){}[0]
+
+    final fun toString(): kotlin/String // com.steamstreet.awskt.signing/SigningRequest.toString|toString(){}[0]
+}
+
+sealed class com.steamstreet.awskt.signing/PayloadHash { // com.steamstreet.awskt.signing/PayloadHash|null[0]
+    final class Precomputed : com.steamstreet.awskt.signing/PayloadHash { // com.steamstreet.awskt.signing/PayloadHash.Precomputed|null[0]
+        constructor <init>(kotlin/String) // com.steamstreet.awskt.signing/PayloadHash.Precomputed.<init>|<init>(kotlin.String){}[0]
+
+        final val hex // com.steamstreet.awskt.signing/PayloadHash.Precomputed.hex|{}hex[0]
+            final fun <get-hex>(): kotlin/String // com.steamstreet.awskt.signing/PayloadHash.Precomputed.hex.<get-hex>|<get-hex>(){}[0]
+    }
+
+    final object Compute : com.steamstreet.awskt.signing/PayloadHash { // com.steamstreet.awskt.signing/PayloadHash.Compute|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.signing/PayloadHash.Compute.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.signing/PayloadHash.Compute.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.signing/PayloadHash.Compute.toString|toString(){}[0]
+    }
+
+    final object EmptyBody : com.steamstreet.awskt.signing/PayloadHash { // com.steamstreet.awskt.signing/PayloadHash.EmptyBody|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.signing/PayloadHash.EmptyBody.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.signing/PayloadHash.EmptyBody.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.signing/PayloadHash.EmptyBody.toString|toString(){}[0]
+    }
+
+    final object Unsigned : com.steamstreet.awskt.signing/PayloadHash { // com.steamstreet.awskt.signing/PayloadHash.Unsigned|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.signing/PayloadHash.Unsigned.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.signing/PayloadHash.Unsigned.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.signing/PayloadHash.Unsigned.toString|toString(){}[0]
+    }
+}
+
+final object com.steamstreet.awskt.signing/SigV4 { // com.steamstreet.awskt.signing/SigV4|null[0]
+    final fun sign(com.steamstreet.awskt.signing/SigningRequest, com.steamstreet.awskt.signing/AwsCredentials, com.steamstreet.awskt.signing/SigV4Config, kotlin/Long): com.steamstreet.awskt.signing/SignedRequest // com.steamstreet.awskt.signing/SigV4.sign|sign(com.steamstreet.awskt.signing.SigningRequest;com.steamstreet.awskt.signing.AwsCredentials;com.steamstreet.awskt.signing.SigV4Config;kotlin.Long){}[0]
+}
+
+final fun com.steamstreet.awskt.signing/sigV4UriEncode(kotlin/String, kotlin/Boolean = ...): kotlin/String // com.steamstreet.awskt.signing/sigV4UriEncode|sigV4UriEncode(kotlin.String;kotlin.Boolean){}[0]
+final fun com.steamstreet.awskt.signing/signingNameFor(kotlin/String): kotlin/String // com.steamstreet.awskt.signing/signingNameFor|signingNameFor(kotlin.String){}[0]

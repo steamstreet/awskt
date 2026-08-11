@@ -1,0 +1,74 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, js, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:standards>
+abstract interface com.steamstreet.exceptions/MDCExceptionMixin { // com.steamstreet.exceptions/MDCExceptionMixin|null[0]
+    abstract val mdcAttributes // com.steamstreet.exceptions/MDCExceptionMixin.mdcAttributes|{}mdcAttributes[0]
+        abstract fun <get-mdcAttributes>(): kotlin.collections/MutableMap<kotlin/String, kotlin/Any?> // com.steamstreet.exceptions/MDCExceptionMixin.mdcAttributes.<get-mdcAttributes>|<get-mdcAttributes>(){}[0]
+}
+
+final class <#A: kotlin/Any?> com.steamstreet/AsyncLazy { // com.steamstreet/AsyncLazy|null[0]
+    constructor <init>(#A? = ..., kotlin.coroutines/SuspendFunction0<#A>) // com.steamstreet/AsyncLazy.<init>|<init>(1:0?;kotlin.coroutines.SuspendFunction0<1:0>){}[0]
+
+    final val isInitialized // com.steamstreet/AsyncLazy.isInitialized|{}isInitialized[0]
+        final fun <get-isInitialized>(): kotlin/Boolean // com.steamstreet/AsyncLazy.isInitialized.<get-isInitialized>|<get-isInitialized>(){}[0]
+
+    final suspend fun get(): #A // com.steamstreet/AsyncLazy.get|get(){}[0]
+}
+
+final class <#A: kotlin/Any?> com.steamstreet/MutableLazy : kotlin.properties/ReadWriteProperty<kotlin/Any?, #A> { // com.steamstreet/MutableLazy|null[0]
+    constructor <init>(kotlin.time/Duration?, kotlin/Function0<#A>) // com.steamstreet/MutableLazy.<init>|<init>(kotlin.time.Duration?;kotlin.Function0<1:0>){}[0]
+
+    final fun getValue(kotlin/Any?, kotlin.reflect/KProperty<*>): #A // com.steamstreet/MutableLazy.getValue|getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}[0]
+    final fun setValue(kotlin/Any?, kotlin.reflect/KProperty<*>, #A) // com.steamstreet/MutableLazy.setValue|setValue(kotlin.Any?;kotlin.reflect.KProperty<*>;1:0){}[0]
+}
+
+final class com.steamstreet.exceptions/IllegalAccessException : kotlin/Exception { // com.steamstreet.exceptions/IllegalAccessException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Throwable) // com.steamstreet.exceptions/IllegalAccessException.<init>|<init>(kotlin.String?;kotlin.Throwable){}[0]
+}
+
+final class com.steamstreet.exceptions/NotFoundException : kotlin/Exception { // com.steamstreet.exceptions/NotFoundException|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.exceptions/NotFoundException.<init>|<init>(kotlin.String?;kotlin.String?){}[0]
+
+    final val resourceId // com.steamstreet.exceptions/NotFoundException.resourceId|{}resourceId[0]
+        final fun <get-resourceId>(): kotlin/String? // com.steamstreet.exceptions/NotFoundException.resourceId.<get-resourceId>|<get-resourceId>(){}[0]
+}
+
+open class com.steamstreet.exceptions/DuplicateItemException : com.steamstreet.exceptions/MDCExceptionMixin, kotlin/Exception { // com.steamstreet.exceptions/DuplicateItemException|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.exceptions/DuplicateItemException.<init>|<init>(kotlin.String?;kotlin.String?){}[0]
+
+    final val id // com.steamstreet.exceptions/DuplicateItemException.id|{}id[0]
+        final fun <get-id>(): kotlin/String? // com.steamstreet.exceptions/DuplicateItemException.id.<get-id>|<get-id>(){}[0]
+    open val mdcAttributes // com.steamstreet.exceptions/DuplicateItemException.mdcAttributes|{}mdcAttributes[0]
+        open fun <get-mdcAttributes>(): kotlin.collections/MutableMap<kotlin/String, kotlin/Any?> // com.steamstreet.exceptions/DuplicateItemException.mdcAttributes.<get-mdcAttributes>|<get-mdcAttributes>(){}[0]
+}
+
+open class com.steamstreet.exceptions/StatefulException : kotlin/Exception { // com.steamstreet.exceptions/StatefulException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Throwable? = ..., kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement> = ...) // com.steamstreet.exceptions/StatefulException.<init>|<init>(kotlin.String?;kotlin.Throwable?;kotlin.collections.Map<kotlin.String,kotlinx.serialization.json.JsonElement>){}[0]
+
+    final val state // com.steamstreet.exceptions/StatefulException.state|{}state[0]
+        final fun <get-state>(): kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement> // com.steamstreet.exceptions/StatefulException.state.<get-state>|<get-state>(){}[0]
+
+    open fun toString(): kotlin/String // com.steamstreet.exceptions/StatefulException.toString|toString(){}[0]
+}
+
+final fun (kotlin/String).com.steamstreet.strings/appendIf(kotlin/String, kotlin/Function0<kotlin/Boolean>): kotlin/String // com.steamstreet.strings/appendIf|appendIf@kotlin.String(kotlin.String;kotlin.Function0<kotlin.Boolean>){}[0]
+final fun (kotlin/String?).com.steamstreet.strings/capture(kotlin/String): kotlin/String? // com.steamstreet.strings/capture|capture@kotlin.String?(kotlin.String){}[0]
+final fun (kotlin/String?).com.steamstreet.strings/captureAll(kotlin/String): kotlin.collections/List<kotlin/String> // com.steamstreet.strings/captureAll|captureAll@kotlin.String?(kotlin.String){}[0]
+final fun (kotlin/String?).com.steamstreet.strings/isNotNullOrBlank(): kotlin/Boolean // com.steamstreet.strings/isNotNullOrBlank|isNotNullOrBlank@kotlin.String?(){}[0]
+final fun (kotlin/String?).com.steamstreet.strings/isNotNullOrEmpty(): kotlin/Boolean // com.steamstreet.strings/isNotNullOrEmpty|isNotNullOrEmpty@kotlin.String?(){}[0]
+final fun (kotlin/String?).com.steamstreet.strings/simpleSlug(): kotlin/String // com.steamstreet.strings/simpleSlug|simpleSlug@kotlin.String?(){}[0]
+final fun <#A: kotlin/Any, #B: kotlin/Any, #C: kotlin/Any, #D: kotlin/Any?> com.steamstreet/whenNotNull(#A?, #B?, #C?, kotlin/Function3<#A, #B, #C, #D>): #D? // com.steamstreet/whenNotNull|whenNotNull(0:0?;0:1?;0:2?;kotlin.Function3<0:0,0:1,0:2,0:3>){0§<kotlin.Any>;1§<kotlin.Any>;2§<kotlin.Any>;3§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any, #B: kotlin/Any, #C: kotlin/Any?> com.steamstreet/whenNotNull(#A?, #B?, kotlin/Function2<#A, #B, #C>): #C? // com.steamstreet/whenNotNull|whenNotNull(0:0?;0:1?;kotlin.Function2<0:0,0:1,0:2>){0§<kotlin.Any>;1§<kotlin.Any>;2§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any, #B: kotlin/Any?> com.steamstreet/whenNotNull(#A?, kotlin/Function1<#A, #B>): #B? // com.steamstreet/whenNotNull|whenNotNull(0:0?;kotlin.Function1<0:0,0:1>){0§<kotlin.Any>;1§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?, #B: kotlin/Any> (kotlin.collections/Map<#A, #B?>).com.steamstreet.collections/filterNotNullValues(): kotlin.collections/Map<#A, #B> // com.steamstreet.collections/filterNotNullValues|filterNotNullValues@kotlin.collections.Map<0:0,0:1?>(){0§<kotlin.Any?>;1§<kotlin.Any>}[0]
+final fun <#A: kotlin/Any?> (kotlin.collections/MutableList<#A>).com.steamstreet.collections/filterInPlace(kotlin/Function1<#A, kotlin/Boolean>) // com.steamstreet.collections/filterInPlace|filterInPlace@kotlin.collections.MutableList<0:0>(kotlin.Function1<0:0,kotlin.Boolean>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> com.steamstreet/asyncLazy(#A? = ..., kotlin.coroutines/SuspendFunction0<#A>): com.steamstreet/AsyncLazy<#A> // com.steamstreet/asyncLazy|asyncLazy(0:0?;kotlin.coroutines.SuspendFunction0<0:0>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> com.steamstreet/cached(kotlin.time/Duration, kotlin/Function0<#A>): kotlin.properties/ReadWriteProperty<kotlin/Any?, #A> // com.steamstreet/cached|cached(kotlin.time.Duration;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> com.steamstreet/mutableLazy(kotlin/Function0<#A>): kotlin.properties/ReadWriteProperty<kotlin/Any?, #A> // com.steamstreet/mutableLazy|mutableLazy(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]
+final fun com.steamstreet/epochMillis(): kotlin/Long // com.steamstreet/epochMillis|epochMillis(){}[0]
+final inline fun <#A: kotlin/Any?> (kotlin.collections/Iterable<#A>).com.steamstreet.collections/contains(kotlin/Function1<#A, kotlin/Boolean>): kotlin/Boolean // com.steamstreet.collections/contains|contains@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,kotlin.Boolean>){0§<kotlin.Any?>}[0]

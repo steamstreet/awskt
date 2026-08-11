@@ -1,0 +1,1963 @@
+public final class com/steamstreet/awskt/dynamodb/AttributeDefinition {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/AttributeDefinition$Companion;
+	public fun <init> (Ljava/lang/String;Lcom/steamstreet/awskt/dynamodb/ScalarAttributeType;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lcom/steamstreet/awskt/dynamodb/ScalarAttributeType;
+	public final fun copy (Ljava/lang/String;Lcom/steamstreet/awskt/dynamodb/ScalarAttributeType;)Lcom/steamstreet/awskt/dynamodb/AttributeDefinition;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/AttributeDefinition;Ljava/lang/String;Lcom/steamstreet/awskt/dynamodb/ScalarAttributeType;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/AttributeDefinition;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttributeName ()Ljava/lang/String;
+	public final fun getAttributeType ()Lcom/steamstreet/awskt/dynamodb/ScalarAttributeType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/AttributeDefinition$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/AttributeDefinition$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/AttributeDefinition;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/AttributeDefinition;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/AttributeDefinition$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public abstract class com/steamstreet/awskt/dynamodb/AttributeValue {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/AttributeValue$Companion;
+	public final fun asB ()[B
+	public final fun asBOrNull ()[B
+	public final fun asBool ()Z
+	public final fun asBoolOrNull ()Ljava/lang/Boolean;
+	public final fun asBs ()Ljava/util/List;
+	public final fun asBsOrNull ()Ljava/util/List;
+	public final fun asL ()Ljava/util/List;
+	public final fun asLOrNull ()Ljava/util/List;
+	public final fun asM ()Ljava/util/Map;
+	public final fun asMOrNull ()Ljava/util/Map;
+	public final fun asN ()Ljava/lang/String;
+	public final fun asNOrNull ()Ljava/lang/String;
+	public final fun asNs ()Ljava/util/List;
+	public final fun asNsOrNull ()Ljava/util/List;
+	public final fun asNull ()Z
+	public final fun asNullOrNull ()Ljava/lang/Boolean;
+	public final fun asS ()Ljava/lang/String;
+	public final fun asSOrNull ()Ljava/lang/String;
+	public final fun asSs ()Ljava/util/List;
+	public final fun asSsOrNull ()Ljava/util/List;
+}
+
+public final class com/steamstreet/awskt/dynamodb/AttributeValue$B : com/steamstreet/awskt/dynamodb/AttributeValue {
+	public fun <init> ([B)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()[B
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/dynamodb/AttributeValue$Bool : com/steamstreet/awskt/dynamodb/AttributeValue {
+	public fun <init> (Z)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lcom/steamstreet/awskt/dynamodb/AttributeValue$Bool;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/AttributeValue$Bool;ZILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/AttributeValue$Bool;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/dynamodb/AttributeValue$Bs : com/steamstreet/awskt/dynamodb/AttributeValue {
+	public fun <init> (Ljava/util/List;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/dynamodb/AttributeValue$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/AttributeValue$L : com/steamstreet/awskt/dynamodb/AttributeValue {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/steamstreet/awskt/dynamodb/AttributeValue$L;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/AttributeValue$L;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/AttributeValue$L;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/dynamodb/AttributeValue$M : com/steamstreet/awskt/dynamodb/AttributeValue {
+	public fun <init> (Ljava/util/Map;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/AttributeValue$M;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/AttributeValue$M;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/AttributeValue$M;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/dynamodb/AttributeValue$N : com/steamstreet/awskt/dynamodb/AttributeValue {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/AttributeValue$N;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/AttributeValue$N;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/AttributeValue$N;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/dynamodb/AttributeValue$Ns : com/steamstreet/awskt/dynamodb/AttributeValue {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/steamstreet/awskt/dynamodb/AttributeValue$Ns;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/AttributeValue$Ns;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/AttributeValue$Ns;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/dynamodb/AttributeValue$Null : com/steamstreet/awskt/dynamodb/AttributeValue {
+	public fun <init> ()V
+	public fun <init> (Z)V
+	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lcom/steamstreet/awskt/dynamodb/AttributeValue$Null;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/AttributeValue$Null;ZILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/AttributeValue$Null;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/dynamodb/AttributeValue$S : com/steamstreet/awskt/dynamodb/AttributeValue {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/AttributeValue$S;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/AttributeValue$S;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/AttributeValue$S;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/dynamodb/AttributeValue$Ss : com/steamstreet/awskt/dynamodb/AttributeValue {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/steamstreet/awskt/dynamodb/AttributeValue$Ss;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/AttributeValue$Ss;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/AttributeValue$Ss;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/dynamodb/AttributeValueKt {
+	public static final fun attributeValue (I)Lcom/steamstreet/awskt/dynamodb/AttributeValue;
+	public static final fun attributeValue (J)Lcom/steamstreet/awskt/dynamodb/AttributeValue;
+	public static final fun attributeValue (Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/AttributeValue;
+	public static final fun attributeValue (Z)Lcom/steamstreet/awskt/dynamodb/AttributeValue;
+	public static final fun attributeValue ([B)Lcom/steamstreet/awskt/dynamodb/AttributeValue;
+}
+
+public final class com/steamstreet/awskt/dynamodb/AttributeValueSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/AttributeValueSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/AttributeValue;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun fromJson (Lkotlinx/serialization/json/JsonElement;)Lcom/steamstreet/awskt/dynamodb/AttributeValue;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/AttributeValue;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public final fun toJson (Lcom/steamstreet/awskt/dynamodb/AttributeValue;)Lkotlinx/serialization/json/JsonObject;
+}
+
+public final class com/steamstreet/awskt/dynamodb/BatchGetItemRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/BatchGetItemRequest$Companion;
+	public fun <init> (Ljava/util/Map;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/BatchGetItemRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/BatchGetItemRequest;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/BatchGetItemRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getRequestItems ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/BatchGetItemRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/BatchGetItemRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/BatchGetItemRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/BatchGetItemRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/BatchGetItemRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/BatchGetItemResponse {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/BatchGetItemResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Map;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/BatchGetItemResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/BatchGetItemResponse;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/BatchGetItemResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getResponses ()Ljava/util/Map;
+	public final fun getUnprocessedKeys ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/BatchGetItemResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/BatchGetItemResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/BatchGetItemResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/BatchGetItemResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/BatchGetItemResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/BatchWriteItemRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/BatchWriteItemRequest$Companion;
+	public fun <init> (Ljava/util/Map;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/BatchWriteItemRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/BatchWriteItemRequest;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/BatchWriteItemRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getRequestItems ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/BatchWriteItemRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/BatchWriteItemRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/BatchWriteItemRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/BatchWriteItemRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/BatchWriteItemRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/BatchWriteItemResponse {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/BatchWriteItemResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/BatchWriteItemResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/BatchWriteItemResponse;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/BatchWriteItemResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getUnprocessedItems ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/BatchWriteItemResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/BatchWriteItemResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/BatchWriteItemResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/BatchWriteItemResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/BatchWriteItemResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/BillingMode : java/lang/Enum {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/BillingMode$Companion;
+	public static final field PayPerRequest Lcom/steamstreet/awskt/dynamodb/BillingMode;
+	public static final field Provisioned Lcom/steamstreet/awskt/dynamodb/BillingMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/BillingMode;
+	public static fun values ()[Lcom/steamstreet/awskt/dynamodb/BillingMode;
+}
+
+public final class com/steamstreet/awskt/dynamodb/BillingMode$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/CancellationReason {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/CancellationReason$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/util/Map;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/CancellationReason;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/CancellationReason;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/CancellationReason;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCode ()Ljava/lang/String;
+	public final fun getItem ()Ljava/util/Map;
+	public final fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/CancellationReason$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/CancellationReason$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/CancellationReason;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/CancellationReason;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/CancellationReason$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ConditionCheck {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/ConditionCheck$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/util/Map;
+	public final fun component5 ()Ljava/util/Map;
+	public final fun component6 ()Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public final fun copy (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;)Lcom/steamstreet/awskt/dynamodb/ConditionCheck;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/ConditionCheck;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/ConditionCheck;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConditionExpression ()Ljava/lang/String;
+	public final fun getExpressionAttributeNames ()Ljava/util/Map;
+	public final fun getExpressionAttributeValues ()Ljava/util/Map;
+	public final fun getKey ()Ljava/util/Map;
+	public final fun getReturnValuesOnConditionCheckFailure ()Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public final fun getTableName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/ConditionCheck$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/ConditionCheck$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/ConditionCheck;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/ConditionCheck;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ConditionCheck$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ConditionalCheckFailedException : com/steamstreet/awskt/dynamodb/DynamoDbException {
+	public fun <init> (Ljava/lang/String;ILjava/util/Map;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/util/Map;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getItem ()Ljava/util/Map;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ConsumedCapacity {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/ConsumedCapacity$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Double;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Double;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/Double;
+	public final fun copy (Ljava/lang/String;Ljava/lang/Double;)Lcom/steamstreet/awskt/dynamodb/ConsumedCapacity;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/ConsumedCapacity;Ljava/lang/String;Ljava/lang/Double;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/ConsumedCapacity;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCapacityUnits ()Ljava/lang/Double;
+	public final fun getTableName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/ConsumedCapacity$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/ConsumedCapacity$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/ConsumedCapacity;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/ConsumedCapacity;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ConsumedCapacity$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/CreateTableRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/CreateTableRequest$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/BillingMode;Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/StreamSpecification;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/BillingMode;Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/StreamSpecification;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Lcom/steamstreet/awskt/dynamodb/BillingMode;
+	public final fun component5 ()Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;
+	public final fun component6 ()Ljava/util/List;
+	public final fun component7 ()Ljava/util/List;
+	public final fun component8 ()Lcom/steamstreet/awskt/dynamodb/StreamSpecification;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/BillingMode;Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/StreamSpecification;)Lcom/steamstreet/awskt/dynamodb/CreateTableRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/CreateTableRequest;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/BillingMode;Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/StreamSpecification;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/CreateTableRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttributeDefinitions ()Ljava/util/List;
+	public final fun getBillingMode ()Lcom/steamstreet/awskt/dynamodb/BillingMode;
+	public final fun getGlobalSecondaryIndexes ()Ljava/util/List;
+	public final fun getKeySchema ()Ljava/util/List;
+	public final fun getLocalSecondaryIndexes ()Ljava/util/List;
+	public final fun getProvisionedThroughput ()Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;
+	public final fun getStreamSpecification ()Lcom/steamstreet/awskt/dynamodb/StreamSpecification;
+	public final fun getTableName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/CreateTableRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/CreateTableRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/CreateTableRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/CreateTableRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/CreateTableRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/CreateTableResponse {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/CreateTableResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/dynamodb/TableDescription;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/dynamodb/TableDescription;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/dynamodb/TableDescription;
+	public final fun copy (Lcom/steamstreet/awskt/dynamodb/TableDescription;)Lcom/steamstreet/awskt/dynamodb/CreateTableResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/CreateTableResponse;Lcom/steamstreet/awskt/dynamodb/TableDescription;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/CreateTableResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTableDescription ()Lcom/steamstreet/awskt/dynamodb/TableDescription;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/CreateTableResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/CreateTableResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/CreateTableResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/CreateTableResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/CreateTableResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/DeleteItemRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/DeleteItemRequest$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValue;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValue;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/util/Map;
+	public final fun component5 ()Ljava/util/Map;
+	public final fun component6 ()Lcom/steamstreet/awskt/dynamodb/ReturnValue;
+	public final fun component7 ()Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public final fun copy (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValue;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;)Lcom/steamstreet/awskt/dynamodb/DeleteItemRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/DeleteItemRequest;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValue;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/DeleteItemRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConditionExpression ()Ljava/lang/String;
+	public final fun getExpressionAttributeNames ()Ljava/util/Map;
+	public final fun getExpressionAttributeValues ()Ljava/util/Map;
+	public final fun getKey ()Ljava/util/Map;
+	public final fun getReturnValues ()Lcom/steamstreet/awskt/dynamodb/ReturnValue;
+	public final fun getReturnValuesOnConditionCheckFailure ()Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public final fun getTableName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/DeleteItemRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/DeleteItemRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/DeleteItemRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/DeleteItemRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/DeleteItemRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/DeleteItemResponse {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/DeleteItemResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/DeleteItemResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/DeleteItemResponse;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/DeleteItemResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttributes ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/DeleteItemResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/DeleteItemResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/DeleteItemResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/DeleteItemResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/DeleteItemResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/DeleteRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/DeleteRequest$Companion;
+	public fun <init> (Ljava/util/Map;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/DeleteRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/DeleteRequest;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/DeleteRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/DeleteRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/DeleteRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/DeleteRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/DeleteRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/DeleteRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/DeleteTableRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/DeleteTableRequest$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/DeleteTableRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/DeleteTableRequest;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/DeleteTableRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTableName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/DeleteTableRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/DeleteTableRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/DeleteTableRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/DeleteTableRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/DeleteTableRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/DeleteTableResponse {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/DeleteTableResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/dynamodb/TableDescription;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/dynamodb/TableDescription;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/dynamodb/TableDescription;
+	public final fun copy (Lcom/steamstreet/awskt/dynamodb/TableDescription;)Lcom/steamstreet/awskt/dynamodb/DeleteTableResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/DeleteTableResponse;Lcom/steamstreet/awskt/dynamodb/TableDescription;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/DeleteTableResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTableDescription ()Lcom/steamstreet/awskt/dynamodb/TableDescription;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/DeleteTableResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/DeleteTableResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/DeleteTableResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/DeleteTableResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/DeleteTableResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/DescribeTableRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/DescribeTableRequest$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/DescribeTableRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/DescribeTableRequest;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/DescribeTableRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTableName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/DescribeTableRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/DescribeTableRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/DescribeTableRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/DescribeTableRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/DescribeTableRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/DescribeTableResponse {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/DescribeTableResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/dynamodb/TableDescription;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/dynamodb/TableDescription;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/dynamodb/TableDescription;
+	public final fun copy (Lcom/steamstreet/awskt/dynamodb/TableDescription;)Lcom/steamstreet/awskt/dynamodb/DescribeTableResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/DescribeTableResponse;Lcom/steamstreet/awskt/dynamodb/TableDescription;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/DescribeTableResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTable ()Lcom/steamstreet/awskt/dynamodb/TableDescription;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/DescribeTableResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/DescribeTableResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/DescribeTableResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/DescribeTableResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/DescribeTableResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public abstract interface class com/steamstreet/awskt/dynamodb/DynamoDb : java/lang/AutoCloseable {
+	public abstract fun batchGetItem (Lcom/steamstreet/awskt/dynamodb/BatchGetItemRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun batchWriteItem (Lcom/steamstreet/awskt/dynamodb/BatchWriteItemRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun createTable (Lcom/steamstreet/awskt/dynamodb/CreateTableRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun deleteItem (Lcom/steamstreet/awskt/dynamodb/DeleteItemRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun deleteTable (Lcom/steamstreet/awskt/dynamodb/DeleteTableRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun describeTable (Lcom/steamstreet/awskt/dynamodb/DescribeTableRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getClient ()Lcom/steamstreet/awskt/core/AwsServiceClient;
+	public abstract fun getItem (Lcom/steamstreet/awskt/dynamodb/GetItemRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun putItem (Lcom/steamstreet/awskt/dynamodb/PutItemRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun query (Lcom/steamstreet/awskt/dynamodb/QueryRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun scan (Lcom/steamstreet/awskt/dynamodb/ScanRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun transactGetItems (Lcom/steamstreet/awskt/dynamodb/TransactGetItemsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun transactWriteItems (Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun updateItem (Lcom/steamstreet/awskt/dynamodb/UpdateItemRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/dynamodb/DynamoDbConfig {
+	public fun <init> ()V
+	public final fun getCaInfo ()Ljava/lang/String;
+	public final fun getCredentialsProvider ()Lcom/steamstreet/awskt/core/AwsCredentialsProvider;
+	public final fun getEndpointUrl ()Ljava/lang/String;
+	public final fun getHttpClient ()Lio/ktor/client/HttpClient;
+	public final fun getRegion ()Ljava/lang/String;
+	public final fun getRetryConfig ()Lcom/steamstreet/awskt/core/RetryConfig;
+	public final fun setCaInfo (Ljava/lang/String;)V
+	public final fun setCredentialsProvider (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;)V
+	public final fun setEndpointUrl (Ljava/lang/String;)V
+	public final fun setHttpClient (Lio/ktor/client/HttpClient;)V
+	public final fun setRegion (Ljava/lang/String;)V
+	public final fun setRetryConfig (Lcom/steamstreet/awskt/core/RetryConfig;)V
+}
+
+public class com/steamstreet/awskt/dynamodb/DynamoDbException : com/steamstreet/awskt/core/AwsServiceException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/dynamodb/DynamoDbKt {
+	public static final fun DynamoDb (Lkotlin/jvm/functions/Function1;)Lcom/steamstreet/awskt/dynamodb/DynamoDb;
+	public static synthetic fun DynamoDb$default (Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/DynamoDb;
+	public static final fun batchGetAll (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ZLjava/lang/String;Ljava/util/Map;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun batchGetAll$default (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ZLjava/lang/String;Ljava/util/Map;ILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun batchWriteAll (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun batchWriteAll$default (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun getDYNAMODB_PROTOCOL ()Lcom/steamstreet/awskt/core/AwsProtocol;
+	public static final fun items (Lkotlinx/coroutines/flow/Flow;)Lkotlinx/coroutines/flow/Flow;
+	public static final fun queryPaged (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Lcom/steamstreet/awskt/dynamodb/QueryRequest;)Lkotlinx/coroutines/flow/Flow;
+	public static final fun scanItems (Lkotlinx/coroutines/flow/Flow;)Lkotlinx/coroutines/flow/Flow;
+	public static final fun scanPaged (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Lcom/steamstreet/awskt/dynamodb/ScanRequest;)Lkotlinx/coroutines/flow/Flow;
+}
+
+public final class com/steamstreet/awskt/dynamodb/Get {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/Get$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/util/Map;
+	public final fun copy (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/Get;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/Get;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/Get;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getExpressionAttributeNames ()Ljava/util/Map;
+	public final fun getKey ()Ljava/util/Map;
+	public final fun getProjectionExpression ()Ljava/lang/String;
+	public final fun getTableName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/Get$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/Get$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/Get;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/Get;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/Get$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/GetItemRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/GetItemRequest$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/lang/Boolean;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/util/Map;
+	public final fun copy (Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/GetItemRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/GetItemRequest;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/GetItemRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConsistentRead ()Ljava/lang/Boolean;
+	public final fun getExpressionAttributeNames ()Ljava/util/Map;
+	public final fun getKey ()Ljava/util/Map;
+	public final fun getProjectionExpression ()Ljava/lang/String;
+	public final fun getTableName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/GetItemRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/GetItemRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/GetItemRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/GetItemRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/GetItemRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/GetItemResponse {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/GetItemResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/GetItemResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/GetItemResponse;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/GetItemResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getItem ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/GetItemResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/GetItemResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/GetItemResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/GetItemResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/GetItemResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/GlobalSecondaryIndex {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/GlobalSecondaryIndex$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/Projection;Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/Projection;Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Lcom/steamstreet/awskt/dynamodb/Projection;
+	public final fun component4 ()Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/Projection;Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;)Lcom/steamstreet/awskt/dynamodb/GlobalSecondaryIndex;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/GlobalSecondaryIndex;Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/Projection;Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/GlobalSecondaryIndex;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIndexName ()Ljava/lang/String;
+	public final fun getKeySchema ()Ljava/util/List;
+	public final fun getProjection ()Lcom/steamstreet/awskt/dynamodb/Projection;
+	public final fun getProvisionedThroughput ()Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/GlobalSecondaryIndex$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/GlobalSecondaryIndex$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/GlobalSecondaryIndex;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/GlobalSecondaryIndex;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/GlobalSecondaryIndex$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/GlobalSecondaryIndexDescription {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/GlobalSecondaryIndexDescription$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/Projection;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/Projection;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Lcom/steamstreet/awskt/dynamodb/Projection;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/Projection;Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/GlobalSecondaryIndexDescription;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/GlobalSecondaryIndexDescription;Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/Projection;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/GlobalSecondaryIndexDescription;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIndexName ()Ljava/lang/String;
+	public final fun getIndexStatus ()Ljava/lang/String;
+	public final fun getKeySchema ()Ljava/util/List;
+	public final fun getProjection ()Lcom/steamstreet/awskt/dynamodb/Projection;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/GlobalSecondaryIndexDescription$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/GlobalSecondaryIndexDescription$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/GlobalSecondaryIndexDescription;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/GlobalSecondaryIndexDescription;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/GlobalSecondaryIndexDescription$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/IdempotentParameterMismatchException : com/steamstreet/awskt/dynamodb/DynamoDbException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/dynamodb/ItemResponse {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/ItemResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/ItemResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/ItemResponse;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/ItemResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getItem ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/ItemResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/ItemResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/ItemResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/ItemResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ItemResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/KeySchemaElement {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/KeySchemaElement$Companion;
+	public fun <init> (Ljava/lang/String;Lcom/steamstreet/awskt/dynamodb/KeyType;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lcom/steamstreet/awskt/dynamodb/KeyType;
+	public final fun copy (Ljava/lang/String;Lcom/steamstreet/awskt/dynamodb/KeyType;)Lcom/steamstreet/awskt/dynamodb/KeySchemaElement;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/KeySchemaElement;Ljava/lang/String;Lcom/steamstreet/awskt/dynamodb/KeyType;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/KeySchemaElement;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttributeName ()Ljava/lang/String;
+	public final fun getKeyType ()Lcom/steamstreet/awskt/dynamodb/KeyType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/KeySchemaElement$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/KeySchemaElement$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/KeySchemaElement;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/KeySchemaElement;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/KeySchemaElement$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/KeyType : java/lang/Enum {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/KeyType$Companion;
+	public static final field Hash Lcom/steamstreet/awskt/dynamodb/KeyType;
+	public static final field Range Lcom/steamstreet/awskt/dynamodb/KeyType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/KeyType;
+	public static fun values ()[Lcom/steamstreet/awskt/dynamodb/KeyType;
+}
+
+public final class com/steamstreet/awskt/dynamodb/KeyType$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/KeysAndAttributes {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/KeysAndAttributes$Companion;
+	public fun <init> (Ljava/util/List;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/Boolean;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/List;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/KeysAndAttributes;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/KeysAndAttributes;Ljava/util/List;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/KeysAndAttributes;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConsistentRead ()Ljava/lang/Boolean;
+	public final fun getExpressionAttributeNames ()Ljava/util/Map;
+	public final fun getKeys ()Ljava/util/List;
+	public final fun getProjectionExpression ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/KeysAndAttributes$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/KeysAndAttributes$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/KeysAndAttributes;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/KeysAndAttributes;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/KeysAndAttributes$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/LocalSecondaryIndex {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/LocalSecondaryIndex$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/Projection;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Lcom/steamstreet/awskt/dynamodb/Projection;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/Projection;)Lcom/steamstreet/awskt/dynamodb/LocalSecondaryIndex;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/LocalSecondaryIndex;Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/Projection;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/LocalSecondaryIndex;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIndexName ()Ljava/lang/String;
+	public final fun getKeySchema ()Ljava/util/List;
+	public final fun getProjection ()Lcom/steamstreet/awskt/dynamodb/Projection;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/LocalSecondaryIndex$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/LocalSecondaryIndex$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/LocalSecondaryIndex;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/LocalSecondaryIndex;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/LocalSecondaryIndex$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ModelKt {
+	public static final fun orNullIfEmpty (Ljava/util/List;)Ljava/util/List;
+	public static final fun orNullIfEmpty (Ljava/util/Map;)Ljava/util/Map;
+}
+
+public final class com/steamstreet/awskt/dynamodb/Projection {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/Projection$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/dynamodb/ProjectionType;Ljava/util/List;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/dynamodb/ProjectionType;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/dynamodb/ProjectionType;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Lcom/steamstreet/awskt/dynamodb/ProjectionType;Ljava/util/List;)Lcom/steamstreet/awskt/dynamodb/Projection;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/Projection;Lcom/steamstreet/awskt/dynamodb/ProjectionType;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/Projection;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNonKeyAttributes ()Ljava/util/List;
+	public final fun getProjectionType ()Lcom/steamstreet/awskt/dynamodb/ProjectionType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/Projection$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/Projection$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/Projection;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/Projection;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/Projection$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ProjectionType : java/lang/Enum {
+	public static final field All Lcom/steamstreet/awskt/dynamodb/ProjectionType;
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/ProjectionType$Companion;
+	public static final field Include Lcom/steamstreet/awskt/dynamodb/ProjectionType;
+	public static final field KeysOnly Lcom/steamstreet/awskt/dynamodb/ProjectionType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/ProjectionType;
+	public static fun values ()[Lcom/steamstreet/awskt/dynamodb/ProjectionType;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ProjectionType$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ProvisionedThroughput {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput$Companion;
+	public fun <init> (JJ)V
+	public final fun component1 ()J
+	public final fun component2 ()J
+	public final fun copy (JJ)Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;JJILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReadCapacityUnits ()J
+	public final fun getWriteCapacityUnits ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/ProvisionedThroughput$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ProvisionedThroughput$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ProvisionedThroughputExceededException : com/steamstreet/awskt/dynamodb/DynamoDbException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/dynamodb/PutItemRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/PutItemRequest$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValue;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValue;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/util/Map;
+	public final fun component5 ()Ljava/util/Map;
+	public final fun component6 ()Lcom/steamstreet/awskt/dynamodb/ReturnValue;
+	public final fun component7 ()Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public final fun copy (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValue;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;)Lcom/steamstreet/awskt/dynamodb/PutItemRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/PutItemRequest;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValue;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/PutItemRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConditionExpression ()Ljava/lang/String;
+	public final fun getExpressionAttributeNames ()Ljava/util/Map;
+	public final fun getExpressionAttributeValues ()Ljava/util/Map;
+	public final fun getItem ()Ljava/util/Map;
+	public final fun getReturnValues ()Lcom/steamstreet/awskt/dynamodb/ReturnValue;
+	public final fun getReturnValuesOnConditionCheckFailure ()Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public final fun getTableName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/PutItemRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/PutItemRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/PutItemRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/PutItemRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/PutItemRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/PutItemResponse {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/PutItemResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/PutItemResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/PutItemResponse;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/PutItemResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttributes ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/PutItemResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/PutItemResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/PutItemResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/PutItemResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/PutItemResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/PutRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/PutRequest$Companion;
+	public fun <init> (Ljava/util/Map;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/PutRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/PutRequest;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/PutRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getItem ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/PutRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/PutRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/PutRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/PutRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/PutRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/QueryRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/QueryRequest$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Boolean;Lcom/steamstreet/awskt/dynamodb/Select;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Boolean;Lcom/steamstreet/awskt/dynamodb/Select;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/lang/Boolean;
+	public final fun component11 ()Ljava/lang/Boolean;
+	public final fun component12 ()Lcom/steamstreet/awskt/dynamodb/Select;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/util/Map;
+	public final fun component7 ()Ljava/util/Map;
+	public final fun component8 ()Ljava/util/Map;
+	public final fun component9 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Boolean;Lcom/steamstreet/awskt/dynamodb/Select;)Lcom/steamstreet/awskt/dynamodb/QueryRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/QueryRequest;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Boolean;Lcom/steamstreet/awskt/dynamodb/Select;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/QueryRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConsistentRead ()Ljava/lang/Boolean;
+	public final fun getExclusiveStartKey ()Ljava/util/Map;
+	public final fun getExpressionAttributeNames ()Ljava/util/Map;
+	public final fun getExpressionAttributeValues ()Ljava/util/Map;
+	public final fun getFilterExpression ()Ljava/lang/String;
+	public final fun getIndexName ()Ljava/lang/String;
+	public final fun getKeyConditionExpression ()Ljava/lang/String;
+	public final fun getLimit ()Ljava/lang/Integer;
+	public final fun getProjectionExpression ()Ljava/lang/String;
+	public final fun getScanIndexForward ()Ljava/lang/Boolean;
+	public final fun getSelect ()Lcom/steamstreet/awskt/dynamodb/Select;
+	public final fun getTableName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/QueryRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/QueryRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/QueryRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/QueryRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/QueryRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/QueryResponse {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/QueryResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun component3 ()Ljava/lang/Integer;
+	public final fun component4 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/QueryResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/QueryResponse;Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/QueryResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCount ()Ljava/lang/Integer;
+	public final fun getItems ()Ljava/util/List;
+	public final fun getLastEvaluatedKey ()Ljava/util/Map;
+	public final fun getScannedCount ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/QueryResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/QueryResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/QueryResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/QueryResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/QueryResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ResourceNotFoundException : com/steamstreet/awskt/dynamodb/DynamoDbException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/dynamodb/ReturnValue : java/lang/Enum {
+	public static final field AllNew Lcom/steamstreet/awskt/dynamodb/ReturnValue;
+	public static final field AllOld Lcom/steamstreet/awskt/dynamodb/ReturnValue;
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/ReturnValue$Companion;
+	public static final field None Lcom/steamstreet/awskt/dynamodb/ReturnValue;
+	public static final field UpdatedNew Lcom/steamstreet/awskt/dynamodb/ReturnValue;
+	public static final field UpdatedOld Lcom/steamstreet/awskt/dynamodb/ReturnValue;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/ReturnValue;
+	public static fun values ()[Lcom/steamstreet/awskt/dynamodb/ReturnValue;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ReturnValue$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure : java/lang/Enum {
+	public static final field AllOld Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure$Companion;
+	public static final field None Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public static fun values ()[Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ScalarAttributeType : java/lang/Enum {
+	public static final field B Lcom/steamstreet/awskt/dynamodb/ScalarAttributeType;
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/ScalarAttributeType$Companion;
+	public static final field N Lcom/steamstreet/awskt/dynamodb/ScalarAttributeType;
+	public static final field S Lcom/steamstreet/awskt/dynamodb/ScalarAttributeType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/ScalarAttributeType;
+	public static fun values ()[Lcom/steamstreet/awskt/dynamodb/ScalarAttributeType;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ScalarAttributeType$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ScanRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/ScanRequest$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Integer;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Integer;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/lang/Integer;
+	public final fun component11 ()Ljava/lang/Integer;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/util/Map;
+	public final fun component6 ()Ljava/util/Map;
+	public final fun component7 ()Ljava/util/Map;
+	public final fun component8 ()Ljava/lang/Integer;
+	public final fun component9 ()Ljava/lang/Boolean;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Integer;Ljava/lang/Integer;)Lcom/steamstreet/awskt/dynamodb/ScanRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/ScanRequest;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Integer;Ljava/lang/Integer;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/ScanRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConsistentRead ()Ljava/lang/Boolean;
+	public final fun getExclusiveStartKey ()Ljava/util/Map;
+	public final fun getExpressionAttributeNames ()Ljava/util/Map;
+	public final fun getExpressionAttributeValues ()Ljava/util/Map;
+	public final fun getFilterExpression ()Ljava/lang/String;
+	public final fun getIndexName ()Ljava/lang/String;
+	public final fun getLimit ()Ljava/lang/Integer;
+	public final fun getProjectionExpression ()Ljava/lang/String;
+	public final fun getSegment ()Ljava/lang/Integer;
+	public final fun getTableName ()Ljava/lang/String;
+	public final fun getTotalSegments ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/ScanRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/ScanRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/ScanRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/ScanRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ScanRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ScanResponse {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/ScanResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun component3 ()Ljava/lang/Integer;
+	public final fun component4 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/ScanResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/ScanResponse;Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/ScanResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCount ()Ljava/lang/Integer;
+	public final fun getItems ()Ljava/util/List;
+	public final fun getLastEvaluatedKey ()Ljava/util/Map;
+	public final fun getScannedCount ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/ScanResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/ScanResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/ScanResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/ScanResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ScanResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/Select : java/lang/Enum {
+	public static final field AllAttributes Lcom/steamstreet/awskt/dynamodb/Select;
+	public static final field AllProjectedAttributes Lcom/steamstreet/awskt/dynamodb/Select;
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/Select$Companion;
+	public static final field Count Lcom/steamstreet/awskt/dynamodb/Select;
+	public static final field SpecificAttributes Lcom/steamstreet/awskt/dynamodb/Select;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/Select;
+	public static fun values ()[Lcom/steamstreet/awskt/dynamodb/Select;
+}
+
+public final class com/steamstreet/awskt/dynamodb/Select$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/StreamSpecification {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/StreamSpecification$Companion;
+	public fun <init> (ZLcom/steamstreet/awskt/dynamodb/StreamViewType;)V
+	public synthetic fun <init> (ZLcom/steamstreet/awskt/dynamodb/StreamViewType;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Lcom/steamstreet/awskt/dynamodb/StreamViewType;
+	public final fun copy (ZLcom/steamstreet/awskt/dynamodb/StreamViewType;)Lcom/steamstreet/awskt/dynamodb/StreamSpecification;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/StreamSpecification;ZLcom/steamstreet/awskt/dynamodb/StreamViewType;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/StreamSpecification;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getStreamEnabled ()Z
+	public final fun getStreamViewType ()Lcom/steamstreet/awskt/dynamodb/StreamViewType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/StreamSpecification$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/StreamSpecification$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/StreamSpecification;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/StreamSpecification;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/StreamSpecification$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/StreamViewType : java/lang/Enum {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/StreamViewType$Companion;
+	public static final field KeysOnly Lcom/steamstreet/awskt/dynamodb/StreamViewType;
+	public static final field NewAndOldImages Lcom/steamstreet/awskt/dynamodb/StreamViewType;
+	public static final field NewImage Lcom/steamstreet/awskt/dynamodb/StreamViewType;
+	public static final field OldImage Lcom/steamstreet/awskt/dynamodb/StreamViewType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/StreamViewType;
+	public static fun values ()[Lcom/steamstreet/awskt/dynamodb/StreamViewType;
+}
+
+public final class com/steamstreet/awskt/dynamodb/StreamViewType$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TableDescription {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/TableDescription$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;Ljava/lang/Long;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/StreamSpecification;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;Ljava/lang/Long;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/StreamSpecification;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/Long;
+	public final fun component4 ()Ljava/lang/Long;
+	public final fun component5 ()Ljava/util/List;
+	public final fun component6 ()Ljava/util/List;
+	public final fun component7 ()Ljava/util/List;
+	public final fun component8 ()Lcom/steamstreet/awskt/dynamodb/StreamSpecification;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;Ljava/lang/Long;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/StreamSpecification;Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/TableDescription;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/TableDescription;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;Ljava/lang/Long;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/dynamodb/StreamSpecification;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/TableDescription;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttributeDefinitions ()Ljava/util/List;
+	public final fun getGlobalSecondaryIndexes ()Ljava/util/List;
+	public final fun getItemCount ()Ljava/lang/Long;
+	public final fun getKeySchema ()Ljava/util/List;
+	public final fun getLatestStreamArn ()Ljava/lang/String;
+	public final fun getStreamSpecification ()Lcom/steamstreet/awskt/dynamodb/StreamSpecification;
+	public final fun getTableName ()Ljava/lang/String;
+	public final fun getTableSizeBytes ()Ljava/lang/Long;
+	public final fun getTableStatus ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/TableDescription$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/TableDescription$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/TableDescription;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/TableDescription;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TableDescription$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactDelete {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/TransactDelete$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/util/Map;
+	public final fun component5 ()Ljava/util/Map;
+	public final fun component6 ()Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public final fun copy (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;)Lcom/steamstreet/awskt/dynamodb/TransactDelete;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/TransactDelete;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/TransactDelete;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConditionExpression ()Ljava/lang/String;
+	public final fun getExpressionAttributeNames ()Ljava/util/Map;
+	public final fun getExpressionAttributeValues ()Ljava/util/Map;
+	public final fun getKey ()Ljava/util/Map;
+	public final fun getReturnValuesOnConditionCheckFailure ()Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public final fun getTableName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/TransactDelete$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/TransactDelete$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/TransactDelete;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/TransactDelete;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactDelete$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactGetItem {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/TransactGetItem$Companion;
+	public fun <init> (Lcom/steamstreet/awskt/dynamodb/Get;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/dynamodb/Get;
+	public final fun copy (Lcom/steamstreet/awskt/dynamodb/Get;)Lcom/steamstreet/awskt/dynamodb/TransactGetItem;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/TransactGetItem;Lcom/steamstreet/awskt/dynamodb/Get;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/TransactGetItem;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getGet ()Lcom/steamstreet/awskt/dynamodb/Get;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/TransactGetItem$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/TransactGetItem$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/TransactGetItem;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/TransactGetItem;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactGetItem$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactGetItemsRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/TransactGetItemsRequest$Companion;
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/steamstreet/awskt/dynamodb/TransactGetItemsRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/TransactGetItemsRequest;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/TransactGetItemsRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTransactItems ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/TransactGetItemsRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/TransactGetItemsRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/TransactGetItemsRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/TransactGetItemsRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactGetItemsRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactGetItemsResponse {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/TransactGetItemsResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/steamstreet/awskt/dynamodb/TransactGetItemsResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/TransactGetItemsResponse;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/TransactGetItemsResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getResponses ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/TransactGetItemsResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/TransactGetItemsResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/TransactGetItemsResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/TransactGetItemsResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactGetItemsResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactPut {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/TransactPut$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/util/Map;
+	public final fun component5 ()Ljava/util/Map;
+	public final fun component6 ()Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public final fun copy (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;)Lcom/steamstreet/awskt/dynamodb/TransactPut;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/TransactPut;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/TransactPut;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConditionExpression ()Ljava/lang/String;
+	public final fun getExpressionAttributeNames ()Ljava/util/Map;
+	public final fun getExpressionAttributeValues ()Ljava/util/Map;
+	public final fun getItem ()Ljava/util/Map;
+	public final fun getReturnValuesOnConditionCheckFailure ()Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public final fun getTableName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/TransactPut$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/TransactPut$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/TransactPut;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/TransactPut;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactPut$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactUpdate {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/TransactUpdate$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/util/Map;
+	public final fun component6 ()Ljava/util/Map;
+	public final fun component7 ()Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public final fun copy (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;)Lcom/steamstreet/awskt/dynamodb/TransactUpdate;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/TransactUpdate;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/TransactUpdate;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConditionExpression ()Ljava/lang/String;
+	public final fun getExpressionAttributeNames ()Ljava/util/Map;
+	public final fun getExpressionAttributeValues ()Ljava/util/Map;
+	public final fun getKey ()Ljava/util/Map;
+	public final fun getReturnValuesOnConditionCheckFailure ()Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public final fun getTableName ()Ljava/lang/String;
+	public final fun getUpdateExpression ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/TransactUpdate$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/TransactUpdate$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/TransactUpdate;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/TransactUpdate;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactUpdate$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactWriteItem {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/TransactWriteItem$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/dynamodb/TransactPut;Lcom/steamstreet/awskt/dynamodb/TransactUpdate;Lcom/steamstreet/awskt/dynamodb/TransactDelete;Lcom/steamstreet/awskt/dynamodb/ConditionCheck;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/dynamodb/TransactPut;Lcom/steamstreet/awskt/dynamodb/TransactUpdate;Lcom/steamstreet/awskt/dynamodb/TransactDelete;Lcom/steamstreet/awskt/dynamodb/ConditionCheck;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/dynamodb/TransactPut;
+	public final fun component2 ()Lcom/steamstreet/awskt/dynamodb/TransactUpdate;
+	public final fun component3 ()Lcom/steamstreet/awskt/dynamodb/TransactDelete;
+	public final fun component4 ()Lcom/steamstreet/awskt/dynamodb/ConditionCheck;
+	public final fun copy (Lcom/steamstreet/awskt/dynamodb/TransactPut;Lcom/steamstreet/awskt/dynamodb/TransactUpdate;Lcom/steamstreet/awskt/dynamodb/TransactDelete;Lcom/steamstreet/awskt/dynamodb/ConditionCheck;)Lcom/steamstreet/awskt/dynamodb/TransactWriteItem;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/TransactWriteItem;Lcom/steamstreet/awskt/dynamodb/TransactPut;Lcom/steamstreet/awskt/dynamodb/TransactUpdate;Lcom/steamstreet/awskt/dynamodb/TransactDelete;Lcom/steamstreet/awskt/dynamodb/ConditionCheck;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/TransactWriteItem;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConditionCheck ()Lcom/steamstreet/awskt/dynamodb/ConditionCheck;
+	public final fun getDelete ()Lcom/steamstreet/awskt/dynamodb/TransactDelete;
+	public final fun getPut ()Lcom/steamstreet/awskt/dynamodb/TransactPut;
+	public final fun getUpdate ()Lcom/steamstreet/awskt/dynamodb/TransactUpdate;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/TransactWriteItem$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/TransactWriteItem$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/TransactWriteItem;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/TransactWriteItem;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactWriteItem$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactWriteItemsRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsRequest$Companion;
+	public fun <init> (Ljava/util/List;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/util/List;Ljava/lang/String;)Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsRequest;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getClientRequestToken ()Ljava/lang/String;
+	public final fun getTransactItems ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/TransactWriteItemsRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactWriteItemsRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactWriteItemsResponse {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsResponse;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConsumedCapacity ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/TransactWriteItemsResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/TransactWriteItemsResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactWriteItemsResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/TransactionCanceledException : com/steamstreet/awskt/dynamodb/DynamoDbException {
+	public fun <init> (Ljava/lang/String;ILjava/util/List;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCancellationReasons ()Ljava/util/List;
+}
+
+public final class com/steamstreet/awskt/dynamodb/UpdateItemRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/UpdateItemRequest$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValue;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValue;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/util/Map;
+	public final fun component6 ()Ljava/util/Map;
+	public final fun component7 ()Lcom/steamstreet/awskt/dynamodb/ReturnValue;
+	public final fun component8 ()Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public final fun copy (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValue;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;)Lcom/steamstreet/awskt/dynamodb/UpdateItemRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/UpdateItemRequest;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/awskt/dynamodb/ReturnValue;Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/UpdateItemRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConditionExpression ()Ljava/lang/String;
+	public final fun getExpressionAttributeNames ()Ljava/util/Map;
+	public final fun getExpressionAttributeValues ()Ljava/util/Map;
+	public final fun getKey ()Ljava/util/Map;
+	public final fun getReturnValues ()Lcom/steamstreet/awskt/dynamodb/ReturnValue;
+	public final fun getReturnValuesOnConditionCheckFailure ()Lcom/steamstreet/awskt/dynamodb/ReturnValuesOnConditionCheckFailure;
+	public final fun getTableName ()Ljava/lang/String;
+	public final fun getUpdateExpression ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/UpdateItemRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/UpdateItemRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/UpdateItemRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/UpdateItemRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/UpdateItemRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/UpdateItemResponse {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/UpdateItemResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lcom/steamstreet/awskt/dynamodb/UpdateItemResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/UpdateItemResponse;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/UpdateItemResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttributes ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/UpdateItemResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/UpdateItemResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/UpdateItemResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/UpdateItemResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/UpdateItemResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/ValidationException : com/steamstreet/awskt/dynamodb/DynamoDbException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/dynamodb/WriteRequest {
+	public static final field Companion Lcom/steamstreet/awskt/dynamodb/WriteRequest$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/dynamodb/PutRequest;Lcom/steamstreet/awskt/dynamodb/DeleteRequest;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/dynamodb/PutRequest;Lcom/steamstreet/awskt/dynamodb/DeleteRequest;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/dynamodb/PutRequest;
+	public final fun component2 ()Lcom/steamstreet/awskt/dynamodb/DeleteRequest;
+	public final fun copy (Lcom/steamstreet/awskt/dynamodb/PutRequest;Lcom/steamstreet/awskt/dynamodb/DeleteRequest;)Lcom/steamstreet/awskt/dynamodb/WriteRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/dynamodb/WriteRequest;Lcom/steamstreet/awskt/dynamodb/PutRequest;Lcom/steamstreet/awskt/dynamodb/DeleteRequest;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/WriteRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDeleteRequest ()Lcom/steamstreet/awskt/dynamodb/DeleteRequest;
+	public final fun getPutRequest ()Lcom/steamstreet/awskt/dynamodb/PutRequest;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/dynamodb/WriteRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/dynamodb/WriteRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/dynamodb/WriteRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/dynamodb/WriteRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/dynamodb/WriteRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+

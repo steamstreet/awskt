@@ -1,0 +1,69 @@
+public abstract interface class com/steamstreet/aws/lambda/DynamoEventHandler {
+	public abstract fun handleRecord (Lcom/steamstreet/dynamokt/DynamoStreamEvent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public class com/steamstreet/aws/lambda/DynamoKinesisStreamHandler : com/steamstreet/aws/lambda/IOLambda, com/steamstreet/aws/lambda/DynamoEventHandler {
+	public fun <init> (ZZ)V
+	public synthetic fun <init> (ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getEnableBatchItemFailures ()Z
+	public final fun getLogFailures ()Ljava/util/logging/Level;
+	public fun handle (Lcom/steamstreet/aws/lambda/kinesis/KinesisRecords;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	protected fun handle (Lcom/steamstreet/dynamokt/DynamoStreamRecords;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun handle (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun handleRecord (Lcom/steamstreet/dynamokt/DynamoStreamEvent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun setLogFailures (Ljava/util/logging/Level;)V
+}
+
+public abstract class com/steamstreet/aws/lambda/DynamoKtStreamHandler : com/steamstreet/aws/lambda/IOLambda {
+	public fun <init> (Lcom/steamstreet/dynamokt/DynamoKt;ZZLaws/sdk/kotlin/services/kinesis/KinesisClient;)V
+	public synthetic fun <init> (Lcom/steamstreet/dynamokt/DynamoKt;ZZLaws/sdk/kotlin/services/kinesis/KinesisClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected final fun getDynamoKtSession ()Lcom/steamstreet/dynamokt/DynamoKtSession;
+	public final fun getEnableBatchItemFailures ()Z
+	public final fun getLogFailures ()Ljava/util/logging/Level;
+	public fun getLogIncoming ()Z
+	public fun getLogOutgoing ()Z
+	public final fun getLogRecords ()Z
+	public synthetic fun handle (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun handle (Lkotlinx/serialization/json/JsonElement;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	protected fun handleRecord (Lcom/steamstreet/dynamokt/DynamoStreamEvent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	protected fun handleRecords (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	protected fun logRecord (Lkotlin/jvm/functions/Function0;)V
+	protected fun onItemUpdate (Lcom/steamstreet/dynamokt/Item;Lcom/steamstreet/dynamokt/Item;Lcom/steamstreet/dynamokt/DynamoStreamEvent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	protected fun processKinesisBatchRecord (Lcom/steamstreet/aws/lambda/kinesis/KinesisBatchInfo;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun setLogFailures (Ljava/util/logging/Level;)V
+	public fun setLogIncoming (Z)V
+	public fun setLogOutgoing (Z)V
+	public final fun setLogRecords (Z)V
+}
+
+public final class com/steamstreet/aws/lambda/DynamoKtStreamHandlerKt {
+	public static final fun StreamHandlingException (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun StreamHandlingException$default (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public abstract class com/steamstreet/aws/lambda/DynamoStreamHandler : com/steamstreet/aws/lambda/InputLambda, com/steamstreet/aws/lambda/DynamoEventHandler {
+	public fun <init> ()V
+	protected final fun getAsync ()Z
+	public fun handle (Lcom/steamstreet/dynamokt/DynamoStreamRecords;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun handle (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	protected final fun setAsync (Z)V
+}
+
+public final class com/steamstreet/aws/lambda/RecordInfo {
+	public fun <init> (Lcom/steamstreet/dynamokt/DynamoStreamEvent;Ljava/lang/String;)V
+	public final fun component1 ()Lcom/steamstreet/dynamokt/DynamoStreamEvent;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Lcom/steamstreet/dynamokt/DynamoStreamEvent;Ljava/lang/String;)Lcom/steamstreet/aws/lambda/RecordInfo;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/lambda/RecordInfo;Lcom/steamstreet/dynamokt/DynamoStreamEvent;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/aws/lambda/RecordInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDynamoEvent ()Lcom/steamstreet/dynamokt/DynamoStreamEvent;
+	public final fun getIdentifier ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/aws/lambda/StreamHandlingException : com/steamstreet/exceptions/StatefulException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+

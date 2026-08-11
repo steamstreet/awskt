@@ -1,0 +1,450 @@
+public final class com/steamstreet/aws/test/AWSLocal {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun addService (Lcom/steamstreet/aws/test/MockService;)Lcom/steamstreet/aws/test/MockService;
+	public final fun getAccountId ()Ljava/lang/String;
+	public final fun getProcessing ()Z
+	public final fun getRegion ()Ljava/lang/String;
+	public final fun start (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun stop (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun waitForProcessing (J)V
+	public static synthetic fun waitForProcessing$default (Lcom/steamstreet/aws/test/AWSLocal;JILjava/lang/Object;)V
+}
+
+public final class com/steamstreet/aws/test/DirectInvocationHandler : com/steamstreet/aws/test/LambdaInvocationHandler {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public final fun getFunction ()Lkotlin/jvm/functions/Function1;
+	public fun invoke ([BLcom/amazonaws/services/lambda/runtime/Context;)[B
+}
+
+public final class com/steamstreet/aws/test/DynamoEventBridgePipeKt {
+	public static final fun dynamoPipe (Laws/sdk/kotlin/services/eventbridge/EventBridgeClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lkotlin/jvm/functions/Function2;
+}
+
+public final class com/steamstreet/aws/test/DynamoLocalBuilder {
+	public fun <init> ()V
+	public fun <init> (I)V
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getClient ()Laws/sdk/kotlin/services/dynamodb/DynamoDbClient;
+	public final fun getClientBuilder ()Lkotlin/jvm/functions/Function1;
+	public final fun getPort ()I
+	public final fun getStreamsClient ()Laws/sdk/kotlin/services/dynamodbstreams/DynamoDbStreamsClient;
+	public final fun setPort (I)V
+	public final fun start ()V
+	public final fun stop ()V
+}
+
+public final class com/steamstreet/aws/test/DynamoStreamRunner : com/steamstreet/aws/test/MockService {
+	public fun <init> (Ljava/lang/String;Laws/sdk/kotlin/services/dynamodbstreams/DynamoDbStreamsClient;Lkotlin/jvm/functions/Function2;)V
+	public fun isProcessing ()Z
+	public fun isReady ()Z
+	public fun start (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun stop (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/aws/test/DynamoStreamRunnerKt {
+	public static final fun DynamoStreamRunner (Ljava/lang/String;Laws/sdk/kotlin/services/dynamodbstreams/DynamoDbStreamsClient;Lcom/steamstreet/aws/lambda/DynamoStreamHandler;)Lcom/steamstreet/aws/test/DynamoStreamRunner;
+}
+
+public final class com/steamstreet/aws/test/DynamoTestHelpersKt {
+	public static final fun AttributeDefinition (Ljava/lang/String;Laws/sdk/kotlin/services/dynamodb/model/ScalarAttributeType;)Laws/sdk/kotlin/services/dynamodb/model/AttributeDefinition;
+	public static synthetic fun AttributeDefinition$default (Ljava/lang/String;Laws/sdk/kotlin/services/dynamodb/model/ScalarAttributeType;ILjava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeDefinition;
+	public static final fun GlobalSecondaryIndex (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Laws/sdk/kotlin/services/dynamodb/model/GlobalSecondaryIndex;
+	public static synthetic fun GlobalSecondaryIndex$default (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/GlobalSecondaryIndex;
+	public static final fun KeySchema (Ljava/lang/String;Ljava/lang/String;)Ljava/util/List;
+	public static synthetic fun KeySchema$default (Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ljava/util/List;
+	public static final fun KeySchemaElement (Ljava/lang/String;Laws/sdk/kotlin/services/dynamodb/model/KeyType;)Laws/sdk/kotlin/services/dynamodb/model/KeySchemaElement;
+	public static final fun defaultTable (Laws/sdk/kotlin/services/dynamodb/DynamoDbClient;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/aws/test/EventBridgeMock : aws/sdk/kotlin/services/eventbridge/EventBridgeClient, com/steamstreet/aws/test/MockService {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Laws/sdk/kotlin/services/eventbridge/EventBridgeClient;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Laws/sdk/kotlin/services/eventbridge/EventBridgeClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun activateEventSource (Laws/sdk/kotlin/services/eventbridge/model/ActivateEventSourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun cancelReplay (Laws/sdk/kotlin/services/eventbridge/model/CancelReplayRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun clearSaved ()V
+	public fun close ()V
+	public fun createApiDestination (Laws/sdk/kotlin/services/eventbridge/model/CreateApiDestinationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createArchive (Laws/sdk/kotlin/services/eventbridge/model/CreateArchiveRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createConnection (Laws/sdk/kotlin/services/eventbridge/model/CreateConnectionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createEndpoint (Laws/sdk/kotlin/services/eventbridge/model/CreateEndpointRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createEventBus (Laws/sdk/kotlin/services/eventbridge/model/CreateEventBusRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createPartnerEventSource (Laws/sdk/kotlin/services/eventbridge/model/CreatePartnerEventSourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deactivateEventSource (Laws/sdk/kotlin/services/eventbridge/model/DeactivateEventSourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deauthorizeConnection (Laws/sdk/kotlin/services/eventbridge/model/DeauthorizeConnectionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteApiDestination (Laws/sdk/kotlin/services/eventbridge/model/DeleteApiDestinationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteArchive (Laws/sdk/kotlin/services/eventbridge/model/DeleteArchiveRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteConnection (Laws/sdk/kotlin/services/eventbridge/model/DeleteConnectionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteEndpoint (Laws/sdk/kotlin/services/eventbridge/model/DeleteEndpointRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteEventBus (Laws/sdk/kotlin/services/eventbridge/model/DeleteEventBusRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deletePartnerEventSource (Laws/sdk/kotlin/services/eventbridge/model/DeletePartnerEventSourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteRule (Laws/sdk/kotlin/services/eventbridge/model/DeleteRuleRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun describeApiDestination (Laws/sdk/kotlin/services/eventbridge/model/DescribeApiDestinationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun describeArchive (Laws/sdk/kotlin/services/eventbridge/model/DescribeArchiveRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun describeConnection (Laws/sdk/kotlin/services/eventbridge/model/DescribeConnectionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun describeEndpoint (Laws/sdk/kotlin/services/eventbridge/model/DescribeEndpointRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun describeEventBus (Laws/sdk/kotlin/services/eventbridge/model/DescribeEventBusRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun describeEventSource (Laws/sdk/kotlin/services/eventbridge/model/DescribeEventSourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun describePartnerEventSource (Laws/sdk/kotlin/services/eventbridge/model/DescribePartnerEventSourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun describeReplay (Laws/sdk/kotlin/services/eventbridge/model/DescribeReplayRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun describeRule (Laws/sdk/kotlin/services/eventbridge/model/DescribeRuleRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun disableRule (Laws/sdk/kotlin/services/eventbridge/model/DisableRuleRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun enableRule (Laws/sdk/kotlin/services/eventbridge/model/EnableRuleRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun eventsOfType (Ljava/lang/String;Ljava/lang/String;)Ljava/util/List;
+	public static synthetic fun eventsOfType$default (Lcom/steamstreet/aws/test/EventBridgeMock;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ljava/util/List;
+	public fun getConfig ()Laws/sdk/kotlin/services/eventbridge/EventBridgeClient$Config;
+	public synthetic fun getConfig ()Laws/smithy/kotlin/runtime/client/SdkClientConfig;
+	public fun isProcessing ()Z
+	public fun isReady ()Z
+	public fun listApiDestinations (Laws/sdk/kotlin/services/eventbridge/model/ListApiDestinationsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listArchives (Laws/sdk/kotlin/services/eventbridge/model/ListArchivesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listConnections (Laws/sdk/kotlin/services/eventbridge/model/ListConnectionsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listEndpoints (Laws/sdk/kotlin/services/eventbridge/model/ListEndpointsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listEventBuses (Laws/sdk/kotlin/services/eventbridge/model/ListEventBusesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listEventSources (Laws/sdk/kotlin/services/eventbridge/model/ListEventSourcesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listPartnerEventSourceAccounts (Laws/sdk/kotlin/services/eventbridge/model/ListPartnerEventSourceAccountsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listPartnerEventSources (Laws/sdk/kotlin/services/eventbridge/model/ListPartnerEventSourcesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listReplays (Laws/sdk/kotlin/services/eventbridge/model/ListReplaysRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listRuleNamesByTarget (Laws/sdk/kotlin/services/eventbridge/model/ListRuleNamesByTargetRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listRules (Laws/sdk/kotlin/services/eventbridge/model/ListRulesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listTagsForResource (Laws/sdk/kotlin/services/eventbridge/model/ListTagsForResourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listTargetsByRule (Laws/sdk/kotlin/services/eventbridge/model/ListTargetsByRuleRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putEvents (Laws/sdk/kotlin/services/eventbridge/model/PutEventsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putPartnerEvents (Laws/sdk/kotlin/services/eventbridge/model/PutPartnerEventsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putPermission (Laws/sdk/kotlin/services/eventbridge/model/PutPermissionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putRule (Laws/sdk/kotlin/services/eventbridge/model/PutRuleRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun putRule (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun putRule (Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun putTarget (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun putTarget (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function3;)V
+	public final fun putTarget (Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun putTarget (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putTargets (Laws/sdk/kotlin/services/eventbridge/model/PutTargetsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun removePermission (Laws/sdk/kotlin/services/eventbridge/model/RemovePermissionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun removeTargets (Laws/sdk/kotlin/services/eventbridge/model/RemoveTargetsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun start (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun startReplay (Laws/sdk/kotlin/services/eventbridge/model/StartReplayRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun stop (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun tagResource (Laws/sdk/kotlin/services/eventbridge/model/TagResourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun testEventPattern (Laws/sdk/kotlin/services/eventbridge/model/TestEventPatternRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun untagResource (Laws/sdk/kotlin/services/eventbridge/model/UntagResourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateApiDestination (Laws/sdk/kotlin/services/eventbridge/model/UpdateApiDestinationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateArchive (Laws/sdk/kotlin/services/eventbridge/model/UpdateArchiveRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateConnection (Laws/sdk/kotlin/services/eventbridge/model/UpdateConnectionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateEndpoint (Laws/sdk/kotlin/services/eventbridge/model/UpdateEndpointRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateEventBus (Laws/sdk/kotlin/services/eventbridge/model/UpdateEventBusRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/aws/test/EventBridgeMockKt {
+	public static final fun eventsOfType (Lcom/steamstreet/aws/test/EventBridgeMock;Lcom/steamstreet/events/EventSchema;Ljava/lang/String;)Ljava/util/List;
+	public static synthetic fun eventsOfType$default (Lcom/steamstreet/aws/test/EventBridgeMock;Lcom/steamstreet/events/EventSchema;Ljava/lang/String;ILjava/lang/Object;)Ljava/util/List;
+	public static final fun post (Lcom/steamstreet/events/EventSchema;Ljava/lang/Object;Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun post (Lcom/steamstreet/events/EventSchema;Ljava/util/Collection;Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun post (Lcom/steamstreet/events/EventSchema;Ljava/util/Collection;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class com/steamstreet/aws/test/LambdaInvocationHandler {
+	public abstract fun invoke ([BLcom/amazonaws/services/lambda/runtime/Context;)[B
+	public static synthetic fun invoke$default (Lcom/steamstreet/aws/test/LambdaInvocationHandler;[BLcom/amazonaws/services/lambda/runtime/Context;ILjava/lang/Object;)[B
+}
+
+public final class com/steamstreet/aws/test/LambdaInvocationHandler$DefaultImpls {
+	public static synthetic fun invoke$default (Lcom/steamstreet/aws/test/LambdaInvocationHandler;[BLcom/amazonaws/services/lambda/runtime/Context;ILjava/lang/Object;)[B
+}
+
+public final class com/steamstreet/aws/test/LambdaLocalContext : com/amazonaws/services/lambda/runtime/Context {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getAwsRequestId ()Ljava/lang/String;
+	public fun getClientContext ()Lcom/amazonaws/services/lambda/runtime/ClientContext;
+	public fun getFunctionName ()Ljava/lang/String;
+	public fun getFunctionVersion ()Ljava/lang/String;
+	public fun getIdentity ()Lcom/amazonaws/services/lambda/runtime/CognitoIdentity;
+	public fun getInvokedFunctionArn ()Ljava/lang/String;
+	public fun getLogGroupName ()Ljava/lang/String;
+	public fun getLogStreamName ()Ljava/lang/String;
+	public fun getLogger ()Lcom/amazonaws/services/lambda/runtime/LambdaLogger;
+	public fun getMemoryLimitInMB ()I
+	public fun getRemainingTimeInMillis ()I
+}
+
+public final class com/steamstreet/aws/test/LambdaMock : aws/sdk/kotlin/services/lambda/LambdaClient, com/steamstreet/aws/test/MockService {
+	public fun <init> ()V
+	public fun <init> (Laws/sdk/kotlin/services/lambda/LambdaClient;)V
+	public synthetic fun <init> (Laws/sdk/kotlin/services/lambda/LambdaClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun addLayerVersionPermission (Laws/sdk/kotlin/services/lambda/model/AddLayerVersionPermissionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun addPermission (Laws/sdk/kotlin/services/lambda/model/AddPermissionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun checkpointDurableExecution (Laws/sdk/kotlin/services/lambda/model/CheckpointDurableExecutionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun close ()V
+	public fun createAlias (Laws/sdk/kotlin/services/lambda/model/CreateAliasRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createCapacityProvider (Laws/sdk/kotlin/services/lambda/model/CreateCapacityProviderRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createCodeSigningConfig (Laws/sdk/kotlin/services/lambda/model/CreateCodeSigningConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createEventSourceMapping (Laws/sdk/kotlin/services/lambda/model/CreateEventSourceMappingRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createFunction (Laws/sdk/kotlin/services/lambda/model/CreateFunctionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun createFunction (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public fun createFunctionUrlConfig (Laws/sdk/kotlin/services/lambda/model/CreateFunctionUrlConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteAlias (Laws/sdk/kotlin/services/lambda/model/DeleteAliasRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteCapacityProvider (Laws/sdk/kotlin/services/lambda/model/DeleteCapacityProviderRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteCodeSigningConfig (Laws/sdk/kotlin/services/lambda/model/DeleteCodeSigningConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteEventSourceMapping (Laws/sdk/kotlin/services/lambda/model/DeleteEventSourceMappingRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteFunction (Laws/sdk/kotlin/services/lambda/model/DeleteFunctionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteFunctionCodeSigningConfig (Laws/sdk/kotlin/services/lambda/model/DeleteFunctionCodeSigningConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteFunctionConcurrency (Laws/sdk/kotlin/services/lambda/model/DeleteFunctionConcurrencyRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteFunctionEventInvokeConfig (Laws/sdk/kotlin/services/lambda/model/DeleteFunctionEventInvokeConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteFunctionUrlConfig (Laws/sdk/kotlin/services/lambda/model/DeleteFunctionUrlConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteLayerVersion (Laws/sdk/kotlin/services/lambda/model/DeleteLayerVersionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteProvisionedConcurrencyConfig (Laws/sdk/kotlin/services/lambda/model/DeleteProvisionedConcurrencyConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getAccountSettings (Laws/sdk/kotlin/services/lambda/model/GetAccountSettingsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getAlias (Laws/sdk/kotlin/services/lambda/model/GetAliasRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getCapacityProvider (Laws/sdk/kotlin/services/lambda/model/GetCapacityProviderRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getCodeSigningConfig (Laws/sdk/kotlin/services/lambda/model/GetCodeSigningConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getConfig ()Laws/sdk/kotlin/services/lambda/LambdaClient$Config;
+	public synthetic fun getConfig ()Laws/smithy/kotlin/runtime/client/SdkClientConfig;
+	public fun getDurableExecution (Laws/sdk/kotlin/services/lambda/model/GetDurableExecutionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getDurableExecutionHistory (Laws/sdk/kotlin/services/lambda/model/GetDurableExecutionHistoryRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getDurableExecutionState (Laws/sdk/kotlin/services/lambda/model/GetDurableExecutionStateRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEventSourceMapping (Laws/sdk/kotlin/services/lambda/model/GetEventSourceMappingRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getFunction (Laws/sdk/kotlin/services/lambda/model/GetFunctionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getFunctionCodeSigningConfig (Laws/sdk/kotlin/services/lambda/model/GetFunctionCodeSigningConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getFunctionConcurrency (Laws/sdk/kotlin/services/lambda/model/GetFunctionConcurrencyRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getFunctionConfiguration (Laws/sdk/kotlin/services/lambda/model/GetFunctionConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getFunctionEventInvokeConfig (Laws/sdk/kotlin/services/lambda/model/GetFunctionEventInvokeConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getFunctionRecursionConfig (Laws/sdk/kotlin/services/lambda/model/GetFunctionRecursionConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getFunctionScalingConfig (Laws/sdk/kotlin/services/lambda/model/GetFunctionScalingConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getFunctionUrlConfig (Laws/sdk/kotlin/services/lambda/model/GetFunctionUrlConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getLayerVersion (Laws/sdk/kotlin/services/lambda/model/GetLayerVersionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getLayerVersionByArn (Laws/sdk/kotlin/services/lambda/model/GetLayerVersionByArnRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getLayerVersionPolicy (Laws/sdk/kotlin/services/lambda/model/GetLayerVersionPolicyRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getPolicy (Laws/sdk/kotlin/services/lambda/model/GetPolicyRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getProvisionedConcurrencyConfig (Laws/sdk/kotlin/services/lambda/model/GetProvisionedConcurrencyConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getRuntimeManagementConfig (Laws/sdk/kotlin/services/lambda/model/GetRuntimeManagementConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun invoke (Laws/sdk/kotlin/services/lambda/model/InvokeRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun invokeAsync (Laws/sdk/kotlin/services/lambda/model/InvokeAsyncRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun invokeWithResponseStream (Laws/sdk/kotlin/services/lambda/model/InvokeWithResponseStreamRequest;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun isProcessing ()Z
+	public fun isReady ()Z
+	public fun listAliases (Laws/sdk/kotlin/services/lambda/model/ListAliasesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listCapacityProviders (Laws/sdk/kotlin/services/lambda/model/ListCapacityProvidersRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listCodeSigningConfigs (Laws/sdk/kotlin/services/lambda/model/ListCodeSigningConfigsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listDurableExecutionsByFunction (Laws/sdk/kotlin/services/lambda/model/ListDurableExecutionsByFunctionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listEventSourceMappings (Laws/sdk/kotlin/services/lambda/model/ListEventSourceMappingsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listFunctionEventInvokeConfigs (Laws/sdk/kotlin/services/lambda/model/ListFunctionEventInvokeConfigsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listFunctionUrlConfigs (Laws/sdk/kotlin/services/lambda/model/ListFunctionUrlConfigsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listFunctionVersionsByCapacityProvider (Laws/sdk/kotlin/services/lambda/model/ListFunctionVersionsByCapacityProviderRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listFunctions (Laws/sdk/kotlin/services/lambda/model/ListFunctionsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listFunctionsByCodeSigningConfig (Laws/sdk/kotlin/services/lambda/model/ListFunctionsByCodeSigningConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listLayerVersions (Laws/sdk/kotlin/services/lambda/model/ListLayerVersionsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listLayers (Laws/sdk/kotlin/services/lambda/model/ListLayersRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listProvisionedConcurrencyConfigs (Laws/sdk/kotlin/services/lambda/model/ListProvisionedConcurrencyConfigsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listTags (Laws/sdk/kotlin/services/lambda/model/ListTagsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listVersionsByFunction (Laws/sdk/kotlin/services/lambda/model/ListVersionsByFunctionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun publishLayerVersion (Laws/sdk/kotlin/services/lambda/model/PublishLayerVersionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun publishVersion (Laws/sdk/kotlin/services/lambda/model/PublishVersionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putFunctionCodeSigningConfig (Laws/sdk/kotlin/services/lambda/model/PutFunctionCodeSigningConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putFunctionConcurrency (Laws/sdk/kotlin/services/lambda/model/PutFunctionConcurrencyRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putFunctionEventInvokeConfig (Laws/sdk/kotlin/services/lambda/model/PutFunctionEventInvokeConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putFunctionRecursionConfig (Laws/sdk/kotlin/services/lambda/model/PutFunctionRecursionConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putFunctionScalingConfig (Laws/sdk/kotlin/services/lambda/model/PutFunctionScalingConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putProvisionedConcurrencyConfig (Laws/sdk/kotlin/services/lambda/model/PutProvisionedConcurrencyConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putRuntimeManagementConfig (Laws/sdk/kotlin/services/lambda/model/PutRuntimeManagementConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun removeLayerVersionPermission (Laws/sdk/kotlin/services/lambda/model/RemoveLayerVersionPermissionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun removePermission (Laws/sdk/kotlin/services/lambda/model/RemovePermissionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun sendDurableExecutionCallbackFailure (Laws/sdk/kotlin/services/lambda/model/SendDurableExecutionCallbackFailureRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun sendDurableExecutionCallbackHeartbeat (Laws/sdk/kotlin/services/lambda/model/SendDurableExecutionCallbackHeartbeatRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun sendDurableExecutionCallbackSuccess (Laws/sdk/kotlin/services/lambda/model/SendDurableExecutionCallbackSuccessRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun start (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun stop (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun stopDurableExecution (Laws/sdk/kotlin/services/lambda/model/StopDurableExecutionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun tagResource (Laws/sdk/kotlin/services/lambda/model/TagResourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun untagResource (Laws/sdk/kotlin/services/lambda/model/UntagResourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateAlias (Laws/sdk/kotlin/services/lambda/model/UpdateAliasRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateCapacityProvider (Laws/sdk/kotlin/services/lambda/model/UpdateCapacityProviderRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateCodeSigningConfig (Laws/sdk/kotlin/services/lambda/model/UpdateCodeSigningConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateEventSourceMapping (Laws/sdk/kotlin/services/lambda/model/UpdateEventSourceMappingRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateFunctionCode (Laws/sdk/kotlin/services/lambda/model/UpdateFunctionCodeRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateFunctionConfiguration (Laws/sdk/kotlin/services/lambda/model/UpdateFunctionConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateFunctionEventInvokeConfig (Laws/sdk/kotlin/services/lambda/model/UpdateFunctionEventInvokeConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateFunctionUrlConfig (Laws/sdk/kotlin/services/lambda/model/UpdateFunctionUrlConfigRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class com/steamstreet/aws/test/MockService {
+	public fun isProcessing ()Z
+	public fun isReady ()Z
+	public fun start (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun stop (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/aws/test/MockService$DefaultImpls {
+	public static fun isProcessing (Lcom/steamstreet/aws/test/MockService;)Z
+	public static fun isReady (Lcom/steamstreet/aws/test/MockService;)Z
+	public static fun start (Lcom/steamstreet/aws/test/MockService;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun stop (Lcom/steamstreet/aws/test/MockService;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/aws/test/ReflectionHandler : com/steamstreet/aws/test/LambdaInvocationHandler {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getClazz ()Ljava/lang/String;
+	public final fun getInstance ()Ljava/lang/Object;
+	public final fun getMethodName ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public fun invoke ([BLcom/amazonaws/services/lambda/runtime/Context;)[B
+}
+
+public final class com/steamstreet/aws/test/S3Local : aws/sdk/kotlin/services/s3/S3Client, com/steamstreet/aws/test/MockService {
+	public fun <init> ()V
+	public fun <init> (Laws/sdk/kotlin/services/s3/S3Client;)V
+	public synthetic fun <init> (Laws/sdk/kotlin/services/s3/S3Client;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun abortMultipartUpload (Laws/sdk/kotlin/services/s3/model/AbortMultipartUploadRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun close ()V
+	public fun completeMultipartUpload (Laws/sdk/kotlin/services/s3/model/CompleteMultipartUploadRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun copyObject (Laws/sdk/kotlin/services/s3/model/CopyObjectRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createBucket (Laws/sdk/kotlin/services/s3/model/CreateBucketRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createBucketMetadataConfiguration (Laws/sdk/kotlin/services/s3/model/CreateBucketMetadataConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createBucketMetadataTableConfiguration (Laws/sdk/kotlin/services/s3/model/CreateBucketMetadataTableConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createMultipartUpload (Laws/sdk/kotlin/services/s3/model/CreateMultipartUploadRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createSession (Laws/sdk/kotlin/services/s3/model/CreateSessionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteBucket (Laws/sdk/kotlin/services/s3/model/DeleteBucketRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteBucketAnalyticsConfiguration (Laws/sdk/kotlin/services/s3/model/DeleteBucketAnalyticsConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteBucketCors (Laws/sdk/kotlin/services/s3/model/DeleteBucketCorsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteBucketEncryption (Laws/sdk/kotlin/services/s3/model/DeleteBucketEncryptionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteBucketIntelligentTieringConfiguration (Laws/sdk/kotlin/services/s3/model/DeleteBucketIntelligentTieringConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteBucketInventoryConfiguration (Laws/sdk/kotlin/services/s3/model/DeleteBucketInventoryConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteBucketLifecycle (Laws/sdk/kotlin/services/s3/model/DeleteBucketLifecycleRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteBucketMetadataConfiguration (Laws/sdk/kotlin/services/s3/model/DeleteBucketMetadataConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteBucketMetadataTableConfiguration (Laws/sdk/kotlin/services/s3/model/DeleteBucketMetadataTableConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteBucketMetricsConfiguration (Laws/sdk/kotlin/services/s3/model/DeleteBucketMetricsConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteBucketOwnershipControls (Laws/sdk/kotlin/services/s3/model/DeleteBucketOwnershipControlsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteBucketPolicy (Laws/sdk/kotlin/services/s3/model/DeleteBucketPolicyRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteBucketReplication (Laws/sdk/kotlin/services/s3/model/DeleteBucketReplicationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteBucketTagging (Laws/sdk/kotlin/services/s3/model/DeleteBucketTaggingRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteBucketWebsite (Laws/sdk/kotlin/services/s3/model/DeleteBucketWebsiteRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteObject (Laws/sdk/kotlin/services/s3/model/DeleteObjectRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteObjectTagging (Laws/sdk/kotlin/services/s3/model/DeleteObjectTaggingRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteObjects (Laws/sdk/kotlin/services/s3/model/DeleteObjectsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deletePublicAccessBlock (Laws/sdk/kotlin/services/s3/model/DeletePublicAccessBlockRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketAbac (Laws/sdk/kotlin/services/s3/model/GetBucketAbacRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketAccelerateConfiguration (Laws/sdk/kotlin/services/s3/model/GetBucketAccelerateConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketAcl (Laws/sdk/kotlin/services/s3/model/GetBucketAclRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketAnalyticsConfiguration (Laws/sdk/kotlin/services/s3/model/GetBucketAnalyticsConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketCors (Laws/sdk/kotlin/services/s3/model/GetBucketCorsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketEncryption (Laws/sdk/kotlin/services/s3/model/GetBucketEncryptionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketIntelligentTieringConfiguration (Laws/sdk/kotlin/services/s3/model/GetBucketIntelligentTieringConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketInventoryConfiguration (Laws/sdk/kotlin/services/s3/model/GetBucketInventoryConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketLifecycleConfiguration (Laws/sdk/kotlin/services/s3/model/GetBucketLifecycleConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketLocation (Laws/sdk/kotlin/services/s3/model/GetBucketLocationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketLogging (Laws/sdk/kotlin/services/s3/model/GetBucketLoggingRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketMetadataConfiguration (Laws/sdk/kotlin/services/s3/model/GetBucketMetadataConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketMetadataTableConfiguration (Laws/sdk/kotlin/services/s3/model/GetBucketMetadataTableConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketMetricsConfiguration (Laws/sdk/kotlin/services/s3/model/GetBucketMetricsConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketNotificationConfiguration (Laws/sdk/kotlin/services/s3/model/GetBucketNotificationConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketOwnershipControls (Laws/sdk/kotlin/services/s3/model/GetBucketOwnershipControlsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketPolicy (Laws/sdk/kotlin/services/s3/model/GetBucketPolicyRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketPolicyStatus (Laws/sdk/kotlin/services/s3/model/GetBucketPolicyStatusRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketReplication (Laws/sdk/kotlin/services/s3/model/GetBucketReplicationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketRequestPayment (Laws/sdk/kotlin/services/s3/model/GetBucketRequestPaymentRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketTagging (Laws/sdk/kotlin/services/s3/model/GetBucketTaggingRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketVersioning (Laws/sdk/kotlin/services/s3/model/GetBucketVersioningRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketWebsite (Laws/sdk/kotlin/services/s3/model/GetBucketWebsiteRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getConfig ()Laws/sdk/kotlin/services/s3/S3Client$Config;
+	public synthetic fun getConfig ()Laws/smithy/kotlin/runtime/client/SdkClientConfig;
+	public fun getObject (Laws/sdk/kotlin/services/s3/model/GetObjectRequest;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getObjectAcl (Laws/sdk/kotlin/services/s3/model/GetObjectAclRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getObjectAttributes (Laws/sdk/kotlin/services/s3/model/GetObjectAttributesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getObjectLegalHold (Laws/sdk/kotlin/services/s3/model/GetObjectLegalHoldRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getObjectLockConfiguration (Laws/sdk/kotlin/services/s3/model/GetObjectLockConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getObjectRetention (Laws/sdk/kotlin/services/s3/model/GetObjectRetentionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getObjectTagging (Laws/sdk/kotlin/services/s3/model/GetObjectTaggingRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getObjectTorrent (Laws/sdk/kotlin/services/s3/model/GetObjectTorrentRequest;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getPublicAccessBlock (Laws/sdk/kotlin/services/s3/model/GetPublicAccessBlockRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun headBucket (Laws/sdk/kotlin/services/s3/model/HeadBucketRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun headObject (Laws/sdk/kotlin/services/s3/model/HeadObjectRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun isProcessing ()Z
+	public fun isReady ()Z
+	public fun listBucketAnalyticsConfigurations (Laws/sdk/kotlin/services/s3/model/ListBucketAnalyticsConfigurationsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listBucketIntelligentTieringConfigurations (Laws/sdk/kotlin/services/s3/model/ListBucketIntelligentTieringConfigurationsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listBucketInventoryConfigurations (Laws/sdk/kotlin/services/s3/model/ListBucketInventoryConfigurationsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listBucketMetricsConfigurations (Laws/sdk/kotlin/services/s3/model/ListBucketMetricsConfigurationsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listBuckets (Laws/sdk/kotlin/services/s3/model/ListBucketsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listDirectoryBuckets (Laws/sdk/kotlin/services/s3/model/ListDirectoryBucketsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listMultipartUploads (Laws/sdk/kotlin/services/s3/model/ListMultipartUploadsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listObjectVersions (Laws/sdk/kotlin/services/s3/model/ListObjectVersionsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listObjects (Laws/sdk/kotlin/services/s3/model/ListObjectsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listObjectsV2 (Laws/sdk/kotlin/services/s3/model/ListObjectsV2Request;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listParts (Laws/sdk/kotlin/services/s3/model/ListPartsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketAbac (Laws/sdk/kotlin/services/s3/model/PutBucketAbacRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketAccelerateConfiguration (Laws/sdk/kotlin/services/s3/model/PutBucketAccelerateConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketAcl (Laws/sdk/kotlin/services/s3/model/PutBucketAclRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketAnalyticsConfiguration (Laws/sdk/kotlin/services/s3/model/PutBucketAnalyticsConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketCors (Laws/sdk/kotlin/services/s3/model/PutBucketCorsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketEncryption (Laws/sdk/kotlin/services/s3/model/PutBucketEncryptionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketIntelligentTieringConfiguration (Laws/sdk/kotlin/services/s3/model/PutBucketIntelligentTieringConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketInventoryConfiguration (Laws/sdk/kotlin/services/s3/model/PutBucketInventoryConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketLifecycleConfiguration (Laws/sdk/kotlin/services/s3/model/PutBucketLifecycleConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketLogging (Laws/sdk/kotlin/services/s3/model/PutBucketLoggingRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketMetricsConfiguration (Laws/sdk/kotlin/services/s3/model/PutBucketMetricsConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketNotificationConfiguration (Laws/sdk/kotlin/services/s3/model/PutBucketNotificationConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketOwnershipControls (Laws/sdk/kotlin/services/s3/model/PutBucketOwnershipControlsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketPolicy (Laws/sdk/kotlin/services/s3/model/PutBucketPolicyRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketReplication (Laws/sdk/kotlin/services/s3/model/PutBucketReplicationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketRequestPayment (Laws/sdk/kotlin/services/s3/model/PutBucketRequestPaymentRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketTagging (Laws/sdk/kotlin/services/s3/model/PutBucketTaggingRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketVersioning (Laws/sdk/kotlin/services/s3/model/PutBucketVersioningRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putBucketWebsite (Laws/sdk/kotlin/services/s3/model/PutBucketWebsiteRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putObject (Laws/sdk/kotlin/services/s3/model/PutObjectRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putObjectAcl (Laws/sdk/kotlin/services/s3/model/PutObjectAclRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putObjectLegalHold (Laws/sdk/kotlin/services/s3/model/PutObjectLegalHoldRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putObjectLockConfiguration (Laws/sdk/kotlin/services/s3/model/PutObjectLockConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putObjectRetention (Laws/sdk/kotlin/services/s3/model/PutObjectRetentionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putObjectTagging (Laws/sdk/kotlin/services/s3/model/PutObjectTaggingRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putPublicAccessBlock (Laws/sdk/kotlin/services/s3/model/PutPublicAccessBlockRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun renameObject (Laws/sdk/kotlin/services/s3/model/RenameObjectRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun restoreObject (Laws/sdk/kotlin/services/s3/model/RestoreObjectRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectObjectContent (Laws/sdk/kotlin/services/s3/model/SelectObjectContentRequest;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun start (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun stop (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateBucketMetadataInventoryTableConfiguration (Laws/sdk/kotlin/services/s3/model/UpdateBucketMetadataInventoryTableConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateBucketMetadataJournalTableConfiguration (Laws/sdk/kotlin/services/s3/model/UpdateBucketMetadataJournalTableConfigurationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun uploadPart (Laws/sdk/kotlin/services/s3/model/UploadPartRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun uploadPartCopy (Laws/sdk/kotlin/services/s3/model/UploadPartCopyRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun writeGetObjectResponse (Laws/sdk/kotlin/services/s3/model/WriteGetObjectResponseRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/aws/test/SqsMock : aws/sdk/kotlin/services/sqs/SqsClient, com/steamstreet/aws/test/MockService {
+	public fun <init> ()V
+	public fun <init> (Laws/sdk/kotlin/services/sqs/SqsClient;)V
+	public synthetic fun <init> (Laws/sdk/kotlin/services/sqs/SqsClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun addPermission (Laws/sdk/kotlin/services/sqs/model/AddPermissionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun cancelMessageMoveTask (Laws/sdk/kotlin/services/sqs/model/CancelMessageMoveTaskRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun changeMessageVisibility (Laws/sdk/kotlin/services/sqs/model/ChangeMessageVisibilityRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun changeMessageVisibilityBatch (Laws/sdk/kotlin/services/sqs/model/ChangeMessageVisibilityBatchRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun close ()V
+	public fun createQueue (Laws/sdk/kotlin/services/sqs/model/CreateQueueRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteMessage (Laws/sdk/kotlin/services/sqs/model/DeleteMessageRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteMessageBatch (Laws/sdk/kotlin/services/sqs/model/DeleteMessageBatchRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteQueue (Laws/sdk/kotlin/services/sqs/model/DeleteQueueRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getConfig ()Laws/sdk/kotlin/services/sqs/SqsClient$Config;
+	public synthetic fun getConfig ()Laws/smithy/kotlin/runtime/client/SdkClientConfig;
+	public fun getQueueAttributes (Laws/sdk/kotlin/services/sqs/model/GetQueueAttributesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getQueueUrl (Laws/sdk/kotlin/services/sqs/model/GetQueueUrlRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun isProcessing ()Z
+	public fun isReady ()Z
+	public fun listDeadLetterSourceQueues (Laws/sdk/kotlin/services/sqs/model/ListDeadLetterSourceQueuesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listMessageMoveTasks (Laws/sdk/kotlin/services/sqs/model/ListMessageMoveTasksRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listQueueTags (Laws/sdk/kotlin/services/sqs/model/ListQueueTagsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listQueues (Laws/sdk/kotlin/services/sqs/model/ListQueuesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun purgeQueue (Laws/sdk/kotlin/services/sqs/model/PurgeQueueRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun receiveMessage (Laws/sdk/kotlin/services/sqs/model/ReceiveMessageRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun removePermission (Laws/sdk/kotlin/services/sqs/model/RemovePermissionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun sendMessage (Laws/sdk/kotlin/services/sqs/model/SendMessageRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun sendMessageBatch (Laws/sdk/kotlin/services/sqs/model/SendMessageBatchRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun setQueueAttributes (Laws/sdk/kotlin/services/sqs/model/SetQueueAttributesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun start (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun startMessageMoveTask (Laws/sdk/kotlin/services/sqs/model/StartMessageMoveTaskRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun stop (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun tagQueue (Laws/sdk/kotlin/services/sqs/model/TagQueueRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun untagQueue (Laws/sdk/kotlin/services/sqs/model/UntagQueueRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

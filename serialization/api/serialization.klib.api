@@ -1,0 +1,13 @@
+// Klib ABI Dump
+// Targets: [iosArm64, js]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:serialization>
+final fun (kotlinx.serialization.json/JsonObject).com.steamstreet.serialization/comprehensiveDiff(kotlinx.serialization.json/JsonObject): kotlinx.serialization.json/JsonObject // com.steamstreet.serialization/comprehensiveDiff|comprehensiveDiff@kotlinx.serialization.json.JsonObject(kotlinx.serialization.json.JsonObject){}[0]
+final fun (kotlinx.serialization.json/JsonObject).com.steamstreet.serialization/copy(kotlin/Function1<kotlinx.serialization.json/JsonObjectBuilder, kotlin/Unit>): kotlinx.serialization.json/JsonObject // com.steamstreet.serialization/copy|copy@kotlinx.serialization.json.JsonObject(kotlin.Function1<kotlinx.serialization.json.JsonObjectBuilder,kotlin.Unit>){}[0]
+final fun (kotlinx.serialization.json/JsonObject).com.steamstreet.serialization/deepEquals(kotlinx.serialization.json/JsonObject): kotlin/Boolean // com.steamstreet.serialization/deepEquals|deepEquals@kotlinx.serialization.json.JsonObject(kotlinx.serialization.json.JsonObject){}[0]
+final fun (kotlinx.serialization.json/JsonObject).com.steamstreet.serialization/diff(kotlinx.serialization.json/JsonObject): kotlinx.serialization.json/JsonObject // com.steamstreet.serialization/diff|diff@kotlinx.serialization.json.JsonObject(kotlinx.serialization.json.JsonObject){}[0]
+final fun (kotlinx.serialization.json/JsonObject?).com.steamstreet.serialization/copyOrBuild(kotlin/Function1<kotlinx.serialization.json/JsonObjectBuilder, kotlin/Unit>): kotlinx.serialization.json/JsonObject // com.steamstreet.serialization/copyOrBuild|copyOrBuild@kotlinx.serialization.json.JsonObject?(kotlin.Function1<kotlinx.serialization.json.JsonObjectBuilder,kotlin.Unit>){}[0]

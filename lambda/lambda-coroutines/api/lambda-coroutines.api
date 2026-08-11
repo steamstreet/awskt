@@ -1,0 +1,49 @@
+public final class com/steamstreet/aws/lambda/CoroutinesKt {
+	public static field lambdaContext Lcom/amazonaws/services/lambda/runtime/Context;
+	public static final fun getLambdaContext ()Lcom/amazonaws/services/lambda/runtime/Context;
+	public static final fun getLambdaJson ()Lkotlinx/serialization/json/Json;
+	public static final fun getLogIncoming ()Z
+	public static final fun getLogger ()Lorg/slf4j/Logger;
+	public static final fun lambda (Lcom/amazonaws/services/lambda/runtime/Context;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public static synthetic fun lambda$default (Lcom/amazonaws/services/lambda/runtime/Context;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun readIncoming (Ljava/io/InputStream;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun readIncoming$default (Ljava/io/InputStream;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun setLambdaContext (Lcom/amazonaws/services/lambda/runtime/Context;)V
+	public static final fun setLogIncoming (Z)V
+}
+
+public abstract class com/steamstreet/aws/lambda/IOLambda : com/steamstreet/aws/lambda/SuspendingLambda {
+	public fun <init> (Lkotlinx/serialization/KSerializer;Lkotlinx/serialization/KSerializer;)V
+	public fun execute (Ljava/io/InputStream;Ljava/io/OutputStream;Lcom/amazonaws/services/lambda/runtime/Context;)V
+	public fun getLogIncoming ()Z
+	public fun getLogOutgoing ()Z
+	public fun handle (Ljava/io/InputStream;Ljava/io/OutputStream;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun handle (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun setLogIncoming (Z)V
+	public fun setLogOutgoing (Z)V
+}
+
+public abstract class com/steamstreet/aws/lambda/InputLambda : com/steamstreet/aws/lambda/SuspendingLambda {
+	public fun <init> (Lkotlinx/serialization/KSerializer;)V
+	public fun execute (Ljava/io/InputStream;Ljava/io/OutputStream;Lcom/amazonaws/services/lambda/runtime/Context;)V
+	public fun getLogIncoming ()Z
+	public fun getLogOutgoing ()Z
+	public fun handle (Ljava/io/InputStream;Ljava/io/OutputStream;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun handle (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun setLogIncoming (Z)V
+	public fun setLogOutgoing (Z)V
+}
+
+public abstract interface class com/steamstreet/aws/lambda/SuspendingLambda {
+	public fun execute (Ljava/io/InputStream;Ljava/io/OutputStream;Lcom/amazonaws/services/lambda/runtime/Context;)V
+	public abstract fun getLogIncoming ()Z
+	public abstract fun getLogOutgoing ()Z
+	public abstract fun handle (Ljava/io/InputStream;Ljava/io/OutputStream;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun setLogIncoming (Z)V
+	public abstract fun setLogOutgoing (Z)V
+}
+
+public final class com/steamstreet/aws/lambda/SuspendingLambda$DefaultImpls {
+	public static fun execute (Lcom/steamstreet/aws/lambda/SuspendingLambda;Ljava/io/InputStream;Ljava/io/OutputStream;Lcom/amazonaws/services/lambda/runtime/Context;)V
+}
+
