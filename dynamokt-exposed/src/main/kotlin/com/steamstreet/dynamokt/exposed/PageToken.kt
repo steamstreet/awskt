@@ -1,6 +1,6 @@
 package com.steamstreet.dynamokt.exposed
 
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
+import com.steamstreet.dynamokt.AttributeValue
 import com.steamstreet.dynamokt.AttributeValueSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -17,7 +17,7 @@ private val pageTokenJson: Json = Json {
     ignoreUnknownKeys = true
 }
 
-private val itemMapSerializer = MapSerializer(String.serializer(), AttributeValueSerializer())
+private val itemMapSerializer = MapSerializer(String.serializer(), AttributeValueSerializer)
 
 /**
  * Encode a DynamoDB `LastEvaluatedKey` into an opaque, round-trippable token.

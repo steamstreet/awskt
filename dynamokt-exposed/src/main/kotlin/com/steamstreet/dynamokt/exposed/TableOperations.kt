@@ -1,11 +1,11 @@
 package com.steamstreet.dynamokt.exposed
 
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
-import aws.sdk.kotlin.services.dynamodb.putItem
-import aws.sdk.kotlin.services.dynamodb.getItem
-import aws.sdk.kotlin.services.dynamodb.updateItem
-import aws.sdk.kotlin.services.dynamodb.deleteItem
-import aws.sdk.kotlin.services.dynamodb.query as dynamoQuery
+import com.steamstreet.awskt.dynamodb.DeleteItemRequest
+import com.steamstreet.awskt.dynamodb.PutItemRequest
+import com.steamstreet.awskt.dynamodb.ReturnValue
+import com.steamstreet.awskt.dynamodb.UpdateItemRequest
+import com.steamstreet.awskt.dynamodb.orNullIfEmpty
+import com.steamstreet.dynamokt.AttributeValue
 
 /**
  * A put operation that has been rendered into the pieces DynamoDB needs.
@@ -150,20 +150,17 @@ public class InsertStatement(
     public suspend fun execute(): ResultRow {
         val built = build()
 
-        database.client.putItem {
-            tableName = database.resolveTableName(table)
-            this.item = built.item
-
-            built.conditionExpression?.let { expr ->
-                this.conditionExpression = expr
-                if (built.attributeNames.isNotEmpty()) {
-                    expressionAttributeNames = built.attributeNames
-                }
-                if (built.attributeValues.isNotEmpty()) {
-                    expressionAttributeValues = built.attributeValues
-                }
-            }
-        }
+        database.client.putItem(
+            PutItemRequest(
+                tableName = database.resolveTableName(table),
+                item = built.item,
+                conditionExpression = built.conditionExpression,
+                expressionAttributeNames = built.attributeNames.orNullIfEmpty()
+                    ?.takeIf { built.conditionExpression != null },
+                expressionAttributeValues = built.attributeValues.orNullIfEmpty()
+                    ?.takeIf { built.conditionExpression != null },
+            ),
+        )
 
         return ResultRow(table, built.item)
     }
@@ -319,19 +316,17 @@ public class UpdateStatement(
     public suspend fun execute(): ResultRow {
         val built = build()
 
-        val result = database.client.updateItem {
-            tableName = database.resolveTableName(table)
-            this.key = built.key
-            this.updateExpression = built.updateExpression
-            built.conditionExpression?.let { this.conditionExpression = it }
-            if (built.attributeNames.isNotEmpty()) {
-                expressionAttributeNames = built.attributeNames
-            }
-            if (built.attributeValues.isNotEmpty()) {
-                expressionAttributeValues = built.attributeValues
-            }
-            returnValues = aws.sdk.kotlin.services.dynamodb.model.ReturnValue.AllNew
-        }
+        val result = database.client.updateItem(
+            UpdateItemRequest(
+                tableName = database.resolveTableName(table),
+                key = built.key,
+                updateExpression = built.updateExpression,
+                conditionExpression = built.conditionExpression,
+                expressionAttributeNames = built.attributeNames.orNullIfEmpty(),
+                expressionAttributeValues = built.attributeValues.orNullIfEmpty(),
+                returnValues = ReturnValue.AllNew,
+            ),
+        )
 
         return ResultRow(table, result.attributes ?: emptyMap())
     }
@@ -398,17 +393,15 @@ public class DeleteStatement(
     public suspend fun execute(): Boolean {
         val built = build()
 
-        database.client.deleteItem {
-            tableName = database.resolveTableName(table)
-            this.key = built.key
-            built.conditionExpression?.let { this.conditionExpression = it }
-            if (built.attributeNames.isNotEmpty()) {
-                expressionAttributeNames = built.attributeNames
-            }
-            if (built.attributeValues.isNotEmpty()) {
-                expressionAttributeValues = built.attributeValues
-            }
-        }
+        database.client.deleteItem(
+            DeleteItemRequest(
+                tableName = database.resolveTableName(table),
+                key = built.key,
+                conditionExpression = built.conditionExpression,
+                expressionAttributeNames = built.attributeNames.orNullIfEmpty(),
+                expressionAttributeValues = built.attributeValues.orNullIfEmpty(),
+            ),
+        )
 
         return true
     }

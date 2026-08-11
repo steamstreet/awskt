@@ -1,7 +1,16 @@
 package com.steamstreet.dynamokt.exposed
 
+import com.steamstreet.awskt.dynamodb.AttributeDefinition
+import com.steamstreet.awskt.dynamodb.BillingMode
+import com.steamstreet.awskt.dynamodb.CreateTableRequest
+import com.steamstreet.awskt.dynamodb.GlobalSecondaryIndex
+import com.steamstreet.awskt.dynamodb.KeySchemaElement
+import com.steamstreet.awskt.dynamodb.KeyType
+import com.steamstreet.awskt.dynamodb.Projection
+import com.steamstreet.awskt.dynamodb.ProjectionType
+import com.steamstreet.awskt.dynamodb.ScalarAttributeType
+
 import aws.sdk.kotlin.services.dynamodb.createTable
-import aws.sdk.kotlin.services.dynamodb.model.*
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -54,112 +63,66 @@ class QueryTest : ExposedTestBase() {
     }
 
     private suspend fun createOrdersTable() {
-        database.client.createTable {
-            tableName = Orders.tableName
-            keySchema = listOf(
-                KeySchemaElement {
-                    attributeName = Orders.customerId.name
-                    keyType = KeyType.Hash
-                },
-                KeySchemaElement {
-                    attributeName = Orders.orderId.name
-                    keyType = KeyType.Range
-                }
-            )
-            attributeDefinitions = listOf(
-                AttributeDefinition {
-                    attributeName = Orders.customerId.name
-                    attributeType = ScalarAttributeType.S
-                },
-                AttributeDefinition {
-                    attributeName = Orders.orderId.name
-                    attributeType = ScalarAttributeType.S
-                }
-            )
-            billingMode = BillingMode.PayPerRequest
-        }
+        database.client.createTable(
+            CreateTableRequest(
+                tableName = Orders.tableName,
+                keySchema = listOf(
+                    KeySchemaElement(Orders.customerId.name, KeyType.Hash),
+                    KeySchemaElement(Orders.orderId.name, KeyType.Range),
+                ),
+                attributeDefinitions = listOf(
+                    AttributeDefinition(Orders.customerId.name, ScalarAttributeType.S),
+                    AttributeDefinition(Orders.orderId.name, ScalarAttributeType.S),
+                ),
+                billingMode = BillingMode.PayPerRequest,
+            ),
+        )
     }
 
     private suspend fun createUsersTableWithGsi() {
-        database.client.createTable {
-            tableName = Users.tableName
-            keySchema = listOf(
-                KeySchemaElement {
-                    attributeName = Users.id.name
-                    keyType = KeyType.Hash
-                }
-            )
-            attributeDefinitions = listOf(
-                AttributeDefinition {
-                    attributeName = Users.id.name
-                    attributeType = ScalarAttributeType.S
-                },
-                AttributeDefinition {
-                    attributeName = Users.email.name
-                    attributeType = ScalarAttributeType.S
-                }
-            )
-            globalSecondaryIndexes = listOf(
-                GlobalSecondaryIndex {
-                    indexName = "byEmail"
-                    keySchema = listOf(
-                        KeySchemaElement {
-                            attributeName = Users.email.name
-                            keyType = KeyType.Hash
-                        }
-                    )
-                    projection = Projection {
-                        projectionType = aws.sdk.kotlin.services.dynamodb.model.ProjectionType.All
-                    }
-                }
-            )
-            billingMode = BillingMode.PayPerRequest
-        }
+        database.client.createTable(
+            CreateTableRequest(
+                tableName = Users.tableName,
+                keySchema = listOf(KeySchemaElement(Users.id.name, KeyType.Hash)),
+                attributeDefinitions = listOf(
+                    AttributeDefinition(Users.id.name, ScalarAttributeType.S),
+                    AttributeDefinition(Users.email.name, ScalarAttributeType.S),
+                ),
+                globalSecondaryIndexes = listOf(
+                    GlobalSecondaryIndex(
+                        indexName = "byEmail",
+                        keySchema = listOf(KeySchemaElement(Users.email.name, KeyType.Hash)),
+                        projection = Projection(ProjectionType.All),
+                    ),
+                ),
+                billingMode = BillingMode.PayPerRequest,
+            ),
+        )
     }
 
     private suspend fun createTracksTableWithGsi() {
-        database.client.createTable {
-            tableName = Tracks.tableName
-            keySchema = listOf(
-                KeySchemaElement {
-                    attributeName = Tracks.trackId.name
-                    keyType = KeyType.Hash
-                }
-            )
-            attributeDefinitions = listOf(
-                AttributeDefinition {
-                    attributeName = Tracks.trackId.name
-                    attributeType = ScalarAttributeType.S
-                },
-                AttributeDefinition {
-                    attributeName = Tracks.artistType.name
-                    attributeType = ScalarAttributeType.S
-                },
-                AttributeDefinition {
-                    attributeName = Tracks.position.name
-                    attributeType = ScalarAttributeType.S
-                }
-            )
-            globalSecondaryIndexes = listOf(
-                GlobalSecondaryIndex {
-                    indexName = "byArtist"
-                    keySchema = listOf(
-                        KeySchemaElement {
-                            attributeName = Tracks.artistType.name
-                            keyType = KeyType.Hash
-                        },
-                        KeySchemaElement {
-                            attributeName = Tracks.position.name
-                            keyType = KeyType.Range
-                        }
-                    )
-                    projection = Projection {
-                        projectionType = aws.sdk.kotlin.services.dynamodb.model.ProjectionType.All
-                    }
-                }
-            )
-            billingMode = BillingMode.PayPerRequest
-        }
+        database.client.createTable(
+            CreateTableRequest(
+                tableName = Tracks.tableName,
+                keySchema = listOf(KeySchemaElement(Tracks.trackId.name, KeyType.Hash)),
+                attributeDefinitions = listOf(
+                    AttributeDefinition(Tracks.trackId.name, ScalarAttributeType.S),
+                    AttributeDefinition(Tracks.artistType.name, ScalarAttributeType.S),
+                    AttributeDefinition(Tracks.position.name, ScalarAttributeType.S),
+                ),
+                globalSecondaryIndexes = listOf(
+                    GlobalSecondaryIndex(
+                        indexName = "byArtist",
+                        keySchema = listOf(
+                            KeySchemaElement(Tracks.artistType.name, KeyType.Hash),
+                            KeySchemaElement(Tracks.position.name, KeyType.Range),
+                        ),
+                        projection = Projection(ProjectionType.All),
+                    ),
+                ),
+                billingMode = BillingMode.PayPerRequest,
+            ),
+        )
     }
 
     private suspend fun insertTrack(artist: String, pos: String, blobBytes: Int = 0) {
@@ -173,30 +136,20 @@ class QueryTest : ExposedTestBase() {
     }
 
     private suspend fun createEventsTable() {
-        database.client.createTable {
-            tableName = Events.tableName
-            keySchema = listOf(
-                KeySchemaElement {
-                    attributeName = Events.pk.name
-                    keyType = KeyType.Hash
-                },
-                KeySchemaElement {
-                    attributeName = Events.sk.name
-                    keyType = KeyType.Range
-                }
-            )
-            attributeDefinitions = listOf(
-                AttributeDefinition {
-                    attributeName = Events.pk.name
-                    attributeType = ScalarAttributeType.S
-                },
-                AttributeDefinition {
-                    attributeName = Events.sk.name
-                    attributeType = ScalarAttributeType.N
-                }
-            )
-            billingMode = BillingMode.PayPerRequest
-        }
+        database.client.createTable(
+            CreateTableRequest(
+                tableName = Events.tableName,
+                keySchema = listOf(
+                    KeySchemaElement(Events.pk.name, KeyType.Hash),
+                    KeySchemaElement(Events.sk.name, KeyType.Range),
+                ),
+                attributeDefinitions = listOf(
+                    AttributeDefinition(Events.pk.name, ScalarAttributeType.S),
+                    AttributeDefinition(Events.sk.name, ScalarAttributeType.N),
+                ),
+                billingMode = BillingMode.PayPerRequest,
+            ),
+        )
     }
 
     @Test

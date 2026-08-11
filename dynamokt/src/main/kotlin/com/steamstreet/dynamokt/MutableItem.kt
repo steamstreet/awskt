@@ -2,12 +2,14 @@
 
 package com.steamstreet.dynamokt
 
-import aws.sdk.kotlin.services.dynamodb.model.*
-import aws.sdk.kotlin.services.dynamodb.putItem
-import aws.sdk.kotlin.services.dynamodb.updateItem
+import com.steamstreet.awskt.dynamodb.ConditionalCheckFailedException
+import com.steamstreet.awskt.dynamodb.PutItemRequest
+import com.steamstreet.awskt.dynamodb.ReturnValue
+import com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure
+import com.steamstreet.awskt.dynamodb.UpdateItemRequest
+import com.steamstreet.awskt.dynamodb.orNullIfEmpty
 import com.steamstreet.exceptions.DuplicateItemException
 import com.steamstreet.exceptions.NotFoundException
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.reflect.KProperty1
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -30,7 +32,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     internal val attributeValues = HashMap<String, AttributeValue>()
     internal var updateExpressions = ArrayList<Update>()
 
-    private val attributeIndex = AtomicInteger(1)
+    private var attributeIndex = 1
 
     /**
      * The attribute placeholder allocated for each attribute that is having values added to it as a
@@ -159,13 +161,13 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     public operator fun set(key: String, value: AttributeValue?) {
         val newKey = key.split(".").joinToString(".") { keyElement ->
             val (baseName, suffix) = parseKeyComponent(keyElement)
-            "#attr${attributeIndex.getAndIncrement()}".also {
+            "#attr${attributeIndex++}".also {
                 attributeNames[it] = baseName
             } + suffix
         }
 
         if (value != null) {
-            val attrValue = "attr${attributeIndex.getAndIncrement()}"
+            val attrValue = "attr${attributeIndex++}"
             updateExpressions.add(Update("SET", "$newKey = :$attrValue"))
             attributeValues[":$attrValue"] = value
         } else {
@@ -180,7 +182,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      */
     public fun increment(key: String, amount: Int = 1) {
         if (amount != 0) {
-            val attr = "attr${attributeIndex.getAndIncrement()}"
+            val attr = "attr${attributeIndex++}"
             attributeNames["#$attr"] = key
             attributeValues[":$attr"] = AttributeValue.N(amount.toString())
             updateExpressions.add(Update("ADD", "#$attr :$attr"))
@@ -194,7 +196,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
         // look for a key with the same value. If the list already exists, we need to add it to that one
         // instead of adding a new expression.
         val existingAttr = attributeNames.entries.find { it.value == key }?.key?.drop(1)
-        val attr = existingAttr ?: "attr${attributeIndex.getAndIncrement()}"
+        val attr = existingAttr ?: "attr${attributeIndex++}"
         val existingList = attributeValues[":$attr"]
         var list = existingList ?: AttributeValue.L(emptyList())
 
@@ -225,7 +227,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
         // DynamoDB rejects an update expression that operates on the same path twice, so repeated
         // additions to an attribute are merged into the single ADD expression for that attribute.
         val attr = setAdditions.getOrPut(key) {
-            "attr${attributeIndex.getAndIncrement()}".also {
+            "attr${attributeIndex++}".also {
                 attributeNames["#$it"] = key
                 updateExpressions.add(Update("ADD", "#$it :$it"))
             }
@@ -241,7 +243,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      * Remove an item from a list
      */
     public fun removeFromList(key: String, index: Int) {
-        val attr = "attr${attributeIndex.getAndIncrement()}"
+        val attr = "attr${attributeIndex++}"
         attributeNames["#$attr"] = key
         updateExpressions.add(Update("REMOVE", """#$attr[$index]"""))
     }
@@ -281,7 +283,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      * Add a condition that checks that an attribute has the given value.
      */
     public fun conditionAttributeEquals(name: String, value: AttributeValue) {
-        val attr = "attr${attributeIndex.getAndIncrement()}"
+        val attr = "attr${attributeIndex++}"
         condition(
             "#$attr = :$attr",
             mapOf("#$attr" to name),
@@ -293,7 +295,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      * Require that an attribute exists as a condition of the update.
      */
     public fun requireAttributeExists(name: String) {
-        val attr = "attr${attributeIndex.getAndIncrement()}"
+        val attr = "attr${attributeIndex++}"
         condition(
             "attribute_exists(#$attr)",
             mapOf("#$attr" to name)
@@ -304,7 +306,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      * Require that an attribute exists as a condition of the update.
      */
     public fun requireAttributeNotExists(name: String) {
-        val attr = "attr${attributeIndex.getAndIncrement()}"
+        val attr = "attr${attributeIndex++}"
         condition(
             "attribute_not_exists(#$attr)",
             mapOf("#$attr" to name)
@@ -324,7 +326,7 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
     public fun delete(key: String) {
         val newKey = key.split(".").joinToString(".") { keyElement ->
             val (baseName, suffix) = parseKeyComponent(keyElement)
-            "#attr${attributeIndex.getAndIncrement()}".also {
+            "#attr${attributeIndex++}".also {
                 attributeNames[it] = baseName
             } + suffix
         }
@@ -395,24 +397,28 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
         }).filterNullValues()
 
         val result = try {
-            dynamo.dynamo.putItem {
-                tableName = dynamo.table
-                item = attributes
-
-                // ALL_NEW is the default
-                if (this@MutableItem.returnValues != ReturnValue.AllNew) {
-                    returnValues = this@MutableItem.returnValues
-                }
-
-                if (doNotOverwrite) {
-                    conditionExpression = "attribute_not_exists(#pk)"
-                    expressionAttributeNames = mapOf("#pk" to dynamo.pkName)
-                    this.returnValuesOnConditionCheckFailure = this@MutableItem.conditionalCheckFailReturn
-                }
-            }
+            dynamo.dynamo.putItem(
+                PutItemRequest(
+                    tableName = dynamo.table,
+                    item = attributes,
+                    // ALL_NEW is the default, so only send it when it differs.
+                    returnValues = this.returnValues.takeIf { it != ReturnValue.AllNew },
+                    conditionExpression = "attribute_not_exists(#pk)".takeIf { doNotOverwrite },
+                    expressionAttributeNames = mapOf("#pk" to dynamo.pkName).takeIf { doNotOverwrite },
+                    returnValuesOnConditionCheckFailure =
+                        conditionalCheckFailReturn.takeIf { doNotOverwrite },
+                ),
+            )
         } catch (cce: ConditionalCheckFailedException) {
-            throw DuplicateDynamoItemException(attributes[dynamo.pkName]?.asS().orEmpty(),
-                dynamo.skName?.let { attributes[it]?.asS() })
+            throw DuplicateDynamoItemException(
+                attributes[dynamo.pkName]?.asSOrNull().orEmpty(),
+                // asSOrNull, not asS: a numeric sort key made this throw ClassCastException from
+                // inside the error path, replacing a useful duplicate-item error with a cast failure.
+                dynamo.skName?.let { attributes[it]?.asSOrNull() },
+                // The losing item was already being requested via ReturnValuesOnConditionCheckFailure
+                // and then dropped on the floor. It is the only copy of the state that won the race.
+                cce.item?.let { Item(dynamo, it) },
+            )
         }
 
         return if (returnValues == ReturnValue.AllNew) {
@@ -432,30 +438,25 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
                 this
             }
         }
-        return Item(dynamo, dynamo.dynamo.updateItem {
-            tableName = dynamo.table
-            key = buildMap {
-                put(dynamo.pkName, attributes[dynamo.pkName]!!)
-                if (dynamo.skName != null) {
-                    put(dynamo.skName, attributes[dynamo.skName]!!)
-
-                }
-            }
-
-            updateExpression = buildUpdateExpression()
-            returnValues = this@MutableItem.returnValues
-
-            this@MutableItem.conditionExpression?.let { expr ->
-                conditionExpression = expr
-                this.returnValuesOnConditionCheckFailure = this@MutableItem.conditionalCheckFailReturn
-            }
-            if (attributeNames.isNotEmpty()) {
-                expressionAttributeNames = attributeNames
-            }
-            if (attributeValues.isNotEmpty()) {
-                expressionAttributeValues = attributeValues
-            }
-        }.attributes!!)
+        return Item(
+            dynamo,
+            dynamo.dynamo.updateItem(
+                UpdateItemRequest(
+                    tableName = dynamo.table,
+                    key = buildMap {
+                        put(dynamo.pkName, attributes[dynamo.pkName]!!)
+                        if (dynamo.skName != null) put(dynamo.skName, attributes[dynamo.skName]!!)
+                    },
+                    updateExpression = buildUpdateExpression(),
+                    returnValues = this.returnValues,
+                    conditionExpression = conditionExpression,
+                    returnValuesOnConditionCheckFailure =
+                        conditionalCheckFailReturn.takeIf { conditionExpression != null },
+                    expressionAttributeNames = attributeNames.orNullIfEmpty(),
+                    expressionAttributeValues = attributeValues.orNullIfEmpty(),
+                ),
+            ).attributes!!,
+        )
     }
 }
 

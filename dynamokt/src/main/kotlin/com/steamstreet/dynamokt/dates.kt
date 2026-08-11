@@ -2,7 +2,6 @@
 
 package com.steamstreet.dynamokt
 
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import kotlinx.datetime.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime

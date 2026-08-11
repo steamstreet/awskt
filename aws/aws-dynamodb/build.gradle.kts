@@ -16,6 +16,9 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                // `dynamo` owns AttributeValue and is transport-free by design (Decision 2); this
+                // module re-exports it, so a consumer of the client sees one attribute type.
+                api(project(":dynamo"))
                 api(project(":aws:aws-core"))
                 api(libs.kotlin.serialization.json)
                 implementation(libs.kotlin.coroutines.core)

@@ -1,7 +1,12 @@
 package com.steamstreet.dynamokt
 
-import aws.sdk.kotlin.services.dynamodb.createTable
-import aws.sdk.kotlin.services.dynamodb.model.*
+import com.steamstreet.awskt.dynamodb.AttributeDefinition
+import com.steamstreet.awskt.dynamodb.BillingMode
+import com.steamstreet.awskt.dynamodb.CreateTableRequest
+import com.steamstreet.awskt.dynamodb.KeySchemaElement
+import com.steamstreet.awskt.dynamodb.KeyType
+import com.steamstreet.awskt.dynamodb.ScalarAttributeType
+
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
@@ -225,30 +230,20 @@ class BasicTests : DynamoKtTests() {
 
     suspend fun createTable(tableName: String = "Table"): DynamoKt {
         val dynamoClient = DynamoKt.defaultClientBuilder(null)
-        dynamoClient.createTable {
-            this.tableName = tableName
-            keySchema = listOf(
-                KeySchemaElement {
-                    attributeName = "pk"
-                    keyType = KeyType.Hash
-                },
-                KeySchemaElement {
-                    attributeName = "sk"
-                    keyType = KeyType.Range
-                }
-            )
-            attributeDefinitions = listOf(
-                AttributeDefinition {
-                    attributeName = "pk"
-                    attributeType = ScalarAttributeType.S
-                },
-                AttributeDefinition {
-                    attributeName = "sk"
-                    attributeType = ScalarAttributeType.S
-                }
-            )
-            billingMode = BillingMode.PayPerRequest
-        }
+        dynamoClient.createTable(
+            CreateTableRequest(
+                tableName = tableName,
+                keySchema = listOf(
+                    KeySchemaElement("pk", KeyType.Hash),
+                    KeySchemaElement("sk", KeyType.Range),
+                ),
+                attributeDefinitions = listOf(
+                    AttributeDefinition("pk", ScalarAttributeType.S),
+                    AttributeDefinition("sk", ScalarAttributeType.S),
+                ),
+                billingMode = BillingMode.PayPerRequest,
+            ),
+        )
         return DynamoKt(tableName)
     }
 }

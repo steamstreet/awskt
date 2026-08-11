@@ -1,16 +1,16 @@
 package com.steamstreet.dynamokt
 
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
-import aws.sdk.kotlin.services.dynamodb.model.QueryRequest
-import aws.sdk.kotlin.services.dynamodb.model.QueryResponse
-import aws.sdk.kotlin.services.dynamodb.paginators.items
-import aws.sdk.kotlin.services.dynamodb.paginators.queryPaginated
-import aws.sdk.kotlin.services.dynamodb.paginators.scanPaginated
-import kotlinx.coroutines.FlowPreview
+import com.steamstreet.awskt.dynamodb.QueryRequest
+import com.steamstreet.awskt.dynamodb.QueryResponse
+import com.steamstreet.awskt.dynamodb.ScanRequest
+import com.steamstreet.awskt.dynamodb.items
+import com.steamstreet.awskt.dynamodb.orNullIfEmpty
+import com.steamstreet.awskt.dynamodb.queryPaged
+import com.steamstreet.awskt.dynamodb.scanItems
+import com.steamstreet.awskt.dynamodb.scanPaged
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
-import java.util.concurrent.atomic.AtomicInteger
 
 
 public class Query internal constructor(
@@ -32,7 +32,7 @@ public class Query internal constructor(
     private var attributeNames: MutableMap<String, String>? = null
     private var attributeValues: MutableMap<String, AttributeValue>? = null
 
-    private var attributeIndex = AtomicInteger(1)
+    private var attributeIndex = 1
 
     // Segment information used for scans only.
     internal var segments: Int? = null
@@ -49,7 +49,7 @@ public class Query internal constructor(
 
     private fun processAttributeName(name: String): String {
         return name.split(".").map { keyElement ->
-            "#attr${attributeIndex.getAndIncrement()}".also {
+            "#attr${attributeIndex++}".also {
                 if (attributeNames == null) {
                     attributeNames = HashMap()
                 }
@@ -181,58 +181,40 @@ public class Query internal constructor(
         }
     }
 
-    private fun QueryRequest.Builder.buildQuery() {
-        this.tableName = dynamo.table
+    /**
+     * Builds the request.
+     *
+     * Returns a value rather than mutating a builder, which is not a stylistic change: the AWS SDK's
+     * mutable `QueryRequest.Builder` is gone, and a `data class` request is what makes the paginator
+     * safe — `page.copy(exclusiveStartKey = …)` cannot silently drop a field the way the old
+     * field-by-field reconstruction could.
+     *
+     * Every optional collection goes through `orNullIfEmpty()`: an assigned `emptyMap()` serializes
+     * as `"ExpressionAttributeValues":{}`, which DynamoDB rejects outright.
+     */
+    private fun buildQuery(): QueryRequest = QueryRequest(
+        tableName = dynamo.table,
+        indexName = indexName,
+        keyConditionExpression = "#pk = :pk".let {
+            if (sk.expression != null) "$it and ${sk.expression}" else it
+        },
+        filterExpression = filter,
+        projectionExpression = projection?.takeIf { it.isNotEmpty() }?.joinToString(", "),
+        expressionAttributeNames = buildExpressionNames().orNullIfEmpty(),
+        expressionAttributeValues = buildExpressionValues().orNullIfEmpty(),
+        exclusiveStartKey = token?.fromJsonToItem(),
+        limit = limit,
+        scanIndexForward = false.takeIf { !forward },
+        consistentRead = true.takeIf { consistent },
+    )
 
-        if (!forward) {
-            scanIndexForward = false
-        }
-
-        token?.let {
-            exclusiveStartKey = it.fromJsonToItem()
-        }
-
-        if (this@Query.indexName != null) {
-            indexName = this@Query.indexName
-        }
-
-        if (consistent) {
-            this.consistentRead = (true)
-        }
-
-        if (!projection.isNullOrEmpty()) {
-            this.projectionExpression = (projection?.joinToString(", "))
-        }
-
-        expressionAttributeNames = (buildExpressionNames())
-        expressionAttributeValues = (buildExpressionValues())
-        this.filterExpression = (filter)
-
-        keyConditionExpression = ("#pk = :pk".let {
-            if (sk.expression != null) {
-                "$it and ${sk.expression}"
-            } else {
-                it
-            }
-        })
-
-        if (this@Query.limit != null) {
-            this.limit = this@Query.limit
-        }
-    }
-
-    @OptIn(FlowPreview::class)
     internal suspend fun execute(): QueryResult {
-        val request = QueryRequest {
-            buildQuery()
-        }
+        val request = buildQuery()
 
         return if (loadAll) {
-            val result = dynamo.dynamo.queryPaginated(request)
-
-
+            val pages = dynamo.dynamo.queryPaged(request)
             object : QueryResult {
-                override val items: Flow<Item> = result.items().map { Item(dynamo, it) }
+                override val items: Flow<Item> = pages.items().map { Item(dynamo, it) }
                 override val paginationToken: String? = null
             }
         } else {
@@ -249,29 +231,16 @@ public class Query internal constructor(
     }
 
     internal fun executeScan(): QueryResult {
-        val items = dynamo.dynamo.scanPaginated {
-            tableName = (dynamo.table)
-            buildExpressionNames().takeIf { it.isNotEmpty() }?.let {
-                expressionAttributeNames = it
-            }
-            buildExpressionValues().takeIf { it.isNotEmpty() }?.let {
-                expressionAttributeValues = it
-            }
-            projection?.let {
-                projectionExpression = it.joinToString(", ")
-            }
-
-            this@Query.segment?.let {
-                segment = it
-            }
-            this@Query.segments?.let {
-                totalSegments = it
-            }
-
-            filterExpression = filter
-        }.items().map {
-            Item(dynamo, it)
-        }
+        val request = ScanRequest(
+            tableName = dynamo.table,
+            filterExpression = filter,
+            projectionExpression = projection?.joinToString(", "),
+            expressionAttributeNames = buildExpressionNames().orNullIfEmpty(),
+            expressionAttributeValues = buildExpressionValues().orNullIfEmpty(),
+            segment = segment,
+            totalSegments = segments,
+        )
+        val items = dynamo.dynamo.scanPaged(request).scanItems().map { Item(dynamo, it) }
 
         return object : QueryResult {
             override val items: Flow<Item> = items

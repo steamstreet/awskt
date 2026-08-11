@@ -29,13 +29,13 @@ public final class com/steamstreet/dynamokt/exposed/BetweenOp : com/steamstreet/
 
 public final class com/steamstreet/dynamokt/exposed/BoolColumn : com/steamstreet/dynamokt/exposed/Column {
 	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Table;Ljava/lang/String;)V
-	public fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Boolean;
-	public synthetic fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
+	public fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Boolean;
+	public synthetic fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
 	public fun getName ()Ljava/lang/String;
 	public fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public fun nullable ()Lcom/steamstreet/dynamokt/exposed/Column;
-	public synthetic fun toAttributeValue (Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
-	public fun toAttributeValue (Z)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public synthetic fun toAttributeValue (Ljava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public fun toAttributeValue (Z)Lcom/steamstreet/dynamokt/AttributeValue;
 }
 
 public final class com/steamstreet/dynamokt/exposed/BoundTable {
@@ -57,11 +57,11 @@ public final class com/steamstreet/dynamokt/exposed/BoundTableKt {
 }
 
 public abstract interface class com/steamstreet/dynamokt/exposed/Column {
-	public abstract fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
+	public abstract fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public fun nullable ()Lcom/steamstreet/dynamokt/exposed/Column;
-	public abstract fun toAttributeValue (Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public abstract fun toAttributeValue (Ljava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue;
 }
 
 public final class com/steamstreet/dynamokt/exposed/Column$DefaultImpls {
@@ -70,20 +70,20 @@ public final class com/steamstreet/dynamokt/exposed/Column$DefaultImpls {
 
 public final class com/steamstreet/dynamokt/exposed/CustomEnumerationColumn : com/steamstreet/dynamokt/exposed/Column {
 	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Table;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
-	public fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Enum;
-	public synthetic fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
+	public fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Enum;
+	public synthetic fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
 	public fun getName ()Ljava/lang/String;
 	public fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public fun nullable ()Lcom/steamstreet/dynamokt/exposed/Column;
-	public fun toAttributeValue (Ljava/lang/Enum;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
-	public synthetic fun toAttributeValue (Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public fun toAttributeValue (Ljava/lang/Enum;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public synthetic fun toAttributeValue (Ljava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue;
 }
 
 public final class com/steamstreet/dynamokt/exposed/Database {
 	public static final field Companion Lcom/steamstreet/dynamokt/exposed/Database$Companion;
-	public fun <init> (Laws/sdk/kotlin/services/dynamodb/DynamoDbClient;ZLkotlin/jvm/functions/Function1;)V
-	public synthetic fun <init> (Laws/sdk/kotlin/services/dynamodb/DynamoDbClient;ZLkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getClient ()Laws/sdk/kotlin/services/dynamodb/DynamoDbClient;
+	public fun <init> (Lcom/steamstreet/awskt/dynamodb/DynamoDb;ZLkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/dynamodb/DynamoDb;ZLkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getClient ()Lcom/steamstreet/awskt/dynamodb/DynamoDb;
 	public final fun getDefaultConsistentRead ()Z
 	public final fun getTableNameMapper ()Lkotlin/jvm/functions/Function1;
 	public final fun resolveTableName (Lcom/steamstreet/dynamokt/exposed/Table;)Ljava/lang/String;
@@ -91,8 +91,8 @@ public final class com/steamstreet/dynamokt/exposed/Database {
 }
 
 public final class com/steamstreet/dynamokt/exposed/Database$Companion {
-	public final fun connect (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun connect$default (Lcom/steamstreet/dynamokt/exposed/Database$Companion;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun connect (Lkotlin/jvm/functions/Function1;)Lcom/steamstreet/dynamokt/exposed/Database;
+	public static synthetic fun connect$default (Lcom/steamstreet/dynamokt/exposed/Database$Companion;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/exposed/Database;
 }
 
 public final class com/steamstreet/dynamokt/exposed/DatabaseBuilder {
@@ -132,26 +132,26 @@ public final class com/steamstreet/dynamokt/exposed/DeleteStatement {
 
 public final class com/steamstreet/dynamokt/exposed/EnumerationByNameColumn : com/steamstreet/dynamokt/exposed/Column {
 	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Table;Ljava/lang/String;Lkotlin/reflect/KClass;)V
-	public fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Enum;
-	public synthetic fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
+	public fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Enum;
+	public synthetic fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
 	public final fun getEnumClass ()Lkotlin/reflect/KClass;
 	public fun getName ()Ljava/lang/String;
 	public fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public fun nullable ()Lcom/steamstreet/dynamokt/exposed/Column;
-	public fun toAttributeValue (Ljava/lang/Enum;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
-	public synthetic fun toAttributeValue (Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public fun toAttributeValue (Ljava/lang/Enum;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public synthetic fun toAttributeValue (Ljava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue;
 }
 
 public final class com/steamstreet/dynamokt/exposed/EnumerationColumn : com/steamstreet/dynamokt/exposed/Column {
 	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Table;Ljava/lang/String;Lkotlin/reflect/KClass;)V
-	public fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Enum;
-	public synthetic fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
+	public fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Enum;
+	public synthetic fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
 	public final fun getEnumClass ()Lkotlin/reflect/KClass;
 	public fun getName ()Ljava/lang/String;
 	public fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public fun nullable ()Lcom/steamstreet/dynamokt/exposed/Column;
-	public fun toAttributeValue (Ljava/lang/Enum;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
-	public synthetic fun toAttributeValue (Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public fun toAttributeValue (Ljava/lang/Enum;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public synthetic fun toAttributeValue (Ljava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue;
 }
 
 public final class com/steamstreet/dynamokt/exposed/EqOp : com/steamstreet/dynamokt/exposed/Op {
@@ -211,13 +211,13 @@ public final class com/steamstreet/dynamokt/exposed/InsertStatement {
 
 public final class com/steamstreet/dynamokt/exposed/IntegerColumn : com/steamstreet/dynamokt/exposed/Column {
 	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Table;Ljava/lang/String;)V
-	public fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Integer;
-	public synthetic fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
+	public fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Integer;
+	public synthetic fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
 	public fun getName ()Ljava/lang/String;
 	public fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public fun nullable ()Lcom/steamstreet/dynamokt/exposed/Column;
-	public fun toAttributeValue (I)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
-	public synthetic fun toAttributeValue (Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public fun toAttributeValue (I)Lcom/steamstreet/dynamokt/AttributeValue;
+	public synthetic fun toAttributeValue (Ljava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue;
 }
 
 public final class com/steamstreet/dynamokt/exposed/KeysOp : com/steamstreet/dynamokt/exposed/Op {
@@ -233,14 +233,14 @@ public final class com/steamstreet/dynamokt/exposed/LeOp : com/steamstreet/dynam
 
 public final class com/steamstreet/dynamokt/exposed/ListColumn : com/steamstreet/dynamokt/exposed/Column {
 	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Table;Ljava/lang/String;Lcom/steamstreet/dynamokt/exposed/Column;)V
-	public synthetic fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
-	public fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/util/List;
+	public synthetic fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
+	public fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/util/List;
 	public final fun getElementColumn ()Lcom/steamstreet/dynamokt/exposed/Column;
 	public fun getName ()Ljava/lang/String;
 	public fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public fun nullable ()Lcom/steamstreet/dynamokt/exposed/Column;
-	public synthetic fun toAttributeValue (Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
-	public fun toAttributeValue (Ljava/util/List;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public synthetic fun toAttributeValue (Ljava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public fun toAttributeValue (Ljava/util/List;)Lcom/steamstreet/dynamokt/AttributeValue;
 }
 
 public final class com/steamstreet/dynamokt/exposed/LocalSecondaryIndex : com/steamstreet/dynamokt/exposed/Index {
@@ -256,13 +256,13 @@ public final class com/steamstreet/dynamokt/exposed/LocalSecondaryIndex : com/st
 
 public final class com/steamstreet/dynamokt/exposed/LongColumn : com/steamstreet/dynamokt/exposed/Column {
 	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Table;Ljava/lang/String;)V
-	public fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Long;
-	public synthetic fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
+	public fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Long;
+	public synthetic fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
 	public fun getName ()Ljava/lang/String;
 	public fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public fun nullable ()Lcom/steamstreet/dynamokt/exposed/Column;
-	public fun toAttributeValue (J)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
-	public synthetic fun toAttributeValue (Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public fun toAttributeValue (J)Lcom/steamstreet/dynamokt/AttributeValue;
+	public synthetic fun toAttributeValue (Ljava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue;
 }
 
 public final class com/steamstreet/dynamokt/exposed/LtOp : com/steamstreet/dynamokt/exposed/Op {
@@ -273,13 +273,13 @@ public final class com/steamstreet/dynamokt/exposed/LtOp : com/steamstreet/dynam
 
 public final class com/steamstreet/dynamokt/exposed/MapColumn : com/steamstreet/dynamokt/exposed/Column {
 	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Table;Ljava/lang/String;)V
-	public synthetic fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
-	public fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/util/Map;
+	public synthetic fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
+	public fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/util/Map;
 	public fun getName ()Ljava/lang/String;
 	public fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public fun nullable ()Lcom/steamstreet/dynamokt/exposed/Column;
-	public synthetic fun toAttributeValue (Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
-	public fun toAttributeValue (Ljava/util/Map;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public synthetic fun toAttributeValue (Ljava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public fun toAttributeValue (Ljava/util/Map;)Lcom/steamstreet/dynamokt/AttributeValue;
 }
 
 public final class com/steamstreet/dynamokt/exposed/NeOp : com/steamstreet/dynamokt/exposed/Op {
@@ -294,12 +294,12 @@ public final class com/steamstreet/dynamokt/exposed/NoIndexMatchException : java
 
 public final class com/steamstreet/dynamokt/exposed/NullableColumn : com/steamstreet/dynamokt/exposed/Column {
 	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Column;)V
-	public fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
+	public fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
 	public fun getName ()Ljava/lang/String;
 	public fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public final fun getWrapped ()Lcom/steamstreet/dynamokt/exposed/Column;
 	public fun nullable ()Lcom/steamstreet/dynamokt/exposed/Column;
-	public fun toAttributeValue (Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public fun toAttributeValue (Ljava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue;
 }
 
 public abstract class com/steamstreet/dynamokt/exposed/Op {
@@ -430,24 +430,24 @@ public final class com/steamstreet/dynamokt/exposed/TableOperationsKt {
 
 public final class com/steamstreet/dynamokt/exposed/TextColumn : com/steamstreet/dynamokt/exposed/Column {
 	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Table;Ljava/lang/String;)V
-	public synthetic fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
-	public fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/String;
+	public synthetic fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
+	public fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
 	public fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public fun nullable ()Lcom/steamstreet/dynamokt/exposed/Column;
-	public synthetic fun toAttributeValue (Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
-	public fun toAttributeValue (Ljava/lang/String;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public synthetic fun toAttributeValue (Ljava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public fun toAttributeValue (Ljava/lang/String;)Lcom/steamstreet/dynamokt/AttributeValue;
 }
 
 public final class com/steamstreet/dynamokt/exposed/TimestampColumn : com/steamstreet/dynamokt/exposed/Column {
 	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Table;Ljava/lang/String;)V
-	public synthetic fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
-	public fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Lkotlin/time/Instant;
+	public synthetic fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
+	public fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Lkotlin/time/Instant;
 	public fun getName ()Ljava/lang/String;
 	public fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public fun nullable ()Lcom/steamstreet/dynamokt/exposed/Column;
-	public synthetic fun toAttributeValue (Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
-	public fun toAttributeValue (Lkotlin/time/Instant;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public synthetic fun toAttributeValue (Ljava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public fun toAttributeValue (Lkotlin/time/Instant;)Lcom/steamstreet/dynamokt/AttributeValue;
 }
 
 public final class com/steamstreet/dynamokt/exposed/Transaction {
@@ -498,12 +498,12 @@ public final class com/steamstreet/dynamokt/exposed/UpdateStatement {
 
 public final class com/steamstreet/dynamokt/exposed/VarCharColumn : com/steamstreet/dynamokt/exposed/Column {
 	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Table;Ljava/lang/String;)V
-	public synthetic fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/Object;
-	public fun fromAttributeValue (Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)Ljava/lang/String;
+	public synthetic fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
+	public fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
 	public fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public fun nullable ()Lcom/steamstreet/dynamokt/exposed/Column;
-	public synthetic fun toAttributeValue (Ljava/lang/Object;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
-	public fun toAttributeValue (Ljava/lang/String;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public synthetic fun toAttributeValue (Ljava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public fun toAttributeValue (Ljava/lang/String;)Lcom/steamstreet/dynamokt/AttributeValue;
 }
 

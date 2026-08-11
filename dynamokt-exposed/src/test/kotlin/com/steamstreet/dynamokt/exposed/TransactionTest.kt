@@ -1,6 +1,6 @@
 package com.steamstreet.dynamokt.exposed
 
-import aws.sdk.kotlin.services.dynamodb.model.TransactionCanceledException
+import com.steamstreet.awskt.dynamodb.TransactionCanceledException
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeNull

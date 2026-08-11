@@ -1,7 +1,7 @@
 package com.steamstreet.aws.test
 
 import aws.sdk.kotlin.runtime.AwsServiceException
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
+import com.steamstreet.dynamokt.AttributeValue
 import aws.sdk.kotlin.services.dynamodbstreams.*
 import aws.sdk.kotlin.services.dynamodbstreams.model.GetRecordsResponse
 import aws.sdk.kotlin.services.dynamodbstreams.model.Record

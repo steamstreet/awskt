@@ -1,5 +1,6 @@
 package com.steamstreet.awskt.dynamodb
 
+import com.steamstreet.dynamokt.AttributeValue
 import com.steamstreet.awskt.core.callJson
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking

@@ -222,16 +222,16 @@ final class com.steamstreet.awskt.dynamodb/BatchGetItemRequest { // com.steamstr
 }
 
 final class com.steamstreet.awskt.dynamodb/BatchGetItemResponse { // com.steamstreet.awskt.dynamodb/BatchGetItemResponse|null[0]
-    constructor <init>(kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>>>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/KeysAndAttributes>? = ...) // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.<init>|<init>(kotlin.collections.Map<kotlin.String,kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>>>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.KeysAndAttributes>?){}[0]
+    constructor <init>(kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/KeysAndAttributes>? = ...) // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.<init>|<init>(kotlin.collections.Map<kotlin.String,kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>>>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.KeysAndAttributes>?){}[0]
 
     final val responses // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.responses|{}responses[0]
-        final fun <get-responses>(): kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>>>? // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.responses.<get-responses>|<get-responses>(){}[0]
+        final fun <get-responses>(): kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>>? // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.responses.<get-responses>|<get-responses>(){}[0]
     final val unprocessedKeys // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.unprocessedKeys|{}unprocessedKeys[0]
         final fun <get-unprocessedKeys>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/KeysAndAttributes>? // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.unprocessedKeys.<get-unprocessedKeys>|<get-unprocessedKeys>(){}[0]
 
-    final fun component1(): kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>>>? // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.component1|component1(){}[0]
+    final fun component1(): kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>>? // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.component1|component1(){}[0]
     final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/KeysAndAttributes>? // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.component2|component2(){}[0]
-    final fun copy(kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>>>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/KeysAndAttributes>? = ...): com.steamstreet.awskt.dynamodb/BatchGetItemResponse // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.copy|copy(kotlin.collections.Map<kotlin.String,kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>>>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.KeysAndAttributes>?){}[0]
+    final fun copy(kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/KeysAndAttributes>? = ...): com.steamstreet.awskt.dynamodb/BatchGetItemResponse // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.copy|copy(kotlin.collections.Map<kotlin.String,kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>>>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.KeysAndAttributes>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.toString|toString(){}[0]
@@ -309,19 +309,19 @@ final class com.steamstreet.awskt.dynamodb/BatchWriteItemResponse { // com.steam
 }
 
 final class com.steamstreet.awskt.dynamodb/CancellationReason { // com.steamstreet.awskt.dynamodb/CancellationReason|null[0]
-    constructor <init>(kotlin/String, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/CancellationReason.<init>|<init>(kotlin.String;kotlin.String?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/CancellationReason.<init>|<init>(kotlin.String;kotlin.String?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
 
     final val code // com.steamstreet.awskt.dynamodb/CancellationReason.code|{}code[0]
         final fun <get-code>(): kotlin/String // com.steamstreet.awskt.dynamodb/CancellationReason.code.<get-code>|<get-code>(){}[0]
     final val item // com.steamstreet.awskt.dynamodb/CancellationReason.item|{}item[0]
-        final fun <get-item>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/CancellationReason.item.<get-item>|<get-item>(){}[0]
+        final fun <get-item>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/CancellationReason.item.<get-item>|<get-item>(){}[0]
     final val message // com.steamstreet.awskt.dynamodb/CancellationReason.message|{}message[0]
         final fun <get-message>(): kotlin/String? // com.steamstreet.awskt.dynamodb/CancellationReason.message.<get-message>|<get-message>(){}[0]
 
     final fun component1(): kotlin/String // com.steamstreet.awskt.dynamodb/CancellationReason.component1|component1(){}[0]
     final fun component2(): kotlin/String? // com.steamstreet.awskt.dynamodb/CancellationReason.component2|component2(){}[0]
-    final fun component3(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/CancellationReason.component3|component3(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/CancellationReason // com.steamstreet.awskt.dynamodb/CancellationReason.copy|copy(kotlin.String;kotlin.String?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    final fun component3(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/CancellationReason.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/CancellationReason // com.steamstreet.awskt.dynamodb/CancellationReason.copy|copy(kotlin.String;kotlin.String?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/CancellationReason.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/CancellationReason.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/CancellationReason.toString|toString(){}[0]
@@ -343,28 +343,28 @@ final class com.steamstreet.awskt.dynamodb/CancellationReason { // com.steamstre
 }
 
 final class com.steamstreet.awskt.dynamodb/ConditionCheck { // com.steamstreet.awskt.dynamodb/ConditionCheck|null[0]
-    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>, kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...) // com.steamstreet.awskt.dynamodb/ConditionCheck.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
+    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>, kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...) // com.steamstreet.awskt.dynamodb/ConditionCheck.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
 
     final val conditionExpression // com.steamstreet.awskt.dynamodb/ConditionCheck.conditionExpression|{}conditionExpression[0]
         final fun <get-conditionExpression>(): kotlin/String // com.steamstreet.awskt.dynamodb/ConditionCheck.conditionExpression.<get-conditionExpression>|<get-conditionExpression>(){}[0]
     final val expressionAttributeNames // com.steamstreet.awskt.dynamodb/ConditionCheck.expressionAttributeNames|{}expressionAttributeNames[0]
         final fun <get-expressionAttributeNames>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/ConditionCheck.expressionAttributeNames.<get-expressionAttributeNames>|<get-expressionAttributeNames>(){}[0]
     final val expressionAttributeValues // com.steamstreet.awskt.dynamodb/ConditionCheck.expressionAttributeValues|{}expressionAttributeValues[0]
-        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/ConditionCheck.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
+        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/ConditionCheck.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
     final val key // com.steamstreet.awskt.dynamodb/ConditionCheck.key|{}key[0]
-        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/ConditionCheck.key.<get-key>|<get-key>(){}[0]
+        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/ConditionCheck.key.<get-key>|<get-key>(){}[0]
     final val returnValuesOnConditionCheckFailure // com.steamstreet.awskt.dynamodb/ConditionCheck.returnValuesOnConditionCheckFailure|{}returnValuesOnConditionCheckFailure[0]
         final fun <get-returnValuesOnConditionCheckFailure>(): com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? // com.steamstreet.awskt.dynamodb/ConditionCheck.returnValuesOnConditionCheckFailure.<get-returnValuesOnConditionCheckFailure>|<get-returnValuesOnConditionCheckFailure>(){}[0]
     final val tableName // com.steamstreet.awskt.dynamodb/ConditionCheck.tableName|{}tableName[0]
         final fun <get-tableName>(): kotlin/String // com.steamstreet.awskt.dynamodb/ConditionCheck.tableName.<get-tableName>|<get-tableName>(){}[0]
 
     final fun component1(): kotlin/String // com.steamstreet.awskt.dynamodb/ConditionCheck.component1|component1(){}[0]
-    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/ConditionCheck.component2|component2(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/ConditionCheck.component2|component2(){}[0]
     final fun component3(): kotlin/String // com.steamstreet.awskt.dynamodb/ConditionCheck.component3|component3(){}[0]
     final fun component4(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/ConditionCheck.component4|component4(){}[0]
-    final fun component5(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/ConditionCheck.component5|component5(){}[0]
+    final fun component5(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/ConditionCheck.component5|component5(){}[0]
     final fun component6(): com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? // com.steamstreet.awskt.dynamodb/ConditionCheck.component6|component6(){}[0]
-    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> = ..., kotlin/String = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...): com.steamstreet.awskt.dynamodb/ConditionCheck // com.steamstreet.awskt.dynamodb/ConditionCheck.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ..., kotlin/String = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...): com.steamstreet.awskt.dynamodb/ConditionCheck // com.steamstreet.awskt.dynamodb/ConditionCheck.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/ConditionCheck.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/ConditionCheck.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/ConditionCheck.toString|toString(){}[0]
@@ -386,10 +386,10 @@ final class com.steamstreet.awskt.dynamodb/ConditionCheck { // com.steamstreet.a
 }
 
 final class com.steamstreet.awskt.dynamodb/ConditionalCheckFailedException : com.steamstreet.awskt.dynamodb/DynamoDbException { // com.steamstreet.awskt.dynamodb/ConditionalCheckFailedException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., kotlin/String? = ...) // com.steamstreet.awskt.dynamodb/ConditionalCheckFailedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., kotlin/String? = ...) // com.steamstreet.awskt.dynamodb/ConditionalCheckFailedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;kotlin.String?){}[0]
 
     final val item // com.steamstreet.awskt.dynamodb/ConditionalCheckFailedException.item|{}item[0]
-        final fun <get-item>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/ConditionalCheckFailedException.item.<get-item>|<get-item>(){}[0]
+        final fun <get-item>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/ConditionalCheckFailedException.item.<get-item>|<get-item>(){}[0]
 }
 
 final class com.steamstreet.awskt.dynamodb/ConsumedCapacity { // com.steamstreet.awskt.dynamodb/ConsumedCapacity|null[0]
@@ -497,16 +497,16 @@ final class com.steamstreet.awskt.dynamodb/CreateTableResponse { // com.steamstr
 }
 
 final class com.steamstreet.awskt.dynamodb/DeleteItemRequest { // com.steamstreet.awskt.dynamodb/DeleteItemRequest|null[0]
-    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValue? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...) // com.steamstreet.awskt.dynamodb/DeleteItemRequest.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValue?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
+    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValue? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...) // com.steamstreet.awskt.dynamodb/DeleteItemRequest.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValue?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
 
     final val conditionExpression // com.steamstreet.awskt.dynamodb/DeleteItemRequest.conditionExpression|{}conditionExpression[0]
         final fun <get-conditionExpression>(): kotlin/String? // com.steamstreet.awskt.dynamodb/DeleteItemRequest.conditionExpression.<get-conditionExpression>|<get-conditionExpression>(){}[0]
     final val expressionAttributeNames // com.steamstreet.awskt.dynamodb/DeleteItemRequest.expressionAttributeNames|{}expressionAttributeNames[0]
         final fun <get-expressionAttributeNames>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/DeleteItemRequest.expressionAttributeNames.<get-expressionAttributeNames>|<get-expressionAttributeNames>(){}[0]
     final val expressionAttributeValues // com.steamstreet.awskt.dynamodb/DeleteItemRequest.expressionAttributeValues|{}expressionAttributeValues[0]
-        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/DeleteItemRequest.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
+        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/DeleteItemRequest.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
     final val key // com.steamstreet.awskt.dynamodb/DeleteItemRequest.key|{}key[0]
-        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/DeleteItemRequest.key.<get-key>|<get-key>(){}[0]
+        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/DeleteItemRequest.key.<get-key>|<get-key>(){}[0]
     final val returnValues // com.steamstreet.awskt.dynamodb/DeleteItemRequest.returnValues|{}returnValues[0]
         final fun <get-returnValues>(): com.steamstreet.awskt.dynamodb/ReturnValue? // com.steamstreet.awskt.dynamodb/DeleteItemRequest.returnValues.<get-returnValues>|<get-returnValues>(){}[0]
     final val returnValuesOnConditionCheckFailure // com.steamstreet.awskt.dynamodb/DeleteItemRequest.returnValuesOnConditionCheckFailure|{}returnValuesOnConditionCheckFailure[0]
@@ -515,13 +515,13 @@ final class com.steamstreet.awskt.dynamodb/DeleteItemRequest { // com.steamstree
         final fun <get-tableName>(): kotlin/String // com.steamstreet.awskt.dynamodb/DeleteItemRequest.tableName.<get-tableName>|<get-tableName>(){}[0]
 
     final fun component1(): kotlin/String // com.steamstreet.awskt.dynamodb/DeleteItemRequest.component1|component1(){}[0]
-    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/DeleteItemRequest.component2|component2(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/DeleteItemRequest.component2|component2(){}[0]
     final fun component3(): kotlin/String? // com.steamstreet.awskt.dynamodb/DeleteItemRequest.component3|component3(){}[0]
     final fun component4(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/DeleteItemRequest.component4|component4(){}[0]
-    final fun component5(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/DeleteItemRequest.component5|component5(){}[0]
+    final fun component5(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/DeleteItemRequest.component5|component5(){}[0]
     final fun component6(): com.steamstreet.awskt.dynamodb/ReturnValue? // com.steamstreet.awskt.dynamodb/DeleteItemRequest.component6|component6(){}[0]
     final fun component7(): com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? // com.steamstreet.awskt.dynamodb/DeleteItemRequest.component7|component7(){}[0]
-    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValue? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...): com.steamstreet.awskt.dynamodb/DeleteItemRequest // com.steamstreet.awskt.dynamodb/DeleteItemRequest.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValue?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValue? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...): com.steamstreet.awskt.dynamodb/DeleteItemRequest // com.steamstreet.awskt.dynamodb/DeleteItemRequest.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValue?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/DeleteItemRequest.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/DeleteItemRequest.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/DeleteItemRequest.toString|toString(){}[0]
@@ -543,13 +543,13 @@ final class com.steamstreet.awskt.dynamodb/DeleteItemRequest { // com.steamstree
 }
 
 final class com.steamstreet.awskt.dynamodb/DeleteItemResponse { // com.steamstreet.awskt.dynamodb/DeleteItemResponse|null[0]
-    constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/DeleteItemResponse.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/DeleteItemResponse.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
 
     final val attributes // com.steamstreet.awskt.dynamodb/DeleteItemResponse.attributes|{}attributes[0]
-        final fun <get-attributes>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/DeleteItemResponse.attributes.<get-attributes>|<get-attributes>(){}[0]
+        final fun <get-attributes>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/DeleteItemResponse.attributes.<get-attributes>|<get-attributes>(){}[0]
 
-    final fun component1(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/DeleteItemResponse.component1|component1(){}[0]
-    final fun copy(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/DeleteItemResponse // com.steamstreet.awskt.dynamodb/DeleteItemResponse.copy|copy(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    final fun component1(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/DeleteItemResponse.component1|component1(){}[0]
+    final fun copy(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/DeleteItemResponse // com.steamstreet.awskt.dynamodb/DeleteItemResponse.copy|copy(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/DeleteItemResponse.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/DeleteItemResponse.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/DeleteItemResponse.toString|toString(){}[0]
@@ -571,13 +571,13 @@ final class com.steamstreet.awskt.dynamodb/DeleteItemResponse { // com.steamstre
 }
 
 final class com.steamstreet.awskt.dynamodb/DeleteRequest { // com.steamstreet.awskt.dynamodb/DeleteRequest|null[0]
-    constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>) // com.steamstreet.awskt.dynamodb/DeleteRequest.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>){}[0]
+    constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>) // com.steamstreet.awskt.dynamodb/DeleteRequest.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>){}[0]
 
     final val key // com.steamstreet.awskt.dynamodb/DeleteRequest.key|{}key[0]
-        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/DeleteRequest.key.<get-key>|<get-key>(){}[0]
+        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/DeleteRequest.key.<get-key>|<get-key>(){}[0]
 
-    final fun component1(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/DeleteRequest.component1|component1(){}[0]
-    final fun copy(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> = ...): com.steamstreet.awskt.dynamodb/DeleteRequest // com.steamstreet.awskt.dynamodb/DeleteRequest.copy|copy(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>){}[0]
+    final fun component1(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/DeleteRequest.component1|component1(){}[0]
+    final fun copy(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ...): com.steamstreet.awskt.dynamodb/DeleteRequest // com.steamstreet.awskt.dynamodb/DeleteRequest.copy|copy(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/DeleteRequest.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/DeleteRequest.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/DeleteRequest.toString|toString(){}[0]
@@ -726,22 +726,22 @@ final class com.steamstreet.awskt.dynamodb/DynamoDbConfig { // com.steamstreet.a
 }
 
 final class com.steamstreet.awskt.dynamodb/Get { // com.steamstreet.awskt.dynamodb/Get|null[0]
-    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ...) // com.steamstreet.awskt.dynamodb/Get.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
+    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ...) // com.steamstreet.awskt.dynamodb/Get.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
 
     final val expressionAttributeNames // com.steamstreet.awskt.dynamodb/Get.expressionAttributeNames|{}expressionAttributeNames[0]
         final fun <get-expressionAttributeNames>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/Get.expressionAttributeNames.<get-expressionAttributeNames>|<get-expressionAttributeNames>(){}[0]
     final val key // com.steamstreet.awskt.dynamodb/Get.key|{}key[0]
-        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/Get.key.<get-key>|<get-key>(){}[0]
+        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/Get.key.<get-key>|<get-key>(){}[0]
     final val projectionExpression // com.steamstreet.awskt.dynamodb/Get.projectionExpression|{}projectionExpression[0]
         final fun <get-projectionExpression>(): kotlin/String? // com.steamstreet.awskt.dynamodb/Get.projectionExpression.<get-projectionExpression>|<get-projectionExpression>(){}[0]
     final val tableName // com.steamstreet.awskt.dynamodb/Get.tableName|{}tableName[0]
         final fun <get-tableName>(): kotlin/String // com.steamstreet.awskt.dynamodb/Get.tableName.<get-tableName>|<get-tableName>(){}[0]
 
     final fun component1(): kotlin/String // com.steamstreet.awskt.dynamodb/Get.component1|component1(){}[0]
-    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/Get.component2|component2(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/Get.component2|component2(){}[0]
     final fun component3(): kotlin/String? // com.steamstreet.awskt.dynamodb/Get.component3|component3(){}[0]
     final fun component4(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/Get.component4|component4(){}[0]
-    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ...): com.steamstreet.awskt.dynamodb/Get // com.steamstreet.awskt.dynamodb/Get.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ...): com.steamstreet.awskt.dynamodb/Get // com.steamstreet.awskt.dynamodb/Get.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/Get.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/Get.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/Get.toString|toString(){}[0]
@@ -763,25 +763,25 @@ final class com.steamstreet.awskt.dynamodb/Get { // com.steamstreet.awskt.dynamo
 }
 
 final class com.steamstreet.awskt.dynamodb/GetItemRequest { // com.steamstreet.awskt.dynamodb/GetItemRequest|null[0]
-    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>, kotlin/Boolean? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ...) // com.steamstreet.awskt.dynamodb/GetItemRequest.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.Boolean?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
+    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>, kotlin/Boolean? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ...) // com.steamstreet.awskt.dynamodb/GetItemRequest.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.Boolean?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
 
     final val consistentRead // com.steamstreet.awskt.dynamodb/GetItemRequest.consistentRead|{}consistentRead[0]
         final fun <get-consistentRead>(): kotlin/Boolean? // com.steamstreet.awskt.dynamodb/GetItemRequest.consistentRead.<get-consistentRead>|<get-consistentRead>(){}[0]
     final val expressionAttributeNames // com.steamstreet.awskt.dynamodb/GetItemRequest.expressionAttributeNames|{}expressionAttributeNames[0]
         final fun <get-expressionAttributeNames>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/GetItemRequest.expressionAttributeNames.<get-expressionAttributeNames>|<get-expressionAttributeNames>(){}[0]
     final val key // com.steamstreet.awskt.dynamodb/GetItemRequest.key|{}key[0]
-        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/GetItemRequest.key.<get-key>|<get-key>(){}[0]
+        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/GetItemRequest.key.<get-key>|<get-key>(){}[0]
     final val projectionExpression // com.steamstreet.awskt.dynamodb/GetItemRequest.projectionExpression|{}projectionExpression[0]
         final fun <get-projectionExpression>(): kotlin/String? // com.steamstreet.awskt.dynamodb/GetItemRequest.projectionExpression.<get-projectionExpression>|<get-projectionExpression>(){}[0]
     final val tableName // com.steamstreet.awskt.dynamodb/GetItemRequest.tableName|{}tableName[0]
         final fun <get-tableName>(): kotlin/String // com.steamstreet.awskt.dynamodb/GetItemRequest.tableName.<get-tableName>|<get-tableName>(){}[0]
 
     final fun component1(): kotlin/String // com.steamstreet.awskt.dynamodb/GetItemRequest.component1|component1(){}[0]
-    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/GetItemRequest.component2|component2(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/GetItemRequest.component2|component2(){}[0]
     final fun component3(): kotlin/Boolean? // com.steamstreet.awskt.dynamodb/GetItemRequest.component3|component3(){}[0]
     final fun component4(): kotlin/String? // com.steamstreet.awskt.dynamodb/GetItemRequest.component4|component4(){}[0]
     final fun component5(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/GetItemRequest.component5|component5(){}[0]
-    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> = ..., kotlin/Boolean? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ...): com.steamstreet.awskt.dynamodb/GetItemRequest // com.steamstreet.awskt.dynamodb/GetItemRequest.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.Boolean?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ..., kotlin/Boolean? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ...): com.steamstreet.awskt.dynamodb/GetItemRequest // com.steamstreet.awskt.dynamodb/GetItemRequest.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.Boolean?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/GetItemRequest.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/GetItemRequest.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/GetItemRequest.toString|toString(){}[0]
@@ -803,13 +803,13 @@ final class com.steamstreet.awskt.dynamodb/GetItemRequest { // com.steamstreet.a
 }
 
 final class com.steamstreet.awskt.dynamodb/GetItemResponse { // com.steamstreet.awskt.dynamodb/GetItemResponse|null[0]
-    constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/GetItemResponse.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/GetItemResponse.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
 
     final val item // com.steamstreet.awskt.dynamodb/GetItemResponse.item|{}item[0]
-        final fun <get-item>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/GetItemResponse.item.<get-item>|<get-item>(){}[0]
+        final fun <get-item>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/GetItemResponse.item.<get-item>|<get-item>(){}[0]
 
-    final fun component1(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/GetItemResponse.component1|component1(){}[0]
-    final fun copy(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/GetItemResponse // com.steamstreet.awskt.dynamodb/GetItemResponse.copy|copy(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    final fun component1(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/GetItemResponse.component1|component1(){}[0]
+    final fun copy(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/GetItemResponse // com.steamstreet.awskt.dynamodb/GetItemResponse.copy|copy(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/GetItemResponse.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/GetItemResponse.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/GetItemResponse.toString|toString(){}[0]
@@ -909,13 +909,13 @@ final class com.steamstreet.awskt.dynamodb/IdempotentParameterMismatchException 
 }
 
 final class com.steamstreet.awskt.dynamodb/ItemResponse { // com.steamstreet.awskt.dynamodb/ItemResponse|null[0]
-    constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/ItemResponse.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/ItemResponse.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
 
     final val item // com.steamstreet.awskt.dynamodb/ItemResponse.item|{}item[0]
-        final fun <get-item>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/ItemResponse.item.<get-item>|<get-item>(){}[0]
+        final fun <get-item>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/ItemResponse.item.<get-item>|<get-item>(){}[0]
 
-    final fun component1(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/ItemResponse.component1|component1(){}[0]
-    final fun copy(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/ItemResponse // com.steamstreet.awskt.dynamodb/ItemResponse.copy|copy(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    final fun component1(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/ItemResponse.component1|component1(){}[0]
+    final fun copy(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/ItemResponse // com.steamstreet.awskt.dynamodb/ItemResponse.copy|copy(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/ItemResponse.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/ItemResponse.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/ItemResponse.toString|toString(){}[0]
@@ -968,22 +968,22 @@ final class com.steamstreet.awskt.dynamodb/KeySchemaElement { // com.steamstreet
 }
 
 final class com.steamstreet.awskt.dynamodb/KeysAndAttributes { // com.steamstreet.awskt.dynamodb/KeysAndAttributes|null[0]
-    constructor <init>(kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>>, kotlin/Boolean? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ...) // com.steamstreet.awskt.dynamodb/KeysAndAttributes.<init>|<init>(kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>>;kotlin.Boolean?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
+    constructor <init>(kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>, kotlin/Boolean? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ...) // com.steamstreet.awskt.dynamodb/KeysAndAttributes.<init>|<init>(kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>>;kotlin.Boolean?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
 
     final val consistentRead // com.steamstreet.awskt.dynamodb/KeysAndAttributes.consistentRead|{}consistentRead[0]
         final fun <get-consistentRead>(): kotlin/Boolean? // com.steamstreet.awskt.dynamodb/KeysAndAttributes.consistentRead.<get-consistentRead>|<get-consistentRead>(){}[0]
     final val expressionAttributeNames // com.steamstreet.awskt.dynamodb/KeysAndAttributes.expressionAttributeNames|{}expressionAttributeNames[0]
         final fun <get-expressionAttributeNames>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/KeysAndAttributes.expressionAttributeNames.<get-expressionAttributeNames>|<get-expressionAttributeNames>(){}[0]
     final val keys // com.steamstreet.awskt.dynamodb/KeysAndAttributes.keys|{}keys[0]
-        final fun <get-keys>(): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>> // com.steamstreet.awskt.dynamodb/KeysAndAttributes.keys.<get-keys>|<get-keys>(){}[0]
+        final fun <get-keys>(): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>> // com.steamstreet.awskt.dynamodb/KeysAndAttributes.keys.<get-keys>|<get-keys>(){}[0]
     final val projectionExpression // com.steamstreet.awskt.dynamodb/KeysAndAttributes.projectionExpression|{}projectionExpression[0]
         final fun <get-projectionExpression>(): kotlin/String? // com.steamstreet.awskt.dynamodb/KeysAndAttributes.projectionExpression.<get-projectionExpression>|<get-projectionExpression>(){}[0]
 
-    final fun component1(): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>> // com.steamstreet.awskt.dynamodb/KeysAndAttributes.component1|component1(){}[0]
+    final fun component1(): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>> // com.steamstreet.awskt.dynamodb/KeysAndAttributes.component1|component1(){}[0]
     final fun component2(): kotlin/Boolean? // com.steamstreet.awskt.dynamodb/KeysAndAttributes.component2|component2(){}[0]
     final fun component3(): kotlin/String? // com.steamstreet.awskt.dynamodb/KeysAndAttributes.component3|component3(){}[0]
     final fun component4(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/KeysAndAttributes.component4|component4(){}[0]
-    final fun copy(kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>> = ..., kotlin/Boolean? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ...): com.steamstreet.awskt.dynamodb/KeysAndAttributes // com.steamstreet.awskt.dynamodb/KeysAndAttributes.copy|copy(kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>>;kotlin.Boolean?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
+    final fun copy(kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>> = ..., kotlin/Boolean? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ...): com.steamstreet.awskt.dynamodb/KeysAndAttributes // com.steamstreet.awskt.dynamodb/KeysAndAttributes.copy|copy(kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>>;kotlin.Boolean?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/KeysAndAttributes.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/KeysAndAttributes.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/KeysAndAttributes.toString|toString(){}[0]
@@ -1103,16 +1103,16 @@ final class com.steamstreet.awskt.dynamodb/ProvisionedThroughputExceededExceptio
 }
 
 final class com.steamstreet.awskt.dynamodb/PutItemRequest { // com.steamstreet.awskt.dynamodb/PutItemRequest|null[0]
-    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValue? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...) // com.steamstreet.awskt.dynamodb/PutItemRequest.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValue?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
+    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValue? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...) // com.steamstreet.awskt.dynamodb/PutItemRequest.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValue?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
 
     final val conditionExpression // com.steamstreet.awskt.dynamodb/PutItemRequest.conditionExpression|{}conditionExpression[0]
         final fun <get-conditionExpression>(): kotlin/String? // com.steamstreet.awskt.dynamodb/PutItemRequest.conditionExpression.<get-conditionExpression>|<get-conditionExpression>(){}[0]
     final val expressionAttributeNames // com.steamstreet.awskt.dynamodb/PutItemRequest.expressionAttributeNames|{}expressionAttributeNames[0]
         final fun <get-expressionAttributeNames>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/PutItemRequest.expressionAttributeNames.<get-expressionAttributeNames>|<get-expressionAttributeNames>(){}[0]
     final val expressionAttributeValues // com.steamstreet.awskt.dynamodb/PutItemRequest.expressionAttributeValues|{}expressionAttributeValues[0]
-        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/PutItemRequest.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
+        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/PutItemRequest.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
     final val item // com.steamstreet.awskt.dynamodb/PutItemRequest.item|{}item[0]
-        final fun <get-item>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/PutItemRequest.item.<get-item>|<get-item>(){}[0]
+        final fun <get-item>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/PutItemRequest.item.<get-item>|<get-item>(){}[0]
     final val returnValues // com.steamstreet.awskt.dynamodb/PutItemRequest.returnValues|{}returnValues[0]
         final fun <get-returnValues>(): com.steamstreet.awskt.dynamodb/ReturnValue? // com.steamstreet.awskt.dynamodb/PutItemRequest.returnValues.<get-returnValues>|<get-returnValues>(){}[0]
     final val returnValuesOnConditionCheckFailure // com.steamstreet.awskt.dynamodb/PutItemRequest.returnValuesOnConditionCheckFailure|{}returnValuesOnConditionCheckFailure[0]
@@ -1121,13 +1121,13 @@ final class com.steamstreet.awskt.dynamodb/PutItemRequest { // com.steamstreet.a
         final fun <get-tableName>(): kotlin/String // com.steamstreet.awskt.dynamodb/PutItemRequest.tableName.<get-tableName>|<get-tableName>(){}[0]
 
     final fun component1(): kotlin/String // com.steamstreet.awskt.dynamodb/PutItemRequest.component1|component1(){}[0]
-    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/PutItemRequest.component2|component2(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/PutItemRequest.component2|component2(){}[0]
     final fun component3(): kotlin/String? // com.steamstreet.awskt.dynamodb/PutItemRequest.component3|component3(){}[0]
     final fun component4(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/PutItemRequest.component4|component4(){}[0]
-    final fun component5(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/PutItemRequest.component5|component5(){}[0]
+    final fun component5(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/PutItemRequest.component5|component5(){}[0]
     final fun component6(): com.steamstreet.awskt.dynamodb/ReturnValue? // com.steamstreet.awskt.dynamodb/PutItemRequest.component6|component6(){}[0]
     final fun component7(): com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? // com.steamstreet.awskt.dynamodb/PutItemRequest.component7|component7(){}[0]
-    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValue? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...): com.steamstreet.awskt.dynamodb/PutItemRequest // com.steamstreet.awskt.dynamodb/PutItemRequest.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValue?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValue? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...): com.steamstreet.awskt.dynamodb/PutItemRequest // com.steamstreet.awskt.dynamodb/PutItemRequest.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValue?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/PutItemRequest.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/PutItemRequest.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/PutItemRequest.toString|toString(){}[0]
@@ -1149,13 +1149,13 @@ final class com.steamstreet.awskt.dynamodb/PutItemRequest { // com.steamstreet.a
 }
 
 final class com.steamstreet.awskt.dynamodb/PutItemResponse { // com.steamstreet.awskt.dynamodb/PutItemResponse|null[0]
-    constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/PutItemResponse.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/PutItemResponse.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
 
     final val attributes // com.steamstreet.awskt.dynamodb/PutItemResponse.attributes|{}attributes[0]
-        final fun <get-attributes>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/PutItemResponse.attributes.<get-attributes>|<get-attributes>(){}[0]
+        final fun <get-attributes>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/PutItemResponse.attributes.<get-attributes>|<get-attributes>(){}[0]
 
-    final fun component1(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/PutItemResponse.component1|component1(){}[0]
-    final fun copy(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/PutItemResponse // com.steamstreet.awskt.dynamodb/PutItemResponse.copy|copy(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    final fun component1(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/PutItemResponse.component1|component1(){}[0]
+    final fun copy(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/PutItemResponse // com.steamstreet.awskt.dynamodb/PutItemResponse.copy|copy(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/PutItemResponse.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/PutItemResponse.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/PutItemResponse.toString|toString(){}[0]
@@ -1177,13 +1177,13 @@ final class com.steamstreet.awskt.dynamodb/PutItemResponse { // com.steamstreet.
 }
 
 final class com.steamstreet.awskt.dynamodb/PutRequest { // com.steamstreet.awskt.dynamodb/PutRequest|null[0]
-    constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>) // com.steamstreet.awskt.dynamodb/PutRequest.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>){}[0]
+    constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>) // com.steamstreet.awskt.dynamodb/PutRequest.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>){}[0]
 
     final val item // com.steamstreet.awskt.dynamodb/PutRequest.item|{}item[0]
-        final fun <get-item>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/PutRequest.item.<get-item>|<get-item>(){}[0]
+        final fun <get-item>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/PutRequest.item.<get-item>|<get-item>(){}[0]
 
-    final fun component1(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/PutRequest.component1|component1(){}[0]
-    final fun copy(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> = ...): com.steamstreet.awskt.dynamodb/PutRequest // com.steamstreet.awskt.dynamodb/PutRequest.copy|copy(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>){}[0]
+    final fun component1(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/PutRequest.component1|component1(){}[0]
+    final fun copy(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ...): com.steamstreet.awskt.dynamodb/PutRequest // com.steamstreet.awskt.dynamodb/PutRequest.copy|copy(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/PutRequest.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/PutRequest.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/PutRequest.toString|toString(){}[0]
@@ -1205,16 +1205,16 @@ final class com.steamstreet.awskt.dynamodb/PutRequest { // com.steamstreet.awskt
 }
 
 final class com.steamstreet.awskt.dynamodb/QueryRequest { // com.steamstreet.awskt.dynamodb/QueryRequest|null[0]
-    constructor <init>(kotlin/String, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., kotlin/Int? = ..., kotlin/Boolean? = ..., kotlin/Boolean? = ..., com.steamstreet.awskt.dynamodb/Select? = ...) // com.steamstreet.awskt.dynamodb/QueryRequest.<init>|<init>(kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;kotlin.Int?;kotlin.Boolean?;kotlin.Boolean?;com.steamstreet.awskt.dynamodb.Select?){}[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., kotlin/Int? = ..., kotlin/Boolean? = ..., kotlin/Boolean? = ..., com.steamstreet.awskt.dynamodb/Select? = ...) // com.steamstreet.awskt.dynamodb/QueryRequest.<init>|<init>(kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;kotlin.Int?;kotlin.Boolean?;kotlin.Boolean?;com.steamstreet.awskt.dynamodb.Select?){}[0]
 
     final val consistentRead // com.steamstreet.awskt.dynamodb/QueryRequest.consistentRead|{}consistentRead[0]
         final fun <get-consistentRead>(): kotlin/Boolean? // com.steamstreet.awskt.dynamodb/QueryRequest.consistentRead.<get-consistentRead>|<get-consistentRead>(){}[0]
     final val exclusiveStartKey // com.steamstreet.awskt.dynamodb/QueryRequest.exclusiveStartKey|{}exclusiveStartKey[0]
-        final fun <get-exclusiveStartKey>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/QueryRequest.exclusiveStartKey.<get-exclusiveStartKey>|<get-exclusiveStartKey>(){}[0]
+        final fun <get-exclusiveStartKey>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/QueryRequest.exclusiveStartKey.<get-exclusiveStartKey>|<get-exclusiveStartKey>(){}[0]
     final val expressionAttributeNames // com.steamstreet.awskt.dynamodb/QueryRequest.expressionAttributeNames|{}expressionAttributeNames[0]
         final fun <get-expressionAttributeNames>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/QueryRequest.expressionAttributeNames.<get-expressionAttributeNames>|<get-expressionAttributeNames>(){}[0]
     final val expressionAttributeValues // com.steamstreet.awskt.dynamodb/QueryRequest.expressionAttributeValues|{}expressionAttributeValues[0]
-        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/QueryRequest.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
+        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/QueryRequest.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
     final val filterExpression // com.steamstreet.awskt.dynamodb/QueryRequest.filterExpression|{}filterExpression[0]
         final fun <get-filterExpression>(): kotlin/String? // com.steamstreet.awskt.dynamodb/QueryRequest.filterExpression.<get-filterExpression>|<get-filterExpression>(){}[0]
     final val indexName // com.steamstreet.awskt.dynamodb/QueryRequest.indexName|{}indexName[0]
@@ -1241,10 +1241,10 @@ final class com.steamstreet.awskt.dynamodb/QueryRequest { // com.steamstreet.aws
     final fun component4(): kotlin/String? // com.steamstreet.awskt.dynamodb/QueryRequest.component4|component4(){}[0]
     final fun component5(): kotlin/String? // com.steamstreet.awskt.dynamodb/QueryRequest.component5|component5(){}[0]
     final fun component6(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/QueryRequest.component6|component6(){}[0]
-    final fun component7(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/QueryRequest.component7|component7(){}[0]
-    final fun component8(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/QueryRequest.component8|component8(){}[0]
+    final fun component7(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/QueryRequest.component7|component7(){}[0]
+    final fun component8(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/QueryRequest.component8|component8(){}[0]
     final fun component9(): kotlin/Int? // com.steamstreet.awskt.dynamodb/QueryRequest.component9|component9(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., kotlin/Int? = ..., kotlin/Boolean? = ..., kotlin/Boolean? = ..., com.steamstreet.awskt.dynamodb/Select? = ...): com.steamstreet.awskt.dynamodb/QueryRequest // com.steamstreet.awskt.dynamodb/QueryRequest.copy|copy(kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;kotlin.Int?;kotlin.Boolean?;kotlin.Boolean?;com.steamstreet.awskt.dynamodb.Select?){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., kotlin/Int? = ..., kotlin/Boolean? = ..., kotlin/Boolean? = ..., com.steamstreet.awskt.dynamodb/Select? = ...): com.steamstreet.awskt.dynamodb/QueryRequest // com.steamstreet.awskt.dynamodb/QueryRequest.copy|copy(kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;kotlin.Int?;kotlin.Boolean?;kotlin.Boolean?;com.steamstreet.awskt.dynamodb.Select?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/QueryRequest.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/QueryRequest.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/QueryRequest.toString|toString(){}[0]
@@ -1266,22 +1266,22 @@ final class com.steamstreet.awskt.dynamodb/QueryRequest { // com.steamstreet.aws
 }
 
 final class com.steamstreet.awskt.dynamodb/QueryResponse { // com.steamstreet.awskt.dynamodb/QueryResponse|null[0]
-    constructor <init>(kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>>? = ..., kotlin/Int? = ..., kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/QueryResponse.<init>|<init>(kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>>?;kotlin.Int?;kotlin.Int?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    constructor <init>(kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>? = ..., kotlin/Int? = ..., kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/QueryResponse.<init>|<init>(kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>>?;kotlin.Int?;kotlin.Int?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
 
     final val count // com.steamstreet.awskt.dynamodb/QueryResponse.count|{}count[0]
         final fun <get-count>(): kotlin/Int? // com.steamstreet.awskt.dynamodb/QueryResponse.count.<get-count>|<get-count>(){}[0]
     final val items // com.steamstreet.awskt.dynamodb/QueryResponse.items|{}items[0]
-        final fun <get-items>(): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>>? // com.steamstreet.awskt.dynamodb/QueryResponse.items.<get-items>|<get-items>(){}[0]
+        final fun <get-items>(): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>? // com.steamstreet.awskt.dynamodb/QueryResponse.items.<get-items>|<get-items>(){}[0]
     final val lastEvaluatedKey // com.steamstreet.awskt.dynamodb/QueryResponse.lastEvaluatedKey|{}lastEvaluatedKey[0]
-        final fun <get-lastEvaluatedKey>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/QueryResponse.lastEvaluatedKey.<get-lastEvaluatedKey>|<get-lastEvaluatedKey>(){}[0]
+        final fun <get-lastEvaluatedKey>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/QueryResponse.lastEvaluatedKey.<get-lastEvaluatedKey>|<get-lastEvaluatedKey>(){}[0]
     final val scannedCount // com.steamstreet.awskt.dynamodb/QueryResponse.scannedCount|{}scannedCount[0]
         final fun <get-scannedCount>(): kotlin/Int? // com.steamstreet.awskt.dynamodb/QueryResponse.scannedCount.<get-scannedCount>|<get-scannedCount>(){}[0]
 
-    final fun component1(): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>>? // com.steamstreet.awskt.dynamodb/QueryResponse.component1|component1(){}[0]
+    final fun component1(): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>? // com.steamstreet.awskt.dynamodb/QueryResponse.component1|component1(){}[0]
     final fun component2(): kotlin/Int? // com.steamstreet.awskt.dynamodb/QueryResponse.component2|component2(){}[0]
     final fun component3(): kotlin/Int? // com.steamstreet.awskt.dynamodb/QueryResponse.component3|component3(){}[0]
-    final fun component4(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/QueryResponse.component4|component4(){}[0]
-    final fun copy(kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>>? = ..., kotlin/Int? = ..., kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/QueryResponse // com.steamstreet.awskt.dynamodb/QueryResponse.copy|copy(kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>>?;kotlin.Int?;kotlin.Int?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    final fun component4(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/QueryResponse.component4|component4(){}[0]
+    final fun copy(kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>? = ..., kotlin/Int? = ..., kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/QueryResponse // com.steamstreet.awskt.dynamodb/QueryResponse.copy|copy(kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>>?;kotlin.Int?;kotlin.Int?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/QueryResponse.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/QueryResponse.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/QueryResponse.toString|toString(){}[0]
@@ -1307,16 +1307,16 @@ final class com.steamstreet.awskt.dynamodb/ResourceNotFoundException : com.steam
 }
 
 final class com.steamstreet.awskt.dynamodb/ScanRequest { // com.steamstreet.awskt.dynamodb/ScanRequest|null[0]
-    constructor <init>(kotlin/String, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., kotlin/Int? = ..., kotlin/Boolean? = ..., kotlin/Int? = ..., kotlin/Int? = ...) // com.steamstreet.awskt.dynamodb/ScanRequest.<init>|<init>(kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;kotlin.Int?;kotlin.Boolean?;kotlin.Int?;kotlin.Int?){}[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., kotlin/Int? = ..., kotlin/Boolean? = ..., kotlin/Int? = ..., kotlin/Int? = ...) // com.steamstreet.awskt.dynamodb/ScanRequest.<init>|<init>(kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;kotlin.Int?;kotlin.Boolean?;kotlin.Int?;kotlin.Int?){}[0]
 
     final val consistentRead // com.steamstreet.awskt.dynamodb/ScanRequest.consistentRead|{}consistentRead[0]
         final fun <get-consistentRead>(): kotlin/Boolean? // com.steamstreet.awskt.dynamodb/ScanRequest.consistentRead.<get-consistentRead>|<get-consistentRead>(){}[0]
     final val exclusiveStartKey // com.steamstreet.awskt.dynamodb/ScanRequest.exclusiveStartKey|{}exclusiveStartKey[0]
-        final fun <get-exclusiveStartKey>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/ScanRequest.exclusiveStartKey.<get-exclusiveStartKey>|<get-exclusiveStartKey>(){}[0]
+        final fun <get-exclusiveStartKey>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/ScanRequest.exclusiveStartKey.<get-exclusiveStartKey>|<get-exclusiveStartKey>(){}[0]
     final val expressionAttributeNames // com.steamstreet.awskt.dynamodb/ScanRequest.expressionAttributeNames|{}expressionAttributeNames[0]
         final fun <get-expressionAttributeNames>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/ScanRequest.expressionAttributeNames.<get-expressionAttributeNames>|<get-expressionAttributeNames>(){}[0]
     final val expressionAttributeValues // com.steamstreet.awskt.dynamodb/ScanRequest.expressionAttributeValues|{}expressionAttributeValues[0]
-        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/ScanRequest.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
+        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/ScanRequest.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
     final val filterExpression // com.steamstreet.awskt.dynamodb/ScanRequest.filterExpression|{}filterExpression[0]
         final fun <get-filterExpression>(): kotlin/String? // com.steamstreet.awskt.dynamodb/ScanRequest.filterExpression.<get-filterExpression>|<get-filterExpression>(){}[0]
     final val indexName // com.steamstreet.awskt.dynamodb/ScanRequest.indexName|{}indexName[0]
@@ -1339,11 +1339,11 @@ final class com.steamstreet.awskt.dynamodb/ScanRequest { // com.steamstreet.awsk
     final fun component3(): kotlin/String? // com.steamstreet.awskt.dynamodb/ScanRequest.component3|component3(){}[0]
     final fun component4(): kotlin/String? // com.steamstreet.awskt.dynamodb/ScanRequest.component4|component4(){}[0]
     final fun component5(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/ScanRequest.component5|component5(){}[0]
-    final fun component6(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/ScanRequest.component6|component6(){}[0]
-    final fun component7(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/ScanRequest.component7|component7(){}[0]
+    final fun component6(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/ScanRequest.component6|component6(){}[0]
+    final fun component7(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/ScanRequest.component7|component7(){}[0]
     final fun component8(): kotlin/Int? // com.steamstreet.awskt.dynamodb/ScanRequest.component8|component8(){}[0]
     final fun component9(): kotlin/Boolean? // com.steamstreet.awskt.dynamodb/ScanRequest.component9|component9(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., kotlin/Int? = ..., kotlin/Boolean? = ..., kotlin/Int? = ..., kotlin/Int? = ...): com.steamstreet.awskt.dynamodb/ScanRequest // com.steamstreet.awskt.dynamodb/ScanRequest.copy|copy(kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;kotlin.Int?;kotlin.Boolean?;kotlin.Int?;kotlin.Int?){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., kotlin/Int? = ..., kotlin/Boolean? = ..., kotlin/Int? = ..., kotlin/Int? = ...): com.steamstreet.awskt.dynamodb/ScanRequest // com.steamstreet.awskt.dynamodb/ScanRequest.copy|copy(kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;kotlin.Int?;kotlin.Boolean?;kotlin.Int?;kotlin.Int?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/ScanRequest.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/ScanRequest.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/ScanRequest.toString|toString(){}[0]
@@ -1365,22 +1365,22 @@ final class com.steamstreet.awskt.dynamodb/ScanRequest { // com.steamstreet.awsk
 }
 
 final class com.steamstreet.awskt.dynamodb/ScanResponse { // com.steamstreet.awskt.dynamodb/ScanResponse|null[0]
-    constructor <init>(kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>>? = ..., kotlin/Int? = ..., kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/ScanResponse.<init>|<init>(kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>>?;kotlin.Int?;kotlin.Int?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    constructor <init>(kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>? = ..., kotlin/Int? = ..., kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/ScanResponse.<init>|<init>(kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>>?;kotlin.Int?;kotlin.Int?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
 
     final val count // com.steamstreet.awskt.dynamodb/ScanResponse.count|{}count[0]
         final fun <get-count>(): kotlin/Int? // com.steamstreet.awskt.dynamodb/ScanResponse.count.<get-count>|<get-count>(){}[0]
     final val items // com.steamstreet.awskt.dynamodb/ScanResponse.items|{}items[0]
-        final fun <get-items>(): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>>? // com.steamstreet.awskt.dynamodb/ScanResponse.items.<get-items>|<get-items>(){}[0]
+        final fun <get-items>(): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>? // com.steamstreet.awskt.dynamodb/ScanResponse.items.<get-items>|<get-items>(){}[0]
     final val lastEvaluatedKey // com.steamstreet.awskt.dynamodb/ScanResponse.lastEvaluatedKey|{}lastEvaluatedKey[0]
-        final fun <get-lastEvaluatedKey>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/ScanResponse.lastEvaluatedKey.<get-lastEvaluatedKey>|<get-lastEvaluatedKey>(){}[0]
+        final fun <get-lastEvaluatedKey>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/ScanResponse.lastEvaluatedKey.<get-lastEvaluatedKey>|<get-lastEvaluatedKey>(){}[0]
     final val scannedCount // com.steamstreet.awskt.dynamodb/ScanResponse.scannedCount|{}scannedCount[0]
         final fun <get-scannedCount>(): kotlin/Int? // com.steamstreet.awskt.dynamodb/ScanResponse.scannedCount.<get-scannedCount>|<get-scannedCount>(){}[0]
 
-    final fun component1(): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>>? // com.steamstreet.awskt.dynamodb/ScanResponse.component1|component1(){}[0]
+    final fun component1(): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>? // com.steamstreet.awskt.dynamodb/ScanResponse.component1|component1(){}[0]
     final fun component2(): kotlin/Int? // com.steamstreet.awskt.dynamodb/ScanResponse.component2|component2(){}[0]
     final fun component3(): kotlin/Int? // com.steamstreet.awskt.dynamodb/ScanResponse.component3|component3(){}[0]
-    final fun component4(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/ScanResponse.component4|component4(){}[0]
-    final fun copy(kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>>? = ..., kotlin/Int? = ..., kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/ScanResponse // com.steamstreet.awskt.dynamodb/ScanResponse.copy|copy(kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>>?;kotlin.Int?;kotlin.Int?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    final fun component4(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/ScanResponse.component4|component4(){}[0]
+    final fun copy(kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>? = ..., kotlin/Int? = ..., kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/ScanResponse // com.steamstreet.awskt.dynamodb/ScanResponse.copy|copy(kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>>?;kotlin.Int?;kotlin.Int?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/ScanResponse.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/ScanResponse.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/ScanResponse.toString|toString(){}[0]
@@ -1485,28 +1485,28 @@ final class com.steamstreet.awskt.dynamodb/TableDescription { // com.steamstreet
 }
 
 final class com.steamstreet.awskt.dynamodb/TransactDelete { // com.steamstreet.awskt.dynamodb/TransactDelete|null[0]
-    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...) // com.steamstreet.awskt.dynamodb/TransactDelete.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
+    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...) // com.steamstreet.awskt.dynamodb/TransactDelete.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
 
     final val conditionExpression // com.steamstreet.awskt.dynamodb/TransactDelete.conditionExpression|{}conditionExpression[0]
         final fun <get-conditionExpression>(): kotlin/String? // com.steamstreet.awskt.dynamodb/TransactDelete.conditionExpression.<get-conditionExpression>|<get-conditionExpression>(){}[0]
     final val expressionAttributeNames // com.steamstreet.awskt.dynamodb/TransactDelete.expressionAttributeNames|{}expressionAttributeNames[0]
         final fun <get-expressionAttributeNames>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/TransactDelete.expressionAttributeNames.<get-expressionAttributeNames>|<get-expressionAttributeNames>(){}[0]
     final val expressionAttributeValues // com.steamstreet.awskt.dynamodb/TransactDelete.expressionAttributeValues|{}expressionAttributeValues[0]
-        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/TransactDelete.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
+        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/TransactDelete.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
     final val key // com.steamstreet.awskt.dynamodb/TransactDelete.key|{}key[0]
-        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/TransactDelete.key.<get-key>|<get-key>(){}[0]
+        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/TransactDelete.key.<get-key>|<get-key>(){}[0]
     final val returnValuesOnConditionCheckFailure // com.steamstreet.awskt.dynamodb/TransactDelete.returnValuesOnConditionCheckFailure|{}returnValuesOnConditionCheckFailure[0]
         final fun <get-returnValuesOnConditionCheckFailure>(): com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? // com.steamstreet.awskt.dynamodb/TransactDelete.returnValuesOnConditionCheckFailure.<get-returnValuesOnConditionCheckFailure>|<get-returnValuesOnConditionCheckFailure>(){}[0]
     final val tableName // com.steamstreet.awskt.dynamodb/TransactDelete.tableName|{}tableName[0]
         final fun <get-tableName>(): kotlin/String // com.steamstreet.awskt.dynamodb/TransactDelete.tableName.<get-tableName>|<get-tableName>(){}[0]
 
     final fun component1(): kotlin/String // com.steamstreet.awskt.dynamodb/TransactDelete.component1|component1(){}[0]
-    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/TransactDelete.component2|component2(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/TransactDelete.component2|component2(){}[0]
     final fun component3(): kotlin/String? // com.steamstreet.awskt.dynamodb/TransactDelete.component3|component3(){}[0]
     final fun component4(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/TransactDelete.component4|component4(){}[0]
-    final fun component5(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/TransactDelete.component5|component5(){}[0]
+    final fun component5(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/TransactDelete.component5|component5(){}[0]
     final fun component6(): com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? // com.steamstreet.awskt.dynamodb/TransactDelete.component6|component6(){}[0]
-    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...): com.steamstreet.awskt.dynamodb/TransactDelete // com.steamstreet.awskt.dynamodb/TransactDelete.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...): com.steamstreet.awskt.dynamodb/TransactDelete // com.steamstreet.awskt.dynamodb/TransactDelete.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/TransactDelete.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/TransactDelete.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/TransactDelete.toString|toString(){}[0]
@@ -1610,28 +1610,28 @@ final class com.steamstreet.awskt.dynamodb/TransactGetItemsResponse { // com.ste
 }
 
 final class com.steamstreet.awskt.dynamodb/TransactPut { // com.steamstreet.awskt.dynamodb/TransactPut|null[0]
-    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...) // com.steamstreet.awskt.dynamodb/TransactPut.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
+    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...) // com.steamstreet.awskt.dynamodb/TransactPut.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
 
     final val conditionExpression // com.steamstreet.awskt.dynamodb/TransactPut.conditionExpression|{}conditionExpression[0]
         final fun <get-conditionExpression>(): kotlin/String? // com.steamstreet.awskt.dynamodb/TransactPut.conditionExpression.<get-conditionExpression>|<get-conditionExpression>(){}[0]
     final val expressionAttributeNames // com.steamstreet.awskt.dynamodb/TransactPut.expressionAttributeNames|{}expressionAttributeNames[0]
         final fun <get-expressionAttributeNames>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/TransactPut.expressionAttributeNames.<get-expressionAttributeNames>|<get-expressionAttributeNames>(){}[0]
     final val expressionAttributeValues // com.steamstreet.awskt.dynamodb/TransactPut.expressionAttributeValues|{}expressionAttributeValues[0]
-        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/TransactPut.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
+        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/TransactPut.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
     final val item // com.steamstreet.awskt.dynamodb/TransactPut.item|{}item[0]
-        final fun <get-item>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/TransactPut.item.<get-item>|<get-item>(){}[0]
+        final fun <get-item>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/TransactPut.item.<get-item>|<get-item>(){}[0]
     final val returnValuesOnConditionCheckFailure // com.steamstreet.awskt.dynamodb/TransactPut.returnValuesOnConditionCheckFailure|{}returnValuesOnConditionCheckFailure[0]
         final fun <get-returnValuesOnConditionCheckFailure>(): com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? // com.steamstreet.awskt.dynamodb/TransactPut.returnValuesOnConditionCheckFailure.<get-returnValuesOnConditionCheckFailure>|<get-returnValuesOnConditionCheckFailure>(){}[0]
     final val tableName // com.steamstreet.awskt.dynamodb/TransactPut.tableName|{}tableName[0]
         final fun <get-tableName>(): kotlin/String // com.steamstreet.awskt.dynamodb/TransactPut.tableName.<get-tableName>|<get-tableName>(){}[0]
 
     final fun component1(): kotlin/String // com.steamstreet.awskt.dynamodb/TransactPut.component1|component1(){}[0]
-    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/TransactPut.component2|component2(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/TransactPut.component2|component2(){}[0]
     final fun component3(): kotlin/String? // com.steamstreet.awskt.dynamodb/TransactPut.component3|component3(){}[0]
     final fun component4(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/TransactPut.component4|component4(){}[0]
-    final fun component5(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/TransactPut.component5|component5(){}[0]
+    final fun component5(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/TransactPut.component5|component5(){}[0]
     final fun component6(): com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? // com.steamstreet.awskt.dynamodb/TransactPut.component6|component6(){}[0]
-    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...): com.steamstreet.awskt.dynamodb/TransactPut // com.steamstreet.awskt.dynamodb/TransactPut.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...): com.steamstreet.awskt.dynamodb/TransactPut // com.steamstreet.awskt.dynamodb/TransactPut.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/TransactPut.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/TransactPut.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/TransactPut.toString|toString(){}[0]
@@ -1653,16 +1653,16 @@ final class com.steamstreet.awskt.dynamodb/TransactPut { // com.steamstreet.awsk
 }
 
 final class com.steamstreet.awskt.dynamodb/TransactUpdate { // com.steamstreet.awskt.dynamodb/TransactUpdate|null[0]
-    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>, kotlin/String, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...) // com.steamstreet.awskt.dynamodb/TransactUpdate.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
+    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>, kotlin/String, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...) // com.steamstreet.awskt.dynamodb/TransactUpdate.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
 
     final val conditionExpression // com.steamstreet.awskt.dynamodb/TransactUpdate.conditionExpression|{}conditionExpression[0]
         final fun <get-conditionExpression>(): kotlin/String? // com.steamstreet.awskt.dynamodb/TransactUpdate.conditionExpression.<get-conditionExpression>|<get-conditionExpression>(){}[0]
     final val expressionAttributeNames // com.steamstreet.awskt.dynamodb/TransactUpdate.expressionAttributeNames|{}expressionAttributeNames[0]
         final fun <get-expressionAttributeNames>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/TransactUpdate.expressionAttributeNames.<get-expressionAttributeNames>|<get-expressionAttributeNames>(){}[0]
     final val expressionAttributeValues // com.steamstreet.awskt.dynamodb/TransactUpdate.expressionAttributeValues|{}expressionAttributeValues[0]
-        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/TransactUpdate.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
+        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/TransactUpdate.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
     final val key // com.steamstreet.awskt.dynamodb/TransactUpdate.key|{}key[0]
-        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/TransactUpdate.key.<get-key>|<get-key>(){}[0]
+        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/TransactUpdate.key.<get-key>|<get-key>(){}[0]
     final val returnValuesOnConditionCheckFailure // com.steamstreet.awskt.dynamodb/TransactUpdate.returnValuesOnConditionCheckFailure|{}returnValuesOnConditionCheckFailure[0]
         final fun <get-returnValuesOnConditionCheckFailure>(): com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? // com.steamstreet.awskt.dynamodb/TransactUpdate.returnValuesOnConditionCheckFailure.<get-returnValuesOnConditionCheckFailure>|<get-returnValuesOnConditionCheckFailure>(){}[0]
     final val tableName // com.steamstreet.awskt.dynamodb/TransactUpdate.tableName|{}tableName[0]
@@ -1671,13 +1671,13 @@ final class com.steamstreet.awskt.dynamodb/TransactUpdate { // com.steamstreet.a
         final fun <get-updateExpression>(): kotlin/String // com.steamstreet.awskt.dynamodb/TransactUpdate.updateExpression.<get-updateExpression>|<get-updateExpression>(){}[0]
 
     final fun component1(): kotlin/String // com.steamstreet.awskt.dynamodb/TransactUpdate.component1|component1(){}[0]
-    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/TransactUpdate.component2|component2(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/TransactUpdate.component2|component2(){}[0]
     final fun component3(): kotlin/String // com.steamstreet.awskt.dynamodb/TransactUpdate.component3|component3(){}[0]
     final fun component4(): kotlin/String? // com.steamstreet.awskt.dynamodb/TransactUpdate.component4|component4(){}[0]
     final fun component5(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/TransactUpdate.component5|component5(){}[0]
-    final fun component6(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/TransactUpdate.component6|component6(){}[0]
+    final fun component6(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/TransactUpdate.component6|component6(){}[0]
     final fun component7(): com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? // com.steamstreet.awskt.dynamodb/TransactUpdate.component7|component7(){}[0]
-    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> = ..., kotlin/String = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...): com.steamstreet.awskt.dynamodb/TransactUpdate // com.steamstreet.awskt.dynamodb/TransactUpdate.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ..., kotlin/String = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...): com.steamstreet.awskt.dynamodb/TransactUpdate // com.steamstreet.awskt.dynamodb/TransactUpdate.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/TransactUpdate.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/TransactUpdate.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/TransactUpdate.toString|toString(){}[0]
@@ -1800,16 +1800,16 @@ final class com.steamstreet.awskt.dynamodb/TransactionCanceledException : com.st
 }
 
 final class com.steamstreet.awskt.dynamodb/UpdateItemRequest { // com.steamstreet.awskt.dynamodb/UpdateItemRequest|null[0]
-    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>, kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValue? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...) // com.steamstreet.awskt.dynamodb/UpdateItemRequest.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValue?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
+    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>, kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValue? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...) // com.steamstreet.awskt.dynamodb/UpdateItemRequest.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValue?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
 
     final val conditionExpression // com.steamstreet.awskt.dynamodb/UpdateItemRequest.conditionExpression|{}conditionExpression[0]
         final fun <get-conditionExpression>(): kotlin/String? // com.steamstreet.awskt.dynamodb/UpdateItemRequest.conditionExpression.<get-conditionExpression>|<get-conditionExpression>(){}[0]
     final val expressionAttributeNames // com.steamstreet.awskt.dynamodb/UpdateItemRequest.expressionAttributeNames|{}expressionAttributeNames[0]
         final fun <get-expressionAttributeNames>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/UpdateItemRequest.expressionAttributeNames.<get-expressionAttributeNames>|<get-expressionAttributeNames>(){}[0]
     final val expressionAttributeValues // com.steamstreet.awskt.dynamodb/UpdateItemRequest.expressionAttributeValues|{}expressionAttributeValues[0]
-        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/UpdateItemRequest.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
+        final fun <get-expressionAttributeValues>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/UpdateItemRequest.expressionAttributeValues.<get-expressionAttributeValues>|<get-expressionAttributeValues>(){}[0]
     final val key // com.steamstreet.awskt.dynamodb/UpdateItemRequest.key|{}key[0]
-        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/UpdateItemRequest.key.<get-key>|<get-key>(){}[0]
+        final fun <get-key>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/UpdateItemRequest.key.<get-key>|<get-key>(){}[0]
     final val returnValues // com.steamstreet.awskt.dynamodb/UpdateItemRequest.returnValues|{}returnValues[0]
         final fun <get-returnValues>(): com.steamstreet.awskt.dynamodb/ReturnValue? // com.steamstreet.awskt.dynamodb/UpdateItemRequest.returnValues.<get-returnValues>|<get-returnValues>(){}[0]
     final val returnValuesOnConditionCheckFailure // com.steamstreet.awskt.dynamodb/UpdateItemRequest.returnValuesOnConditionCheckFailure|{}returnValuesOnConditionCheckFailure[0]
@@ -1820,14 +1820,14 @@ final class com.steamstreet.awskt.dynamodb/UpdateItemRequest { // com.steamstree
         final fun <get-updateExpression>(): kotlin/String? // com.steamstreet.awskt.dynamodb/UpdateItemRequest.updateExpression.<get-updateExpression>|<get-updateExpression>(){}[0]
 
     final fun component1(): kotlin/String // com.steamstreet.awskt.dynamodb/UpdateItemRequest.component1|component1(){}[0]
-    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/UpdateItemRequest.component2|component2(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.awskt.dynamodb/UpdateItemRequest.component2|component2(){}[0]
     final fun component3(): kotlin/String? // com.steamstreet.awskt.dynamodb/UpdateItemRequest.component3|component3(){}[0]
     final fun component4(): kotlin/String? // com.steamstreet.awskt.dynamodb/UpdateItemRequest.component4|component4(){}[0]
     final fun component5(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.dynamodb/UpdateItemRequest.component5|component5(){}[0]
-    final fun component6(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/UpdateItemRequest.component6|component6(){}[0]
+    final fun component6(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/UpdateItemRequest.component6|component6(){}[0]
     final fun component7(): com.steamstreet.awskt.dynamodb/ReturnValue? // com.steamstreet.awskt.dynamodb/UpdateItemRequest.component7|component7(){}[0]
     final fun component8(): com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? // com.steamstreet.awskt.dynamodb/UpdateItemRequest.component8|component8(){}[0]
-    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValue? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...): com.steamstreet.awskt.dynamodb/UpdateItemRequest // com.steamstreet.awskt.dynamodb/UpdateItemRequest.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValue?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., com.steamstreet.awskt.dynamodb/ReturnValue? = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure? = ...): com.steamstreet.awskt.dynamodb/UpdateItemRequest // com.steamstreet.awskt.dynamodb/UpdateItemRequest.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;com.steamstreet.awskt.dynamodb.ReturnValue?;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/UpdateItemRequest.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/UpdateItemRequest.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/UpdateItemRequest.toString|toString(){}[0]
@@ -1849,13 +1849,13 @@ final class com.steamstreet.awskt.dynamodb/UpdateItemRequest { // com.steamstree
 }
 
 final class com.steamstreet.awskt.dynamodb/UpdateItemResponse { // com.steamstreet.awskt.dynamodb/UpdateItemResponse|null[0]
-    constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/UpdateItemResponse.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...) // com.steamstreet.awskt.dynamodb/UpdateItemResponse.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
 
     final val attributes // com.steamstreet.awskt.dynamodb/UpdateItemResponse.attributes|{}attributes[0]
-        final fun <get-attributes>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/UpdateItemResponse.attributes.<get-attributes>|<get-attributes>(){}[0]
+        final fun <get-attributes>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/UpdateItemResponse.attributes.<get-attributes>|<get-attributes>(){}[0]
 
-    final fun component1(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/UpdateItemResponse.component1|component1(){}[0]
-    final fun copy(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/UpdateItemResponse // com.steamstreet.awskt.dynamodb/UpdateItemResponse.copy|copy(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>?){}[0]
+    final fun component1(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/UpdateItemResponse.component1|component1(){}[0]
+    final fun copy(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ...): com.steamstreet.awskt.dynamodb/UpdateItemResponse // com.steamstreet.awskt.dynamodb/UpdateItemResponse.copy|copy(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/UpdateItemResponse.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/UpdateItemResponse.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/UpdateItemResponse.toString|toString(){}[0]
@@ -1913,183 +1913,15 @@ open class com.steamstreet.awskt.dynamodb/DynamoDbException : com.steamstreet.aw
     constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.dynamodb/DynamoDbException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
 }
 
-sealed class com.steamstreet.awskt.dynamodb/AttributeValue { // com.steamstreet.awskt.dynamodb/AttributeValue|null[0]
-    final fun asB(): kotlin/ByteArray // com.steamstreet.awskt.dynamodb/AttributeValue.asB|asB(){}[0]
-    final fun asBOrNull(): kotlin/ByteArray? // com.steamstreet.awskt.dynamodb/AttributeValue.asBOrNull|asBOrNull(){}[0]
-    final fun asBool(): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.asBool|asBool(){}[0]
-    final fun asBoolOrNull(): kotlin/Boolean? // com.steamstreet.awskt.dynamodb/AttributeValue.asBoolOrNull|asBoolOrNull(){}[0]
-    final fun asBs(): kotlin.collections/List<kotlin/ByteArray> // com.steamstreet.awskt.dynamodb/AttributeValue.asBs|asBs(){}[0]
-    final fun asBsOrNull(): kotlin.collections/List<kotlin/ByteArray>? // com.steamstreet.awskt.dynamodb/AttributeValue.asBsOrNull|asBsOrNull(){}[0]
-    final fun asL(): kotlin.collections/List<com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/AttributeValue.asL|asL(){}[0]
-    final fun asLOrNull(): kotlin.collections/List<com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/AttributeValue.asLOrNull|asLOrNull(){}[0]
-    final fun asM(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/AttributeValue.asM|asM(){}[0]
-    final fun asMOrNull(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>? // com.steamstreet.awskt.dynamodb/AttributeValue.asMOrNull|asMOrNull(){}[0]
-    final fun asN(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.asN|asN(){}[0]
-    final fun asNOrNull(): kotlin/String? // com.steamstreet.awskt.dynamodb/AttributeValue.asNOrNull|asNOrNull(){}[0]
-    final fun asNs(): kotlin.collections/List<kotlin/String> // com.steamstreet.awskt.dynamodb/AttributeValue.asNs|asNs(){}[0]
-    final fun asNsOrNull(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.dynamodb/AttributeValue.asNsOrNull|asNsOrNull(){}[0]
-    final fun asNull(): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.asNull|asNull(){}[0]
-    final fun asNullOrNull(): kotlin/Boolean? // com.steamstreet.awskt.dynamodb/AttributeValue.asNullOrNull|asNullOrNull(){}[0]
-    final fun asS(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.asS|asS(){}[0]
-    final fun asSOrNull(): kotlin/String? // com.steamstreet.awskt.dynamodb/AttributeValue.asSOrNull|asSOrNull(){}[0]
-    final fun asSs(): kotlin.collections/List<kotlin/String> // com.steamstreet.awskt.dynamodb/AttributeValue.asSs|asSs(){}[0]
-    final fun asSsOrNull(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.dynamodb/AttributeValue.asSsOrNull|asSsOrNull(){}[0]
-
-    final class B : com.steamstreet.awskt.dynamodb/AttributeValue { // com.steamstreet.awskt.dynamodb/AttributeValue.B|null[0]
-        constructor <init>(kotlin/ByteArray) // com.steamstreet.awskt.dynamodb/AttributeValue.B.<init>|<init>(kotlin.ByteArray){}[0]
-
-        final val value // com.steamstreet.awskt.dynamodb/AttributeValue.B.value|{}value[0]
-            final fun <get-value>(): kotlin/ByteArray // com.steamstreet.awskt.dynamodb/AttributeValue.B.value.<get-value>|<get-value>(){}[0]
-
-        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.B.equals|equals(kotlin.Any?){}[0]
-        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/AttributeValue.B.hashCode|hashCode(){}[0]
-        final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.B.toString|toString(){}[0]
-    }
-
-    final class Bool : com.steamstreet.awskt.dynamodb/AttributeValue { // com.steamstreet.awskt.dynamodb/AttributeValue.Bool|null[0]
-        constructor <init>(kotlin/Boolean) // com.steamstreet.awskt.dynamodb/AttributeValue.Bool.<init>|<init>(kotlin.Boolean){}[0]
-
-        final val value // com.steamstreet.awskt.dynamodb/AttributeValue.Bool.value|{}value[0]
-            final fun <get-value>(): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.Bool.value.<get-value>|<get-value>(){}[0]
-
-        final fun component1(): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.Bool.component1|component1(){}[0]
-        final fun copy(kotlin/Boolean = ...): com.steamstreet.awskt.dynamodb/AttributeValue.Bool // com.steamstreet.awskt.dynamodb/AttributeValue.Bool.copy|copy(kotlin.Boolean){}[0]
-        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.Bool.equals|equals(kotlin.Any?){}[0]
-        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/AttributeValue.Bool.hashCode|hashCode(){}[0]
-        final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.Bool.toString|toString(){}[0]
-    }
-
-    final class Bs : com.steamstreet.awskt.dynamodb/AttributeValue { // com.steamstreet.awskt.dynamodb/AttributeValue.Bs|null[0]
-        constructor <init>(kotlin.collections/List<kotlin/ByteArray>) // com.steamstreet.awskt.dynamodb/AttributeValue.Bs.<init>|<init>(kotlin.collections.List<kotlin.ByteArray>){}[0]
-
-        final val value // com.steamstreet.awskt.dynamodb/AttributeValue.Bs.value|{}value[0]
-            final fun <get-value>(): kotlin.collections/List<kotlin/ByteArray> // com.steamstreet.awskt.dynamodb/AttributeValue.Bs.value.<get-value>|<get-value>(){}[0]
-
-        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.Bs.equals|equals(kotlin.Any?){}[0]
-        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/AttributeValue.Bs.hashCode|hashCode(){}[0]
-        final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.Bs.toString|toString(){}[0]
-    }
-
-    final class L : com.steamstreet.awskt.dynamodb/AttributeValue { // com.steamstreet.awskt.dynamodb/AttributeValue.L|null[0]
-        constructor <init>(kotlin.collections/List<com.steamstreet.awskt.dynamodb/AttributeValue>) // com.steamstreet.awskt.dynamodb/AttributeValue.L.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.dynamodb.AttributeValue>){}[0]
-
-        final val value // com.steamstreet.awskt.dynamodb/AttributeValue.L.value|{}value[0]
-            final fun <get-value>(): kotlin.collections/List<com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/AttributeValue.L.value.<get-value>|<get-value>(){}[0]
-
-        final fun component1(): kotlin.collections/List<com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/AttributeValue.L.component1|component1(){}[0]
-        final fun copy(kotlin.collections/List<com.steamstreet.awskt.dynamodb/AttributeValue> = ...): com.steamstreet.awskt.dynamodb/AttributeValue.L // com.steamstreet.awskt.dynamodb/AttributeValue.L.copy|copy(kotlin.collections.List<com.steamstreet.awskt.dynamodb.AttributeValue>){}[0]
-        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.L.equals|equals(kotlin.Any?){}[0]
-        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/AttributeValue.L.hashCode|hashCode(){}[0]
-        final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.L.toString|toString(){}[0]
-    }
-
-    final class M : com.steamstreet.awskt.dynamodb/AttributeValue { // com.steamstreet.awskt.dynamodb/AttributeValue.M|null[0]
-        constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>) // com.steamstreet.awskt.dynamodb/AttributeValue.M.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>){}[0]
-
-        final val value // com.steamstreet.awskt.dynamodb/AttributeValue.M.value|{}value[0]
-            final fun <get-value>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/AttributeValue.M.value.<get-value>|<get-value>(){}[0]
-
-        final fun component1(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/AttributeValue.M.component1|component1(){}[0]
-        final fun copy(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue> = ...): com.steamstreet.awskt.dynamodb/AttributeValue.M // com.steamstreet.awskt.dynamodb/AttributeValue.M.copy|copy(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>){}[0]
-        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.M.equals|equals(kotlin.Any?){}[0]
-        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/AttributeValue.M.hashCode|hashCode(){}[0]
-        final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.M.toString|toString(){}[0]
-    }
-
-    final class N : com.steamstreet.awskt.dynamodb/AttributeValue { // com.steamstreet.awskt.dynamodb/AttributeValue.N|null[0]
-        constructor <init>(kotlin/String) // com.steamstreet.awskt.dynamodb/AttributeValue.N.<init>|<init>(kotlin.String){}[0]
-
-        final val value // com.steamstreet.awskt.dynamodb/AttributeValue.N.value|{}value[0]
-            final fun <get-value>(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.N.value.<get-value>|<get-value>(){}[0]
-
-        final fun component1(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.N.component1|component1(){}[0]
-        final fun copy(kotlin/String = ...): com.steamstreet.awskt.dynamodb/AttributeValue.N // com.steamstreet.awskt.dynamodb/AttributeValue.N.copy|copy(kotlin.String){}[0]
-        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.N.equals|equals(kotlin.Any?){}[0]
-        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/AttributeValue.N.hashCode|hashCode(){}[0]
-        final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.N.toString|toString(){}[0]
-    }
-
-    final class Ns : com.steamstreet.awskt.dynamodb/AttributeValue { // com.steamstreet.awskt.dynamodb/AttributeValue.Ns|null[0]
-        constructor <init>(kotlin.collections/List<kotlin/String>) // com.steamstreet.awskt.dynamodb/AttributeValue.Ns.<init>|<init>(kotlin.collections.List<kotlin.String>){}[0]
-
-        final val value // com.steamstreet.awskt.dynamodb/AttributeValue.Ns.value|{}value[0]
-            final fun <get-value>(): kotlin.collections/List<kotlin/String> // com.steamstreet.awskt.dynamodb/AttributeValue.Ns.value.<get-value>|<get-value>(){}[0]
-
-        final fun component1(): kotlin.collections/List<kotlin/String> // com.steamstreet.awskt.dynamodb/AttributeValue.Ns.component1|component1(){}[0]
-        final fun copy(kotlin.collections/List<kotlin/String> = ...): com.steamstreet.awskt.dynamodb/AttributeValue.Ns // com.steamstreet.awskt.dynamodb/AttributeValue.Ns.copy|copy(kotlin.collections.List<kotlin.String>){}[0]
-        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.Ns.equals|equals(kotlin.Any?){}[0]
-        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/AttributeValue.Ns.hashCode|hashCode(){}[0]
-        final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.Ns.toString|toString(){}[0]
-    }
-
-    final class Null : com.steamstreet.awskt.dynamodb/AttributeValue { // com.steamstreet.awskt.dynamodb/AttributeValue.Null|null[0]
-        constructor <init>(kotlin/Boolean = ...) // com.steamstreet.awskt.dynamodb/AttributeValue.Null.<init>|<init>(kotlin.Boolean){}[0]
-
-        final val value // com.steamstreet.awskt.dynamodb/AttributeValue.Null.value|{}value[0]
-            final fun <get-value>(): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.Null.value.<get-value>|<get-value>(){}[0]
-
-        final fun component1(): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.Null.component1|component1(){}[0]
-        final fun copy(kotlin/Boolean = ...): com.steamstreet.awskt.dynamodb/AttributeValue.Null // com.steamstreet.awskt.dynamodb/AttributeValue.Null.copy|copy(kotlin.Boolean){}[0]
-        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.Null.equals|equals(kotlin.Any?){}[0]
-        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/AttributeValue.Null.hashCode|hashCode(){}[0]
-        final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.Null.toString|toString(){}[0]
-    }
-
-    final class S : com.steamstreet.awskt.dynamodb/AttributeValue { // com.steamstreet.awskt.dynamodb/AttributeValue.S|null[0]
-        constructor <init>(kotlin/String) // com.steamstreet.awskt.dynamodb/AttributeValue.S.<init>|<init>(kotlin.String){}[0]
-
-        final val value // com.steamstreet.awskt.dynamodb/AttributeValue.S.value|{}value[0]
-            final fun <get-value>(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.S.value.<get-value>|<get-value>(){}[0]
-
-        final fun component1(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.S.component1|component1(){}[0]
-        final fun copy(kotlin/String = ...): com.steamstreet.awskt.dynamodb/AttributeValue.S // com.steamstreet.awskt.dynamodb/AttributeValue.S.copy|copy(kotlin.String){}[0]
-        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.S.equals|equals(kotlin.Any?){}[0]
-        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/AttributeValue.S.hashCode|hashCode(){}[0]
-        final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.S.toString|toString(){}[0]
-    }
-
-    final class Ss : com.steamstreet.awskt.dynamodb/AttributeValue { // com.steamstreet.awskt.dynamodb/AttributeValue.Ss|null[0]
-        constructor <init>(kotlin.collections/List<kotlin/String>) // com.steamstreet.awskt.dynamodb/AttributeValue.Ss.<init>|<init>(kotlin.collections.List<kotlin.String>){}[0]
-
-        final val value // com.steamstreet.awskt.dynamodb/AttributeValue.Ss.value|{}value[0]
-            final fun <get-value>(): kotlin.collections/List<kotlin/String> // com.steamstreet.awskt.dynamodb/AttributeValue.Ss.value.<get-value>|<get-value>(){}[0]
-
-        final fun component1(): kotlin.collections/List<kotlin/String> // com.steamstreet.awskt.dynamodb/AttributeValue.Ss.component1|component1(){}[0]
-        final fun copy(kotlin.collections/List<kotlin/String> = ...): com.steamstreet.awskt.dynamodb/AttributeValue.Ss // com.steamstreet.awskt.dynamodb/AttributeValue.Ss.copy|copy(kotlin.collections.List<kotlin.String>){}[0]
-        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.dynamodb/AttributeValue.Ss.equals|equals(kotlin.Any?){}[0]
-        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.dynamodb/AttributeValue.Ss.hashCode|hashCode(){}[0]
-        final fun toString(): kotlin/String // com.steamstreet.awskt.dynamodb/AttributeValue.Ss.toString|toString(){}[0]
-    }
-
-    final object Companion { // com.steamstreet.awskt.dynamodb/AttributeValue.Companion|null[0]
-        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.dynamodb/AttributeValue> // com.steamstreet.awskt.dynamodb/AttributeValue.Companion.serializer|serializer(){}[0]
-    }
-}
-
-final object com.steamstreet.awskt.dynamodb/AttributeValueSerializer : kotlinx.serialization/KSerializer<com.steamstreet.awskt.dynamodb/AttributeValue> { // com.steamstreet.awskt.dynamodb/AttributeValueSerializer|null[0]
-    final val descriptor // com.steamstreet.awskt.dynamodb/AttributeValueSerializer.descriptor|{}descriptor[0]
-        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.dynamodb/AttributeValueSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
-
-    final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.dynamodb/AttributeValue // com.steamstreet.awskt.dynamodb/AttributeValueSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
-    final fun fromJson(kotlinx.serialization.json/JsonElement): com.steamstreet.awskt.dynamodb/AttributeValue // com.steamstreet.awskt.dynamodb/AttributeValueSerializer.fromJson|fromJson(kotlinx.serialization.json.JsonElement){}[0]
-    final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.dynamodb/AttributeValue) // com.steamstreet.awskt.dynamodb/AttributeValueSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.dynamodb.AttributeValue){}[0]
-    final fun toJson(com.steamstreet.awskt.dynamodb/AttributeValue): kotlinx.serialization.json/JsonObject // com.steamstreet.awskt.dynamodb/AttributeValueSerializer.toJson|toJson(com.steamstreet.awskt.dynamodb.AttributeValue){}[0]
-}
-
 final val com.steamstreet.awskt.dynamodb/DYNAMODB_PROTOCOL // com.steamstreet.awskt.dynamodb/DYNAMODB_PROTOCOL|{}DYNAMODB_PROTOCOL[0]
     final fun <get-DYNAMODB_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.dynamodb/DYNAMODB_PROTOCOL.<get-DYNAMODB_PROTOCOL>|<get-DYNAMODB_PROTOCOL>(){}[0]
 
 final fun (com.steamstreet.awskt.dynamodb/DynamoDb).com.steamstreet.awskt.dynamodb/queryPaged(com.steamstreet.awskt.dynamodb/QueryRequest): kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.dynamodb/QueryResponse> // com.steamstreet.awskt.dynamodb/queryPaged|queryPaged@com.steamstreet.awskt.dynamodb.DynamoDb(com.steamstreet.awskt.dynamodb.QueryRequest){}[0]
 final fun (com.steamstreet.awskt.dynamodb/DynamoDb).com.steamstreet.awskt.dynamodb/scanPaged(com.steamstreet.awskt.dynamodb/ScanRequest): kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.dynamodb/ScanResponse> // com.steamstreet.awskt.dynamodb/scanPaged|scanPaged@com.steamstreet.awskt.dynamodb.DynamoDb(com.steamstreet.awskt.dynamodb.ScanRequest){}[0]
-final fun (kotlin/Boolean).com.steamstreet.awskt.dynamodb/attributeValue(): com.steamstreet.awskt.dynamodb/AttributeValue // com.steamstreet.awskt.dynamodb/attributeValue|attributeValue@kotlin.Boolean(){}[0]
-final fun (kotlin/ByteArray).com.steamstreet.awskt.dynamodb/attributeValue(): com.steamstreet.awskt.dynamodb/AttributeValue // com.steamstreet.awskt.dynamodb/attributeValue|attributeValue@kotlin.ByteArray(){}[0]
-final fun (kotlin/Int).com.steamstreet.awskt.dynamodb/attributeValue(): com.steamstreet.awskt.dynamodb/AttributeValue // com.steamstreet.awskt.dynamodb/attributeValue|attributeValue@kotlin.Int(){}[0]
-final fun (kotlin/Long).com.steamstreet.awskt.dynamodb/attributeValue(): com.steamstreet.awskt.dynamodb/AttributeValue // com.steamstreet.awskt.dynamodb/attributeValue|attributeValue@kotlin.Long(){}[0]
-final fun (kotlin/String).com.steamstreet.awskt.dynamodb/attributeValue(): com.steamstreet.awskt.dynamodb/AttributeValue // com.steamstreet.awskt.dynamodb/attributeValue|attributeValue@kotlin.String(){}[0]
-final fun (kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.dynamodb/QueryResponse>).com.steamstreet.awskt.dynamodb/items(): kotlinx.coroutines.flow/Flow<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>> // com.steamstreet.awskt.dynamodb/items|items@kotlinx.coroutines.flow.Flow<com.steamstreet.awskt.dynamodb.QueryResponse>(){}[0]
-final fun (kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.dynamodb/ScanResponse>).com.steamstreet.awskt.dynamodb/scanItems(): kotlinx.coroutines.flow/Flow<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>> // com.steamstreet.awskt.dynamodb/scanItems|scanItems@kotlinx.coroutines.flow.Flow<com.steamstreet.awskt.dynamodb.ScanResponse>(){}[0]
+final fun (kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.dynamodb/QueryResponse>).com.steamstreet.awskt.dynamodb/items(): kotlinx.coroutines.flow/Flow<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>> // com.steamstreet.awskt.dynamodb/items|items@kotlinx.coroutines.flow.Flow<com.steamstreet.awskt.dynamodb.QueryResponse>(){}[0]
+final fun (kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.dynamodb/ScanResponse>).com.steamstreet.awskt.dynamodb/scanItems(): kotlinx.coroutines.flow/Flow<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>> // com.steamstreet.awskt.dynamodb/scanItems|scanItems@kotlinx.coroutines.flow.Flow<com.steamstreet.awskt.dynamodb.ScanResponse>(){}[0]
 final fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map<#A, #B>?).com.steamstreet.awskt.dynamodb/orNullIfEmpty(): kotlin.collections/Map<#A, #B>? // com.steamstreet.awskt.dynamodb/orNullIfEmpty|orNullIfEmpty@kotlin.collections.Map<0:0,0:1>?(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> (kotlin.collections/List<#A>?).com.steamstreet.awskt.dynamodb/orNullIfEmpty(): kotlin.collections/List<#A>? // com.steamstreet.awskt.dynamodb/orNullIfEmpty|orNullIfEmpty@kotlin.collections.List<0:0>?(){0§<kotlin.Any?>}[0]
 final fun com.steamstreet.awskt.dynamodb/DynamoDb(kotlin/Function1<com.steamstreet.awskt.dynamodb/DynamoDbConfig, kotlin/Unit> = ...): com.steamstreet.awskt.dynamodb/DynamoDb // com.steamstreet.awskt.dynamodb/DynamoDb|DynamoDb(kotlin.Function1<com.steamstreet.awskt.dynamodb.DynamoDbConfig,kotlin.Unit>){}[0]
-final suspend fun (com.steamstreet.awskt.dynamodb/DynamoDb).com.steamstreet.awskt.dynamodb/batchGetAll(kotlin/String, kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>>, kotlin/Boolean = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin/Int = ...): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/AttributeValue>> // com.steamstreet.awskt.dynamodb/batchGetAll|batchGetAll@com.steamstreet.awskt.dynamodb.DynamoDb(kotlin.String;kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.AttributeValue>>;kotlin.Boolean;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.Int){}[0]
+final suspend fun (com.steamstreet.awskt.dynamodb/DynamoDb).com.steamstreet.awskt.dynamodb/batchGetAll(kotlin/String, kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>, kotlin/Boolean = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin/Int = ...): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>> // com.steamstreet.awskt.dynamodb/batchGetAll|batchGetAll@com.steamstreet.awskt.dynamodb.DynamoDb(kotlin.String;kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>>;kotlin.Boolean;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.Int){}[0]
 final suspend fun (com.steamstreet.awskt.dynamodb/DynamoDb).com.steamstreet.awskt.dynamodb/batchWriteAll(kotlin/String, kotlin.collections/List<com.steamstreet.awskt.dynamodb/WriteRequest>, kotlin/Int = ...) // com.steamstreet.awskt.dynamodb/batchWriteAll|batchWriteAll@com.steamstreet.awskt.dynamodb.DynamoDb(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.dynamodb.WriteRequest>;kotlin.Int){}[0]

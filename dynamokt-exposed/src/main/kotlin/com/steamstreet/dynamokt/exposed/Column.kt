@@ -1,6 +1,6 @@
 package com.steamstreet.dynamokt.exposed
 
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
+import com.steamstreet.dynamokt.AttributeValue
 import kotlin.reflect.KClass
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant

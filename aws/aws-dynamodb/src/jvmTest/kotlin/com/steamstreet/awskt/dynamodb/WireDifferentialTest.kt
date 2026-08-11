@@ -1,5 +1,6 @@
 package com.steamstreet.awskt.dynamodb
 
+import com.steamstreet.dynamokt.AttributeValue
 import aws.sdk.kotlin.runtime.auth.credentials.StaticCredentialsProvider
 import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 // The builder-DSL forms (`client.getItem { }`) are extension functions, not members. Without these

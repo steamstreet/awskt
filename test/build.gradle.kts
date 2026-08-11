@@ -36,6 +36,8 @@ kotlin {
         }
         jvmTest {
             dependencies {
+                // M5a: the stream-runner tests drive DynamoKt, which now takes a DynamoDb.
+                implementation(project(":aws:aws-dynamodb-sdk-adapter"))
                 implementation(libs.testcontainers.junit.jupiter)
                 implementation(libs.testcontainers.localstack)
                 implementation(kotlin("test"))

@@ -1,5 +1,7 @@
 package com.steamstreet.awskt.dynamodb
 
+import com.steamstreet.dynamokt.AttributeValue
+import com.steamstreet.dynamokt.AttributeValueSerializer
 import com.steamstreet.awskt.core.AwsServiceClient
 import com.steamstreet.awskt.core.StaticCredentialsProvider
 import com.steamstreet.awskt.core.awsJson

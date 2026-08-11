@@ -1,5 +1,7 @@
 package com.steamstreet.awskt.dynamodb
 
+import com.steamstreet.dynamokt.AttributeValue
+import com.steamstreet.dynamokt.AttributeValueSerializer
 import aws.sdk.kotlin.runtime.auth.credentials.StaticCredentialsProvider
 import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 import aws.sdk.kotlin.services.dynamodb.batchGetItem
@@ -138,6 +140,9 @@ class ResponseDifferentialTest {
         is AttributeValue.Bs -> tagged("BS", JsonArray(v.value.map { JsonPrimitive(b64(it)) }))
         is AttributeValue.L -> tagged("L", JsonArray(v.value.map { ourValue(it) }))
         is AttributeValue.M -> tagged("M", JsonObject(v.value.mapValues { ourValue(it.value) }))
+        // Rendered by discriminator so that if one ever appears in the corpus the comparison names
+        // it, rather than passing because both sides stringified to the same placeholder.
+        is AttributeValue.SdkUnknown -> tagged("SDK_UNKNOWN", JsonPrimitive(v.discriminator))
     }
 
     private fun sdkItem(item: Map<String, SdkAttributeValue>?): JsonElement =

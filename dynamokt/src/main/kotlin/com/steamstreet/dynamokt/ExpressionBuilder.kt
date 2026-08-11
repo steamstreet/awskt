@@ -2,8 +2,6 @@
 
 package com.steamstreet.dynamokt
 
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
-import aws.sdk.kotlin.services.dynamodb.model.ScanRequest
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -320,14 +318,30 @@ public class ExpressionBuilder internal constructor(private val state: Expressio
     public fun attribute(attribute: String): FilterAttribute = FilterAttribute(attribute)
 }
 
-public fun ExpressionBuilder.apply(scan: ScanRequest.Builder) {
-    val expr = expression()
-    if (expr != null) {
-        scan.filterExpression = expr
-        scan.expressionAttributeNames = nameMap
-        scan.expressionAttributeValues = valueMap
-    }
-}
+/**
+ * A built filter: the expression plus the name and value maps it refers to.
+ *
+ * The three travel together — an expression referencing `#a` or `:v` is meaningless without the
+ * corresponding map — so returning them as one value removes the class of bug where a caller copies
+ * the expression and forgets a map.
+ */
+public data class FilterExpression(
+    public val expression: String,
+    public val names: Map<String, String>,
+    public val values: Map<String, AttributeValue>,
+)
+
+/**
+ * Builds the filter, or null when nothing was specified.
+ *
+ * Replaces `fun ExpressionBuilder.apply(scan: ScanRequest.Builder)`, which existed only because the
+ * AWS SDK exposed a mutable request builder to push into. It had **zero callers anywhere in this
+ * repo**, and its `nameMap`/`valueMap` arguments were already `internal`, so the only thing an
+ * outside caller could ever do with it was hand it an SDK type this library no longer has in its
+ * API. Returning a value the caller applies is both the honest replacement and a smaller one.
+ */
+public fun ExpressionBuilder.build(): FilterExpression? =
+    expression()?.let { FilterExpression(it, nameMap.toMap(), valueMap.toMap()) }
 
 /**
  * Build a filter from a query.

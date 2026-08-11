@@ -5,6 +5,7 @@ import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 import aws.sdk.kotlin.services.dynamodbstreams.DynamoDbStreamsClient
 import aws.smithy.kotlin.runtime.net.url.Url
 import com.steamstreet.dynamokt.DynamoKt
+import com.steamstreet.awskt.dynamodb.sdk.SdkBackedDynamoDb
 import com.steamstreet.dynamokt.DynamoStreamEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -89,7 +90,7 @@ class DynamoStreamTest {
 
     @Test
     fun testStreamReading() = runTest {
-        val dynamoKt = DynamoKt(table, builder = { ddb }).session()
+        val dynamoKt = DynamoKt(table, builder = { SdkBackedDynamoDb(ddb) }).session()
 
         dynamoKt.put("person", "123") {
             set("name", "Jon")
@@ -99,7 +100,7 @@ class DynamoStreamTest {
 
     @Test
     fun testStreamReading2() = runTest {
-        val dynamoKt = DynamoKt(table, builder = { ddb }).session()
+        val dynamoKt = DynamoKt(table, builder = { SdkBackedDynamoDb(ddb) }).session()
 
         dynamoKt.put("person", "123") {
             set("name", "Jon")

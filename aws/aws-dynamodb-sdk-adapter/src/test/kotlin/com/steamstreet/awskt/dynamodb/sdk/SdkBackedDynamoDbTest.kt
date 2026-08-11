@@ -5,7 +5,8 @@ import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 import aws.smithy.kotlin.runtime.net.url.Url
 import com.steamstreet.awskt.core.callJson
 import com.steamstreet.awskt.dynamodb.AttributeDefinition
-import com.steamstreet.awskt.dynamodb.AttributeValue
+import com.steamstreet.awskt.dynamodb.Item
+import com.steamstreet.dynamokt.AttributeValue
 import com.steamstreet.awskt.dynamodb.BillingMode
 import com.steamstreet.awskt.dynamodb.ConditionalCheckFailedException
 import com.steamstreet.awskt.dynamodb.CreateTableRequest

@@ -1,6 +1,5 @@
 package com.steamstreet.dynamokt
 
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import com.steamstreet.exceptions.NotFoundException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex

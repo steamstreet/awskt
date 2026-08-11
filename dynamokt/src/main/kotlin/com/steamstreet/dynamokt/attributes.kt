@@ -1,27 +1,24 @@
 package com.steamstreet.dynamokt
 
-
-import aws.sdk.kotlin.services.dynamodb.model.AttributeAction
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValueUpdate
-
 /**
- * Create an update from a value.
+ * How an [AttributeValueUpdate] changes an attribute.
+ *
+ * Project-owned rather than a wire DTO. `attributeUpdates` is **never sent to DynamoDB** — the
+ * legacy `AttributeUpdates` API it mirrors was superseded by update expressions years ago, and this
+ * repo only uses these types as in-memory bookkeeping while an item is being edited. Modelling them
+ * as request types would imply a wire contract that does not exist.
  */
-public fun AttributeValue.update(action: AttributeAction = AttributeAction.Put): AttributeValueUpdate {
-    return AttributeValueUpdate {
-        this.action = action
-        this.value = this@update
-    }
-}
+public enum class AttributeAction { Put, Delete, Add }
 
-public fun AttributeValue(value: String): AttributeValue = AttributeValue.S(value)
-public fun AttributeValueUpdate(value: AttributeValue?, action: AttributeAction): AttributeValueUpdate {
-    return AttributeValueUpdate {
-        this.action = action
-        this.value = value
-    }
-}
+/** An in-memory record of one attribute change. See [AttributeAction] for why this is not a DTO. */
+public data class AttributeValueUpdate(
+    public val value: AttributeValue? = null,
+    public val action: AttributeAction = AttributeAction.Put,
+)
+
+/** Create an update from a value. */
+public fun AttributeValue.update(action: AttributeAction = AttributeAction.Put): AttributeValueUpdate =
+    AttributeValueUpdate(this, action)
 
 /**
  * Add a PUT update
@@ -95,21 +92,3 @@ public fun diff(value1: Map<String, AttributeValue>, value2: Map<String, Attribu
 
 public fun diff(item1: Item, item2: Item): List<String> =
     diff(item1.attributes, item2.attributes)
-
-
-/**
- * Extension functions that make it easy to create attribute value objects from Kotlin data types.
- */
-
-private val ATTRIBUTE_FALSE = AttributeValue.Bool(false)
-private val ATTRIBUTE_TRUE = AttributeValue.Bool(true)
-
-public fun Boolean.attributeValue(): AttributeValue = if (this) ATTRIBUTE_TRUE else ATTRIBUTE_FALSE
-public fun String.attributeValue(): AttributeValue = AttributeValue.S(this)
-public fun Number.attributeValue(): AttributeValue = AttributeValue.N(this.toString())
-public fun Set<String>.attributeValue(): AttributeValue = AttributeValue.Ss(this.toList())
-public fun List<AttributeValue>.attributeValue(): AttributeValue = AttributeValue.L(this)
-
-public fun Map<String, AttributeValue>.attributeValue(): AttributeValue = AttributeValue.M(this)
-public fun attributeMap(vararg pairs: Pair<String, AttributeValue>): AttributeValue =
-    AttributeValue.M(pairs.toMap())

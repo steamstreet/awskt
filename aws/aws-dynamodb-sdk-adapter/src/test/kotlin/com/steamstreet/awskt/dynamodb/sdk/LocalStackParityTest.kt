@@ -5,7 +5,8 @@ import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 import aws.smithy.kotlin.runtime.net.url.Url
 import com.steamstreet.awskt.core.StaticCredentialsProvider
 import com.steamstreet.awskt.dynamodb.AttributeDefinition
-import com.steamstreet.awskt.dynamodb.AttributeValue
+import com.steamstreet.awskt.dynamodb.Item
+import com.steamstreet.dynamokt.AttributeValue
 import com.steamstreet.awskt.dynamodb.BillingMode
 import com.steamstreet.awskt.dynamodb.ConditionalCheckFailedException
 import com.steamstreet.awskt.dynamodb.CreateTableRequest
@@ -14,7 +15,6 @@ import com.steamstreet.awskt.dynamodb.DeleteTableRequest
 import com.steamstreet.awskt.dynamodb.DescribeTableRequest
 import com.steamstreet.awskt.dynamodb.DynamoDb
 import com.steamstreet.awskt.dynamodb.GetItemRequest
-import com.steamstreet.awskt.dynamodb.Item
 import com.steamstreet.awskt.dynamodb.KeySchemaElement
 import com.steamstreet.awskt.dynamodb.KeyType
 import com.steamstreet.awskt.dynamodb.PutItemRequest

@@ -1,6 +1,5 @@
 package com.steamstreet.dynamokt
 
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

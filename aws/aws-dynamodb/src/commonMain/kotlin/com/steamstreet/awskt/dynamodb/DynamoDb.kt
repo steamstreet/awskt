@@ -1,5 +1,6 @@
 package com.steamstreet.awskt.dynamodb
 
+import com.steamstreet.dynamokt.AttributeValueSerializer
 import com.steamstreet.awskt.core.AwsCredentialsProvider
 import com.steamstreet.awskt.core.AwsProtocol
 import com.steamstreet.awskt.core.AwsServiceClient

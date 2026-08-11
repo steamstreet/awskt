@@ -1,7 +1,17 @@
 package com.steamstreet.dynamokt
 
-import aws.sdk.kotlin.services.dynamodb.*
-import aws.sdk.kotlin.services.dynamodb.model.*
+import com.steamstreet.awskt.dynamodb.DeleteItemRequest
+import com.steamstreet.awskt.dynamodb.DeleteRequest
+import com.steamstreet.awskt.dynamodb.DescribeTableRequest
+import com.steamstreet.awskt.dynamodb.DynamoDb
+import com.steamstreet.awskt.dynamodb.GetItemRequest
+import com.steamstreet.awskt.dynamodb.PutItemRequest
+import com.steamstreet.awskt.dynamodb.PutRequest
+import com.steamstreet.awskt.dynamodb.TableDescription
+import com.steamstreet.awskt.dynamodb.WriteRequest
+import com.steamstreet.awskt.dynamodb.batchGetAll
+import com.steamstreet.awskt.dynamodb.batchWriteAll
+import com.steamstreet.awskt.dynamodb.orNullIfEmpty
 import com.steamstreet.exceptions.NotFoundException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +22,7 @@ import kotlinx.coroutines.launch
 
 public class DynamoKtSession(
     public val dynamoKt: DynamoKt,
-    public val dynamo: DynamoDbClient,
+    public val dynamo: DynamoDb,
     public val table: String = dynamoKt.table,
     public val pkName: String = dynamoKt.pkName,
     public val skName: String? = dynamoKt.skName,
@@ -23,9 +33,7 @@ public class DynamoKtSession(
      * Describe the table
      */
     public suspend fun describeTable(): TableDescription {
-        return dynamo.describeTable {
-            tableName = table
-        }.table ?: throw IllegalStateException()
+        return dynamo.describeTable(DescribeTableRequest(table)).table ?: throw IllegalStateException()
     }
 
     /**
@@ -35,14 +43,21 @@ public class DynamoKtSession(
         pk: String, sk: String?, attributes: List<String>? = null,
         consistent: Boolean = false
     ): Item? {
-        return dynamo.getItem {
-            tableName = table
-            key = keyMap(pk, sk)
-            attributes?.apply {
-                attributesToGet = this
-            }
-            consistentRead = consistent
-        }.let {
+        // `attributesToGet` is DynamoDB's deprecated legacy parameter and our client does not carry
+        // it. A projection expression is the supported replacement, and it needs the placeholder
+        // indirection because an attribute name may collide with a reserved word.
+        val projection = attributes?.takeIf { it.isNotEmpty() }?.let { requested ->
+            requested.withIndex().associate { (index, name) -> "#p$index" to name }
+        }
+        return dynamo.getItem(
+            GetItemRequest(
+                tableName = table,
+                key = keyMap(pk, sk),
+                consistentRead = consistent,
+                projectionExpression = projection?.keys?.joinToString(", "),
+                expressionAttributeNames = projection.orNullIfEmpty(),
+            ),
+        ).let {
             if (it.item == null) {
                 null
             } else {
@@ -81,38 +96,28 @@ public class DynamoKtSession(
         items: List<Pair<String, String?>>, attributes: Collection<String> = emptyList(),
         consistent: Boolean = false
     ): List<Item> {
-        return items.chunked(80).flatMap { chunkedItems ->
-            val request = BatchGetItemRequest {
-                requestItems =
-                    mapOf(
-                        table to
-                                KeysAndAttributes {
-                                    keys = chunkedItems.map {
-                                        buildMap {
-                                            put(pkName, it.first.attributeValue())
-                                            if (skName != null) {
-                                                put(skName, it.second!!.attributeValue())
-                                            }
-                                        }
-                                    }
+        // `batchGetAll` chunks to DynamoDB's documented limit of 100 and, crucially, loops
+        // `UnprocessedKeys`. The code this replaces chunked to 80 and read only `Responses`, so a
+        // throttled batch or a 16 MB cap silently returned *fewer items than were asked for* with no
+        // error — a live data-loss bug, not a style issue.
+        val names = attributes.takeIf { it.isNotEmpty() }
+            ?.withIndex()?.associate { (index, name) -> "#attr$index" to name }
 
-                                    if (attributes.isNotEmpty()) {
-                                        var index = 0
-                                        val names = attributes.associateBy { "#attr${index++}" }
-                                        expressionAttributeNames = names
-                                        projectionExpression = names.keys.joinToString(",")
-                                    }
-                                    consistentRead = consistent
-                                }
-                    )
-            }
-            dynamo.batchGetItem(request).responses?.get(table)?.map {
-                Item(this, it).also { item ->
-                    if (attributes.isEmpty()) {
-                        cacheItem(item)
-                    }
+        return dynamo.batchGetAll(
+            tableName = table,
+            keys = items.map {
+                buildMap {
+                    put(pkName, it.first.attributeValue())
+                    if (skName != null) put(skName, it.second!!.attributeValue())
                 }
-            } ?: emptyList()
+            },
+            consistentRead = consistent,
+            projectionExpression = names?.keys?.joinToString(","),
+            expressionAttributeNames = names.orNullIfEmpty(),
+        ).map {
+            Item(this, it).also { item ->
+                if (attributes.isEmpty()) cacheItem(item)
+            }
         }
     }
 
@@ -127,10 +132,9 @@ public class DynamoKtSession(
     }
 
     override suspend fun put(pk: String, sk: String?, attributes: Map<String, AttributeValue>): Item {
-        dynamo.putItem {
-            tableName = table
-            item = attributes + keyMap(pk, sk)
-        }.let {
+        dynamo.putItem(
+            PutItemRequest(tableName = table, item = attributes + keyMap(pk, sk)),
+        ).let {
             return Item(
                 this, attributes + keyMap(pk, sk)
             )
@@ -164,24 +168,21 @@ public class DynamoKtSession(
         val result = Query(this, pk).apply(block).execute()
 
         result.items.map { item ->
-            DeleteRequest {
+            DeleteRequest(
                 key = buildMap {
                     put(pkName, item.pk.attributeValue())
-                    if (skName != null) {
-                        put(skName, item.sk!!.attributeValue())
-                    }
-                }
-            }
+                    if (skName != null) put(skName, item.sk!!.attributeValue())
+                },
+            )
         }.map {
-            WriteRequest {
-                this.deleteRequest = it
-            }
+            WriteRequest(deleteRequest = it)
         }.let { items ->
             val toDelete = items.toList()
             if (toDelete.isNotEmpty()) {
-                dynamo.batchWriteItem {
-                    requestItems = (mapOf(table to toDelete))
-                }
+                // `batchWriteAll` chunks to 25 and loops `UnprocessedItems`. The unchunked call this
+                // replaces threw ValidationException above 25 items and silently under-deleted
+                // whenever a batch was throttled, because it discarded the response.
+                dynamo.batchWriteAll(table, toDelete)
             }
         }
         return result
@@ -234,21 +235,17 @@ public class DynamoKtSession(
         val item = MutableItem(this, keyMap(pk, sk))
         item.block()
 
-        dynamo.deleteItem {
-            tableName = (table)
-            key = (keyMap(pk, sk))
-
-            if (item.conditionExpression != null) {
-                conditionExpression = item.conditionExpression
-
-                if (item.attributeNames.isNotEmpty()) {
-                    expressionAttributeNames = item.attributeNames
-                }
-                if (item.attributeValues.isNotEmpty()) {
-                    expressionAttributeValues = item.attributeValues
-                }
-            }
-        }
+        dynamo.deleteItem(
+            DeleteItemRequest(
+                tableName = table,
+                key = keyMap(pk, sk),
+                conditionExpression = item.conditionExpression,
+                expressionAttributeNames =
+                    item.attributeNames.orNullIfEmpty().takeIf { item.conditionExpression != null },
+                expressionAttributeValues =
+                    item.attributeValues.orNullIfEmpty().takeIf { item.conditionExpression != null },
+            ),
+        )
     }
 
     override suspend fun commit() {

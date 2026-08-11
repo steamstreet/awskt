@@ -9,6 +9,7 @@ dependencies {
     // Both are `api`: a consumer of this module holds our DTOs on one side and hands it an SDK
     // client on the other, so both type sets are part of its surface.
     api(project(":aws:aws-dynamodb"))
+    api(project(":dynamo"))
     api(libs.aws.dynamodb)
 
     testImplementation(kotlin("test"))

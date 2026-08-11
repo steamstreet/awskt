@@ -1,6 +1,6 @@
 package com.steamstreet.dynamokt.exposed
 
-import aws.sdk.kotlin.services.dynamodb.model.ConditionalCheckFailedException
+import com.steamstreet.awskt.dynamodb.ConditionalCheckFailedException
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.testcontainers.junit.jupiter.Testcontainers

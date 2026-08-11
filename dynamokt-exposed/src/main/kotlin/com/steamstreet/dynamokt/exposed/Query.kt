@@ -1,11 +1,12 @@
 package com.steamstreet.dynamokt.exposed
 
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
-import aws.sdk.kotlin.services.dynamodb.getItem
-import aws.sdk.kotlin.services.dynamodb.query
-import aws.sdk.kotlin.services.dynamodb.scan as dynamoScan
-import aws.sdk.kotlin.services.dynamodb.batchGetItem
-import aws.sdk.kotlin.services.dynamodb.model.KeysAndAttributes
+import com.steamstreet.awskt.dynamodb.BatchGetItemRequest
+import com.steamstreet.awskt.dynamodb.GetItemRequest
+import com.steamstreet.awskt.dynamodb.QueryRequest
+import com.steamstreet.awskt.dynamodb.ScanRequest
+import com.steamstreet.awskt.dynamodb.orNullIfEmpty
+import com.steamstreet.dynamokt.AttributeValue
+import com.steamstreet.awskt.dynamodb.KeysAndAttributes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
@@ -438,15 +439,15 @@ public class Query(
             }
         }
 
-        val result = database.client.getItem {
-            tableName = database.resolveTableName(table)
-            this.key = key
-            consistentRead = database.defaultConsistentRead
-            if (projectionExpression != null) {
-                this.projectionExpression = projectionExpression
-                expressionAttributeNames = projectionNames
-            }
-        }
+        val result = database.client.getItem(
+            GetItemRequest(
+                tableName = database.resolveTableName(table),
+                key = key,
+                consistentRead = database.defaultConsistentRead,
+                projectionExpression = projectionExpression,
+                expressionAttributeNames = projectionNames?.takeIf { projectionExpression != null },
+            ),
+        )
 
         result.item?.let { emit(ResultRow(table, it)) }
     }
@@ -478,26 +479,21 @@ public class Query(
         // Merge projection names into nameIndex
         projectionNames?.let { nameIndex.putAll(it) }
 
-        val result = database.client.query {
-            tableName = database.resolveTableName(table)
-            match.index?.let { indexName = it.name }
-            this.keyConditionExpression = keyConditionExpression
-            if (projectionExpression != null) {
-                this.projectionExpression = projectionExpression
-            }
-            if (nameIndex.isNotEmpty()) {
-                expressionAttributeNames = nameIndex
-            }
-            if (valueIndex.isNotEmpty()) {
-                expressionAttributeValues = valueIndex
-            }
-            consistentRead = if (match.index == null) database.defaultConsistentRead else false
-            if (!scanForward) {
-                scanIndexForward = false
-            }
-            exclusiveStart?.let { exclusiveStartKey = it }
-            pageLimit?.let { limit = it }
-        }
+        val result = database.client.query(
+            QueryRequest(
+                tableName = database.resolveTableName(table),
+                indexName = match.index?.name,
+                keyConditionExpression = keyConditionExpression,
+                projectionExpression = projectionExpression,
+                expressionAttributeNames = nameIndex.orNullIfEmpty(),
+                expressionAttributeValues = valueIndex.orNullIfEmpty(),
+                // A GSI cannot be read consistently, so the flag only applies to the base table.
+                consistentRead = if (match.index == null) database.defaultConsistentRead else false,
+                scanIndexForward = false.takeIf { !scanForward },
+                exclusiveStartKey = exclusiveStart,
+                limit = pageLimit,
+            ),
+        )
 
         return (result.items ?: emptyList()) to result.lastEvaluatedKey
     }
@@ -520,8 +516,10 @@ public class Query(
                     if (next <= 0) return@flow
                 }
             }
-            if (last == null) break
-            exclusiveStart = last
+            // Emptiness, not nullity: DynamoDB can return `"LastEvaluatedKey": {}`, and a `== null`
+            // check treats that as "there is another page", re-issuing the identical request
+            // forever. Same rule as the client's own paginators.
+            exclusiveStart = last?.takeIf { it.isNotEmpty() } ?: break
         }
     }
 
@@ -547,23 +545,17 @@ public class Query(
         // Merge projection names into nameIndex
         projectionNames?.let { nameIndex.putAll(it) }
 
-        val result = database.client.dynamoScan {
-            tableName = database.resolveTableName(table)
-            if (projectionExpression != null) {
-                this.projectionExpression = projectionExpression
-            }
-            if (filterExpression != null) {
-                this.filterExpression = filterExpression
-            }
-            if (nameIndex.isNotEmpty()) {
-                expressionAttributeNames = nameIndex
-            }
-            if (valueIndex.isNotEmpty()) {
-                expressionAttributeValues = valueIndex
-            }
-            exclusiveStart?.let { exclusiveStartKey = it }
-            pageLimit?.let { limit = it }
-        }
+        val result = database.client.scan(
+            ScanRequest(
+                tableName = database.resolveTableName(table),
+                filterExpression = filterExpression,
+                projectionExpression = projectionExpression,
+                expressionAttributeNames = nameIndex.orNullIfEmpty(),
+                expressionAttributeValues = valueIndex.orNullIfEmpty(),
+                exclusiveStartKey = exclusiveStart,
+                limit = pageLimit,
+            ),
+        )
 
         return (result.items ?: emptyList()) to result.lastEvaluatedKey
     }
@@ -585,8 +577,10 @@ public class Query(
                     if (next <= 0) return@flow
                 }
             }
-            if (last == null) break
-            exclusiveStart = last
+            // Emptiness, not nullity: DynamoDB can return `"LastEvaluatedKey": {}`, and a `== null`
+            // check treats that as "there is another page", re-issuing the identical request
+            // forever. Same rule as the client's own paginators.
+            exclusiveStart = last?.takeIf { it.isNotEmpty() } ?: break
         }
     }
 
@@ -600,8 +594,8 @@ public class Query(
 
         // DynamoDB BatchGetItem has a limit of 100 items per request
         keys.chunked(100).forEach { chunk ->
-            val keysAndAttributes = KeysAndAttributes {
-                this.keys = chunk.map { (pk, sk) ->
+            val keysAndAttributes = KeysAndAttributes(
+                keys = chunk.map { (pk, sk) ->
                     buildMap {
                         @Suppress("UNCHECKED_CAST")
                         put(pkColumn.name, (pkColumn as Column<Any?>).toAttributeValue(pk))
@@ -611,18 +605,16 @@ public class Query(
                             put(skColumn.name, (skColumn as Column<Any?>).toAttributeValue(sk))
                         }
                     }
-                }
-                consistentRead = database.defaultConsistentRead
-                if (projectionExpression != null) {
-                    this.projectionExpression = projectionExpression
-                    expressionAttributeNames = projectionNames
-                }
-            }
+                },
+                consistentRead = database.defaultConsistentRead,
+                projectionExpression = projectionExpression,
+                expressionAttributeNames = projectionNames?.takeIf { projectionExpression != null },
+            )
 
             val resolvedTableName = database.resolveTableName(table)
-            val result = database.client.batchGetItem {
-                requestItems = mapOf(resolvedTableName to keysAndAttributes)
-            }
+            val result = database.client.batchGetItem(
+                BatchGetItemRequest(mapOf(resolvedTableName to keysAndAttributes)),
+            )
 
             result.responses?.get(resolvedTableName)?.forEach { item ->
                 emit(ResultRow(table, item))
@@ -706,8 +698,8 @@ public fun Table.batchGet(
 
     // DynamoDB BatchGetItem has a limit of 100 items per request
     keys.chunked(100).forEach { chunk ->
-        val keysAndAttributes = KeysAndAttributes {
-            this.keys = chunk.map { (pk, sk) ->
+        val keysAndAttributes = KeysAndAttributes(
+            keys = chunk.map { (pk, sk) ->
                 buildMap {
                     @Suppress("UNCHECKED_CAST")
                     put(pkColumn.name, (pkColumn as Column<Any?>).toAttributeValue(pk))
@@ -717,14 +709,14 @@ public fun Table.batchGet(
                         put(skColumn.name, (skColumn as Column<Any?>).toAttributeValue(sk))
                     }
                 }
-            }
-            consistentRead = database.defaultConsistentRead
-        }
+            },
+            consistentRead = database.defaultConsistentRead,
+        )
 
         val resolvedTableName = database.resolveTableName(this@batchGet)
-        val result = database.client.batchGetItem {
-            requestItems = mapOf(resolvedTableName to keysAndAttributes)
-        }
+        val result = database.client.batchGetItem(
+            BatchGetItemRequest(mapOf(resolvedTableName to keysAndAttributes)),
+        )
 
         result.responses?.get(resolvedTableName)?.forEach { item ->
             emit(ResultRow(this@batchGet, item))

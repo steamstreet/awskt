@@ -1,5 +1,6 @@
 package com.steamstreet.awskt.dynamodb
 
+import com.steamstreet.dynamokt.AttributeValue
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -28,6 +29,15 @@ import kotlinx.serialization.Serializable
  * `"ExpressionAttributeValues":{}` — which DynamoDB **rejects**, where an absent field is fine.
  * The existing `dynamokt` code guards this by hand in three places; here it is a type-level rule.
  */
+/**
+ * An item: the shape every DynamoDB read and write is expressed in.
+ *
+ * Declared here rather than beside [AttributeValue] in `dynamo`, because that module's package is
+ * `com.steamstreet.dynamokt` — which already contains a `class Item`, the rich entity wrapper
+ * `dynamokt` is built around. Two `Item`s in one package is a redeclaration, not an overload.
+ */
+public typealias Item = Map<String, AttributeValue>
+
 public fun <K, V> Map<K, V>?.orNullIfEmpty(): Map<K, V>? = this?.takeIf { it.isNotEmpty() }
 
 public fun <T> List<T>?.orNullIfEmpty(): List<T>? = this?.takeIf { it.isNotEmpty() }

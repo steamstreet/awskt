@@ -1,9 +1,8 @@
 package com.steamstreet.dynamokt
 
-import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
-import aws.smithy.kotlin.runtime.auth.awscredentials.CredentialsProvider
+import com.steamstreet.awskt.core.AwsCredentialsProvider
+import com.steamstreet.awskt.dynamodb.DynamoDb
 import com.steamstreet.mutableLazy
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 
 /**
@@ -14,13 +13,13 @@ public class DynamoKt(
     public val table: String,
     public val pkName: String = "pk",
     public val skName: String? = "sk",
-    public val builder: (CredentialsProvider?) -> DynamoDbClient = defaultClientBuilder,
-    public val defaultCredentials: CredentialsProvider? = null,
+    public val builder: (AwsCredentialsProvider?) -> DynamoDb = defaultClientBuilder,
+    public val defaultCredentials: AwsCredentialsProvider? = null,
     public val ttlAttribute: String? = null
 ) {
     internal val indexes = hashMapOf<String, DynamoKtIndex>()
 
-    private val defaultClient: DynamoDbClient by lazy {
+    private val defaultClient: DynamoDb by lazy {
         builder(defaultCredentials)
     }
 
@@ -40,7 +39,7 @@ public class DynamoKt(
     /**
      * Create an AWS session, which is just operations linked with specific credentials.
      */
-    public fun session(awsCredentialsProvider: CredentialsProvider? = null): DynamoKtSession {
+    public fun session(awsCredentialsProvider: AwsCredentialsProvider? = null): DynamoKtSession {
         val client = if (awsCredentialsProvider == null) {
             defaultClient
         } else {
@@ -60,14 +59,18 @@ public class DynamoKt(
     }
 
     public companion object {
-        public var defaultClientBuilder: (CredentialsProvider?) -> DynamoDbClient by mutableLazy {
-            return@mutableLazy {
-                runBlocking {
-                    DynamoDbClient.fromEnvironment {
-                        if (it != null) {
-                            this.credentialsProvider = it
-                        }
-                    }
+        /**
+         * How a client is built. Swappable so tests can point at LocalStack.
+         *
+         * No `runBlocking` any more: client construction is not suspending (plan Decision 4), so
+         * region, endpoint and credentials all resolve lazily at the first call instead of blocking
+         * a coroutine thread here. That deletes one of the five `runBlocking` wrappers the plan
+         * counted, and it is what lets a client be constructed from a non-suspending context.
+         */
+        public var defaultClientBuilder: (AwsCredentialsProvider?) -> DynamoDb by mutableLazy {
+            return@mutableLazy { credentials ->
+                DynamoDb {
+                    if (credentials != null) credentialsProvider = credentials
                 }
             }
         }

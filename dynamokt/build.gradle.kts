@@ -4,13 +4,19 @@ plugins {
 
 dependencies {
     api(project(":dynamo"))
-    api(libs.aws.dynamodb)
+    // The hand-written client replaces `libs.aws.dynamodb`. That swap is the point of the milestone:
+    // nothing in dynamokt's production graph references the AWS SDK any more.
+    api(project(":aws:aws-dynamodb"))
     api(libs.kotlin.coroutines.core)
     api(libs.kotlin.serialization.json)
-    implementation(libs.kotlin.date.time)
+    // `api`, not `implementation`: dates.kt exposes kotlinx.datetime types in its public signatures,
+    // so a consumer cannot use them without this on the compile classpath.
+    api(libs.kotlin.date.time)
     api(project(":standards"))
-    implementation(project(":env"))
 
+    // M5a runs the existing suites against SdkBackedDynamoDb, so behaviour is still the AWS SDK's
+    // while the *type* swap is validated. Test-only: the adapter never enters the production graph.
+    testImplementation(project(":aws:aws-dynamodb-sdk-adapter"))
     testImplementation(kotlin("test"))
     testImplementation(libs.kluent)
     testImplementation(libs.kotlin.coroutines.test)
@@ -45,4 +51,10 @@ tasks.test {
         environment("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", "/var/run/docker.sock")
         systemProperty("api.version", "1.43")
     }
+}
+
+tasks.withType<Test> {
+    // Forwards the implementation switch into the test JVM. Without this, `-Dawskt.dynamodb.impl`
+    // only ever reaches the Gradle daemon and the flip silently does nothing.
+    systemProperty("awskt.dynamodb.impl", System.getProperty("awskt.dynamodb.impl") ?: "sdk")
 }

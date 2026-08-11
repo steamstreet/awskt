@@ -1,10 +1,165 @@
-public final class com/steamstreet/dynamokt/AttributeValueSerializer : kotlinx/serialization/KSerializer {
+public abstract class com/steamstreet/dynamokt/AttributeValue {
+	public static final field Companion Lcom/steamstreet/dynamokt/AttributeValue$Companion;
+	public final fun asB ()[B
+	public final fun asBOrNull ()[B
+	public final fun asBool ()Z
+	public final fun asBoolOrNull ()Ljava/lang/Boolean;
+	public final fun asBs ()Ljava/util/List;
+	public final fun asBsOrNull ()Ljava/util/List;
+	public final fun asL ()Ljava/util/List;
+	public final fun asLOrNull ()Ljava/util/List;
+	public final fun asM ()Ljava/util/Map;
+	public final fun asMOrNull ()Ljava/util/Map;
+	public final fun asN ()Ljava/lang/String;
+	public final fun asNOrNull ()Ljava/lang/String;
+	public final fun asNs ()Ljava/util/List;
+	public final fun asNsOrNull ()Ljava/util/List;
+	public final fun asNull ()Z
+	public final fun asNullOrNull ()Ljava/lang/Boolean;
+	public final fun asS ()Ljava/lang/String;
+	public final fun asSOrNull ()Ljava/lang/String;
+	public final fun asSs ()Ljava/util/List;
+	public final fun asSsOrNull ()Ljava/util/List;
+}
+
+public final class com/steamstreet/dynamokt/AttributeValue$B : com/steamstreet/dynamokt/AttributeValue {
+	public fun <init> ([B)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()[B
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/AttributeValue$Bool : com/steamstreet/dynamokt/AttributeValue {
+	public fun <init> (Z)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lcom/steamstreet/dynamokt/AttributeValue$Bool;
+	public static synthetic fun copy$default (Lcom/steamstreet/dynamokt/AttributeValue$Bool;ZILjava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue$Bool;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/AttributeValue$Bs : com/steamstreet/dynamokt/AttributeValue {
+	public fun <init> (Ljava/util/List;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/AttributeValue$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/dynamokt/AttributeValue$L : com/steamstreet/dynamokt/AttributeValue {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/steamstreet/dynamokt/AttributeValue$L;
+	public static synthetic fun copy$default (Lcom/steamstreet/dynamokt/AttributeValue$L;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue$L;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/AttributeValue$M : com/steamstreet/dynamokt/AttributeValue {
+	public fun <init> (Ljava/util/Map;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lcom/steamstreet/dynamokt/AttributeValue$M;
+	public static synthetic fun copy$default (Lcom/steamstreet/dynamokt/AttributeValue$M;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue$M;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/AttributeValue$N : com/steamstreet/dynamokt/AttributeValue {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/dynamokt/AttributeValue$N;
+	public static synthetic fun copy$default (Lcom/steamstreet/dynamokt/AttributeValue$N;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue$N;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/AttributeValue$Ns : com/steamstreet/dynamokt/AttributeValue {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/steamstreet/dynamokt/AttributeValue$Ns;
+	public static synthetic fun copy$default (Lcom/steamstreet/dynamokt/AttributeValue$Ns;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue$Ns;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/AttributeValue$Null : com/steamstreet/dynamokt/AttributeValue {
 	public fun <init> ()V
-	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;
+	public fun <init> (Z)V
+	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lcom/steamstreet/dynamokt/AttributeValue$Null;
+	public static synthetic fun copy$default (Lcom/steamstreet/dynamokt/AttributeValue$Null;ZILjava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue$Null;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/AttributeValue$S : com/steamstreet/dynamokt/AttributeValue {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/dynamokt/AttributeValue$S;
+	public static synthetic fun copy$default (Lcom/steamstreet/dynamokt/AttributeValue$S;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue$S;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/AttributeValue$SdkUnknown : com/steamstreet/dynamokt/AttributeValue {
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDiscriminator ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/AttributeValue$Ss : com/steamstreet/dynamokt/AttributeValue {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/steamstreet/dynamokt/AttributeValue$Ss;
+	public static synthetic fun copy$default (Lcom/steamstreet/dynamokt/AttributeValue$Ss;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/AttributeValue$Ss;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/AttributeValueKt {
+	public static final fun AttributeValue (Ljava/lang/String;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public static final fun attributeMap ([Lkotlin/Pair;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public static final fun attributeValue (Ljava/lang/Number;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public static final fun attributeValue (Ljava/lang/String;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public static final fun attributeValue (Ljava/util/List;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public static final fun attributeValue (Ljava/util/Map;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public static final fun attributeValue (Ljava/util/Set;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public static final fun attributeValue (Z)Lcom/steamstreet/dynamokt/AttributeValue;
+	public static final fun attributeValue ([B)Lcom/steamstreet/dynamokt/AttributeValue;
+}
+
+public final class com/steamstreet/dynamokt/AttributeValueSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lcom/steamstreet/dynamokt/AttributeValueSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/dynamokt/AttributeValue;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun fromJson (Lkotlinx/serialization/json/JsonElement;)Lcom/steamstreet/dynamokt/AttributeValue;
 	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Laws/sdk/kotlin/services/dynamodb/model/AttributeValue;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/dynamokt/AttributeValue;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public final fun toJson (Lcom/steamstreet/dynamokt/AttributeValue;)Lkotlinx/serialization/json/JsonObject;
 }
 
 public final class com/steamstreet/dynamokt/DynamoStreamEvent {
@@ -116,6 +271,14 @@ public final synthetic class com/steamstreet/dynamokt/DynamoStreamRecords$$seria
 
 public final class com/steamstreet/dynamokt/DynamoStreamRecords$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/dynamokt/JsonKt {
+	public static final fun fromJsonToAttributeValue (Ljava/lang/String;)Lcom/steamstreet/dynamokt/AttributeValue;
+	public static final fun fromJsonToItem (Ljava/lang/String;)Ljava/util/Map;
+	public static final fun fromJsonToItem (Lkotlinx/serialization/json/JsonElement;)Ljava/util/Map;
+	public static final fun getAttributeValueJson ()Lkotlinx/serialization/json/Json;
+	public static final fun toJsonItemString (Ljava/util/Map;)Ljava/lang/String;
 }
 
 public final class com/steamstreet/dynamokt/UserIdentity {

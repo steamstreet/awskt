@@ -1,4 +1,4 @@
-package com.steamstreet.awskt.dynamodb
+package com.steamstreet.dynamokt
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -128,6 +128,28 @@ public sealed class AttributeValue {
         override fun toString(): String = "Bs(${value.size} blobs)"
     }
 
+    /**
+     * A variant this library does not model, carried through untouched.
+     *
+     * Decoding must not throw on an unrecognised discriminator. This type parses **DynamoDB stream
+     * records** inside Lambdas and decodes **pagination tokens**, and in both places a hard failure
+     * is far worse than an unknown value: a stream handler that throws poisons its shard and retries
+     * the same record until the data expires.
+     *
+     * The raw element is retained so re-encoding is lossless — a token that round-trips through this
+     * type comes out byte-identical rather than quietly losing an attribute.
+     */
+    public class SdkUnknown internal constructor(
+        public val discriminator: String,
+        internal val rawValue: JsonElement,
+    ) : AttributeValue() {
+        override fun equals(other: Any?): Boolean = this === other ||
+            (other is SdkUnknown && discriminator == other.discriminator && rawValue == other.rawValue)
+
+        override fun hashCode(): Int = discriminator.hashCode() * 31 + rawValue.hashCode()
+        override fun toString(): String = "SdkUnknown($discriminator)"
+    }
+
     // -- Accessors, matching the AWS SDK's shape ---------------------------------------------
 
     public fun asS(): String = (this as S).value
@@ -198,6 +220,9 @@ public object AttributeValueSerializer : KSerializer<AttributeValue> {
             is AttributeValue.L -> put("L", buildJsonArray { value.value.forEach { add(toJson(it)) } })
             is AttributeValue.M ->
                 put("M", buildJsonObject { value.value.forEach { (k, v) -> put(k, toJson(v)) } })
+
+            // Lossless: whatever came in under an unrecognised key goes back out unchanged.
+            is AttributeValue.SdkUnknown -> put(value.discriminator, value.rawValue)
         }
     }
 
@@ -219,18 +244,36 @@ public object AttributeValueSerializer : KSerializer<AttributeValue> {
             "BS" -> AttributeValue.Bs(entry.value.jsonArray.map { Base64.decode(it.jsonPrimitive.content) })
             "L" -> AttributeValue.L(entry.value.jsonArray.map { fromJson(it) })
             "M" -> AttributeValue.M(entry.value.jsonObject.mapValues { fromJson(it.value) })
-            else -> throw SerializationException("unknown AttributeValue discriminator '${entry.key}'")
+            // Deliberately not an exception — see SdkUnknown's KDoc.
+            else -> AttributeValue.SdkUnknown(entry.key, entry.value)
         }
     }
 }
 
-/** An item: the shape every DynamoDB read and write is expressed in. */
-public typealias Item = Map<String, AttributeValue>
-
 // -- Construction conveniences ----------------------------------------------------------------
+//
+// These live beside the type rather than in `dynamokt` because both modules share this package: two
+// files each declaring `String.attributeValue()` in `com.steamstreet.dynamokt` is a redeclaration
+// clash, not an overload. The set below is the union of what each side had.
+//
+// `Number` rather than separate `Int`/`Long` overloads: with both present, an `Int` receiver
+// matches the more specific one and a `Long` the other, which is fine — until someone adds a
+// `Double` overload and the same literal starts serializing differently depending on inferred type.
+// One entry point keeps `N`'s decimal string coming from exactly one place.
 
+private val ATTRIBUTE_FALSE = AttributeValue.Bool(false)
+private val ATTRIBUTE_TRUE = AttributeValue.Bool(true)
+
+public fun Boolean.attributeValue(): AttributeValue = if (this) ATTRIBUTE_TRUE else ATTRIBUTE_FALSE
 public fun String.attributeValue(): AttributeValue = AttributeValue.S(this)
-public fun Int.attributeValue(): AttributeValue = AttributeValue.N(this.toString())
-public fun Long.attributeValue(): AttributeValue = AttributeValue.N(this.toString())
-public fun Boolean.attributeValue(): AttributeValue = AttributeValue.Bool(this)
+public fun Number.attributeValue(): AttributeValue = AttributeValue.N(this.toString())
 public fun ByteArray.attributeValue(): AttributeValue = AttributeValue.B(this)
+public fun Set<String>.attributeValue(): AttributeValue = AttributeValue.Ss(this.toList())
+public fun List<AttributeValue>.attributeValue(): AttributeValue = AttributeValue.L(this)
+public fun Map<String, AttributeValue>.attributeValue(): AttributeValue = AttributeValue.M(this)
+
+public fun attributeMap(vararg pairs: Pair<String, AttributeValue>): AttributeValue =
+    AttributeValue.M(pairs.toMap())
+
+/** Pseudo-constructor for the overwhelmingly common case. */
+public fun AttributeValue(value: String): AttributeValue = AttributeValue.S(value)

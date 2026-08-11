@@ -1,6 +1,6 @@
 package com.steamstreet.dynamokt.exposed
 
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
+import com.steamstreet.dynamokt.AttributeValue
 
 /**
  * Wraps a DynamoDB item with type-safe column access.

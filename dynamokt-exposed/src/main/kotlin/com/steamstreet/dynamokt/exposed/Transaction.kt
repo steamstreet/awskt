@@ -1,10 +1,16 @@
 package com.steamstreet.dynamokt.exposed
 
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
-import aws.sdk.kotlin.services.dynamodb.model.TransactGetItem
-import aws.sdk.kotlin.services.dynamodb.model.TransactWriteItem
-import aws.sdk.kotlin.services.dynamodb.transactGetItems
-import aws.sdk.kotlin.services.dynamodb.transactWriteItems
+import com.steamstreet.dynamokt.AttributeValue
+import com.steamstreet.awskt.dynamodb.TransactGetItem
+import com.steamstreet.awskt.dynamodb.TransactGetItemsRequest
+import com.steamstreet.awskt.dynamodb.ConditionCheck
+import com.steamstreet.awskt.dynamodb.Get
+import com.steamstreet.awskt.dynamodb.TransactDelete
+import com.steamstreet.awskt.dynamodb.TransactPut
+import com.steamstreet.awskt.dynamodb.TransactUpdate
+import com.steamstreet.awskt.dynamodb.TransactWriteItem
+import com.steamstreet.awskt.dynamodb.TransactWriteItemsRequest
+import com.steamstreet.awskt.dynamodb.orNullIfEmpty
 
 /**
  * The maximum number of operations DynamoDB accepts in a single transaction.
@@ -69,21 +75,19 @@ public class Transaction internal constructor(public val database: Database) {
         val resolvedName = database.resolveTableName(this)
 
         register(this, key)
-        items.add(TransactWriteItem {
-            put {
-                tableName = resolvedName
-                item = built.item
-                built.conditionExpression?.let { expr ->
-                    conditionExpression = expr
-                    if (built.attributeNames.isNotEmpty()) {
-                        expressionAttributeNames = built.attributeNames
-                    }
-                    if (built.attributeValues.isNotEmpty()) {
-                        expressionAttributeValues = built.attributeValues
-                    }
-                }
-            }
-        })
+        items.add(
+            TransactWriteItem(
+                put = TransactPut(
+                    tableName = resolvedName,
+                    item = built.item,
+                    conditionExpression = built.conditionExpression,
+                    expressionAttributeNames = built.attributeNames.orNullIfEmpty()
+                        ?.takeIf { built.conditionExpression != null },
+                    expressionAttributeValues = built.attributeValues.orNullIfEmpty()
+                        ?.takeIf { built.conditionExpression != null },
+                ),
+            ),
+        )
     }
 
     /**
@@ -102,20 +106,18 @@ public class Transaction internal constructor(public val database: Database) {
         val resolvedName = database.resolveTableName(this)
 
         register(this, built.key)
-        items.add(TransactWriteItem {
-            update {
-                tableName = resolvedName
-                key = built.key
-                updateExpression = built.updateExpression
-                built.conditionExpression?.let { conditionExpression = it }
-                if (built.attributeNames.isNotEmpty()) {
-                    expressionAttributeNames = built.attributeNames
-                }
-                if (built.attributeValues.isNotEmpty()) {
-                    expressionAttributeValues = built.attributeValues
-                }
-            }
-        })
+        items.add(
+            TransactWriteItem(
+                update = TransactUpdate(
+                    tableName = resolvedName,
+                    key = built.key,
+                    updateExpression = built.updateExpression,
+                    conditionExpression = built.conditionExpression,
+                    expressionAttributeNames = built.attributeNames.orNullIfEmpty(),
+                    expressionAttributeValues = built.attributeValues.orNullIfEmpty(),
+                ),
+            ),
+        )
     }
 
     /**
@@ -137,19 +139,17 @@ public class Transaction internal constructor(public val database: Database) {
         val resolvedName = database.resolveTableName(this)
 
         register(this, built.key)
-        items.add(TransactWriteItem {
-            delete {
-                tableName = resolvedName
-                key = built.key
-                built.conditionExpression?.let { conditionExpression = it }
-                if (built.attributeNames.isNotEmpty()) {
-                    expressionAttributeNames = built.attributeNames
-                }
-                if (built.attributeValues.isNotEmpty()) {
-                    expressionAttributeValues = built.attributeValues
-                }
-            }
-        })
+        items.add(
+            TransactWriteItem(
+                delete = TransactDelete(
+                    tableName = resolvedName,
+                    key = built.key,
+                    conditionExpression = built.conditionExpression,
+                    expressionAttributeNames = built.attributeNames.orNullIfEmpty(),
+                    expressionAttributeValues = built.attributeValues.orNullIfEmpty(),
+                ),
+            ),
+        )
     }
 
     /**
@@ -176,19 +176,17 @@ public class Transaction internal constructor(public val database: Database) {
         val resolvedName = database.resolveTableName(this)
 
         register(this, itemKey)
-        items.add(TransactWriteItem {
-            conditionCheck {
-                tableName = resolvedName
-                key = itemKey
-                conditionExpression = expression
-                if (nameIndex.isNotEmpty()) {
-                    expressionAttributeNames = nameIndex
-                }
-                if (valueIndex.isNotEmpty()) {
-                    expressionAttributeValues = valueIndex
-                }
-            }
-        })
+        items.add(
+            TransactWriteItem(
+                conditionCheck = ConditionCheck(
+                    tableName = resolvedName,
+                    key = itemKey,
+                    conditionExpression = expression,
+                    expressionAttributeNames = nameIndex.orNullIfEmpty(),
+                    expressionAttributeValues = valueIndex.orNullIfEmpty(),
+                ),
+            ),
+        )
     }
 
     /**
@@ -267,10 +265,9 @@ public class Transaction internal constructor(public val database: Database) {
         }
 
         val token = clientRequestToken
-        database.client.transactWriteItems {
-            transactItems = items
-            token?.let { this.clientRequestToken = it }
-        }
+        database.client.transactWriteItems(
+            TransactWriteItemsRequest(transactItems = items, clientRequestToken = token),
+        )
     }
 }
 
@@ -327,12 +324,7 @@ public class TransactionGet internal constructor(public val database: Database) 
         val resolvedName = database.resolveTableName(this)
 
         tables.add(this)
-        items.add(TransactGetItem {
-            get {
-                tableName = resolvedName
-                key = itemKey
-            }
-        })
+        items.add(TransactGetItem(Get(tableName = resolvedName, key = itemKey)))
     }
 
     /**
@@ -366,9 +358,7 @@ public suspend fun Database.transactionGet(
         "Transaction contains ${request.items.size} reads, but DynamoDB allows at most $MAX_TRANSACTION_ITEMS."
     }
 
-    val response = client.transactGetItems {
-        transactItems = request.items
-    }
+    val response = client.transactGetItems(TransactGetItemsRequest(request.items))
 
     return request.tables.mapIndexed { index, table ->
         response.responses?.getOrNull(index)?.item?.takeIf { it.isNotEmpty() }?.let {

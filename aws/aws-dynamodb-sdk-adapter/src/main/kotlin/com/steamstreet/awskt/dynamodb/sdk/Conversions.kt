@@ -1,7 +1,7 @@
 package com.steamstreet.awskt.dynamodb.sdk
 
 import com.steamstreet.awskt.dynamodb.AttributeDefinition
-import com.steamstreet.awskt.dynamodb.AttributeValue
+import com.steamstreet.dynamokt.AttributeValue
 import com.steamstreet.awskt.dynamodb.BillingMode
 import com.steamstreet.awskt.dynamodb.CancellationReason
 import com.steamstreet.awskt.dynamodb.ConsumedCapacity
@@ -70,6 +70,13 @@ internal fun AttributeValue.toSdk(): SdkAttributeValue = when (this) {
     is AttributeValue.Bs -> SdkAttributeValue.Bs(value)
     is AttributeValue.L -> SdkAttributeValue.L(value.map { it.toSdk() })
     is AttributeValue.M -> SdkAttributeValue.M(value.mapValues { it.value.toSdk() })
+
+    // Symmetric with the SdkUnknown branch below: the SDK's own SdkUnknown carries no payload, so
+    // there is nothing to map it onto and a request built from it would be silently wrong.
+    is AttributeValue.SdkUnknown -> throw IllegalArgumentException(
+        "Cannot send AttributeValue.SdkUnknown('${'$'}{discriminator}') through the AWS SDK: it was " +
+            "decoded from a variant this library does not model, and the SDK cannot represent it.",
+    )
 }
 
 internal fun SdkAttributeValue.toAwsKt(): AttributeValue = when (this) {

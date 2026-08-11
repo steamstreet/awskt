@@ -1,6 +1,5 @@
 package com.steamstreet.dynamokt
 
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
@@ -51,11 +50,11 @@ class JsonTests {
     @Test
     fun testSerializer() {
         val encoded =
-            Json.encodeToString(AttributeValueSerializer(), AttributeValue.S("Jon"))
+            Json.encodeToString(AttributeValueSerializer, AttributeValue.S("Jon"))
         println(encoded)
 
        val mapEncoded = Json.encodeToString(MapSerializer(String.serializer(),
-            AttributeValueSerializer()), mapOf(
+            AttributeValueSerializer), mapOf(
                 "name" to AttributeValue.S("Jon"),
                 "ago" to AttributeValue.N("48")
             ))
@@ -65,7 +64,7 @@ class JsonTests {
     @Test
     fun testEmptyMap() {
         val attr = AttributeValue.M(emptyMap())
-        val str = Json.encodeToString(AttributeValueSerializer(), attr)
+        val str = Json.encodeToString(AttributeValueSerializer, attr)
 
         str.shouldBeEqualTo("""{"M":{}}""")
     }
@@ -73,7 +72,7 @@ class JsonTests {
     @Test
     fun testEmptyList() {
         val attr = AttributeValue.L(emptyList())
-        val str = Json.encodeToString(AttributeValueSerializer(), attr)
+        val str = Json.encodeToString(AttributeValueSerializer, attr)
 
         str.shouldBeEqualTo("""{"L":[]}""")
     }
