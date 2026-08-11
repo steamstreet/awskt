@@ -1091,6 +1091,74 @@ The ordering rationale is Decision 3's, applied to a new problem. If S3-mode sig
 
 **The whole repo compiles and all 100 DynamoDB integration tests pass — while still executing against the real AWS SDK underneath.** This isolates "did the type swap break anything?" from "does the hand-written client work?".
 
+> **STATUS: THE TYPE SWAP IS DONE AND GREEN (2026-08-11). The layout conversion is not.**
+> `./gradlew build` passes across the whole repo: **504 tests, 0 failures**. The 99 DynamoDB
+> integration tests (25 `dynamokt` + 72 `dynamokt-exposed` + 2 `test`) all execute against
+> **`SdkBackedDynamoDb`**, so behaviour underneath is still, byte for byte, the AWS SDK's.
+>
+> **The headline goal is met, and it is checkable rather than asserted:**
+> `./gradlew :dynamokt:dependencies --configuration runtimeClasspath | grep -c aws.sdk.kotlin`
+> returns **0**, and so does `dynamokt-exposed`. The AWS SDK is gone from both production graphs.
+>
+> **What is done (5a.1, 5a.3, 5a.4 and the swap half of 5a.2):**
+> - `dynamo` is multiplatform and owns `AttributeValue`, transport-free (no Ktor, no aws-core).
+> - `dynamokt`: `DynamoKt`, `DynamoKtSession`, `Transaction`, `Query`, `MutableItem`,
+>   `ExpressionBuilder`, `attributes.kt` all on `DynamoDb`.
+> - `dynamokt-exposed`: `Database.client` is a `DynamoDb`, `connect()` is no longer `suspend`, and
+>   all ten builder-DSL call sites are value requests.
+> - `test`: `DynamoStreamRunner.toModelAttributeValue()` retargeted; the stream tests wrap the SDK
+>   client in the adapter.
+> - `.api` dumps regenerated — **that diff is the API-break artifact the approval gate wanted**, and
+>   `checkLegacyAbi` fired on the change rather than letting it through, which is the guard earning
+>   its place on its first real break.
+>
+> **What is NOT done:** the multiplatform *layout* conversion of `dynamokt`/`dynamokt-exposed`
+> (`src/main` → `src/commonMain`/`src/jvmMain`), and therefore everything the common-stdlib
+> compilation is what forces: `java.util.Base64` in `Serialization.kt`, `Dispatchers.IO` in
+> `DynamoKtSession`, the `N`-precision fix in both directions, `dates.kt`'s `java.time` migration and
+> `delegates.kt`'s `KClass<T>` → `List<T>`. Those are real tasks in this section and they remain.
+> Splitting them out was deliberate: the type swap is independently verifiable and independently
+> revertible, and bundling a source-layout move into the same change would have made any failure
+> ambiguous between the two.
+>
+> **Findings worth carrying into M5b:**
+> 1. **The plan's one "genuine design uncertainty" evaporated.** `ExpressionBuilder.apply(scan:)` had
+>    **zero callers repo-wide**, and its `nameMap`/`valueMap` were already `internal`, so the only
+>    thing an outside caller could do with it was pass an SDK builder type. Deleted; replaced by
+>    `build(): FilterExpression?`. No redesign was needed.
+> 2. **Two same-package collisions that only appear once `AttributeValue` actually moves**, neither
+>    anticipated: `dynamo`'s `typealias Item` against `dynamokt`'s long-standing `class Item`, and
+>    duplicate `String`/`Boolean.attributeValue()` extensions. Decision 2 as written walks straight
+>    into both. The alias now lives in `aws-dynamodb`; the conveniences are consolidated beside the
+>    type with `Number` replacing `Int`/`Long`.
+> 3. **The exception-hierarchy swap has a visible test-facing consequence** the plan did not list:
+>    nine `dynamokt-exposed` tests asserted on `aws.sdk…ConditionalCheckFailedException` /
+>    `TransactionCanceledException` and had to move to ours. That is the adapter working as intended
+>    — one hierarchy — but it means M5b's "no test changes" expectation is already partly spent.
+> 4. `implementation(project(":env"))` was **verified dead (0 usages)** and removed, taking `env` off
+>    `dynamokt`'s native critical path entirely.
+> 5. Three real bugs fixed in passing: `getAll` silently returned partial results (no
+>    `UnprocessedKeys` loop, chunked to 80 not 100); `queryDelete` sent an unchunked batch and
+>    discarded the response; and `DuplicateDynamoItemException` was requesting the losing item via
+>    `ReturnValuesOnConditionCheckFailure` and then discarding it, while `asS()` on a numeric sort
+>    key threw `ClassCastException` from inside the error path. The exposed paging loops broke on
+>    `last == null` and would have spun forever on an empty `LastEvaluatedKey`.
+>
+> **M5b IS ALREADY PASSING.** Both suites were run against the hand-written `DefaultDynamoDb` with
+> `-Dawskt.dynamodb.impl=native`: **97 integration tests, 0 failures** (25 `dynamokt` +
+> 72 `dynamokt-exposed`), against LocalStack.
+>
+> That claim was verified rather than inferred, because a passing run proves nothing on its own here
+> — if the switch had failed to reach the test JVM the suite would have run on the *adapter* and
+> passed exactly the same way. It did fail to reach it at first: `-D` sets the property on the
+> Gradle daemon, not the forked test JVM, so the flip silently did nothing until
+> `systemProperty(...)` was added to both build files. A marker then confirmed **36 native-branch
+> constructions and zero SDK ones**.
+>
+> This means M5b's remaining risk is much lower than its 3-day estimate assumes — the flip is
+> `-Dawskt.dynamodb.impl=native` becoming the default. What M5b still owes is the *decision* and the
+> behavioural-difference note for the PR (the retry-on-ambiguous-write divergence), not discovery.
+
 This is one atomic merge across `dynamo`, `dynamokt`, `dynamokt-exposed` **and `test`**. Verified: `dynamokt-exposed/build.gradle.kts:6` declares `api(project(":dynamo"))`, and `test/build.gradle.kts:32` declares `api(project(":dynamokt"))`, so both break the instant `dynamo` owns `AttributeValue`.
 
 #### 5a.1 `dynamo` — own the type
