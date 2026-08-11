@@ -107,6 +107,9 @@ There is nothing for a serializer to serialize. The service trait is `aws.protoc
 - **Range-GET as a resumable-download abstraction.** Expose the single `Range` request header and the `Content-Range` response field. Do not build chunked-download orchestration on top of it — that is the same workstream as streaming and multipart.
 - **A Smithy code generator, and any committed generated source.**
 - **JS and Wasm targets for `dynamokt`.** Its commonMain uses `runBlocking` (`DynamoKt.kt:65`, `Item.kt`, `Transaction.kt`, `delegates.kt`), which resolves only across the jvm+native `concurrent` source set. Record as an ADR.
+- **iOS (and every other Apple mobile) target for the `aws-*` modules. Decided by Jon, 2026-08-10: these are server-side only.** Written down because the repo makes the opposite look like an oversight — `logging`, `standards` and `serialization` all declare `iosArm64()`/`iosSimulatorArm64()`, so an `aws-*` module without them reads as an omission rather than a decision. It is a decision. `aws-signing` would in fact be nearly free to add (KotlinCrypto only, no Ktor) and `ktor-client-darwin` is already in the version catalog for `aws-core`, so the cost is not the argument — the argument is that shipping AWS credentials to a mobile device is the wrong shape, and a target with no consumer is still public API to maintain. This is the same reasoning as Decision 11's refusal to add `js(IR)` to `aws-eventbridge`.
+
+  **`macosArm64` is NOT an exception to this and must not be "cleaned up" as an unused Apple target.** It exists so the development machine can *execute* native tests: `linuxArm64` is Tier 2 and never runs, `linuxX64` needs an ubuntu host, and without `macosArm64` there is no target on which native code is run rather than merely linked. It is test infrastructure that happens to be an Apple platform.
 
 ### Deferred to v2 — a decision with a ceiling, not an exclusion
 
@@ -143,6 +146,19 @@ Declared in `dynamo/src/commonMain/kotlin/com/steamstreet/dynamokt/AttributeValu
 *Rationale*: `dynamo` and `dynamokt` already share the package and `dynamokt` already does `api(project(":dynamo"))`. Keeping the SDK's names costs nothing and protects ~200 call sites (asS 37, asM 22, asN 20, asL 16, asSs 10, …). `dynamo` keeps zero Ktor and zero aws-core dependency, so stream-event parsing stays transport-free.
 
 **`B` and `Bs` must NOT be data classes.** Hand-write `equals`/`hashCode` using `contentEquals`/`contentHashCode` — `attributes.kt:53` `findDifferences` and the private `diff()` at `attributes.kt:70` rely on structural equality, and a data class over `ByteArray` silently breaks item diffing for binary attributes.
+
+**AMENDED 2026-08-10 (Jon's decision): `Ss`, `Ns` and `Bs` compare as SETS, and this section's "keeps the SDK's exact shape" is now false for equality specifically.** Say so plainly rather than leaving the divergence to be discovered.
+
+The `ByteArray` argument above turns out to have been the *narrow* case of a wider one, and LocalStack found the wider one on its first run: DynamoDB's set types are unordered, and the service returned `NS: ["1","-2.5"]` as `["-2.5","1"]`. With the SDK's order-sensitive `List` equality, **a set-valued attribute is not equal to itself across a write and a read** — which breaks `findDifferences` for exactly the same reason `ByteArray` did, just more often and more quietly. Whatever this section says about protecting item diffing, it has to hold for sets too or it does not hold.
+
+Mechanics, all in `AttributeValue.kt`:
+- `Ss` and `Ns` stay `data class` (so `copy()` and destructuring survive) with explicit `equals`/`hashCode` over `value.toSet()`; declaring them suppresses only the generated pair.
+- `Bs` maps elements to `List<Byte>` before the set comparison, getting content semantics and order independence together.
+- `Ns` compares **as strings, not as numbers**. `N` carries an exact decimal string precisely so nothing has to decide what `"1"` and `"1.0"` mean, and `equals` does not get to decide either.
+- **Duplicates collapse** (`Ss(["a","a"]) == Ss(["a"])`). That agrees with the service, which rejects duplicate members outright.
+- **Only equality ignores order.** The constructor still takes a `List`, so the wire form and `value` both preserve it — asserted by a test, because a "tidy-up" that sorted on construction would change the bytes we send.
+
+Six tests pin this in `commonTest`, including that a reordered set hashes identically and is therefore usable as a map key, and that different contents are still unequal — set semantics must not quietly become "everything is equal".
 
 ### 3. `DynamoDb` is an interface, and `SdkBackedDynamoDb` is BUILT, not hypothetical
 
@@ -402,11 +418,81 @@ No client code is written in this milestone.
 - [ ] Re-verify the premise: check whether any current `aws.sdk.kotlin` release publishes `linuxArm64` klibs. If it does, stop and un-park 2.3.x instead. Ten minutes; repeat at every milestone boundary.
 - [ ] ~~**Obtain written approval for the public API break**~~ — **DONE 2026-08-09** (see §9 Q1). Approved for items (a)–(i). Item (k) stays blocked on Q7; item (j) stays deferred to M7. Record the approval in an ADR file as the durable artifact.
 - [ ] Add `org.jetbrains.kotlinx:binary-compatibility-validator` and commit `.api` dumps for `dynamo`, `dynamokt`, `dynamokt-exposed` **before** M5a, so the migration PR's diff shows exactly what the public surface change is. This is the artifact the approval gate needs and it does not exist today.
+
+> **STATUS: DONE (2026-08-10), via the Kotlin plugin's built-in ABI validation rather than BCV.**
+> **35 dump files across 26 modules**, generated by `updateLegacyAbi` and verified by
+> `checkLegacyAbi`, which the Kotlin plugin wires into `check` — so `./gradlew build` now fails on
+> an unreviewed public-API change. The whole repo is covered, not just the three modules this task
+> named; the baseline is worth more the wider it is, and it cost nothing extra to apply in the two
+> convention plugins.
+>
+> **Substituted `kotlin { abiValidation { } }` for `org.jetbrains.kotlinx:binary-compatibility-validator`.**
+> Two reasons, the second deciding:
+> 1. It ships inside the Kotlin plugin already applied, so it cannot drift out of step with the
+>    compiler — a live concern on a repo that just moved 2.2.21 → 2.3.21 to satisfy the Ktor gate.
+> 2. **It dumps klibs.** `aws-core.klib.api` opens with `// Targets: [linuxArm64, linuxX64,
+>    macosArm64]` — so the target this entire project exists for is covered. A JVM-only dump would
+>    have frozen the surface on the one platform whose ABI was never in question.
+>
+> `keepUnsupportedTargets = true` is set deliberately: without it a dump taken on macOS drops the
+> Linux targets and a dump taken on CI drops the Apple ones, and the two hosts fight over the
+> checked-in file forever.
+>
+> **M2's exit criterion is met**: `AwsServiceClient.callRaw` is frozen in `aws-core.klib.api:112`
+> with its generalized `(method, path, query, headers, body, …)` signature, so M3.5 can be developed
+> against a fixed seam. M3's `AwsServiceException.rawErrorBody` addition is recorded in both dumps.
+>
+> **The guard was mutation-tested rather than assumed.** Adding one public function to `aws-core`
+> makes `checkLegacyAbi` fail with a readable diff naming it, in *both* the `.api` and the
+> `.klib.api`. A frozen-API artifact that never fires would be worse than none, since it reads as
+> coverage.
+>
+> Note the dumps live in each module's `api/` directory and are not gitignored — they are source,
+> and reviewing their diff is the point.
 - [ ] Pre-task (30 min, separate commit): apply strict `explicitApi()` to `dynamo`/`dynamokt`/`dynamokt-exposed` on the *current* `jvm-library-conventions` build and fix whatever it surfaces. `buildSrc/src/main/kotlin/steamstreet-common.jvm-library-conventions.gradle.kts:11` is `explicitApiWarning()`; the MPP convention leaves it to each module. Decoupling this from the multiplatform conversion removes an unrelated failure source.
 - [ ] **HARD GATE — bump `ktor = "3.3.3"` → `>= 3.5.0`** at `gradle/libs.versions.toml:4`. Do not start native transport work until it lands. Rationale, and **this is NOT an S3 cost**: KTOR-9527 ("Curl: Freeze when receiving large responses", fixed 3.5.0) is a *freeze*, not an error — `CurlHttpResponseBody.onBodyChunkReceived` bridges libcurl's write callback through `runBlocking`, and `ByteChannel.flush()` suspends once the unflushed buffer reaches **1 MB**, blocking the curl thread where no timeout can rescue it. **DynamoDB's Query and Scan page limit is exactly 1 MB**, so a full-page native `Query` response sits precisely on the threshold. KTOR-9483 ("Curl: backpressure implementation is never used", fixed 3.5.0) compounds it. This is pre-existing debt in the plan that the S3 analysis merely exposed; a native GetObject or full-page Query over the limit is a **hang until Lambda timeout**, which no unit test and no LocalStack run can reproduce.
   - **Blast radius, verified against `ref-2.2.x`**: exactly three build files reference `libs.ktor` — `cognito/build.gradle.kts`, `lambda/lambda-api-gateway-ktor/build.gradle.kts`, `logging/build.gradle.kts`. **`events` references no ktor at all**, so the js(IR) concern in early drafts of this section was wrong. The genuinely risky module is **`logging`**, which declares `iosArm64()`, `iosSimulatorArm64()`, `js { browser() }` and `wasmJs { browser() }` (`logging/build.gradle.kts:12-19`) alongside `compileOnly(libs.ktor.client.core)` in commonMain and `api(libs.ktor.client.core)` in its native set — a Ktor minor bump across wasmJs and Apple targets is where a 1-day estimate breaks, and per §6.1 it can only be verified on the macOS host, not on ubuntu CI.
   - **Caveat to record, not to hide**: KTOR-9527's affected-versions field lists 3.4.3, not 3.3.3. That 3.3.3 is affected is an *inference from the described mechanism*, not a stated fact. Confirm on the issue tracker during M0; if 3.3.3 turns out unaffected the bump is still wanted for KTOR-9483/9545/9546, but its severity drops from gate to hygiene.
   - **Verification**: `./gradlew build` green across the whole repo **on macOS** (the only host that can build `logging`'s Apple targets), including `:logging:compileKotlinWasmJs`, `:logging:compileKotlinJs`, and both ktor-server modules.
+
+> **STATUS: THE KTOR GATE IS CLEARED (2026-08-10) — `ktor = "3.5.2"`, the latest release.**
+> `./gradlew build` is green across the entire repo on macOS: **476 tests, 0 failures**, spanning
+> jvm, macosArm64, iosSimulatorArm64, js/browser and wasmJs, plus the Docker-backed `dynamokt` (25)
+> and `dynamokt-exposed` (72) suites. Linux native test binaries link for `aws-signing`, `aws-core`
+> and `aws-dynamodb` on both `linuxArm64` and `linuxX64`.
+>
+> **THE GATE WAS NOT A VERSION BUMP. IT FORCED A REPO-WIDE KOTLIN UPGRADE, AND THIS SECTION
+> UNDER-PRICED IT BY A WHOLE WORKSTREAM.** `buildSrc/build.gradle.kts` pinned Kotlin **2.2.21**;
+> from **Ktor 3.4.0 onward** the published Kotlin/Native klibs carry `abi_version=2.3.0`
+> (`compiler_version=2.3.0` for 3.4.x, `2.3.21` for 3.5.x), and a 2.2.x compiler cannot read them.
+> Verified by unzipping the klib manifests for 3.3.3, 3.4.0, 3.4.3, 3.5.0, 3.5.1 and 3.5.2: 3.3.3 is
+> `abi_version=2.2.0` and every version from 3.4.0 up is `2.3.0`. **There is no Ktor >= 3.5.0 that
+> works on Kotlin 2.2.x**, so the gate and the Kotlin upgrade are one decision. Kotlin is now
+> **2.3.21**, which is what Ktor 3.5.2 itself was compiled with.
+>
+> **The failure mode is a lie, and it cost real time — record it so the next person does not repeat
+> the diagnosis.** An incompatible klib is reported as
+> `KLIB resolver: Could not find "<absolute path>" in [...]` for a file that is sitting at exactly
+> that path, fully downloaded. It reads as a corrupt cache or a download race; it is neither. If you
+> see it after a Ktor or Kotlin change, unzip the klib and read `default/manifest` — `abi_version`
+> is the answer.
+>
+> Two smaller consequences, both mechanical:
+> 1. **Both yarn lockfiles had to be regenerated** — `kotlinStoreYarnLock` and then
+>    `kotlinWasmStoreYarnLock` fail in sequence until `kotlinUpgradeYarnLock` and
+>    `kotlinWasmUpgradeYarnLock` are run. `kotlin-js-store/yarn.lock` and
+>    `kotlin-js-store/wasm/yarn.lock` are both part of the change.
+> 2. **Two new deprecation warnings**, in `lambda/lambda-api-gateway-ktor/.../ApiGatewayKtorCall.kt:53,56`
+>    — the `RequestConnectionPoint.host` / `.port` overrides. Warnings only; left alone because the
+>    replacement members carry different semantics and that is not this milestone's call.
+>
+> This section's own risk assessment was right about *which* module was dangerous and wrong about
+> *why*. It named `logging` (iOS + wasmJs + js) as "where a 1-day estimate breaks" — and `logging`
+> was indeed the first thing to fail, but on the Kotlin ABI, not on anything Ktor-API-shaped. Once
+> Kotlin moved, no source change was needed anywhere in the repo.
+>
+> Also cleared from this section since: `binary-compatibility-validator` and the `.api` dumps (done
+> 2026-08-10, via the Kotlin plugin's built-in ABI validation — see the M0 task above).
 - [ ] Version catalog additions: `kotlincrypto-hmac-sha2 = { module = "org.kotlincrypto.macs:hmac-sha2", version = "0.8.0" }`, `ktor-client-curl = { group = "io.ktor", name = "ktor-client-curl", version.ref = "ktor" }`, `ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }`.
 - [ ] **Ten-minute check before M3.5a's harness design is committed**: confirm that `aws.sdk.kotlin:s3` publishes a presigner extension (`S3Client.presignGetObject` / `presignPutObject`) resolvable as a `jvmTest` dependency on Maven Central. It is the best oracle in M3.5a. If it does not resolve, the 37 query-mode vector assertions and the live unauthenticated-fetch oracle both still stand and the milestone survives — it just loses its offline deterministic byte comparison and M3.5a grows by ~0.5 day. See Risk 33.
 - [ ] Create `buildSrc/src/main/kotlin/steamstreet-common.container-test-conventions.gradle.kts`, hoisting the OrbStack docker-socket block currently triplicated verbatim at `dynamokt/build.gradle.kts:38-47`, `dynamokt-exposed/build.gradle.kts:31-40`, `test/build.gradle.kts:54-63`, applied via `tasks.withType<Test>().configureEach`. **Do this BEFORE any 2.3.x cherry-pick** — 2.3.x deleted all three copies.
@@ -414,7 +500,7 @@ No client code is written in this milestone.
 - [ ] Add `.github/workflows/ci.yml` with an explicit **host-to-task matrix** (see §6.1). Note `pr.yml:3-5` fires only on `[opened, reopened]`, so pushes to an open PR are never built today, and `build.yml:4-5` triggers only on dead branches "2.0"/"2.1".
 - [ ] `include(":aws:aws-signing")`, `include(":aws:aws-core")` in `settings.gradle.kts`. Safe: `ref-2.2.x/lambda/` has no `build.gradle.kts` and the root `tasks.named("final")` uses `tasks.matching { it.name == "publishToSonatype" }`, so an empty container project contributes nothing.
 
-**Verification**: `./gradlew build` green **on macOS** on the new branch at Ktor ≥ 3.5.0, with the container-test plugin applied and the three triplicated OrbStack blocks removed, including `:logging:compileKotlinWasmJs` and `:logging:compileKotlinJs`; `./gradlew apiDump` produces committed `.api` files; the new CI workflow passes on a throwaway PR; written API-break approval recorded in an ADR file.
+**Verification**: `./gradlew build` green **on macOS** on the new branch at Ktor ≥ 3.5.0, with the container-test plugin applied and the three triplicated OrbStack blocks removed, including `:logging:compileKotlinWasmJs` and `:logging:compileKotlinJs`; `./gradlew updateLegacyAbi` produces committed `.api`/`.klib.api` files (the task is `updateLegacyAbi`, not `apiDump` — see the ABI-validation STATUS note above); the new CI workflow passes on a throwaway PR; written API-break approval recorded in an ADR file.
 
 #### 6.1 Host-to-test-task matrix (referenced throughout)
 
@@ -550,7 +636,7 @@ So the ceiling is **40 header-capable + 40 query-capable = 80 case-assertions**,
 >    presign vectors sign a real (empty) body hash, and forcing it fails all 37. It is an S3-layer
 >    policy belonging to M3.5a.
 >
-> Not yet done in M1's dependencies: `binary-compatibility-validator` / `apiDump` (an M0 task), and
+> Not yet done in M1's dependencies: ABI validation (an M0 task — **done 2026-08-10**), and
 > `linuxX64Test` *execution*, which needs the ubuntu CI runner M0 sets up.
 
 **Verification**:
@@ -563,7 +649,7 @@ So the ceiling is **40 header-capable + 40 query-capable = 80 case-assertions**,
 - **`get-percent-single-encoded` and the seven `*-unnormalized` cases pass in BOTH header and query mode.**
 - New unit test: the key `a/../b` produces two **different** canonical URIs under `normalizeUriPath = true` vs `false`.
 - New unit test: endpoint `http://localhost:4566` produces canonical header `host:localhost:4566`; `https://dynamodb.us-east-1.amazonaws.com` produces `host:dynamodb.us-east-1.amazonaws.com`.
-- `./gradlew apiDump` re-committed; the `.api` diff is reviewed as public API of a published artifact.
+- `./gradlew updateLegacyAbi` re-run and committed; the `.api` / `.klib.api` diff is reviewed as public API of a published artifact. ✅ *(done — `aws-signing.klib.api` covers all three native targets)*
 
 ---
 
@@ -601,8 +687,17 @@ So the ceiling is **40 header-capable + 40 query-capable = 80 case-assertions**,
 >    second would have let Ktor invent a `Content-Type` we never signed — the same header-mutation
 >    failure class recorded in M1.
 >
-> Still outstanding from this section: `apiDump` (blocked on M0 adding binary-compatibility-
-> validator) and `linuxX64Test` *execution* (blocked on M0's ubuntu CI runner).
+> **Amended by M3 (2026-08-10): `AwsServiceException` gains `rawErrorBody: ByteArray?`,** populated
+> by the transport. Some AWS errors carry structured payload past a code and a message — DynamoDB's
+> `ConditionalCheckFailedException` returns the item that failed the condition, its
+> `TransactionCanceledException` a positional reason list — and reducing the response to
+> `ErrorDetails` at the transport destroyed all of it. Carrying the bytes keeps error-*schema*
+> knowledge in the service module, which is the same split `AwsErrorParser` already makes. This also
+> supersedes `transactionCancellationReasons`, which returned bare `List<String>`; the DynamoDB
+> module now parses the full `CancellationReason` including its `Item`.
+>
+> Still outstanding from this section: `linuxX64Test` *execution* (needs a Linux host). The `.api`
+> dump is done — see the M0 task; `callRaw`'s signature is frozen in `aws-core.klib.api`.
 
 **Tasks**:
 - [ ] `aws/aws-core/build.gradle.kts` — MPP conventions, `explicitApi()`, jvm/linuxX64/linuxArm64/macosArm64. commonMain: aws-signing, ktor-client-core, kotlinx-serialization-json, kotlinx-coroutines-core. jvmMain: ktor-client-cio. nativeMain: ktor-client-curl. commonTest: `kotlin("test")`, ktor-client-mock. **No `:standards`, `:env`, `:logging`.**
@@ -660,15 +755,16 @@ So the ceiling is **40 header-capable + 40 query-capable = 80 case-assertions**,
   - a `HEAD` 404 with **no body at all** still produces a typed exception;
   - `x-amz-request-id` and `x-amz-id-2` both reach the thrown `AwsServiceException`;
   - a 301 with a `Location` header is **surfaced, not followed**, and no `Authorization` header is emitted to the redirect target.
-- `:aws:aws-core:apiDump` committed, and `AwsServiceClient.callRaw`'s signature is frozen in it (see §5).
+- `:aws:aws-core:updateLegacyAbi` committed, and `AwsServiceClient.callRaw`'s signature is frozen in it (see §5). ✅ *(done — `aws-core.klib.api:112`)*
 
 ---
 
 ### M3 — `aws-dynamodb`: 12 ops, differential harness, SDK adapter, live smoke (10.5 days)
 
-> **STATUS: M3 PARTIALLY IMPLEMENTED (2026-08-10).** `aws/aws-dynamodb` exists on branch `3.0.x`.
-> **19 tests, 0 failures, identical on `jvm` and `macosArm64`**; `linuxArm64` links. The branch now
-> carries **129 tests across three modules**.
+> **STATUS: M3 CODE-COMPLETE (2026-08-10); one exit criterion blocked on IAM.** `aws/aws-dynamodb`
+> and `aws/aws-dynamodb-sdk-adapter` exist on branch `3.0.x`. **81 jvm / 26 macosArm64 tests in
+> `aws-dynamodb`, 0 failures**, plus **24 in the adapter**; `linuxX64` and `linuxArm64` link. The
+> branch now carries **215 jvm / 134 macosArm64 tests across four modules**, all green.
 >
 > **NEW REQUIREMENT FROM JON, and it changed the design: the library must be extensible.** A
 > consumer who needs an operation this library does not ship must be able to add it as an extension
@@ -733,9 +829,134 @@ So the ceiling is **40 header-capable + 40 query-capable = 80 case-assertions**,
 > parameter is binary-incompatible via the generated `copy$default` — already true of the
 > constructor, so it changes nothing about versioning.
 >
-> **Not yet done in M3:** the **response-side** differential harness (~15 canned AWS bodies through
-> both deserializers); `SdkBackedDynamoDb` in `aws-dynamodb-sdk-adapter`; the live DynamoDB smoke
-> test (exit criterion (d)).
+> **THE RESPONSE-SIDE DIFFERENTIAL HARNESS IS GREEN — 18 tests, exit criterion (a) closed.**
+> `ResponseDifferentialTest` feeds one canned AWS body to both deserializers and compares the
+> resulting models structurally. The corpus covers everything this section asked for: a GetItem
+> carrying all ten variants including `{"S":""}`, `{"M":{}}`, `{"L":[]}`, a 38-digit `N`, a two-blob
+> `BS` and an explicit `{"NULL":true}`; four-deep nested M/L; a miss; Query with, without and with an
+> **empty** `LastEvaluatedKey`; Scan; PutItem/UpdateItem/DeleteItem `Attributes`; BatchGetItem with
+> `UnprocessedKeys`; BatchWriteItem with `UnprocessedItems`; TransactGetItems with a missing slot;
+> DescribeTable and CreateTable across the full index/stream closure; and both error bodies.
+>
+> **The SDK side is driven by a JDK `HttpServer` on an ephemeral loopback port with the client's
+> `endpointUrl` aimed at it** — not an interceptor and not an `HttpClientEngine` over an
+> `@InternalApi` base. That runs the SDK's *real* deserialization path end to end, headers included,
+> and needs no internal API at all. Both sides are rendered to `JsonElement` by **separately
+> hand-written** functions rather than by `AttributeValueSerializer.toJson`: checking our decoder
+> with our own encoder would let a symmetric mistake cancel itself out.
+>
+> **The response harness immediately paid for itself — it found two fields that were silently
+> dropped, which is exactly the failure class the request harness cannot see.** A wrong response
+> mapping does not error; it yields `null`.
+> 1. **`ConditionalCheckFailedException.item` was never populated** — `mapErrors` passed a literal
+>    `null`. DynamoDB returns the item that lost the race inside the *error body*, and it exists
+>    nowhere else, so a caller had no way to recover it.
+> 2. **`TransactionCanceledException.cancellationReasons` was declared `List<String>` and always
+>    empty**, while `Model.kt`'s `CancellationReason` (code/message/item) sat unused. It is now
+>    `List<CancellationReason>` and positional — one entry per `TransactItems` entry, `"None"`
+>    included — because filtering the successes out misaligns every index after the first failure.
+>
+> Fixing both needed the raw error bytes, which the transport had already reduced to a code and a
+> message. **`AwsServiceException` therefore gains `rawErrorBody: ByteArray?`** (populated in
+> `AwsServiceClient.toException`). That keeps error-*schema* knowledge in the service module where
+> it belongs rather than teaching protocol-agnostic `aws-core` about DynamoDB's shapes — the same
+> split `AwsErrorParser` already uses. `aws-core`'s now-unused `transactionCancellationReasons`
+> helper is superseded by the richer DynamoDB-side parse.
+>
+> **A third gap, found by trying to write the live test:** `ReturnValuesOnConditionCheckFailure` was
+> declared but **no request DTO carried it**, which made the two fixes above unreachable in
+> production — DynamoDB only returns the losing item when asked. The field is now on
+> `PutItemRequest`, `UpdateItemRequest`, `DeleteItemRequest`, `TransactPut`, `TransactUpdate`,
+> `TransactDelete` and `ConditionCheck`, with two new differential tests pinning it against the SDK.
+>
+> **`SdkBackedDynamoDb` IS BUILT — `aws/aws-dynamodb-sdk-adapter`, jvm-only, 15 green tests.**
+> Decision 3's landability argument is now real: M5a can swap the type against behaviour that is
+> still byte-for-byte the AWS SDK's, and M5b's flip is a one-line revert. It maps all thirteen
+> operations plus the whole enum and `AttributeValue` closure, and re-throws the SDK's exceptions as
+> **this library's**, so consumer `catch` blocks are written once and do not change again at the flip.
+>
+> Three findings from building it:
+> 1. **Decision 18 collides with Decision 3 and the plan did not notice.** `DynamoDb.client` is part
+>    of the interface, but an SDK client contains no `AwsServiceClient` to hand back. Resolved by
+>    building one lazily from the delegate's *own* resolved region, credentials and endpoint — with a
+>    bridge from the SDK's `CredentialsProvider` to ours, which as a bonus lets the seam inherit
+>    profile/SSO/`credential_process` sources `aws-core` deliberately does not carry. An extension
+>    function therefore survives the swap; nothing is constructed unless `client` is read.
+> 2. **smithy-kotlin's `ServiceException.message` appends `", Request ID: …"`.** Using it verbatim
+>    would make the identical error read differently depending on which implementation produced it —
+>    the one observable difference this class exists to eliminate. The adapter reads
+>    `sdkErrorMetadata.errorMessage` instead and carries the id in its own field.
+> 3. **smithy-kotlin reads the request id from `x-amz-request-id`** (`X_AMZN_REQUEST_ID_HEADER` in
+>    `awsprotocol/ResponseUtils.kt`), *not* the `x-amzn-RequestId` DynamoDB actually sends. Our
+>    transport reads either. Noted because a fixture that emits one spelling only proves half the path.
+>
+> **Live DynamoDB smoke test (exit criterion (d)): WRITTEN AND RUNNING, BUT NOT YET CLOSED — blocked
+> on IAM, not on code.** `LiveDynamoDbTest` covers create → put → get → query → transactWrite/Get →
+> a failed condition returning the losing item → `batchWriteAll`/`batchGetAll` chunking 30 items,
+> and deletes its scratch table in a `finally`. It uses `runBlocking`, not `runTest`, because
+> `runTest`'s virtual clock skips `delay` and would turn the wait-for-ACTIVE loop into an
+> unthrottled poll against a real AWS API.
+>
+> **Verified 2026-08-10: in account `443844975891`, neither `ai-vegasful-test` (`AgentReadOnly`) nor
+> `ai-vegasful-test-deploy` (`AgentDeploy`) is granted `dynamodb:CreateTable`.** Both signed
+> perfectly and were refused by IAM. To close (d), either grant CreateTable/DeleteTable on
+> `arn:…:table/awskt-live-smoke-*`, or set `AWSKT_LIVE_TABLE=<name>` to a scratch table with a
+> `String` `pk` hash key and `String` `sk` range key — the tests then create and delete nothing.
+> Without either they self-skip loudly rather than fail, because a permission refusal is not a
+> client defect.
+>
+> **What the failed run nonetheless proved, and it is not nothing.** An `AccessDeniedException`
+> naming our own IAM principal is only reachable *after* AWS has verified the signature — a bad
+> signature comes back `InvalidSignatureException` and never reaches an authorization decision. So
+> `awsAuthenticatesUsEvenWhenItRefusesTheAction` asserts exactly that, and passes live today: real
+> AWS authenticated a request `aws-dynamodb` signed, and the typed error and request id came back
+> through the full parse path. The signature oracle is closed for this module; only the *write*
+> path remains unexercised against real AWS.
+>
+> **LOCALSTACK / TESTCONTAINERS SUITES ADDED (Jon's call, 2026-08-10) — 16 + 9 tests, green.**
+> This oracle was scheduled for M5a, on the *existing* 100 tests. Pulling it forward to M3 was
+> right, and the reason is visible in the plan's own validation table: until now nothing could say
+> the API **works**, only that it was **shaped right**. A `MockEngine` answers whatever it was told
+> to answer and a byte-differential is satisfied by two clients being wrong identically. LocalStack
+> has an opinion — it rejects `"ExpressionAttributeValues":{}`, enforces the 25-item
+> `BatchWriteItem` cap, evaluates condition expressions and really applies `ADD`.
+>
+> - `LocalStackDynamoDbTest` (16, in `aws-dynamodb/src/jvmTest`) — control plane, all ten variants
+>   round-tripped through a validating service, `SET`/`ADD`/`REMOVE`, the empty-collection invariant
+>   *accepted by the service* rather than merely absent from our JSON, real multi-page pagination at
+>   `Limit=1`, GSI query, filter + projection + descending sort, 60-item batch chunking, a four-kind
+>   transaction, a cancelled transaction's positional reasons, and an extension operation
+>   (`ListTables`) added from outside the library and run against a real service.
+> - `LocalStackParityTest` (9, in the adapter) — the same operations through **both**
+>   implementations, results compared. This is the test that makes M5a landable: the split rests
+>   entirely on the claim that a consumer cannot tell `SdkBackedDynamoDb` from `DefaultDynamoDb`,
+>   and nothing else in the project tested it. Non-vacuity confirmed by mutation: mapping the SDK's
+>   `Null` to `Bool` in `Conversions.kt` fails it immediately.
+>
+> **It found two things on its first run, which is the argument for having pulled it forward.**
+> 1. **DynamoDB's `SS`/`NS`/`BS` are genuinely unordered.** `NS: ["1","-2.5"]` came back as
+>    `["-2.5","1"]`, and the assertion failed on ordering alone. **RESOLVED — Jon, 2026-08-10: the
+>    three set types compare as sets.** See Decision 2's amendment below.
+> 2. **LocalStack 3.0 silently ignores `ReturnValuesOnConditionCheckFailure`** — the feature landed
+>    in DynamoDB in December 2023 and the image predates it, so the conditional-write test fails in a
+>    way that looks exactly like a client bug. The new suites pin **4.0**. The three existing suites
+>    (`dynamokt`, `dynamokt-exposed`, `test`) still use 3.0; M5a should bump them.
+>
+> **`buildSrc/steamstreet-common.container-test-conventions.gradle.kts` created** — an M0 task,
+> pulled forward because this would have been the fourth verbatim copy of the OrbStack docker-socket
+> block. Applied to the two new modules only; switching `dynamokt`, `dynamokt-exposed` and `test`
+> over touches three working integration suites and stays M0's job. Note it uses
+> `tasks.withType<Test>().configureEach`, not `tasks.test` — a KMP module has `jvmTest`, not `test`.
+>
+> **What LocalStack does NOT do, restated because a green run invites the opposite reading:** it
+> never verifies a signature (`DummyKey`/`DummySecret`, IAM enforcement off), so it cannot close
+> exit criterion (d). It does exercise one thing real AWS cannot — LocalStack listens on an
+> **ephemeral port**, so every request signs and sends `host:port` rather than a bare host, which is
+> Risk 3, a bug that passes every default-port fixture and fails every real request.
+>
+> **Still outstanding from this section:** exit criterion (d)'s write path (IAM, above), and
+> `linuxX64Test` *execution* (needs a Linux host; the binary links here). The `.api` dumps are done
+> — `aws-dynamodb.klib.api` covers `[linuxArm64, linuxX64, macosArm64]`.
 
 **Build the harness FIRST (days 1–2), not last.** Every DTO is then validated as it is written.
 
