@@ -1,7 +1,11 @@
+@file:OptIn(ExperimentalEncodingApi::class)
+
 package com.steamstreet.dynamokt
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.*
-import java.util.*
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 /**
  * Some helpers for saving serializable objects to Dynamo. Much of this code should be
@@ -30,13 +34,25 @@ private fun JsonArray.toAttributeList(): AttributeValue {
     }
 }
 
+/**
+ * Converts a JSON scalar to an attribute.
+ *
+ * The number branch takes the **raw literal**, not a parsed numeric type. The chain this replaces
+ * was `intOrNull ?: longOrNull ?: floatOrNull ?: doubleOrNull` — and `floatOrNull` sits *before*
+ * `doubleOrNull`, so every non-integral number was coerced through a 32-bit float and truncated to
+ * roughly 7 significant digits before becoming an `AttributeValue.N`. DynamoDB numbers carry up to
+ * 38. A price or a large identifier was silently rounded on the way in.
+ *
+ * Taking `content` directly is also the only lossless option: `N` already stores an exact decimal
+ * string, so parsing and re-rendering can only lose information.
+ */
 private fun JsonPrimitive.toPrimitiveValue(): AttributeValue {
     return if (this.isString) {
         this.content.attributeValue()
     } else {
-        this.booleanOrNull?.attributeValue() ?: this.intOrNull?.attributeValue() ?: this.longOrNull?.attributeValue()
-        ?: this.floatOrNull?.attributeValue() ?: this.doubleOrNull?.attributeValue()
-        ?: throw IllegalStateException("Unknown content ${this.content}")
+        this.booleanOrNull?.attributeValue()
+            ?: this.content.takeIf { it.isNotBlank() && it != "null" }?.let { AttributeValue.N(it) }
+            ?: throw IllegalStateException("Unknown content ${this.content}")
     }
 }
 
@@ -75,19 +91,19 @@ public fun AttributeValue.asJsonElement(): JsonElement {
             JsonArray(attribute.asSs().map { JsonPrimitive(it) })
         }
         attribute.asNsOrNull() != null -> {
-            JsonArray(attribute.asNs().map { JsonPrimitive(it.toBigDecimal()) })
+            JsonArray(attribute.asNs().map { unquotedNumber(it) })
         }
         attribute.asBsOrNull() != null -> {
-            JsonArray(attribute.asBs().map { JsonPrimitive(String(Base64.getEncoder().encode(it))) })
+            JsonArray(attribute.asBs().map { JsonPrimitive(Base64.encode(it)) })
         }
         attribute.asNOrNull() != null -> {
-            JsonPrimitive(attribute.asN().toBigDecimal())
+            unquotedNumber(attribute.asN())
         }
         attribute.asBoolOrNull() != null -> {
             JsonPrimitive(attribute.asBool())
         }
         attribute.asBOrNull() != null -> {
-            JsonPrimitive(String(Base64.getEncoder().encode(attribute.asB())))
+            JsonPrimitive(Base64.encode(attribute.asB()))
         }
         attribute.asSOrNull() != null -> {
             JsonPrimitive(attribute.asS())
@@ -151,3 +167,18 @@ public inline fun <reified T> AttributeValue.deserialize(): T {
     return attributeValueJson.decodeFromJsonElement(this.asJsonElement())
 }
 
+
+/**
+ * Emits `N` as a JSON number without going through any numeric type.
+ *
+ * `toBigDecimal()` was both a JVM-only coupling (`java.math.BigDecimal`) and a lossy one for the
+ * 38-digit values DynamoDB permits. `JsonUnquotedLiteral` writes the exact decimal string as a bare
+ * number instead.
+ *
+ * Two documented sharp edges: it **throws** when handed the literal string `"null"`, which is why
+ * the caller filters that; and `JsonUnquotedLiteral("1.0") != JsonPrimitive(1.0)`, so any test
+ * comparing `JsonElement` instances rather than rendered JSON sees a difference.
+ */
+@OptIn(ExperimentalSerializationApi::class)
+private fun unquotedNumber(value: String): JsonElement =
+    if (value.isBlank() || value == "null") JsonNull else JsonUnquotedLiteral(value)

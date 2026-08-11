@@ -82,9 +82,9 @@ public final class com/steamstreet/dynamokt/DatesKt {
 	public static final fun attributeValue (Lkotlin/time/Instant;)Lcom/steamstreet/dynamokt/AttributeValue;
 	public static final fun getInstant (Lcom/steamstreet/dynamokt/AttributeValue;)Lkotlin/time/Instant;
 	public static final fun getInstant (Lcom/steamstreet/dynamokt/Item;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun getLocalDate (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/time/LocalDate;
-	public static final fun getLocalDateTime (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/time/LocalDateTime;
-	public static final fun getLocalTime (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/time/LocalTime;
+	public static final fun getLocalDate (Lcom/steamstreet/dynamokt/AttributeValue;)Lkotlinx/datetime/LocalDate;
+	public static final fun getLocalDateTime (Lcom/steamstreet/dynamokt/AttributeValue;)Lkotlinx/datetime/LocalDateTime;
+	public static final fun getLocalTime (Lcom/steamstreet/dynamokt/AttributeValue;)Lkotlinx/datetime/LocalTime;
 	public static final fun instantAttribute (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
 	public static final fun instantAttribute (Lcom/steamstreet/dynamokt/ItemContainer;Lkotlin/time/Instant;Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
 	public static synthetic fun instantAttribute$default (Lcom/steamstreet/dynamokt/ItemContainer;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
@@ -194,7 +194,7 @@ public final class com/steamstreet/dynamokt/DynamoKtSessionKt {
 }
 
 public final class com/steamstreet/dynamokt/EnumSerializer : com/steamstreet/dynamokt/AttributeSerializer {
-	public fun <init> (Lkotlin/reflect/KClass;Ljava/lang/Enum;)V
+	public fun <init> (Ljava/util/List;Ljava/lang/Enum;)V
 	public fun attribute (Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
 	public fun deserialize (Lcom/steamstreet/dynamokt/ItemContainer;Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Enum;
 	public synthetic fun deserialize (Lcom/steamstreet/dynamokt/ItemContainer;Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
@@ -432,7 +432,7 @@ public final class com/steamstreet/dynamokt/MutableItemContainer$DefaultImpls {
 }
 
 public final class com/steamstreet/dynamokt/NullableEnumSerializer : com/steamstreet/dynamokt/AttributeSerializer {
-	public fun <init> (Lkotlin/reflect/KClass;)V
+	public fun <init> (Ljava/util/List;)V
 	public fun attribute (Ljava/lang/String;)Lcom/steamstreet/dynamokt/ItemAttributeDelegate;
 	public fun deserialize (Lcom/steamstreet/dynamokt/ItemContainer;Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Enum;
 	public synthetic fun deserialize (Lcom/steamstreet/dynamokt/ItemContainer;Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;

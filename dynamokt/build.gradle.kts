@@ -1,28 +1,62 @@
 plugins {
-    id("steamstreet-common.jvm-library-conventions")
+    id("steamstreet-common.multiplatform-library-conventions")
+    id("steamstreet-common.container-test-conventions")
 }
 
-dependencies {
-    api(project(":dynamo"))
-    // The hand-written client replaces `libs.aws.dynamodb`. That swap is the point of the milestone:
-    // nothing in dynamokt's production graph references the AWS SDK any more.
-    api(project(":aws:aws-dynamodb"))
-    api(libs.kotlin.coroutines.core)
-    api(libs.kotlin.serialization.json)
-    // `api`, not `implementation`: dates.kt exposes kotlinx.datetime types in its public signatures,
-    // so a consumer cannot use them without this on the compile classpath.
-    api(libs.kotlin.date.time)
-    api(project(":standards"))
+description = "Helpers for building DynamoDB applications in Kotlin"
 
-    // M5a runs the existing suites against SdkBackedDynamoDb, so behaviour is still the AWS SDK's
-    // while the *type* swap is validated. Test-only: the adapter never enters the production graph.
-    testImplementation(project(":aws:aws-dynamodb-sdk-adapter"))
-    testImplementation(kotlin("test"))
-    testImplementation(libs.kluent)
-    testImplementation(libs.kotlin.coroutines.test)
-    testImplementation(libs.testcontainers.junit.jupiter)
-    testImplementation(libs.testcontainers.localstack)
+/**
+ * Multiplatform, but with `jvm()` as the only target **for now**.
+ *
+ * The target list is not the point of this conversion — `commonMain` is. Source in `commonMain`
+ * compiles against the *common* stdlib even when only the JVM target is enabled, which is what
+ * surfaces the JVM couplings (`java.util.Base64`, `java.time`, `Dispatchers.IO`,
+ * `KClass.java.enumConstants`) as compile errors now, instead of leaving them for whoever first
+ * adds `linuxArm64`. Adding native targets then becomes a build-file edit rather than archaeology.
+ *
+ * `js`/`wasm` are permanently out: `commonMain` uses `runBlocking`, which resolves only across the
+ * jvm+native `concurrent` source set.
+ */
+kotlin {
+    explicitApi()
 
+    jvm()
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                api(project(":dynamo"))
+                // The hand-written client replaces `libs.aws.dynamodb`. That swap is the point of
+                // the milestone: nothing in dynamokt's production graph references the AWS SDK.
+                api(project(":aws:aws-dynamodb"))
+                api(libs.kotlin.coroutines.core)
+                api(libs.kotlin.serialization.json)
+                // `api`, not `implementation`: dates.kt exposes kotlinx.datetime types in its
+                // public signatures, so a consumer cannot use them without this on the classpath.
+                api(libs.kotlin.date.time)
+                api(project(":standards"))
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+
+        jvmTest {
+            dependencies {
+                // M5a runs the existing suites against SdkBackedDynamoDb, so behaviour is still the
+                // AWS SDK's while the *type* swap is validated. Test-only: the adapter never enters
+                // the production graph.
+                implementation(project(":aws:aws-dynamodb-sdk-adapter"))
+                implementation(libs.kluent)
+                implementation(libs.kotlin.coroutines.test)
+                implementation(libs.testcontainers.junit.jupiter)
+                implementation(libs.testcontainers.localstack)
+            }
+        }
+    }
 }
 
 publishing {
@@ -35,22 +69,11 @@ publishing {
     }
 }
 
-tasks.test {
+// `jvmTest`, not `test`: a multiplatform module has no `test` task, so `tasks.test` would silently
+// configure nothing at all.
+tasks.named<Test>("jvmTest") {
     useJUnitPlatform()
-
-    val libsDir = File(projectDir, "dynamo_libs")
-    this.systemProperty("java.library.path", libsDir.canonicalPath)
-
-    // OrbStack on macOS: Testcontainers' auto-detect can't find the daemon and
-    // its bundled docker-java defaults to an API version OrbStack rejects
-    // ("client version 1.32 is too old; minimum 1.40"). Point at the OrbStack
-    // socket and tell Testcontainers to negotiate a newer API.
-    val orbstackSocket = File(System.getProperty("user.home"), ".orbstack/run/docker.sock")
-    if (orbstackSocket.exists()) {
-        environment("DOCKER_HOST", "unix://${orbstackSocket.absolutePath}")
-        environment("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", "/var/run/docker.sock")
-        systemProperty("api.version", "1.43")
-    }
+    systemProperty("java.library.path", File(projectDir, "dynamo_libs").canonicalPath)
 }
 
 tasks.withType<Test> {

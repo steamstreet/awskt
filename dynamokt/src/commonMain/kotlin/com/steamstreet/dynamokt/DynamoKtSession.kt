@@ -13,7 +13,6 @@ import com.steamstreet.awskt.dynamodb.batchGetAll
 import com.steamstreet.awskt.dynamodb.batchWriteAll
 import com.steamstreet.awskt.dynamodb.orNullIfEmpty
 import com.steamstreet.exceptions.NotFoundException
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.map
@@ -204,7 +203,7 @@ public class DynamoKtSession(
         }
         return channelFlow {
             actualSegmentNumbers.forEach { index ->
-                launch(Dispatchers.IO) {
+                launch(ioDispatcher) {
                     scan {
                         block()
                         this.segments = segments

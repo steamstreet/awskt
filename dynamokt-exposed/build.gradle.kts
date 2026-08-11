@@ -1,23 +1,50 @@
 plugins {
-    id("steamstreet-common.jvm-library-conventions")
+    id("steamstreet-common.multiplatform-library-conventions")
+    id("steamstreet-common.container-test-conventions")
 }
 
-dependencies {
-    api(project(":dynamo"))
-    // The hand-written client replaces the AWS SDK here too — `dynamokt-exposed` builds requests
-    // directly rather than through `dynamokt`, so it has its own client dependency to swap.
-    api(project(":aws:aws-dynamodb"))
-    api(libs.kotlin.coroutines.core)
-    api(project(":standards"))
+description = "Exposed-style type-safe ORM for DynamoDB"
 
-    // M5a executes against SdkBackedDynamoDb so the type swap is validated against known-good
-    // AWS SDK behaviour. Test-only; the adapter never enters the production graph.
-    testImplementation(project(":aws:aws-dynamodb-sdk-adapter"))
-    testImplementation(kotlin("test"))
-    testImplementation(libs.kluent)
-    testImplementation(libs.kotlin.coroutines.test)
-    testImplementation(libs.testcontainers.junit.jupiter)
-    testImplementation(libs.testcontainers.localstack)
+/**
+ * Multiplatform with `jvm()` only, and the sources live in **`jvmMain`, not `commonMain`** — plan
+ * Decision 12, and it is deliberate rather than lazy.
+ *
+ * `Column.kt` uses `enumClass.java.enumConstants` inside the public `EnumerationColumn<T>` and
+ * `EnumerationByNameColumn<T>`. Placing those in `commonMain` would fail even with only the JVM
+ * target enabled once a second target is added, and porting them buys nothing: no Lambda handler
+ * uses `dynamokt-exposed`. Keeping them in `jvmMain` makes the problem disappear instead of trading
+ * it for two unnecessary public API breaks. Convert if and when a native consumer actually appears.
+ */
+kotlin {
+    explicitApi()
+
+    jvm()
+
+    sourceSets {
+        jvmMain {
+            dependencies {
+                api(project(":dynamo"))
+                // The hand-written client replaces the AWS SDK here too — `dynamokt-exposed` builds
+                // requests directly rather than through `dynamokt`, so it has its own swap.
+                api(project(":aws:aws-dynamodb"))
+                api(libs.kotlin.coroutines.core)
+                api(project(":standards"))
+            }
+        }
+
+        jvmTest {
+            dependencies {
+                implementation(kotlin("test"))
+                // M5a executes against SdkBackedDynamoDb so the type swap is validated against
+                // known-good AWS SDK behaviour. Test-only; never in the production graph.
+                implementation(project(":aws:aws-dynamodb-sdk-adapter"))
+                implementation(libs.kluent)
+                implementation(libs.kotlin.coroutines.test)
+                implementation(libs.testcontainers.junit.jupiter)
+                implementation(libs.testcontainers.localstack)
+            }
+        }
+    }
 }
 
 publishing {
@@ -30,23 +57,12 @@ publishing {
     }
 }
 
-tasks.test {
+// `jvmTest`, not `test`: a multiplatform module has no `test` task.
+tasks.named<Test>("jvmTest") {
     useJUnitPlatform()
-
-    // OrbStack on macOS: Testcontainers' auto-detect can't find the daemon and
-    // its bundled docker-java defaults to an API version OrbStack rejects
-    // ("client version 1.32 is too old; minimum 1.40"). Point at the OrbStack
-    // socket and tell Testcontainers to negotiate a newer API.
-    val orbstackSocket = File(System.getProperty("user.home"), ".orbstack/run/docker.sock")
-    if (orbstackSocket.exists()) {
-        environment("DOCKER_HOST", "unix://${orbstackSocket.absolutePath}")
-        environment("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", "/var/run/docker.sock")
-        systemProperty("api.version", "1.43")
-    }
 }
 
 tasks.withType<Test> {
-    // Forwards the implementation switch into the test JVM. Without this, `-Dawskt.dynamodb.impl`
-    // only ever reaches the Gradle daemon and the flip silently does nothing.
+    // Forwards the implementation switch into the test JVM; see dynamokt's build file.
     systemProperty("awskt.dynamodb.impl", System.getProperty("awskt.dynamodb.impl") ?: "sdk")
 }

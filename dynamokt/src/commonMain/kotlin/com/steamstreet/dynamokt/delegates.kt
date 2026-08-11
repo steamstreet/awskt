@@ -3,6 +3,7 @@ package com.steamstreet.dynamokt
 import kotlinx.coroutines.runBlocking
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
+import kotlin.enums.enumEntries
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
@@ -231,34 +232,42 @@ public inline fun <reified T : Enum<T>, R : ItemContainer> enumAttribute(
     default: T,
     attributeName: String? = null
 ): ItemAttributeDelegate<T, R> {
-    return ItemAttributeDelegate(EnumSerializer<T>(T::class, default), attributeName)
+    return ItemAttributeDelegate(EnumSerializer(enumEntries<T>(), default), attributeName)
 }
 
 public inline fun <reified T : Enum<T>, R : ItemContainer> enumAttribute(): ItemAttributeDelegate<T?, R> {
-    return ItemAttributeDelegate(NullableEnumSerializer(T::class))
+    return ItemAttributeDelegate(NullableEnumSerializer(enumEntries<T>()))
 }
 
-public class EnumSerializer<T : Enum<T>>(private val cls: KClass<T>, private val default: T) : AttributeSerializer<T> {
+/**
+ * Takes the constants as a list rather than a `KClass`.
+ *
+ * `cls.java.enumConstants` is a JVM reflection call with no multiplatform equivalent. The reified
+ * factories above supply `enumEntries<T>()` instead, so call sites are unchanged while the class
+ * itself becomes portable.
+ */
+public class EnumSerializer<T : Enum<T>>(private val constants: List<T>, private val default: T) : AttributeSerializer<T> {
     override fun serialize(container: ItemContainer, value: T): AttributeValue? {
         return value.name.attributeValue()
     }
 
     override fun deserialize(container: ItemContainer, attribute: AttributeValue?): T {
         return attribute?.let { attr ->
-            cls.java.enumConstants.find { it.name == attr.asSOrNull() }
+            constants.find { it.name == attr.asSOrNull() }
         } ?: default
     }
 }
 
 
-public class NullableEnumSerializer<T : Enum<T>>(private val cls: KClass<T>) : AttributeSerializer<T?> {
+/** See [EnumSerializer] for why this takes a list. */
+public class NullableEnumSerializer<T : Enum<T>>(private val constants: List<T>) : AttributeSerializer<T?> {
     override fun serialize(container: ItemContainer, value: T?): AttributeValue? {
         return value?.name?.attributeValue()
     }
 
     override fun deserialize(container: ItemContainer, attribute: AttributeValue?): T? {
         return attribute?.let { attr ->
-            cls.java.enumConstants.find { it.name == attr.asSOrNull() }
+            constants.find { it.name == attr.asSOrNull() }
         }
     }
 }
