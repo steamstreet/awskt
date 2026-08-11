@@ -1091,7 +1091,7 @@ The ordering rationale is Decision 3's, applied to a new problem. If S3-mode sig
 
 **The whole repo compiles and all 100 DynamoDB integration tests pass — while still executing against the real AWS SDK underneath.** This isolates "did the type swap break anything?" from "does the hand-written client work?".
 
-> **STATUS: THE TYPE SWAP IS DONE AND GREEN (2026-08-11). The layout conversion is not.**
+> **STATUS: M5a IS COMPLETE (2026-08-11) — type swap *and* layout conversion.**
 > `./gradlew build` passes across the whole repo: **504 tests, 0 failures**. The 99 DynamoDB
 > integration tests (25 `dynamokt` + 72 `dynamokt-exposed` + 2 `test`) all execute against
 > **`SdkBackedDynamoDb`**, so behaviour underneath is still, byte for byte, the AWS SDK's.
@@ -1112,14 +1112,39 @@ The ordering rationale is Decision 3's, applied to a new problem. If S3-mode sig
 >   `checkLegacyAbi` fired on the change rather than letting it through, which is the guard earning
 >   its place on its first real break.
 >
-> **What is NOT done:** the multiplatform *layout* conversion of `dynamokt`/`dynamokt-exposed`
-> (`src/main` → `src/commonMain`/`src/jvmMain`), and therefore everything the common-stdlib
-> compilation is what forces: `java.util.Base64` in `Serialization.kt`, `Dispatchers.IO` in
-> `DynamoKtSession`, the `N`-precision fix in both directions, `dates.kt`'s `java.time` migration and
-> `delegates.kt`'s `KClass<T>` → `List<T>`. Those are real tasks in this section and they remain.
-> Splitting them out was deliberate: the type swap is independently verifiable and independently
-> revertible, and bundling a source-layout move into the same change would have made any failure
-> ambiguous between the two.
+> **The layout conversion landed too.** `dynamokt` is multiplatform with sources in `commonMain`
+> (`jvm()` only for now); `dynamokt-exposed` is multiplatform with sources in **`jvmMain`**, per
+> Decision 12. All the JVM couplings this section lists are gone: `java.util.Base64` →
+> `kotlin.io.encoding.Base64`; `java.time` → `kotlinx.datetime` in `dates.kt`; `KClass<T>` →
+> `List<T>` with `enumEntries<T>()` factories in `delegates.kt`; `AtomicInteger` → plain `var`; and
+> `Dispatchers.IO` → an `expect`/`actual` `ioDispatcher` **rather than a blanket downgrade to
+> `Dispatchers.Default`**, which would have capped parallel scans at the core count on the JVM too.
+>
+> The `N`-precision fix landed in both directions. Inbound was worse than this section describes:
+> `toPrimitiveValue()` resolved `intOrNull ?: longOrNull ?: floatOrNull ?: doubleOrNull`, and
+> `floatOrNull` sits **before** `doubleOrNull`, so every non-integral number was pushed through a
+> 32-bit float and truncated to ~7 significant digits *before* becoming an `AttributeValue.N`.
+> Both directions now use the raw decimal literal (`JsonUnquotedLiteral` outbound).
+>
+> **A CORRECTION TO THIS SECTION'S PREMISE, and it matters for sequencing.** The task list says to
+> convert to MPP with `jvm()` only, on the reasoning that `commonMain` then enforces the common
+> stdlib and surfaces the JVM couplings. **It does not.** With a single target there is no metadata
+> compilation, so `commonMain` is compiled against the JVM stdlib and `java.util.Base64`,
+> `java.time` and `KClass.java.enumConstants` all compile clean. Verified: the conversion built
+> successfully with every coupling still in place. The fixes above were made deliberately, not
+> because the compiler demanded them, and **nothing currently verifies them**.
+>
+> What would verify them is a second target, and that is blocked: adding `macosArm64()` to
+> `dynamokt` fails with `No matching variant of project :standards`, because `standards` declares
+> only jvm/js/wasmJs/iosArm64/iosSimulatorArm64. **M4 (foundation native targets for `standards`,
+> `env`, `logging`) is therefore a hard prerequisite for a native `dynamokt`**, not merely a
+> parallel track — the milestone table's "can run in parallel with M1–M3" is true of M4 itself but
+> hides that M5a's portability work stays unverified until it lands. Do M4 next.
+>
+> `JsonTests` moved to **`dynamo`'s `commonTest`** rather than `dynamokt`'s, because the code it
+> covers (`toJsonItemString`/`fromJsonToItem`) moved to `dynamo` with `AttributeValue` — and
+> `dynamo` has native targets today, so those four tests now execute on `macosArm64` as well as the
+> JVM. Its kluent assertions were rewritten to `kotlin.test`, kluent being JVM-only.
 >
 > **Findings worth carrying into M5b:**
 > 1. **The plan's one "genuine design uncertainty" evaporated.** `ExpressionBuilder.apply(scan:)` had
