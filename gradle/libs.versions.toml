@@ -3,7 +3,14 @@ kotlin-serialization = "1.9.0"
 aws = "1.5.123"
 kotlincrypto-macs = "0.8.0"
 kotlincrypto-hash = "0.8.0"
-ktor = "3.3.3"
+# >= 3.5.0 is a hard requirement, not a routine bump — see NATIVE-AWS-CLIENT-PLAN.md M0.
+# KTOR-9527 ("Curl: freeze when receiving large responses") is a hang, not an error: the Curl
+# engine bridges libcurl's write callback through runBlocking, and ByteChannel.flush() suspends
+# once the unflushed buffer reaches 1 MB — blocking the curl thread where no timeout can rescue it.
+# DynamoDB's Query and Scan page limit is exactly 1 MB, so a full-page native Query sits precisely
+# on that threshold. KTOR-9483 ("Curl: backpressure implementation is never used") compounds it.
+# Both are fixed in 3.5.0.
+ktor = "3.5.2"
 slf4j = "2.0.9"
 coroutines = "1.10.2"
 kotest = "5.9.1"
