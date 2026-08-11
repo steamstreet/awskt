@@ -13,7 +13,6 @@ kotlin {
                 api(libs.aws.dynamodb)
                 api(libs.aws.dynamodb.local)
                 api(libs.aws.dynamodbstreams)
-                api(libs.aws.eventbridge)
                 api(libs.aws.s3)
                 api(libs.aws.lambda)
                 compileOnly(libs.aws.sqs)
@@ -30,6 +29,9 @@ kotlin {
 
                 api(project(":standards"))
                 api(project(":dynamokt"))
+                // EventBridgeMock implements our own one-method client rather than the SDK's, so
+                // the SDK's EventBridge artifact is gone from this module entirely.
+                api(project(":aws:aws-eventbridge"))
                 api(project(":lambda:lambda-eventbridge"))
                 api(project(":lambda:lambda-dynamo-streams"))
             }

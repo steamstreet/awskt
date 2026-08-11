@@ -20,11 +20,8 @@ public final class com/steamstreet/MutableLazy : kotlin/properties/ReadWriteProp
 	public fun setValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
 }
 
-public final class com/steamstreet/MutableLazyJVMKt {
-	public static final fun cached-VtjQ1oo (JLkotlin/jvm/functions/Function0;)Lkotlin/properties/ReadWriteProperty;
-}
-
 public final class com/steamstreet/MutableLazyKt {
+	public static final fun cached-VtjQ1oo (JLkotlin/jvm/functions/Function0;)Lkotlin/properties/ReadWriteProperty;
 	public static final fun mutableLazy (Lkotlin/jvm/functions/Function0;)Lkotlin/properties/ReadWriteProperty;
 }
 

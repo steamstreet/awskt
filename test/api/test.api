@@ -19,7 +19,7 @@ public final class com/steamstreet/aws/test/DirectInvocationHandler : com/steams
 }
 
 public final class com/steamstreet/aws/test/DynamoEventBridgePipeKt {
-	public static final fun dynamoPipe (Laws/sdk/kotlin/services/eventbridge/EventBridgeClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lkotlin/jvm/functions/Function2;
+	public static final fun dynamoPipe (Lcom/steamstreet/awskt/eventbridge/EventBridgeApi;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lkotlin/jvm/functions/Function2;
 }
 
 public final class com/steamstreet/aws/test/DynamoLocalBuilder {
@@ -58,83 +58,42 @@ public final class com/steamstreet/aws/test/DynamoTestHelpersKt {
 	public static final fun defaultTable (Laws/sdk/kotlin/services/dynamodb/DynamoDbClient;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class com/steamstreet/aws/test/EventBridgeMock : aws/sdk/kotlin/services/eventbridge/EventBridgeClient, com/steamstreet/aws/test/MockService {
+public abstract interface class com/steamstreet/aws/test/EventBridgeAdmin {
+	public abstract fun createEventBus (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun listRules (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun listRules$default (Lcom/steamstreet/aws/test/EventBridgeAdmin;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun putRule (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun putRule$default (Lcom/steamstreet/aws/test/EventBridgeAdmin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/aws/test/EventBridgeAdmin$DefaultImpls {
+	public static synthetic fun listRules$default (Lcom/steamstreet/aws/test/EventBridgeAdmin;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun putRule$default (Lcom/steamstreet/aws/test/EventBridgeAdmin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/aws/test/EventBridgeMock : com/steamstreet/aws/test/EventBridgeAdmin, com/steamstreet/aws/test/MockService, com/steamstreet/awskt/eventbridge/EventBridgeApi {
 	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Laws/sdk/kotlin/services/eventbridge/EventBridgeClient;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Laws/sdk/kotlin/services/eventbridge/EventBridgeClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun activateEventSource (Laws/sdk/kotlin/services/eventbridge/model/ActivateEventSourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun cancelReplay (Laws/sdk/kotlin/services/eventbridge/model/CancelReplayRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun clearSaved ()V
 	public fun close ()V
-	public fun createApiDestination (Laws/sdk/kotlin/services/eventbridge/model/CreateApiDestinationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun createArchive (Laws/sdk/kotlin/services/eventbridge/model/CreateArchiveRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun createConnection (Laws/sdk/kotlin/services/eventbridge/model/CreateConnectionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun createEndpoint (Laws/sdk/kotlin/services/eventbridge/model/CreateEndpointRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun createEventBus (Laws/sdk/kotlin/services/eventbridge/model/CreateEventBusRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun createPartnerEventSource (Laws/sdk/kotlin/services/eventbridge/model/CreatePartnerEventSourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun deactivateEventSource (Laws/sdk/kotlin/services/eventbridge/model/DeactivateEventSourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun deauthorizeConnection (Laws/sdk/kotlin/services/eventbridge/model/DeauthorizeConnectionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun deleteApiDestination (Laws/sdk/kotlin/services/eventbridge/model/DeleteApiDestinationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun deleteArchive (Laws/sdk/kotlin/services/eventbridge/model/DeleteArchiveRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun deleteConnection (Laws/sdk/kotlin/services/eventbridge/model/DeleteConnectionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun deleteEndpoint (Laws/sdk/kotlin/services/eventbridge/model/DeleteEndpointRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun deleteEventBus (Laws/sdk/kotlin/services/eventbridge/model/DeleteEventBusRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun deletePartnerEventSource (Laws/sdk/kotlin/services/eventbridge/model/DeletePartnerEventSourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun deleteRule (Laws/sdk/kotlin/services/eventbridge/model/DeleteRuleRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun describeApiDestination (Laws/sdk/kotlin/services/eventbridge/model/DescribeApiDestinationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun describeArchive (Laws/sdk/kotlin/services/eventbridge/model/DescribeArchiveRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun describeConnection (Laws/sdk/kotlin/services/eventbridge/model/DescribeConnectionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun describeEndpoint (Laws/sdk/kotlin/services/eventbridge/model/DescribeEndpointRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun describeEventBus (Laws/sdk/kotlin/services/eventbridge/model/DescribeEventBusRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun describeEventSource (Laws/sdk/kotlin/services/eventbridge/model/DescribeEventSourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun describePartnerEventSource (Laws/sdk/kotlin/services/eventbridge/model/DescribePartnerEventSourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun describeReplay (Laws/sdk/kotlin/services/eventbridge/model/DescribeReplayRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun describeRule (Laws/sdk/kotlin/services/eventbridge/model/DescribeRuleRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun disableRule (Laws/sdk/kotlin/services/eventbridge/model/DisableRuleRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun enableRule (Laws/sdk/kotlin/services/eventbridge/model/EnableRuleRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun createEventBus (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun eventsOfType (Ljava/lang/String;Ljava/lang/String;)Ljava/util/List;
 	public static synthetic fun eventsOfType$default (Lcom/steamstreet/aws/test/EventBridgeMock;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ljava/util/List;
-	public fun getConfig ()Laws/sdk/kotlin/services/eventbridge/EventBridgeClient$Config;
-	public synthetic fun getConfig ()Laws/smithy/kotlin/runtime/client/SdkClientConfig;
+	public fun getClient ()Lcom/steamstreet/awskt/core/AwsServiceClient;
 	public fun isProcessing ()Z
 	public fun isReady ()Z
-	public fun listApiDestinations (Laws/sdk/kotlin/services/eventbridge/model/ListApiDestinationsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun listArchives (Laws/sdk/kotlin/services/eventbridge/model/ListArchivesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun listConnections (Laws/sdk/kotlin/services/eventbridge/model/ListConnectionsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun listEndpoints (Laws/sdk/kotlin/services/eventbridge/model/ListEndpointsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun listEventBuses (Laws/sdk/kotlin/services/eventbridge/model/ListEventBusesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun listEventSources (Laws/sdk/kotlin/services/eventbridge/model/ListEventSourcesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun listPartnerEventSourceAccounts (Laws/sdk/kotlin/services/eventbridge/model/ListPartnerEventSourceAccountsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun listPartnerEventSources (Laws/sdk/kotlin/services/eventbridge/model/ListPartnerEventSourcesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun listReplays (Laws/sdk/kotlin/services/eventbridge/model/ListReplaysRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun listRuleNamesByTarget (Laws/sdk/kotlin/services/eventbridge/model/ListRuleNamesByTargetRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun listRules (Laws/sdk/kotlin/services/eventbridge/model/ListRulesRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun listTagsForResource (Laws/sdk/kotlin/services/eventbridge/model/ListTagsForResourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun listTargetsByRule (Laws/sdk/kotlin/services/eventbridge/model/ListTargetsByRuleRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun putEvents (Laws/sdk/kotlin/services/eventbridge/model/PutEventsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun putPartnerEvents (Laws/sdk/kotlin/services/eventbridge/model/PutPartnerEventsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun putPermission (Laws/sdk/kotlin/services/eventbridge/model/PutPermissionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun putRule (Laws/sdk/kotlin/services/eventbridge/model/PutRuleRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun listRules (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putEvents (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun putRule (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun putRule (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun putRule (Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun putTarget (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun putTarget (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function3;)V
 	public final fun putTarget (Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun putTarget (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun putTargets (Laws/sdk/kotlin/services/eventbridge/model/PutTargetsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun removePermission (Laws/sdk/kotlin/services/eventbridge/model/RemovePermissionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun removeTargets (Laws/sdk/kotlin/services/eventbridge/model/RemoveTargetsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun start (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun startReplay (Laws/sdk/kotlin/services/eventbridge/model/StartReplayRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun stop (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun tagResource (Laws/sdk/kotlin/services/eventbridge/model/TagResourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun testEventPattern (Laws/sdk/kotlin/services/eventbridge/model/TestEventPatternRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun untagResource (Laws/sdk/kotlin/services/eventbridge/model/UntagResourceRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun updateApiDestination (Laws/sdk/kotlin/services/eventbridge/model/UpdateApiDestinationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun updateArchive (Laws/sdk/kotlin/services/eventbridge/model/UpdateArchiveRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun updateConnection (Laws/sdk/kotlin/services/eventbridge/model/UpdateConnectionRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun updateEndpoint (Laws/sdk/kotlin/services/eventbridge/model/UpdateEndpointRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun updateEventBus (Laws/sdk/kotlin/services/eventbridge/model/UpdateEventBusRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class com/steamstreet/aws/test/EventBridgeMockKt {

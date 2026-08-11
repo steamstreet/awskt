@@ -1,14 +1,14 @@
 package com.steamstreet.aws.test
 
-import aws.sdk.kotlin.runtime.AwsServiceException
-import aws.sdk.kotlin.services.eventbridge.EventBridgeClient
-import aws.sdk.kotlin.services.eventbridge.model.*
-import aws.sdk.kotlin.services.eventbridge.putRule
 import com.amazonaws.services.lambda.runtime.Context
 import com.steamstreet.aws.lambda.eventbridge.EventBridgeFunction
 import com.steamstreet.aws.lambda.lambdaJson
+import com.steamstreet.awskt.core.AwsServiceClient
+import com.steamstreet.awskt.eventbridge.EventBridgeApi
+import com.steamstreet.awskt.eventbridge.PutEventsEntry
+import com.steamstreet.awskt.eventbridge.PutEventsResponse
+import com.steamstreet.awskt.eventbridge.PutEventsResultEntry
 import com.steamstreet.events.EventSchema
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.*
 import software.amazon.event.ruler.Ruler
@@ -25,25 +25,40 @@ private class LocalTarget(
 
 /**
  * A local mocked version of event bridge.
+ *
+ * **No longer `EventBridgeClient by mockk`.** It implements this library's own one-method
+ * [EventBridgeApi] outright, plus the test-only [EventBridgeAdmin]. Delegating to a relaxed mockk
+ * meant every operation nobody had overridden silently returned an empty response instead of
+ * failing, so a test that called into an unimplemented corner of the client passed for the wrong
+ * reason. With a one-method interface there is nothing left to relax.
  */
 public class EventBridgeMock(
     private val accountId: String = "1234",
     private val region: String = "us-west-2",
-    private val mockk: EventBridgeClient = mockk(relaxed = true)
-) : EventBridgeClient by mockk, MockService {
+) : EventBridgeApi, EventBridgeAdmin, MockService {
     private val buses = hashMapOf(
         "default" to Bus()
     )
 
-    private val events = ArrayList<PutEventsRequestEntry>()
+    private val events = ArrayList<PutEventsEntry>()
 
     private var processSemaphore = AtomicInteger(0)
 
     override val isProcessing: Boolean get() = processSemaphore.get() != 0
 
+    /**
+     * The extension seam is not available on a mock: there is no signed transport behind it, and
+     * an extension operation written against it would be talking to nothing. Failing loudly beats
+     * handing back a client that cannot work.
+     */
+    override val client: AwsServiceClient
+        get() = throw UnsupportedOperationException(
+            "EventBridgeMock has no transport; extension operations cannot run against it",
+        )
+
     override fun close() {}
 
-    private inner class EventRule(val rule: PutRuleRequest) {
+    private inner class EventRule(val name: String, val eventPattern: String) {
         val targets = ArrayList<LocalTarget>()
     }
 
@@ -56,7 +71,7 @@ public class EventBridgeMock(
         }
     }
 
-    public fun eventsOfType(detailType: String, bus: String? = null): List<PutEventsRequestEntry> {
+    public fun eventsOfType(detailType: String, bus: String? = null): List<PutEventsEntry> {
         synchronized(events) {
             return events.filter {
                 it.detailType == detailType
@@ -69,7 +84,7 @@ public class EventBridgeMock(
     private inner class Bus {
         val rules = ArrayList<EventRule>()
 
-        suspend fun putEvent(entry: PutEventsRequestEntry) {
+        fun putEvent(entry: PutEventsEntry) {
             processSemaphore.incrementAndGet()
 
             val str = buildJsonObject {
@@ -84,7 +99,7 @@ public class EventBridgeMock(
                 runBlocking {
                     synchronized(rules) {
                         rules.filter {
-                            Ruler.matchesRule(str, it.rule.eventPattern!!)
+                            Ruler.matchesRule(str, it.eventPattern)
                         }
                     }.flatMap { it.targets }.forEach {
                         sendToTarget(entry, it)
@@ -95,7 +110,7 @@ public class EventBridgeMock(
         }
 
         private suspend fun sendToTarget(
-            entry: PutEventsRequestEntry,
+            entry: PutEventsEntry,
             target: LocalTarget
         ) {
             val event = buildJsonObject {
@@ -118,45 +133,30 @@ public class EventBridgeMock(
             }
         }
 
-        fun putRule(rule: PutRuleRequest) {
+        fun putRule(name: String, eventPattern: String) {
             synchronized(rules) {
-                if (rules.find { it.rule.name == rule.name } != null) {
-                    throw AwsServiceException("Duplicate rule name", null)
-                }
-                rules.add(EventRule(rule))
+                check(rules.find { it.name == name } == null) { "Duplicate rule name" }
+                rules.add(EventRule(name, eventPattern))
             }
         }
     }
 
-    override suspend fun listRules(input: ListRulesRequest): ListRulesResponse {
-        val bus = buses[input.eventBusName ?: "default"]
-            ?: throw AwsServiceException(input.eventBusName, null)
+    private fun bus(name: String?): Bus =
+        buses[name ?: "default"] ?: throw IllegalArgumentException("No such event bus: $name")
 
-        return ListRulesResponse {
-            rules = synchronized(bus.rules) {
-                bus.rules.map {
-                    Rule { name = it.rule.name }
-                }
-            }
-
-        }
+    override suspend fun listRules(eventBusName: String?): List<String> {
+        val bus = bus(eventBusName)
+        return synchronized(bus.rules) { bus.rules.map { it.name } }
     }
 
-    override suspend fun createEventBus(input: CreateEventBusRequest): CreateEventBusResponse {
-        buses[input.name!!] = Bus()
-        return CreateEventBusResponse {
-            eventBusArn = "arn:aws:events:${region}:$accountId:event-bus/${input.name}"
-        }
+    override suspend fun createEventBus(name: String): String {
+        buses[name] = Bus()
+        return "arn:aws:events:${region}:$accountId:event-bus/$name"
     }
 
-    override suspend fun putRule(input: PutRuleRequest): PutRuleResponse {
-        val bus =
-            buses[input.eventBusName ?: "default"] ?: throw throw AwsServiceException(input.eventBusName, null)
-
-        bus.putRule(input)
-        return PutRuleResponse {
-            ruleArn = "arn:aws:events:${region}:$accountId:rule/${input.name}"
-        }
+    override suspend fun putRule(name: String, eventPattern: String, eventBusName: String?): String {
+        bus(eventBusName).putRule(name, eventPattern)
+        return "arn:aws:events:${region}:$accountId:rule/$name"
     }
 
     /**
@@ -164,11 +164,7 @@ public class EventBridgeMock(
      */
     public suspend fun putRule(bus: String, pattern: String, target: EventBridgeFunction) {
         val ruleName = UUID.randomUUID().toString()
-        putRule(PutRuleRequest {
-            eventBusName = bus
-            eventPattern = pattern
-            name = UUID.randomUUID().toString()
-        })
+        putRule(name = ruleName, eventPattern = pattern, eventBusName = bus)
 
         putTarget(bus, ruleName) { input, context ->
             val output = ByteArrayOutputStream()
@@ -186,11 +182,7 @@ public class EventBridgeMock(
     public suspend fun putTarget(eventBusName: String, pattern: String, handler: EventBridgeFunction) {
         val ruleName = UUID.randomUUID().toString()
 
-        putRule {
-            this.eventBusName = eventBusName
-            eventPattern = pattern
-            this.name = ruleName
-        }
+        putRule(name = ruleName, eventPattern = pattern, eventBusName = eventBusName)
 
         putTarget(eventBusName, ruleName) { input, context ->
             handler.execute(input, ByteArrayOutputStream(), context)
@@ -214,34 +206,25 @@ public class EventBridgeMock(
         }.toString(), handler)
     }
 
-    override suspend fun putTargets(input: PutTargetsRequest): PutTargetsResponse {
-        val bus = buses[input.eventBusName ?: "default"]
-            ?: throw throw AwsServiceException(input.eventBusName, null)
-        val rule = synchronized(bus.rules) {
-            bus.rules.find { it.rule.name == input.rule } ?: throw throw AwsServiceException(
-                input.rule, null
-            )
-        }
-        rule.targets.addAll(input.targets!!.map {
-            LocalTarget()
-        })
-        return PutTargetsResponse {}
-    }
-
     public fun putTarget(eventBus: String, ruleName: String, handler: suspend (InputStream, Context) -> Unit) {
-        val bus = buses[eventBus]
-            ?: throw throw AwsServiceException(eventBus, null)
+        val bus = bus(eventBus)
         val rule = synchronized(bus.rules) {
-            bus.rules.find { it.rule.name == ruleName } ?: throw throw AwsServiceException(
-                ruleName, null
-            )
+            bus.rules.find { it.name == ruleName }
+                ?: throw IllegalArgumentException("No such rule: $ruleName")
         }
 
         rule.targets.add(LocalTarget(handler))
     }
 
-    override suspend fun putEvents(input: PutEventsRequest): PutEventsResponse {
-        val results = input.entries!!.map { entry ->
+    /**
+     * Records every entry and routes it to any matching local target.
+     *
+     * Returns a [PutEventsResultEntry] per input entry with a generated `EventId`, positionally
+     * aligned with the request — the same contract real EventBridge has, and what
+     * `EventBridgeSubmitter` reads to decide which events published.
+     */
+    override suspend fun putEvents(entries: List<PutEventsEntry>): PutEventsResponse {
+        val results = entries.map { entry ->
             synchronized(events) {
                 events.add(entry)
             }
@@ -250,13 +233,10 @@ public class EventBridgeMock(
                 else it
             }
             buses[busName]?.putEvent(entry)
-            PutEventsResultEntry {}
+            PutEventsResultEntry(eventId = UUID.randomUUID().toString())
         }
-        return PutEventsResponse {
-            entries = results
-        }
+        return PutEventsResponse(failedEntryCount = 0, entries = results)
     }
-
 }
 
 /**

@@ -40,11 +40,11 @@ abstract class ExposedTestBase {
                 secretAccessKey = "DummySecret"
             }
         }
-        // M5a runs on SdkBackedDynamoDb so these 72 tests validate the *type* swap against
-        // unchanged AWS SDK behaviour; `-Dawskt.dynamodb.impl=native` runs the same suite on the
-        // hand-written client, which is M5b.
+        // M5b: these 72 tests run on the hand-written client by default.
+        // `-Dawskt.dynamodb.impl=sdk` runs the same suite against unchanged AWS SDK behaviour, so a
+        // failure can be attributed to the client implementation or the type swap in one command.
         database = Database(
-            if (System.getProperty("awskt.dynamodb.impl") == "native") {
+            if (System.getProperty("awskt.dynamodb.impl") != "sdk") {
                 DynamoDb {
                     region = "us-east-1"
                     endpointUrl = endpoint.toString()

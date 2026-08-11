@@ -94,9 +94,15 @@ public class DynamoDbConfig {
 public fun DynamoDb(configure: DynamoDbConfig.() -> Unit = {}): DynamoDb {
     val config = DynamoDbConfig().apply(configure)
     val region = resolveRegion(config.region)
+    // Bind the *effective* client once and hand the same reference to both the transport and the
+    // close path. Passing `config.httpClient` to `DefaultDynamoDb` instead meant that in the only
+    // case where `ownsHttpClient` is true — the caller supplied none, so we built one — the
+    // reference was null and `close()` was a null-safe no-op, leaking the client we had just
+    // created. The flag was right; the reference was not.
+    val httpClient = config.httpClient ?: awsHttpClient(config.caInfo)
     return DefaultDynamoDb(
         client = AwsServiceClient(
-            httpClient = config.httpClient ?: awsHttpClient(config.caInfo),
+            httpClient = httpClient,
             credentialsProvider = config.credentialsProvider ?: defaultCredentialsProvider(),
             endpoint = resolveEndpoint("dynamodb", region, config.endpointUrl),
             region = region,
@@ -104,7 +110,7 @@ public fun DynamoDb(configure: DynamoDbConfig.() -> Unit = {}): DynamoDb {
             retryConfig = config.retryConfig,
         ),
         ownsHttpClient = config.httpClient == null,
-        httpClient = config.httpClient,
+        httpClient = httpClient,
     )
 }
 

@@ -64,5 +64,6 @@ tasks.named<Test>("jvmTest") {
 
 tasks.withType<Test> {
     // Forwards the implementation switch into the test JVM; see dynamokt's build file.
-    systemProperty("awskt.dynamodb.impl", System.getProperty("awskt.dynamodb.impl") ?: "sdk")
+    // M5b flipped this default from `sdk` to `native`.
+    systemProperty("awskt.dynamodb.impl", System.getProperty("awskt.dynamodb.impl") ?: "native")
 }

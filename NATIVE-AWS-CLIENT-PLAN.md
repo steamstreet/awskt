@@ -1078,12 +1078,111 @@ The ordering rationale is Decision 3's, applied to a new problem. If S3-mode sig
 ### M4 — Foundation native targets (3 days) — can run in parallel with M1–M3
 
 **Tasks**:
-- [ ] `standards`: add `linuxX64()`, `linuxArm64()`, `macosArm64()`. Needs a native actual for `expect fun epochMillis()` (`standards/src/commonMain/kotlin/com/steamstreet/Time.kt:6`) and promotion of the `iosMain`-only `Time.kt` and `MutableLazyIOS.kt` to `nativeMain` — `ref-2.3.x` already did both. Promote `libs.kotlin.date.time` to `api` where kotlinx.datetime types are exposed.
-- [ ] `env`: add the three native targets; native `getenv`/`setenv` actual (20 lines, recoverable from `ref-2.3.x/env/src/nativeMain/kotlin/com/steamstreet/env/env.kt`).
-- [ ] **`logging`**: add `linuxArm64()`, `macosArm64()`. Its `nativeMain` source set already exists (`logging/build.gradle.kts:57-61` declares `api(libs.ktor.client.core)`) but `logging/src/nativeMain/kotlin/.../SuspendedLogging.native.kt` **has only ever been compiled for Apple targets**. Expect to need a Linux actual for anything relying on Apple-only APIs. This is an explicit task with its own checkbox, not an aside.
-- [ ] Fix the inverted expiry test in `MutableLazy` (`standards/src/jvmMain/kotlin/com/steamstreet/MutableLazyJVM.kt:38`) and add locking to the native actual, or document it as knowingly broken for finite timeouts. `aws-core` deliberately does not use it either way.
+- [x] `standards`: add `linuxX64()`, `linuxArm64()`, `macosArm64()`. Needs a native actual for `expect fun epochMillis()` (`standards/src/commonMain/kotlin/com/steamstreet/Time.kt:6`) and promotion of the `iosMain`-only `Time.kt` and `MutableLazyIOS.kt` to `nativeMain` — `ref-2.3.x` already did both. Promote `libs.kotlin.date.time` to `api` where kotlinx.datetime types are exposed.
+- [x] `env`: add the three native targets; native `getenv`/`setenv` actual (20 lines, recoverable from `ref-2.3.x/env/src/nativeMain/kotlin/com/steamstreet/env/env.kt`).
+- [x] **`logging`**: add `linuxArm64()`, `macosArm64()`. Its `nativeMain` source set already exists (`logging/build.gradle.kts:57-61` declares `api(libs.ktor.client.core)`) but `logging/src/nativeMain/kotlin/.../SuspendedLogging.native.kt` **has only ever been compiled for Apple targets**. Expect to need a Linux actual for anything relying on Apple-only APIs. This is an explicit task with its own checkbox, not an aside.
+- [x] Fix the inverted expiry test in `MutableLazy` (`standards/src/jvmMain/kotlin/com/steamstreet/MutableLazyJVM.kt:38`) and add locking to the native actual, or document it as knowingly broken for finite timeouts. `aws-core` deliberately does not use it either way.
 
 **Verification**: `./gradlew :standards:build :env:build :logging:build` green on macOS; CI runs `linuxX64Test` for all three. `standards`' and `logging`' existing js/wasmJs/iOS compilations still resolve.
+
+> **STATUS: M4 IS COMPLETE (2026-08-11), and the exit criterion is met.**
+> `./gradlew build` is green across the repo: **528 tests, 0 failures**, up from 507 by exactly the
+> 21 new `MutableLazy` test executions. All three modules carry `linuxX64`, `linuxArm64` and
+> `macosArm64`, and the js/wasmJs/iOS compilations that `serialization`, `events` and `lambda/*`
+> depend on still resolve.
+>
+> **The point of the milestone landed: `dynamokt` now compiles on `macosArm64`, `linuxArm64` and
+> `linuxX64`.** `No matching variant of project :standards` is gone. **M5a's portability work is
+> therefore verified rather than asserted** — with a second target there is a real metadata
+> compilation, and `commonMain` is now checked against the common stdlib for the first time.
+>
+> **That verification found one thing, and only one.** Every M5a fix held up: `kotlin.io.encoding.Base64`,
+> `kotlinx.datetime` in `dates.kt`, `enumEntries<T>()` in `delegates.kt`, the `AtomicInteger` removal
+> and the `runBlocking` placement all compiled without a change. The single failure was the missing
+> native `ioDispatcher` actual — and the interesting part is *why* it could not simply mirror the JVM:
+>
+> **`Dispatchers.IO` does not exist on Kotlin/Native.** kotlinx-coroutines 1.10.2 declares it
+> `internal` off the JVM (`Cannot access 'val IO': it is internal in 'kotlinx.coroutines.Dispatchers'`).
+> The `expect`/`actual` `ioDispatcher` was introduced in M5a precisely so the JVM would keep `IO`
+> instead of collapsing to `Dispatchers.Default` — but on Native there is nothing else to collapse to.
+> `dynamokt/src/nativeMain/.../Dispatchers.native.kt` uses `Dispatchers.Default` and says so in a
+> comment: a parallel scan on Native runs roughly core-count segments concurrently, which on a 2-vCPU
+> Lambda is two in flight regardless of how much of that time is network wait. The alternative,
+> `newFixedThreadPoolContext`, is `@DelicateCoroutinesApi`, allocates threads eagerly and has no owner
+> to close it; sizing it wants a measured native Lambda. **Deferred to M7, where that measurement
+> exists.** Nothing before M7 runs a parallel scan on Native.
+>
+> **Two corrections to this section as written:**
+> 1. **"Promote `libs.kotlin.date.time` to `api` where kotlinx.datetime types are exposed" has zero
+>    sites.** `kotlinx.datetime` is not referenced anywhere in `standards`, `env` or `logging`. Every
+>    use is `kotlin.time.Clock` / `kotlin.time.Instant`, which are **standard library**, and the
+>    convention plugin already opts in to `kotlin.time.ExperimentalTime` globally. The
+>    `implementation(libs.kotlin.date.time)` in `standards`' `iosMain` was dead and was removed;
+>    `standards` now has no datetime dependency at all. (`dynamokt`'s `api(libs.kotlin.date.time)` is
+>    genuine and untouched.)
+> 2. **`logging` needed no Linux actual.** Its `nativeMain` is one line — `actual var log =
+>    Log(DefaultLogPublisher())` — and `DefaultLogPublisher` is `println` plus kotlinx-serialization.
+>    Adding the three targets was a build-file edit and nothing else. The Apple-only risk this section
+>    flagged was not there.
+>
+> **`MutableLazy` was consolidated rather than patched four times.** The inverted expiry check was not
+> only in the JVM actual — the identical class was copy-pasted into `jvmMain`, `iosMain`, `jsMain` and
+> `wasmJsMain`, all four with the same bug, and 2.3.x's `nativeMain` copy would have made five. The
+> class and `cached()` now live in `commonMain` in one copy; the four platform files are deleted.
+>
+> The check reads `epochMillis() - lastRetrieved >= timeout` rather than
+> `lastRetrieved + timeout > epochMillis()`. Subtracting is not a style preference: **the old form was
+> correct for `Duration.INFINITE` only by integer overflow.** `INFINITE.inWholeMilliseconds` is
+> `Long.MAX_VALUE`, so `lastRetrieved + it` wraps negative, and the comparison then accidentally
+> reported "not expired" — which is why `mutableLazy()`, the only form anyone actually calls, always
+> worked while any finite timeout re-ran its initializer on *every* read until expiry and then stopped.
+> A naive `>` → `<=` fix would have inverted that accident and broken every `mutableLazy` in the repo.
+>
+> `standards`' `commonTest` went from 1 test to 5, and it is a real regression suite:
+> `unexpiredFiniteTimeoutInitializesOnce` and `expiredTimeoutRecomputes` were **confirmed to fail
+> against the old logic and pass against the fix**, and `infiniteTimeoutInitializesOnce` guards the
+> overflow trap above. They run on all five platforms, `macosArm64` included.
+>
+> **Locking: Kotlin/Native still has none, deliberately, and it is now written down rather than
+> implied.** `MutableLazyLock` is an `internal expect class` — the JVM actual is a real monitor, so the
+> reflection-based initializers in `env` and `events` keep their run-exactly-once guarantee; JS/Wasm
+> are single-threaded no-ops; the Native actual is a no-op with the reasoning in the file. The cost is
+> that two racing first reads can both run the initializer, not memory unsafety — Kotlin/Native's
+> memory model makes reference field access atomic. Every current caller passes `Duration.INFINITE`
+> with an idempotent initializer. If a native caller ever needs run-exactly-once, the fix is
+> `kotlinx.atomicfu.locks.SynchronizedObject`; it was not pulled in now because it would add a
+> third-party dependency to the POM of the module everything else depends on.
+>
+> **What is NOT covered, and should not be read as green:**
+> - **`:logging:macosArm64Test` is `SKIPPED / NO-SOURCE`.** `logging` has no native tests at all — only
+>   `jvmTest` (6 tests). Its native targets compile and are published; nothing executes them.
+> - **`env` has no tests on any platform**, native included. The posix `getenv`/`setenv` actual is
+>   unexercised.
+> - **`dynamokt`'s native targets run zero tests.** Its suite is `jvmTest` integration tests against
+>   LocalStack via testcontainers; `commonTest` is empty (M5a moved `JsonTests` to `dynamo`). Native is
+>   compile-verified only.
+> - **`linuxX64Test` / `linuxArm64Test` do not run on a macOS host** — Kotlin/Native cross-compiles the
+>   Linux klibs but cannot execute them. Linux execution is CI's job, as this section says.
+>
+> **ABI diff** (the 3.0 gate's evidence). Four dumps changed and the diff is 4 insertions /
+> 7 deletions plus one new file:
+> - `env`, `logging`, `standards` `.klib.api`: target-list lines only, no declaration changed.
+> - `standards.api`: the one real API break — `cached()` moves from the `MutableLazyJVMKt` facade to
+>   `MutableLazyKt`, because its source file moved from `jvmMain` to `commonMain`. Source-compatible,
+>   binary-incompatible, which is what the major version is for. `checkKotlinAbi` caught it unprompted.
+> - `dynamokt/api/dynamokt.klib.api` is **new** — `dynamokt` had no klib dump when it was JVM-only.
+>
+> One naming trap worth writing down, since it costs a confused minute: `checkLegacyAbi` and
+> `updateLegacyAbi` are **lifecycle aggregates** that drive the per-project `checkKotlinAbi` /
+> `updateKotlinAbi`. Both names work and the plan's usage elsewhere is correct — but the *failure
+> message* names `checkKotlinAbi`, so `-x checkLegacyAbi` does not exclude the task that actually
+> failed. Exclude `checkKotlinAbi`, or just regenerate. `keepUnsupportedTargets` works as documented:
+> every dump taken on macOS lists `linuxArm64` and `linuxX64` alongside the Apple targets.
+>
+> **Sequencing note for review:** the `dynamokt` change is separable. Foundation modules =
+> `standards`, `env`, `logging` (+ their ABI dumps); exit-criterion proof = `dynamokt/build.gradle.kts`,
+> `Dispatchers.native.kt` and `dynamokt.klib.api`. It stayed in because it came to one new file, not
+> because the two belong in one commit.
 
 ---
 
@@ -1140,6 +1239,11 @@ The ordering rationale is Decision 3's, applied to a new problem. If S3-mode sig
 > `env`, `logging`) is therefore a hard prerequisite for a native `dynamokt`**, not merely a
 > parallel track — the milestone table's "can run in parallel with M1–M3" is true of M4 itself but
 > hides that M5a's portability work stays unverified until it lands. Do M4 next.
+>
+> **RESOLVED 2026-08-11 by M4.** `dynamokt` compiles on `macosArm64`, `linuxArm64` and `linuxX64`, so
+> everything above is now compiler-verified rather than asserted. The second target found exactly one
+> problem — `Dispatchers.IO` is `internal` outside the JVM in kotlinx-coroutines 1.10.2 — and every
+> other fix in this block held. See M4's STATUS.
 >
 > `JsonTests` moved to **`dynamo`'s `commonTest`** rather than `dynamokt`'s, because the code it
 > covers (`toJsonItemString`/`fromJsonToItem`) moved to `dynamo` with `AttributeValue` — and
@@ -1241,24 +1345,132 @@ This is one atomic merge across `dynamo`, `dynamokt`, `dynamokt-exposed` **and `
 
 ### M5b — Implementation flip (3 days)
 
-- [ ] Flip the default in `DynamoKt.defaultClientBuilder` and `ExposedTestBase` from `SdkBackedDynamoDb` to `DefaultDynamoDb`.
-- [ ] Run the full suite. Fix whatever the hand-written client gets wrong.
-- [ ] Keep both paths wired behind a system property so a regression can be bisected to "type swap" vs "client implementation" in one command.
+- [x] Flip the default in `DynamoKt.defaultClientBuilder` and `ExposedTestBase` from `SdkBackedDynamoDb` to `DefaultDynamoDb`.
+- [x] Run the full suite. Fix whatever the hand-written client gets wrong.
+- [x] Keep both paths wired behind a system property so a regression can be bisected to "type swap" vs "client implementation" in one command.
 - [ ] PR description must call out the deliberate behaviour changes: BatchGetItem `UnprocessedKeys` now retried; BatchWriteItem chunked to 25 and `UnprocessedItems` retried; UpdateItem no longer retried on ambiguous transport failures; `TransactWriteItems` auto-generates `ClientRequestToken`; `N` precision preserved end-to-end.
 
 **Verification**: `./gradlew :dynamokt:jvmTest :dynamokt-exposed:jvmTest` — all 100 tests green on the hand-written client. `-Pawskt.dynamo.client=sdk` still green. **This is the project's headline success criterion.**
+
+> **STATUS: M5b IS COMPLETE (2026-08-11). The headline success criterion is met.**
+> **92 integration tests, 0 failures** on the hand-written `DefaultDynamoDb` (20 `dynamokt` +
+> 72 `dynamokt-exposed`), and **92, 0 failures** again on `-Dawskt.dynamodb.impl=sdk`. Both paths
+> stay wired, so a regression is still one command away from being attributed.
+>
+> **The flip was smaller than this section implies, and the reason matters.** `DynamoKt.defaultClientBuilder`
+> was *already* building `DynamoDb { }` — the hand-written client — because M5a's type swap changed
+> what that factory returns. **Production has been on `DefaultDynamoDb` since M5a.** The only thing
+> still pinned to the SDK was the *test* default, in two `build.gradle.kts` files and two test bases.
+>
+> The test-side condition was also inverted rather than just re-defaulted: it now reads
+> `!= "sdk"` instead of `== "native"`. Otherwise an IDE run, where Gradle's `systemProperty` never
+> reaches the JVM, would silently keep testing the adapter — which is precisely the failure this
+> milestone exists to rule out.
+>
+> **A passing run proves nothing here on its own, so the switch was verified directly.** With the
+> native branch of `DynamoKtTests.buildClient()` replaced by `error(...)`, **18 of 20 tests failed
+> on it** — the two survivors never build a client. The default genuinely selects the hand-written
+> implementation.
+>
+> **One real bug found and fixed, exactly the "fix whatever the hand-written client gets wrong"
+> task.** `DynamoDb()` leaked an `HttpClient` on every client it built:
+> ```kotlin
+> ownsHttpClient = config.httpClient == null,   // true when we built one
+> httpClient = config.httpClient,               // ...but this is then null
+> ```
+> `close()` is `if (ownsHttpClient) httpClient?.close()`, so in the *only* case where ownership is
+> true the reference is null and close is a no-op. The flag was right; the reference was not. Both
+> now bind one `val httpClient` and hand the same reference to the transport and the close path.
+> Ktor connection pools and their coroutine scopes are not free, and `dynamokt` builds a client per
+> session.
+>
+> **Two counts in this plan are wrong.** The verification line says "all 100 tests"; M5a's STATUS
+> says 25 `dynamokt` + 72. The real numbers are **20 + 72 = 92** — `dynamokt` has 6 `BasicTests` and
+> 14 `UpdateTests`, each accounted for in the XML with nothing skipped. Neither number was ever 100.
 
 ---
 
 ### M6 — EventBridge client and the `events` module (5 days)
 
-- [ ] Create `aws/aws-eventbridge` (jvm/linuxX64/linuxArm64/macosArm64), awsJson1_1, target prefix `AWSEvents`. `interface EventBridgeApi { suspend fun putEvents(entries: List<PutEventsEntry>): PutEventsResponse }`, `PutEventsEntry(eventBusName, source, detailType, detail)`, `PutEventsResponse(failedEntryCount, entries)`, `PutEventsResultEntry(eventId, errorCode, errorMessage)`. ~120 lines.
-- [ ] **`events` restructuring — do NOT move to commonMain.** Create an intermediate `jvmNativeMain` source set (via `applyDefaultHierarchyTemplate` with a custom template, or manual `dependsOn`) that excludes `js(IR)`. Move `EventBridgeSubmitter.kt` from `jvmMain` to `jvmNativeMain`. Promote `:standards`, `:env`, `:logging` from `jvmMain` to `jvmNativeMain`. Add `linuxArm64()`, `macosArm64()`. Verify `:events:jsMain` and `:events:compileKotlinJs` still resolve.
-- [ ] Re-type `EventBridgeSubmitter` from `EventBridgeClient` to `EventBridgeApi`. Its per-entry handling at `:46-57` (reading `errorCode`/`errorMessage`/`eventId` on an **HTTP 200**) must be preserved exactly — PutEvents fails per-entry, and a transport that only checks HTTP status reports success on a fully-failed batch.
-- [ ] Rebase `test/src/jvmMain/kotlin/com/steamstreet/aws/test/EventBridgeMock.kt` from `EventBridgeClient by mockk(relaxed = true)` onto a real implementation of the 1-method `EventBridgeApi`. Its `putRule`/`putTargets`/`createEventBus`/`listRules` surface (`:131,:145,:152,:217`) moves to a local test-only `EventBridgeAdmin` interface. This is unbudgeted rework in a published module — the 5-day estimate exists because of it.
-- [ ] Add a PutEvents case to both halves of the M3 differential harness.
+- [x] Create `aws/aws-eventbridge` (jvm/linuxX64/linuxArm64/macosArm64), awsJson1_1, target prefix `AWSEvents`. `interface EventBridgeApi { suspend fun putEvents(entries: List<PutEventsEntry>): PutEventsResponse }`, `PutEventsEntry(eventBusName, source, detailType, detail)`, `PutEventsResponse(failedEntryCount, entries)`, `PutEventsResultEntry(eventId, errorCode, errorMessage)`. ~120 lines.
+- [x] **`events` restructuring — do NOT move to commonMain.** Create an intermediate `jvmNativeMain` source set (via `applyDefaultHierarchyTemplate` with a custom template, or manual `dependsOn`) that excludes `js(IR)`. Move `EventBridgeSubmitter.kt` from `jvmMain` to `jvmNativeMain`. Promote `:standards`, `:env`, `:logging` from `jvmMain` to `jvmNativeMain`. Add `linuxArm64()`, `macosArm64()`. Verify `:events:jsMain` and `:events:compileKotlinJs` still resolve.
+- [x] Re-type `EventBridgeSubmitter` from `EventBridgeClient` to `EventBridgeApi`. Its per-entry handling at `:46-57` (reading `errorCode`/`errorMessage`/`eventId` on an **HTTP 200**) must be preserved exactly — PutEvents fails per-entry, and a transport that only checks HTTP status reports success on a fully-failed batch.
+- [x] Rebase `test/src/jvmMain/kotlin/com/steamstreet/aws/test/EventBridgeMock.kt` from `EventBridgeClient by mockk(relaxed = true)` onto a real implementation of the 1-method `EventBridgeApi`. Its `putRule`/`putTargets`/`createEventBus`/`listRules` surface (`:131,:145,:152,:217`) moves to a local test-only `EventBridgeAdmin` interface. This is unbudgeted rework in a published module — the 5-day estimate exists because of it.
+- [x] Add a PutEvents case to both halves of the M3 differential harness.
 
 **Verification**: `./gradlew :events:build :test:jvmTest` green including the existing EventBridge rule-matching tests, plus request- and response-differential assertions for PutEvents. `:events:jsBrowserTest` (or at minimum `compileKotlinJs`) still passes.
+
+> **STATUS: M6 IS COMPLETE (2026-08-11).**
+> `aws/aws-eventbridge` exists with **17 jvm / 13 macosArm64 tests, 0 failures**, and `linuxX64` /
+> `linuxArm64` link. `events` carries the three native targets, and `test` no longer depends on the
+> AWS SDK's EventBridge artifact at all.
+>
+> **The differential is real, not decorative.** Four of the seventeen tests compare our serialized
+> bytes and our parsed responses against the actual `aws.sdk.kotlin` client, using M3's technique
+> unchanged — an `HttpInterceptor` capturing the request, and a one-shot loopback `HttpServer`
+> feeding both deserializers identical bytes. Verified by sabotage: renaming `@SerialName("DetailType")`
+> to `"detailType"` fails `putEventsRequestMatchesTheSdk`. The response half renders both sides with
+> hand-written functions rather than our own encoder, so a symmetric encode/decode mistake cannot
+> cancel itself out.
+>
+> **`jvmNativeMain` was built by hand, not with `applyDefaultHierarchyTemplate`.** The task list
+> offered both; the manual `dependsOn` won because the default template has no jvm+native group and
+> adding one restructures every other source set in the module as a side effect. It is three lines:
+> `jvmNativeMain.dependsOn(commonMain)`, then `jvmMain` and `nativeMain` both `dependsOn` it.
+> `compileKotlinJs` still passes, which is also the proof that `jvmNativeMain` is correctly excluded
+> from `js` — it references `aws-eventbridge`, which has no `js` target, so a leak would not compile.
+>
+> **More moved to `jvmNativeMain` than this section lists, and it should.** The task names only
+> `EventBridgeSubmitter.kt`, but `EventPoster.kt`, `ApplicationEvent.kt` and `EventSchemaJvm.kt` are
+> all portable — they sat in `jvmMain` only because they reach `poster`, which reaches the submitter.
+> Leaving them behind would have given a native Lambda a submitter it could construct and no
+> `postEvent` to call it with. `EventSchemaJvm.kt` keeps its now-inaccurate filename deliberately:
+> renaming it would rename the `EventSchemaJvmKt` JVM facade for no functional gain.
+>
+> **One thing the plan did not anticipate: `logWarning` is JVM-only.** `EventBridgeSubmitter`'s
+> per-entry warning could not move to a shared source set as written. It now logs through the
+> multiplatform `log.warning { }`, and `checkResponse` became `suspend` to allow it. On the JVM
+> `log` publishes through `Slf4JLogPublisher`, so the output is unchanged. The per-entry *semantics*
+> — read `errorCode`/`errorMessage`/`eventId` on an HTTP 200, return the ids with null for the
+> failures — are preserved exactly, as required.
+>
+> **`EventBridgeApi.client` forces a decision on every implementor,** including mocks. `EventBridgeMock`
+> throws `UnsupportedOperationException` from it: there is no signed transport behind a mock, and an
+> extension operation written against one would be talking to nothing. Failing loudly beats handing
+> back a client that cannot work. (`SdkBackedDynamoDb` answers the same question differently — it
+> builds a real seam — because it has real credentials to build one from.)
+>
+> **Dropping `mockk` from the mock changed its behaviour in one way worth knowing.** As
+> `EventBridgeClient by mockk(relaxed = true)`, every un-overridden operation silently returned an
+> empty response, so a test calling into an unimplemented corner passed for the wrong reason. With a
+> one-method interface there is nothing left to relax. Separately, `putEvents` now returns a
+> generated `EventId` per entry where the old mock returned `PutEventsResultEntry {}` with none —
+> under `ApplicationEventPoster`'s documented contract ("for those that are null, the event was not
+> published") the old mock reported *every* event as unpublished. **Any downstream test asserting on
+> those nulls will now see ids.** That is a fix, but it is a visible one.
+>
+> **`EventBridgeAdmin` is deliberately not in the shipping client.** `aws-eventbridge` ships one
+> operation because that is the only one production code calls; rules, targets and buses exist only
+> so the mock can route an event to a local Lambda. Modelling four control-plane operations in the
+> published API to serve the test module would have been the tail wagging the dog. If real `PutRule`
+> is ever needed, Decision 18's extension seam allows it without forking.
+>
+> **This section's verification line rests on tests that do not exist.** It asks for `:test:jvmTest`
+> green "including the existing EventBridge rule-matching tests" — but `EventBridgeMock` appeared
+> nowhere outside its own file, and `:test:jvmTest` was two `DynamoStreamTest` cases. The largest and
+> riskiest change in this milestone had **no coverage at all**, and rewriting it would have shipped
+> compile-verified and nothing more. `EventBridgeMockTest` now supplies **9 tests**: rule matching
+> and non-matching, bus-ARN resolution, per-entry id generation and ordering, the recorded-event
+> query and clear, duplicate-rule rejection, `listRules`, unknown-bus rejection, and the
+> `client` refusal.
+>
+> **ABI:** `test.api` sheds ~40 SDK-typed methods as `EventBridgeMock` stops delegating to
+> `EventBridgeClient`; `events.api` re-types the submitter's constructor; `events.klib.api` gains the
+> three native targets; `aws-eventbridge/api/` is new. All expected, all reviewable.
+>
+> **Still not covered:** `events` itself has no tests on any platform, so `EventBridgeSubmitter`'s
+> re-typing is verified only by the mock's contract and the differential, not by a test of the
+> submitter. `aws-eventbridge` has no LocalStack or live smoke — M3's DynamoDB equivalents have both.
 
 ---
 

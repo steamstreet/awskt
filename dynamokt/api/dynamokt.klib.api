@@ -1,0 +1,536 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:dynamokt>
+final enum class com.steamstreet.dynamokt/AttributeAction : kotlin/Enum<com.steamstreet.dynamokt/AttributeAction> { // com.steamstreet.dynamokt/AttributeAction|null[0]
+    enum entry Add // com.steamstreet.dynamokt/AttributeAction.Add|null[0]
+    enum entry Delete // com.steamstreet.dynamokt/AttributeAction.Delete|null[0]
+    enum entry Put // com.steamstreet.dynamokt/AttributeAction.Put|null[0]
+
+    final val entries // com.steamstreet.dynamokt/AttributeAction.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.steamstreet.dynamokt/AttributeAction> // com.steamstreet.dynamokt/AttributeAction.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.steamstreet.dynamokt/AttributeAction // com.steamstreet.dynamokt/AttributeAction.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.steamstreet.dynamokt/AttributeAction> // com.steamstreet.dynamokt/AttributeAction.values|values#static(){}[0]
+}
+
+final enum class com.steamstreet.dynamokt/AttributeType : kotlin/Enum<com.steamstreet.dynamokt/AttributeType> { // com.steamstreet.dynamokt/AttributeType|null[0]
+    enum entry BINARY // com.steamstreet.dynamokt/AttributeType.BINARY|null[0]
+    enum entry BINARY_SET // com.steamstreet.dynamokt/AttributeType.BINARY_SET|null[0]
+    enum entry BOOLEAN // com.steamstreet.dynamokt/AttributeType.BOOLEAN|null[0]
+    enum entry LIST // com.steamstreet.dynamokt/AttributeType.LIST|null[0]
+    enum entry MAP // com.steamstreet.dynamokt/AttributeType.MAP|null[0]
+    enum entry NULL // com.steamstreet.dynamokt/AttributeType.NULL|null[0]
+    enum entry NUMBER // com.steamstreet.dynamokt/AttributeType.NUMBER|null[0]
+    enum entry NUMBER_SET // com.steamstreet.dynamokt/AttributeType.NUMBER_SET|null[0]
+    enum entry STRING // com.steamstreet.dynamokt/AttributeType.STRING|null[0]
+    enum entry STRING_SET // com.steamstreet.dynamokt/AttributeType.STRING_SET|null[0]
+
+    final val dynamoType // com.steamstreet.dynamokt/AttributeType.dynamoType|{}dynamoType[0]
+        final fun <get-dynamoType>(): kotlin/String // com.steamstreet.dynamokt/AttributeType.dynamoType.<get-dynamoType>|<get-dynamoType>(){}[0]
+    final val entries // com.steamstreet.dynamokt/AttributeType.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.steamstreet.dynamokt/AttributeType> // com.steamstreet.dynamokt/AttributeType.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.steamstreet.dynamokt/AttributeType // com.steamstreet.dynamokt/AttributeType.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.steamstreet.dynamokt/AttributeType> // com.steamstreet.dynamokt/AttributeType.values|values#static(){}[0]
+}
+
+abstract interface <#A: com.steamstreet.dynamokt/ItemContainer> com.steamstreet.dynamokt/MutableItemContainer : com.steamstreet.dynamokt/ItemContainer { // com.steamstreet.dynamokt/MutableItemContainer|null[0]
+    abstract var entity // com.steamstreet.dynamokt/MutableItemContainer.entity|{}entity[0]
+        abstract fun <get-entity>(): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/MutableItemContainer.entity.<get-entity>|<get-entity>(){}[0]
+        abstract fun <set-entity>(com.steamstreet.dynamokt/Item) // com.steamstreet.dynamokt/MutableItemContainer.entity.<set-entity>|<set-entity>(com.steamstreet.dynamokt.Item){}[0]
+
+    abstract fun mutable(com.steamstreet.dynamokt/MutableItem): #A // com.steamstreet.dynamokt/MutableItemContainer.mutable|mutable(com.steamstreet.dynamokt.MutableItem){}[0]
+    open fun decorate(com.steamstreet.dynamokt/MutableItem) // com.steamstreet.dynamokt/MutableItemContainer.decorate|decorate(com.steamstreet.dynamokt.MutableItem){}[0]
+    open suspend fun update(kotlin/Function2<#A, com.steamstreet.dynamokt/MutableItem, kotlin/Unit>): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/MutableItemContainer.update|update(kotlin.Function2<1:0,com.steamstreet.dynamokt.MutableItem,kotlin.Unit>){}[0]
+}
+
+abstract interface <#A: kotlin/Any?> com.steamstreet.dynamokt/AttributeSerializer { // com.steamstreet.dynamokt/AttributeSerializer|null[0]
+    abstract fun deserialize(com.steamstreet.dynamokt/ItemContainer, com.steamstreet.dynamokt/AttributeValue?): #A // com.steamstreet.dynamokt/AttributeSerializer.deserialize|deserialize(com.steamstreet.dynamokt.ItemContainer;com.steamstreet.dynamokt.AttributeValue?){}[0]
+    abstract fun serialize(com.steamstreet.dynamokt/ItemContainer, #A): com.steamstreet.dynamokt/AttributeValue? // com.steamstreet.dynamokt/AttributeSerializer.serialize|serialize(com.steamstreet.dynamokt.ItemContainer;1:0){}[0]
+    open fun <#A1: com.steamstreet.dynamokt/ItemContainer> attribute(kotlin/String? = ...): com.steamstreet.dynamokt/ItemAttributeDelegate<#A, #A1> // com.steamstreet.dynamokt/AttributeSerializer.attribute|attribute(kotlin.String?){0§<com.steamstreet.dynamokt.ItemContainer>}[0]
+}
+
+abstract interface com.steamstreet.dynamokt/ItemContainer { // com.steamstreet.dynamokt/ItemContainer|null[0]
+    abstract val entity // com.steamstreet.dynamokt/ItemContainer.entity|{}entity[0]
+        abstract fun <get-entity>(): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/ItemContainer.entity.<get-entity>|<get-entity>(){}[0]
+}
+
+abstract interface com.steamstreet.dynamokt/ItemUpdater { // com.steamstreet.dynamokt/ItemUpdater|null[0]
+    abstract suspend fun commit() // com.steamstreet.dynamokt/ItemUpdater.commit|commit(){}[0]
+    abstract suspend fun delete(kotlin/String, kotlin/String?, kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/MutableItem, kotlin/Unit> = ...) // com.steamstreet.dynamokt/ItemUpdater.delete|delete(kotlin.String;kotlin.String?;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.MutableItem,kotlin.Unit>){}[0]
+    abstract suspend fun put(com.steamstreet.dynamokt/AttributeValue, com.steamstreet.dynamokt/AttributeValue?, kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/MutableItem, kotlin/Unit> = ...): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/ItemUpdater.put|put(com.steamstreet.dynamokt.AttributeValue;com.steamstreet.dynamokt.AttributeValue?;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.MutableItem,kotlin.Unit>){}[0]
+    abstract suspend fun put(kotlin/String, kotlin/String?, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/ItemUpdater.put|put(kotlin.String;kotlin.String?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>){}[0]
+    abstract suspend fun update(kotlin/String, kotlin/String?, kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/MutableItem, kotlin/Unit> = ...): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/ItemUpdater.update|update(kotlin.String;kotlin.String?;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.MutableItem,kotlin.Unit>){}[0]
+    open suspend fun put(kotlin/String, kotlin/String?, kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/MutableItem, kotlin/Unit> = ...): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/ItemUpdater.put|put(kotlin.String;kotlin.String?;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.MutableItem,kotlin.Unit>){}[0]
+    open suspend fun update(com.steamstreet.dynamokt/Item, kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/MutableItem, kotlin/Unit> = ...): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/ItemUpdater.update|update(com.steamstreet.dynamokt.Item;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.MutableItem,kotlin.Unit>){}[0]
+}
+
+abstract interface com.steamstreet.dynamokt/QueryResult { // com.steamstreet.dynamokt/QueryResult|null[0]
+    abstract val items // com.steamstreet.dynamokt/QueryResult.items|{}items[0]
+        abstract fun <get-items>(): kotlinx.coroutines.flow/Flow<com.steamstreet.dynamokt/Item> // com.steamstreet.dynamokt/QueryResult.items.<get-items>|<get-items>(){}[0]
+    abstract val paginationToken // com.steamstreet.dynamokt/QueryResult.paginationToken|{}paginationToken[0]
+        abstract fun <get-paginationToken>(): kotlin/String? // com.steamstreet.dynamokt/QueryResult.paginationToken.<get-paginationToken>|<get-paginationToken>(){}[0]
+}
+
+final class <#A: in com.steamstreet.dynamokt/ItemContainer> com.steamstreet.dynamokt/IdAttribute : kotlin.properties/ReadOnlyProperty<#A, kotlin/String> { // com.steamstreet.dynamokt/IdAttribute|null[0]
+    constructor <init>() // com.steamstreet.dynamokt/IdAttribute.<init>|<init>(){}[0]
+
+    final fun getValue(#A, kotlin.reflect/KProperty<*>): kotlin/String // com.steamstreet.dynamokt/IdAttribute.getValue|getValue(1:0;kotlin.reflect.KProperty<*>){}[0]
+}
+
+final class <#A: kotlin/Any?, #B: kotlin/Any?> com.steamstreet.dynamokt/Converter { // com.steamstreet.dynamokt/Converter|null[0]
+    constructor <init>() // com.steamstreet.dynamokt/Converter.<init>|<init>(){}[0]
+
+    final fun from(kotlin/Function1<#B, #A>) // com.steamstreet.dynamokt/Converter.from|from(kotlin.Function1<1:1,1:0>){}[0]
+    final fun to(kotlin/Function1<#A, #B>) // com.steamstreet.dynamokt/Converter.to|to(kotlin.Function1<1:0,1:1>){}[0]
+}
+
+final class <#A: kotlin/Any?> com.steamstreet.dynamokt/AttributeSerializerBuilder { // com.steamstreet.dynamokt/AttributeSerializerBuilder|null[0]
+    constructor <init>() // com.steamstreet.dynamokt/AttributeSerializerBuilder.<init>|<init>(){}[0]
+
+    final var f // com.steamstreet.dynamokt/AttributeSerializerBuilder.f|{}f[0]
+        final fun <get-f>(): kotlin/Function1<com.steamstreet.dynamokt/AttributeValue?, #A>? // com.steamstreet.dynamokt/AttributeSerializerBuilder.f.<get-f>|<get-f>(){}[0]
+        final fun <set-f>(kotlin/Function1<com.steamstreet.dynamokt/AttributeValue?, #A>?) // com.steamstreet.dynamokt/AttributeSerializerBuilder.f.<set-f>|<set-f>(kotlin.Function1<com.steamstreet.dynamokt.AttributeValue?,1:0>?){}[0]
+    final var t // com.steamstreet.dynamokt/AttributeSerializerBuilder.t|{}t[0]
+        final fun <get-t>(): kotlin/Function1<#A, com.steamstreet.dynamokt/AttributeValue?>? // com.steamstreet.dynamokt/AttributeSerializerBuilder.t.<get-t>|<get-t>(){}[0]
+        final fun <set-t>(kotlin/Function1<#A, com.steamstreet.dynamokt/AttributeValue?>?) // com.steamstreet.dynamokt/AttributeSerializerBuilder.t.<set-t>|<set-t>(kotlin.Function1<1:0,com.steamstreet.dynamokt.AttributeValue?>?){}[0]
+
+    final fun build(): com.steamstreet.dynamokt/AttributeSerializer<#A> // com.steamstreet.dynamokt/AttributeSerializerBuilder.build|build(){}[0]
+    final fun from(kotlin/Function1<com.steamstreet.dynamokt/AttributeValue?, #A>) // com.steamstreet.dynamokt/AttributeSerializerBuilder.from|from(kotlin.Function1<com.steamstreet.dynamokt.AttributeValue?,1:0>){}[0]
+    final fun to(kotlin/Function1<#A, com.steamstreet.dynamokt/AttributeValue?>) // com.steamstreet.dynamokt/AttributeSerializerBuilder.to|to(kotlin.Function1<1:0,com.steamstreet.dynamokt.AttributeValue?>){}[0]
+}
+
+final class <#A: kotlin/Enum<#A>> com.steamstreet.dynamokt/EnumSerializer : com.steamstreet.dynamokt/AttributeSerializer<#A> { // com.steamstreet.dynamokt/EnumSerializer|null[0]
+    constructor <init>(kotlin.collections/List<#A>, #A) // com.steamstreet.dynamokt/EnumSerializer.<init>|<init>(kotlin.collections.List<1:0>;1:0){}[0]
+
+    final fun deserialize(com.steamstreet.dynamokt/ItemContainer, com.steamstreet.dynamokt/AttributeValue?): #A // com.steamstreet.dynamokt/EnumSerializer.deserialize|deserialize(com.steamstreet.dynamokt.ItemContainer;com.steamstreet.dynamokt.AttributeValue?){}[0]
+    final fun serialize(com.steamstreet.dynamokt/ItemContainer, #A): com.steamstreet.dynamokt/AttributeValue? // com.steamstreet.dynamokt/EnumSerializer.serialize|serialize(com.steamstreet.dynamokt.ItemContainer;1:0){}[0]
+}
+
+final class <#A: kotlin/Enum<#A>> com.steamstreet.dynamokt/NullableEnumSerializer : com.steamstreet.dynamokt/AttributeSerializer<#A?> { // com.steamstreet.dynamokt/NullableEnumSerializer|null[0]
+    constructor <init>(kotlin.collections/List<#A>) // com.steamstreet.dynamokt/NullableEnumSerializer.<init>|<init>(kotlin.collections.List<1:0>){}[0]
+
+    final fun deserialize(com.steamstreet.dynamokt/ItemContainer, com.steamstreet.dynamokt/AttributeValue?): #A? // com.steamstreet.dynamokt/NullableEnumSerializer.deserialize|deserialize(com.steamstreet.dynamokt.ItemContainer;com.steamstreet.dynamokt.AttributeValue?){}[0]
+    final fun serialize(com.steamstreet.dynamokt/ItemContainer, #A?): com.steamstreet.dynamokt/AttributeValue? // com.steamstreet.dynamokt/NullableEnumSerializer.serialize|serialize(com.steamstreet.dynamokt.ItemContainer;1:0?){}[0]
+}
+
+final class com.steamstreet.dynamokt/AttributeValueUpdate { // com.steamstreet.dynamokt/AttributeValueUpdate|null[0]
+    constructor <init>(com.steamstreet.dynamokt/AttributeValue? = ..., com.steamstreet.dynamokt/AttributeAction = ...) // com.steamstreet.dynamokt/AttributeValueUpdate.<init>|<init>(com.steamstreet.dynamokt.AttributeValue?;com.steamstreet.dynamokt.AttributeAction){}[0]
+
+    final val action // com.steamstreet.dynamokt/AttributeValueUpdate.action|{}action[0]
+        final fun <get-action>(): com.steamstreet.dynamokt/AttributeAction // com.steamstreet.dynamokt/AttributeValueUpdate.action.<get-action>|<get-action>(){}[0]
+    final val value // com.steamstreet.dynamokt/AttributeValueUpdate.value|{}value[0]
+        final fun <get-value>(): com.steamstreet.dynamokt/AttributeValue? // com.steamstreet.dynamokt/AttributeValueUpdate.value.<get-value>|<get-value>(){}[0]
+
+    final fun component1(): com.steamstreet.dynamokt/AttributeValue? // com.steamstreet.dynamokt/AttributeValueUpdate.component1|component1(){}[0]
+    final fun component2(): com.steamstreet.dynamokt/AttributeAction // com.steamstreet.dynamokt/AttributeValueUpdate.component2|component2(){}[0]
+    final fun copy(com.steamstreet.dynamokt/AttributeValue? = ..., com.steamstreet.dynamokt/AttributeAction = ...): com.steamstreet.dynamokt/AttributeValueUpdate // com.steamstreet.dynamokt/AttributeValueUpdate.copy|copy(com.steamstreet.dynamokt.AttributeValue?;com.steamstreet.dynamokt.AttributeAction){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.dynamokt/AttributeValueUpdate.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.dynamokt/AttributeValueUpdate.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.dynamokt/AttributeValueUpdate.toString|toString(){}[0]
+}
+
+final class com.steamstreet.dynamokt/DuplicateDynamoItemException : com.steamstreet.exceptions/DuplicateItemException { // com.steamstreet.dynamokt/DuplicateDynamoItemException|null[0]
+    constructor <init>(kotlin/String, kotlin/String?, com.steamstreet.dynamokt/Item? = ...) // com.steamstreet.dynamokt/DuplicateDynamoItemException.<init>|<init>(kotlin.String;kotlin.String?;com.steamstreet.dynamokt.Item?){}[0]
+}
+
+final class com.steamstreet.dynamokt/DynamoKt { // com.steamstreet.dynamokt/DynamoKt|null[0]
+    constructor <init>(kotlin/String, kotlin/String = ..., kotlin/String? = ..., kotlin/Function1<com.steamstreet.awskt.core/AwsCredentialsProvider?, com.steamstreet.awskt.dynamodb/DynamoDb> = ..., com.steamstreet.awskt.core/AwsCredentialsProvider? = ..., kotlin/String? = ...) // com.steamstreet.dynamokt/DynamoKt.<init>|<init>(kotlin.String;kotlin.String;kotlin.String?;kotlin.Function1<com.steamstreet.awskt.core.AwsCredentialsProvider?,com.steamstreet.awskt.dynamodb.DynamoDb>;com.steamstreet.awskt.core.AwsCredentialsProvider?;kotlin.String?){}[0]
+
+    final val builder // com.steamstreet.dynamokt/DynamoKt.builder|{}builder[0]
+        final fun <get-builder>(): kotlin/Function1<com.steamstreet.awskt.core/AwsCredentialsProvider?, com.steamstreet.awskt.dynamodb/DynamoDb> // com.steamstreet.dynamokt/DynamoKt.builder.<get-builder>|<get-builder>(){}[0]
+    final val defaultCredentials // com.steamstreet.dynamokt/DynamoKt.defaultCredentials|{}defaultCredentials[0]
+        final fun <get-defaultCredentials>(): com.steamstreet.awskt.core/AwsCredentialsProvider? // com.steamstreet.dynamokt/DynamoKt.defaultCredentials.<get-defaultCredentials>|<get-defaultCredentials>(){}[0]
+    final val pkName // com.steamstreet.dynamokt/DynamoKt.pkName|{}pkName[0]
+        final fun <get-pkName>(): kotlin/String // com.steamstreet.dynamokt/DynamoKt.pkName.<get-pkName>|<get-pkName>(){}[0]
+    final val skName // com.steamstreet.dynamokt/DynamoKt.skName|{}skName[0]
+        final fun <get-skName>(): kotlin/String? // com.steamstreet.dynamokt/DynamoKt.skName.<get-skName>|<get-skName>(){}[0]
+    final val table // com.steamstreet.dynamokt/DynamoKt.table|{}table[0]
+        final fun <get-table>(): kotlin/String // com.steamstreet.dynamokt/DynamoKt.table.<get-table>|<get-table>(){}[0]
+    final val ttlAttribute // com.steamstreet.dynamokt/DynamoKt.ttlAttribute|{}ttlAttribute[0]
+        final fun <get-ttlAttribute>(): kotlin/String? // com.steamstreet.dynamokt/DynamoKt.ttlAttribute.<get-ttlAttribute>|<get-ttlAttribute>(){}[0]
+
+    final var entityJsonEncoder // com.steamstreet.dynamokt/DynamoKt.entityJsonEncoder|{}entityJsonEncoder[0]
+        final fun <get-entityJsonEncoder>(): kotlinx.serialization.json/Json // com.steamstreet.dynamokt/DynamoKt.entityJsonEncoder.<get-entityJsonEncoder>|<get-entityJsonEncoder>(){}[0]
+        final fun <set-entityJsonEncoder>(kotlinx.serialization.json/Json) // com.steamstreet.dynamokt/DynamoKt.entityJsonEncoder.<set-entityJsonEncoder>|<set-entityJsonEncoder>(kotlinx.serialization.json.Json){}[0]
+
+    final fun indexes(): kotlin.collections/Collection<com.steamstreet.dynamokt/DynamoKtIndex> // com.steamstreet.dynamokt/DynamoKt.indexes|indexes(){}[0]
+    final fun registerIndex(kotlin/String, kotlin/String, kotlin/String?): com.steamstreet.dynamokt/DynamoKtIndex // com.steamstreet.dynamokt/DynamoKt.registerIndex|registerIndex(kotlin.String;kotlin.String;kotlin.String?){}[0]
+    final fun session(com.steamstreet.awskt.core/AwsCredentialsProvider? = ...): com.steamstreet.dynamokt/DynamoKtSession // com.steamstreet.dynamokt/DynamoKt.session|session(com.steamstreet.awskt.core.AwsCredentialsProvider?){}[0]
+
+    final object Companion { // com.steamstreet.dynamokt/DynamoKt.Companion|null[0]
+        final var defaultClientBuilder // com.steamstreet.dynamokt/DynamoKt.Companion.defaultClientBuilder|{}defaultClientBuilder[0]
+            final fun <get-defaultClientBuilder>(): kotlin/Function1<com.steamstreet.awskt.core/AwsCredentialsProvider?, com.steamstreet.awskt.dynamodb/DynamoDb> // com.steamstreet.dynamokt/DynamoKt.Companion.defaultClientBuilder.<get-defaultClientBuilder>|<get-defaultClientBuilder>(){}[0]
+            final fun <set-defaultClientBuilder>(kotlin/Function1<com.steamstreet.awskt.core/AwsCredentialsProvider?, com.steamstreet.awskt.dynamodb/DynamoDb>) // com.steamstreet.dynamokt/DynamoKt.Companion.defaultClientBuilder.<set-defaultClientBuilder>|<set-defaultClientBuilder>(kotlin.Function1<com.steamstreet.awskt.core.AwsCredentialsProvider?,com.steamstreet.awskt.dynamodb.DynamoDb>){}[0]
+    }
+}
+
+final class com.steamstreet.dynamokt/DynamoKtIndex { // com.steamstreet.dynamokt/DynamoKtIndex|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String?) // com.steamstreet.dynamokt/DynamoKtIndex.<init>|<init>(kotlin.String;kotlin.String;kotlin.String?){}[0]
+
+    final val name // com.steamstreet.dynamokt/DynamoKtIndex.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.steamstreet.dynamokt/DynamoKtIndex.name.<get-name>|<get-name>(){}[0]
+    final val pk // com.steamstreet.dynamokt/DynamoKtIndex.pk|{}pk[0]
+        final fun <get-pk>(): kotlin/String // com.steamstreet.dynamokt/DynamoKtIndex.pk.<get-pk>|<get-pk>(){}[0]
+    final val sk // com.steamstreet.dynamokt/DynamoKtIndex.sk|{}sk[0]
+        final fun <get-sk>(): kotlin/String? // com.steamstreet.dynamokt/DynamoKtIndex.sk.<get-sk>|<get-sk>(){}[0]
+}
+
+final class com.steamstreet.dynamokt/DynamoKtSession : com.steamstreet.dynamokt/ItemUpdater { // com.steamstreet.dynamokt/DynamoKtSession|null[0]
+    constructor <init>(com.steamstreet.dynamokt/DynamoKt, com.steamstreet.awskt.dynamodb/DynamoDb, kotlin/String = ..., kotlin/String = ..., kotlin/String? = ..., kotlin.collections/MutableMap<kotlin/String, com.steamstreet.dynamokt/Item>? = ...) // com.steamstreet.dynamokt/DynamoKtSession.<init>|<init>(com.steamstreet.dynamokt.DynamoKt;com.steamstreet.awskt.dynamodb.DynamoDb;kotlin.String;kotlin.String;kotlin.String?;kotlin.collections.MutableMap<kotlin.String,com.steamstreet.dynamokt.Item>?){}[0]
+
+    final val dynamo // com.steamstreet.dynamokt/DynamoKtSession.dynamo|{}dynamo[0]
+        final fun <get-dynamo>(): com.steamstreet.awskt.dynamodb/DynamoDb // com.steamstreet.dynamokt/DynamoKtSession.dynamo.<get-dynamo>|<get-dynamo>(){}[0]
+    final val dynamoKt // com.steamstreet.dynamokt/DynamoKtSession.dynamoKt|{}dynamoKt[0]
+        final fun <get-dynamoKt>(): com.steamstreet.dynamokt/DynamoKt // com.steamstreet.dynamokt/DynamoKtSession.dynamoKt.<get-dynamoKt>|<get-dynamoKt>(){}[0]
+    final val pkName // com.steamstreet.dynamokt/DynamoKtSession.pkName|{}pkName[0]
+        final fun <get-pkName>(): kotlin/String // com.steamstreet.dynamokt/DynamoKtSession.pkName.<get-pkName>|<get-pkName>(){}[0]
+    final val skName // com.steamstreet.dynamokt/DynamoKtSession.skName|{}skName[0]
+        final fun <get-skName>(): kotlin/String? // com.steamstreet.dynamokt/DynamoKtSession.skName.<get-skName>|<get-skName>(){}[0]
+    final val table // com.steamstreet.dynamokt/DynamoKtSession.table|{}table[0]
+        final fun <get-table>(): kotlin/String // com.steamstreet.dynamokt/DynamoKtSession.table.<get-table>|<get-table>(){}[0]
+
+    final fun facade(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/DynamoKtSession.facade|facade(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>){}[0]
+    final fun facade(kotlin/String, kotlin/String, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ...): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/DynamoKtSession.facade|facade(kotlin.String;kotlin.String;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>){}[0]
+    final fun parallelScan(kotlin/Int, kotlin.collections/List<kotlin/Int>? = ..., kotlin/Function1<com.steamstreet.dynamokt/Query, kotlin/Unit>): kotlinx.coroutines.flow/Flow<com.steamstreet.dynamokt/Item> // com.steamstreet.dynamokt/DynamoKtSession.parallelScan|parallelScan(kotlin.Int;kotlin.collections.List<kotlin.Int>?;kotlin.Function1<com.steamstreet.dynamokt.Query,kotlin.Unit>){}[0]
+    final fun transaction(): com.steamstreet.dynamokt/Transaction // com.steamstreet.dynamokt/DynamoKtSession.transaction|transaction(){}[0]
+    final fun unloaded(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>, kotlin/Boolean): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/DynamoKtSession.unloaded|unloaded(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.Boolean){}[0]
+    final fun unloaded(kotlin/String, kotlin/String?, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>, kotlin/Boolean): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/DynamoKtSession.unloaded|unloaded(kotlin.String;kotlin.String?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.Boolean){}[0]
+    final suspend fun <#A1: kotlin/Any?> get(kotlin/String, kotlin/String?, kotlin/Function1<com.steamstreet.dynamokt/Item, #A1>): #A1 // com.steamstreet.dynamokt/DynamoKtSession.get|get(kotlin.String;kotlin.String?;kotlin.Function1<com.steamstreet.dynamokt.Item,0:0>){0§<kotlin.Any?>}[0]
+    final suspend fun commit() // com.steamstreet.dynamokt/DynamoKtSession.commit|commit(){}[0]
+    final suspend fun delete(kotlin/String, kotlin/String?, kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/MutableItem, kotlin/Unit>) // com.steamstreet.dynamokt/DynamoKtSession.delete|delete(kotlin.String;kotlin.String?;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.MutableItem,kotlin.Unit>){}[0]
+    final suspend fun describeTable(): com.steamstreet.awskt.dynamodb/TableDescription // com.steamstreet.dynamokt/DynamoKtSession.describeTable|describeTable(){}[0]
+    final suspend fun get(kotlin/String, kotlin/String?, kotlin.collections/List<kotlin/String>? = ..., kotlin/Boolean = ...): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/DynamoKtSession.get|get(kotlin.String;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlin.Boolean){}[0]
+    final suspend fun getAll(kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String?>>, kotlin.collections/Collection<kotlin/String> = ..., kotlin/Boolean = ...): kotlin.collections/List<com.steamstreet.dynamokt/Item> // com.steamstreet.dynamokt/DynamoKtSession.getAll|getAll(kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String?>>;kotlin.collections.Collection<kotlin.String>;kotlin.Boolean){}[0]
+    final suspend fun getOrNull(kotlin/String, kotlin/String?, kotlin.collections/List<kotlin/String>? = ..., kotlin/Boolean = ...): com.steamstreet.dynamokt/Item? // com.steamstreet.dynamokt/DynamoKtSession.getOrNull|getOrNull(kotlin.String;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlin.Boolean){}[0]
+    final suspend fun put(com.steamstreet.dynamokt/AttributeValue, com.steamstreet.dynamokt/AttributeValue?, kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/MutableItem, kotlin/Unit>): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/DynamoKtSession.put|put(com.steamstreet.dynamokt.AttributeValue;com.steamstreet.dynamokt.AttributeValue?;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.MutableItem,kotlin.Unit>){}[0]
+    final suspend fun put(kotlin/String, kotlin/String?, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/DynamoKtSession.put|put(kotlin.String;kotlin.String?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>){}[0]
+    final suspend fun query(kotlin/String, kotlin/Function1<com.steamstreet.dynamokt/Query, kotlin/Unit> = ...): com.steamstreet.dynamokt/QueryResult // com.steamstreet.dynamokt/DynamoKtSession.query|query(kotlin.String;kotlin.Function1<com.steamstreet.dynamokt.Query,kotlin.Unit>){}[0]
+    final suspend fun queryDelete(kotlin/String, kotlin/Function1<com.steamstreet.dynamokt/Query, kotlin/Unit> = ...): com.steamstreet.dynamokt/QueryResult // com.steamstreet.dynamokt/DynamoKtSession.queryDelete|queryDelete(kotlin.String;kotlin.Function1<com.steamstreet.dynamokt.Query,kotlin.Unit>){}[0]
+    final suspend fun queryIndex(kotlin/String, kotlin/String, kotlin/Function1<com.steamstreet.dynamokt/Query, kotlin/Unit> = ...): com.steamstreet.dynamokt/QueryResult // com.steamstreet.dynamokt/DynamoKtSession.queryIndex|queryIndex(kotlin.String;kotlin.String;kotlin.Function1<com.steamstreet.dynamokt.Query,kotlin.Unit>){}[0]
+    final suspend fun scan(kotlin/Function1<com.steamstreet.dynamokt/Query, kotlin/Unit>): com.steamstreet.dynamokt/QueryResult // com.steamstreet.dynamokt/DynamoKtSession.scan|scan(kotlin.Function1<com.steamstreet.dynamokt.Query,kotlin.Unit>){}[0]
+    final suspend fun update(kotlin/String, kotlin/String?, kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/MutableItem, kotlin/Unit>): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/DynamoKtSession.update|update(kotlin.String;kotlin.String?;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.MutableItem,kotlin.Unit>){}[0]
+}
+
+final class com.steamstreet.dynamokt/ExpressionBuilder { // com.steamstreet.dynamokt/ExpressionBuilder|null[0]
+    constructor <init>() // com.steamstreet.dynamokt/ExpressionBuilder.<init>|<init>(){}[0]
+
+    final fun addExpression(kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String> = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ...) // com.steamstreet.dynamokt/ExpressionBuilder.addExpression|addExpression(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>){}[0]
+    final fun attribute(kotlin/String): com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute // com.steamstreet.dynamokt/ExpressionBuilder.attribute|attribute(kotlin.String){}[0]
+    final fun attributeExists(kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.attributeExists|attributeExists(kotlin.String){}[0]
+    final fun attributeNotExists(kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.attributeNotExists|attributeNotExists(kotlin.String){}[0]
+    final fun attributeType(kotlin/String, com.steamstreet.dynamokt/AttributeType) // com.steamstreet.dynamokt/ExpressionBuilder.attributeType|attributeType(kotlin.String;com.steamstreet.dynamokt.AttributeType){}[0]
+    final fun between(kotlin/String, kotlin/Number, kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.between|between(kotlin.String;kotlin.Number;kotlin.Number){}[0]
+    final fun between(kotlin/String, kotlin/String, kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.between|between(kotlin.String;kotlin.String;kotlin.String){}[0]
+    final fun contains(kotlin/String, kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.contains|contains(kotlin.String;kotlin.Number){}[0]
+    final fun contains(kotlin/String, kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.contains|contains(kotlin.String;kotlin.String){}[0]
+    final fun equalTo(kotlin/String, kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.equalTo|equalTo(kotlin.String;kotlin.Number){}[0]
+    final fun equalTo(kotlin/String, kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.equalTo|equalTo(kotlin.String;kotlin.String){}[0]
+    final fun expression(): kotlin/String? // com.steamstreet.dynamokt/ExpressionBuilder.expression|expression(){}[0]
+    final fun greaterThan(kotlin/String, kotlin.time/Instant) // com.steamstreet.dynamokt/ExpressionBuilder.greaterThan|greaterThan(kotlin.String;kotlin.time.Instant){}[0]
+    final fun greaterThan(kotlin/String, kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.greaterThan|greaterThan(kotlin.String;kotlin.Number){}[0]
+    final fun greaterThan(kotlin/String, kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.greaterThan|greaterThan(kotlin.String;kotlin.String){}[0]
+    final fun greaterThanOrEqualTo(kotlin/String, kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.greaterThanOrEqualTo|greaterThanOrEqualTo(kotlin.String;kotlin.Number){}[0]
+    final fun isEmpty(kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.isEmpty|isEmpty(kotlin.String){}[0]
+    final fun isNotEmpty(kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.isNotEmpty|isNotEmpty(kotlin.String){}[0]
+    final fun isNotNull(kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.isNotNull|isNotNull(kotlin.String){}[0]
+    final fun isNull(kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.isNull|isNull(kotlin.String){}[0]
+    final fun lessThan(kotlin/String, kotlin.time/Instant) // com.steamstreet.dynamokt/ExpressionBuilder.lessThan|lessThan(kotlin.String;kotlin.time.Instant){}[0]
+    final fun lessThan(kotlin/String, kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.lessThan|lessThan(kotlin.String;kotlin.Number){}[0]
+    final fun lessThan(kotlin/String, kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.lessThan|lessThan(kotlin.String;kotlin.String){}[0]
+    final fun lessThanOrEqualTo(kotlin/String, kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.lessThanOrEqualTo|lessThanOrEqualTo(kotlin.String;kotlin.Number){}[0]
+    final fun notEqualTo(kotlin/String, kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.notEqualTo|notEqualTo(kotlin.String;kotlin.Number){}[0]
+    final fun notEqualTo(kotlin/String, kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.notEqualTo|notEqualTo(kotlin.String;kotlin.String){}[0]
+    final fun or(kotlin/Function1<com.steamstreet.dynamokt/ExpressionBuilder, kotlin/Unit>) // com.steamstreet.dynamokt/ExpressionBuilder.or|or(kotlin.Function1<com.steamstreet.dynamokt.ExpressionBuilder,kotlin.Unit>){}[0]
+    final fun size(kotlin/String): com.steamstreet.dynamokt/ExpressionBuilder.SizeAttribute // com.steamstreet.dynamokt/ExpressionBuilder.size|size(kotlin.String){}[0]
+    final fun startsWith(kotlin/String, kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.startsWith|startsWith(kotlin.String;kotlin.String){}[0]
+    final fun valueIn(kotlin/String, kotlin.collections/List<kotlin/String>) // com.steamstreet.dynamokt/ExpressionBuilder.valueIn|valueIn(kotlin.String;kotlin.collections.List<kotlin.String>){}[0]
+    final fun valueInNumbers(kotlin/String, kotlin.collections/List<kotlin/Number>) // com.steamstreet.dynamokt/ExpressionBuilder.valueInNumbers|valueInNumbers(kotlin.String;kotlin.collections.List<kotlin.Number>){}[0]
+
+    final inner class FilterAttribute { // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute|null[0]
+        constructor <init>(kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.<init>|<init>(kotlin.String){}[0]
+
+        final val name // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.name|{}name[0]
+            final fun <get-name>(): kotlin/String // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.name.<get-name>|<get-name>(){}[0]
+
+        final fun between(kotlin/Number, kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.between|between(kotlin.Number;kotlin.Number){}[0]
+        final fun between(kotlin/String, kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.between|between(kotlin.String;kotlin.String){}[0]
+        final fun contains(kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.contains|contains(kotlin.Number){}[0]
+        final fun contains(kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.contains|contains(kotlin.String){}[0]
+        final fun equalTo(kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.equalTo|equalTo(kotlin.Number){}[0]
+        final fun equalTo(kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.equalTo|equalTo(kotlin.String){}[0]
+        final fun exists() // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.exists|exists(){}[0]
+        final fun greaterThan(kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.greaterThan|greaterThan(kotlin.Number){}[0]
+        final fun greaterThanOrEqualTo(kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.greaterThanOrEqualTo|greaterThanOrEqualTo(kotlin.Number){}[0]
+        final fun hasType(com.steamstreet.dynamokt/AttributeType) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.hasType|hasType(com.steamstreet.dynamokt.AttributeType){}[0]
+        final fun isEmpty() // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.isEmpty|isEmpty(){}[0]
+        final fun isNotEmpty() // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.isNotEmpty|isNotEmpty(){}[0]
+        final fun isNotNull() // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.isNotNull|isNotNull(){}[0]
+        final fun isNull() // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.isNull|isNull(){}[0]
+        final fun isOneOf(kotlin.collections/List<kotlin/String>) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.isOneOf|isOneOf(kotlin.collections.List<kotlin.String>){}[0]
+        final fun isOneOfNumbers(kotlin.collections/List<kotlin/Number>) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.isOneOfNumbers|isOneOfNumbers(kotlin.collections.List<kotlin.Number>){}[0]
+        final fun lessThan(kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.lessThan|lessThan(kotlin.Number){}[0]
+        final fun lessThanOrEqualTo(kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.lessThanOrEqualTo|lessThanOrEqualTo(kotlin.Number){}[0]
+        final fun notEqualTo(kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.notEqualTo|notEqualTo(kotlin.Number){}[0]
+        final fun notEqualTo(kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.notEqualTo|notEqualTo(kotlin.String){}[0]
+        final fun size(): com.steamstreet.dynamokt/ExpressionBuilder.SizeAttribute // com.steamstreet.dynamokt/ExpressionBuilder.FilterAttribute.size|size(){}[0]
+    }
+
+    final inner class SizeAttribute { // com.steamstreet.dynamokt/ExpressionBuilder.SizeAttribute|null[0]
+        constructor <init>(kotlin/String) // com.steamstreet.dynamokt/ExpressionBuilder.SizeAttribute.<init>|<init>(kotlin.String){}[0]
+
+        final fun equalTo(kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.SizeAttribute.equalTo|equalTo(kotlin.Number){}[0]
+        final fun greaterThan(kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.SizeAttribute.greaterThan|greaterThan(kotlin.Number){}[0]
+        final fun greaterThanOrEqualTo(kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.SizeAttribute.greaterThanOrEqualTo|greaterThanOrEqualTo(kotlin.Number){}[0]
+        final fun lessThan(kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.SizeAttribute.lessThan|lessThan(kotlin.Number){}[0]
+        final fun lessThanOrEqualTo(kotlin/Number) // com.steamstreet.dynamokt/ExpressionBuilder.SizeAttribute.lessThanOrEqualTo|lessThanOrEqualTo(kotlin.Number){}[0]
+    }
+}
+
+final class com.steamstreet.dynamokt/FilterExpression { // com.steamstreet.dynamokt/FilterExpression|null[0]
+    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String>, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>) // com.steamstreet.dynamokt/FilterExpression.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>){}[0]
+
+    final val expression // com.steamstreet.dynamokt/FilterExpression.expression|{}expression[0]
+        final fun <get-expression>(): kotlin/String // com.steamstreet.dynamokt/FilterExpression.expression.<get-expression>|<get-expression>(){}[0]
+    final val names // com.steamstreet.dynamokt/FilterExpression.names|{}names[0]
+        final fun <get-names>(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.dynamokt/FilterExpression.names.<get-names>|<get-names>(){}[0]
+    final val values // com.steamstreet.dynamokt/FilterExpression.values|{}values[0]
+        final fun <get-values>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.dynamokt/FilterExpression.values.<get-values>|<get-values>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.dynamokt/FilterExpression.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.dynamokt/FilterExpression.component2|component2(){}[0]
+    final fun component3(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.dynamokt/FilterExpression.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ...): com.steamstreet.dynamokt/FilterExpression // com.steamstreet.dynamokt/FilterExpression.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.dynamokt/FilterExpression.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.dynamokt/FilterExpression.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.dynamokt/FilterExpression.toString|toString(){}[0]
+}
+
+final class com.steamstreet.dynamokt/Items { // com.steamstreet.dynamokt/Items|null[0]
+    constructor <init>(com.steamstreet.dynamokt/Item? = ..., com.steamstreet.dynamokt/Item?) // com.steamstreet.dynamokt/Items.<init>|<init>(com.steamstreet.dynamokt.Item?;com.steamstreet.dynamokt.Item?){}[0]
+
+    final val new // com.steamstreet.dynamokt/Items.new|{}new[0]
+        final fun <get-new>(): com.steamstreet.dynamokt/Item? // com.steamstreet.dynamokt/Items.new.<get-new>|<get-new>(){}[0]
+    final val old // com.steamstreet.dynamokt/Items.old|{}old[0]
+        final fun <get-old>(): com.steamstreet.dynamokt/Item? // com.steamstreet.dynamokt/Items.old.<get-old>|<get-old>(){}[0]
+
+    final fun component1(): com.steamstreet.dynamokt/Item? // com.steamstreet.dynamokt/Items.component1|component1(){}[0]
+    final fun component2(): com.steamstreet.dynamokt/Item? // com.steamstreet.dynamokt/Items.component2|component2(){}[0]
+    final fun copy(com.steamstreet.dynamokt/Item? = ..., com.steamstreet.dynamokt/Item? = ...): com.steamstreet.dynamokt/Items // com.steamstreet.dynamokt/Items.copy|copy(com.steamstreet.dynamokt.Item?;com.steamstreet.dynamokt.Item?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.dynamokt/Items.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.dynamokt/Items.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.dynamokt/Items.toString|toString(){}[0]
+}
+
+final class com.steamstreet.dynamokt/MutableItem : com.steamstreet.dynamokt/Item { // com.steamstreet.dynamokt/MutableItem|null[0]
+    final val allUpdates // com.steamstreet.dynamokt/MutableItem.allUpdates|{}allUpdates[0]
+        final fun <get-allUpdates>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValueUpdate> // com.steamstreet.dynamokt/MutableItem.allUpdates.<get-allUpdates>|<get-allUpdates>(){}[0]
+
+    final var doNotOverwrite // com.steamstreet.dynamokt/MutableItem.doNotOverwrite|{}doNotOverwrite[0]
+        final fun <get-doNotOverwrite>(): kotlin/Boolean // com.steamstreet.dynamokt/MutableItem.doNotOverwrite.<get-doNotOverwrite>|<get-doNotOverwrite>(){}[0]
+        final fun <set-doNotOverwrite>(kotlin/Boolean) // com.steamstreet.dynamokt/MutableItem.doNotOverwrite.<set-doNotOverwrite>|<set-doNotOverwrite>(kotlin.Boolean){}[0]
+    final var replace // com.steamstreet.dynamokt/MutableItem.replace|{}replace[0]
+        final fun <get-replace>(): kotlin/Boolean // com.steamstreet.dynamokt/MutableItem.replace.<get-replace>|<get-replace>(){}[0]
+        final fun <set-replace>(kotlin/Boolean) // com.steamstreet.dynamokt/MutableItem.replace.<set-replace>|<set-replace>(kotlin.Boolean){}[0]
+    final var returnValues // com.steamstreet.dynamokt/MutableItem.returnValues|{}returnValues[0]
+        final fun <get-returnValues>(): com.steamstreet.awskt.dynamodb/ReturnValue // com.steamstreet.dynamokt/MutableItem.returnValues.<get-returnValues>|<get-returnValues>(){}[0]
+        final fun <set-returnValues>(com.steamstreet.awskt.dynamodb/ReturnValue) // com.steamstreet.dynamokt/MutableItem.returnValues.<set-returnValues>|<set-returnValues>(com.steamstreet.awskt.dynamodb.ReturnValue){}[0]
+
+    final fun <#A1: com.steamstreet.dynamokt/ItemContainer, #B1: kotlin/Any?> set(kotlin.reflect/KProperty1<#A1, #B1>, #B1) // com.steamstreet.dynamokt/MutableItem.set|set(kotlin.reflect.KProperty1<0:0,0:1>;0:1){0§<com.steamstreet.dynamokt.ItemContainer>;1§<kotlin.Any?>}[0]
+    final fun addToList(kotlin/String, com.steamstreet.dynamokt/AttributeValue) // com.steamstreet.dynamokt/MutableItem.addToList|addToList(kotlin.String;com.steamstreet.dynamokt.AttributeValue){}[0]
+    final fun addToSet(kotlin/String, kotlin.collections/Collection<kotlin/String>) // com.steamstreet.dynamokt/MutableItem.addToSet|addToSet(kotlin.String;kotlin.collections.Collection<kotlin.String>){}[0]
+    final fun addToSet(kotlin/String, kotlin/String) // com.steamstreet.dynamokt/MutableItem.addToSet|addToSet(kotlin.String;kotlin.String){}[0]
+    final fun clearTTL() // com.steamstreet.dynamokt/MutableItem.clearTTL|clearTTL(){}[0]
+    final fun condition(kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String> = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ..., com.steamstreet.awskt.dynamodb/ReturnValuesOnConditionCheckFailure = ...) // com.steamstreet.dynamokt/MutableItem.condition|condition(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;com.steamstreet.awskt.dynamodb.ReturnValuesOnConditionCheckFailure){}[0]
+    final fun conditionAttributeEquals(kotlin/String, com.steamstreet.dynamokt/AttributeValue) // com.steamstreet.dynamokt/MutableItem.conditionAttributeEquals|conditionAttributeEquals(kotlin.String;com.steamstreet.dynamokt.AttributeValue){}[0]
+    final fun delete(kotlin/String) // com.steamstreet.dynamokt/MutableItem.delete|delete(kotlin.String){}[0]
+    final fun doNoOverwrite(kotlin/Boolean = ...) // com.steamstreet.dynamokt/MutableItem.doNoOverwrite|doNoOverwrite(kotlin.Boolean){}[0]
+    final fun increment(kotlin/String, kotlin/Int = ...) // com.steamstreet.dynamokt/MutableItem.increment|increment(kotlin.String;kotlin.Int){}[0]
+    final fun mustExist() // com.steamstreet.dynamokt/MutableItem.mustExist|mustExist(){}[0]
+    final fun removeFromList(kotlin/String, kotlin/Int) // com.steamstreet.dynamokt/MutableItem.removeFromList|removeFromList(kotlin.String;kotlin.Int){}[0]
+    final fun requireAttributeExists(kotlin/String) // com.steamstreet.dynamokt/MutableItem.requireAttributeExists|requireAttributeExists(kotlin.String){}[0]
+    final fun requireAttributeNotExists(kotlin/String) // com.steamstreet.dynamokt/MutableItem.requireAttributeNotExists|requireAttributeNotExists(kotlin.String){}[0]
+    final fun set(kotlin/String, com.steamstreet.dynamokt/AttributeValue?) // com.steamstreet.dynamokt/MutableItem.set|set(kotlin.String;com.steamstreet.dynamokt.AttributeValue?){}[0]
+    final fun set(kotlin/String, kotlin.time/Instant?) // com.steamstreet.dynamokt/MutableItem.set|set(kotlin.String;kotlin.time.Instant?){}[0]
+    final fun set(kotlin/String, kotlin/Enum<*>?) // com.steamstreet.dynamokt/MutableItem.set|set(kotlin.String;kotlin.Enum<*>?){}[0]
+    final fun set(kotlin/String, kotlin/Int?) // com.steamstreet.dynamokt/MutableItem.set|set(kotlin.String;kotlin.Int?){}[0]
+    final fun set(kotlin/String, kotlin/String?) // com.steamstreet.dynamokt/MutableItem.set|set(kotlin.String;kotlin.String?){}[0]
+    final fun setBoolean(kotlin/String, kotlin/Boolean?) // com.steamstreet.dynamokt/MutableItem.setBoolean|setBoolean(kotlin.String;kotlin.Boolean?){}[0]
+    final fun setGSI(kotlin/Int, kotlin/String, kotlin/String) // com.steamstreet.dynamokt/MutableItem.setGSI|setGSI(kotlin.Int;kotlin.String;kotlin.String){}[0]
+    final fun setLong(kotlin/String, kotlin/Long?) // com.steamstreet.dynamokt/MutableItem.setLong|setLong(kotlin.String;kotlin.Long?){}[0]
+    final fun setTTL(kotlin.time/Duration) // com.steamstreet.dynamokt/MutableItem.setTTL|setTTL(kotlin.time.Duration){}[0]
+    final fun setTTL(kotlin.time/Instant) // com.steamstreet.dynamokt/MutableItem.setTTL|setTTL(kotlin.time.Instant){}[0]
+    final fun update(): com.steamstreet.dynamokt/MutableItem // com.steamstreet.dynamokt/MutableItem.update|update(){}[0]
+    final fun updateListItem(kotlin/String, kotlin/Int, kotlin/String? = ..., com.steamstreet.dynamokt/AttributeValue?) // com.steamstreet.dynamokt/MutableItem.updateListItem|updateListItem(kotlin.String;kotlin.Int;kotlin.String?;com.steamstreet.dynamokt.AttributeValue?){}[0]
+    final suspend fun get(kotlin/String): com.steamstreet.dynamokt/AttributeValue? // com.steamstreet.dynamokt/MutableItem.get|get(kotlin.String){}[0]
+    final suspend fun save(): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/MutableItem.save|save(){}[0]
+
+    final class Update { // com.steamstreet.dynamokt/MutableItem.Update|null[0]
+        constructor <init>(kotlin/String, kotlin/String) // com.steamstreet.dynamokt/MutableItem.Update.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+        final val expression // com.steamstreet.dynamokt/MutableItem.Update.expression|{}expression[0]
+            final fun <get-expression>(): kotlin/String // com.steamstreet.dynamokt/MutableItem.Update.expression.<get-expression>|<get-expression>(){}[0]
+        final val type // com.steamstreet.dynamokt/MutableItem.Update.type|{}type[0]
+            final fun <get-type>(): kotlin/String // com.steamstreet.dynamokt/MutableItem.Update.type.<get-type>|<get-type>(){}[0]
+    }
+}
+
+final class com.steamstreet.dynamokt/Query { // com.steamstreet.dynamokt/Query|null[0]
+    final val dynamo // com.steamstreet.dynamokt/Query.dynamo|{}dynamo[0]
+        final fun <get-dynamo>(): com.steamstreet.dynamokt/DynamoKtSession // com.steamstreet.dynamokt/Query.dynamo.<get-dynamo>|<get-dynamo>(){}[0]
+    final val pk // com.steamstreet.dynamokt/Query.pk|{}pk[0]
+        final fun <get-pk>(): kotlin/String // com.steamstreet.dynamokt/Query.pk.<get-pk>|<get-pk>(){}[0]
+    final val sk // com.steamstreet.dynamokt/Query.sk|{}sk[0]
+        final fun <get-sk>(): com.steamstreet.dynamokt/Query.SortKey // com.steamstreet.dynamokt/Query.sk.<get-sk>|<get-sk>(){}[0]
+
+    final var consistent // com.steamstreet.dynamokt/Query.consistent|{}consistent[0]
+        final fun <get-consistent>(): kotlin/Boolean // com.steamstreet.dynamokt/Query.consistent.<get-consistent>|<get-consistent>(){}[0]
+        final fun <set-consistent>(kotlin/Boolean) // com.steamstreet.dynamokt/Query.consistent.<set-consistent>|<set-consistent>(kotlin.Boolean){}[0]
+    final var forward // com.steamstreet.dynamokt/Query.forward|{}forward[0]
+        final fun <get-forward>(): kotlin/Boolean // com.steamstreet.dynamokt/Query.forward.<get-forward>|<get-forward>(){}[0]
+        final fun <set-forward>(kotlin/Boolean) // com.steamstreet.dynamokt/Query.forward.<set-forward>|<set-forward>(kotlin.Boolean){}[0]
+    final var indexName // com.steamstreet.dynamokt/Query.indexName|{}indexName[0]
+        final fun <get-indexName>(): kotlin/String? // com.steamstreet.dynamokt/Query.indexName.<get-indexName>|<get-indexName>(){}[0]
+        final fun <set-indexName>(kotlin/String?) // com.steamstreet.dynamokt/Query.indexName.<set-indexName>|<set-indexName>(kotlin.String?){}[0]
+    final var limit // com.steamstreet.dynamokt/Query.limit|{}limit[0]
+        final fun <get-limit>(): kotlin/Int? // com.steamstreet.dynamokt/Query.limit.<get-limit>|<get-limit>(){}[0]
+        final fun <set-limit>(kotlin/Int?) // com.steamstreet.dynamokt/Query.limit.<set-limit>|<set-limit>(kotlin.Int?){}[0]
+    final var loadAll // com.steamstreet.dynamokt/Query.loadAll|{}loadAll[0]
+        final fun <get-loadAll>(): kotlin/Boolean // com.steamstreet.dynamokt/Query.loadAll.<get-loadAll>|<get-loadAll>(){}[0]
+        final fun <set-loadAll>(kotlin/Boolean) // com.steamstreet.dynamokt/Query.loadAll.<set-loadAll>|<set-loadAll>(kotlin.Boolean){}[0]
+    final var pkName // com.steamstreet.dynamokt/Query.pkName|{}pkName[0]
+        final fun <get-pkName>(): kotlin/String // com.steamstreet.dynamokt/Query.pkName.<get-pkName>|<get-pkName>(){}[0]
+        final fun <set-pkName>(kotlin/String) // com.steamstreet.dynamokt/Query.pkName.<set-pkName>|<set-pkName>(kotlin.String){}[0]
+    final var skName // com.steamstreet.dynamokt/Query.skName|{}skName[0]
+        final fun <get-skName>(): kotlin/String? // com.steamstreet.dynamokt/Query.skName.<get-skName>|<get-skName>(){}[0]
+        final fun <set-skName>(kotlin/String?) // com.steamstreet.dynamokt/Query.skName.<set-skName>|<set-skName>(kotlin.String?){}[0]
+    final var token // com.steamstreet.dynamokt/Query.token|{}token[0]
+        final fun <get-token>(): kotlin/String? // com.steamstreet.dynamokt/Query.token.<get-token>|<get-token>(){}[0]
+        final fun <set-token>(kotlin/String?) // com.steamstreet.dynamokt/Query.token.<set-token>|<set-token>(kotlin.String?){}[0]
+
+    final fun attributes(kotlin/Array<out kotlin/String>...) // com.steamstreet.dynamokt/Query.attributes|attributes(kotlin.Array<out|kotlin.String>...){}[0]
+    final fun filter(kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String> = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> = ...) // com.steamstreet.dynamokt/Query.filter|filter(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>){}[0]
+    final fun index(kotlin/String, kotlin/String, kotlin/String) // com.steamstreet.dynamokt/Query.index|index(kotlin.String;kotlin.String;kotlin.String){}[0]
+    final fun reversed() // com.steamstreet.dynamokt/Query.reversed|reversed(){}[0]
+    final fun segment(kotlin/Int, kotlin/Int) // com.steamstreet.dynamokt/Query.segment|segment(kotlin.Int;kotlin.Int){}[0]
+
+    final class SortKey { // com.steamstreet.dynamokt/Query.SortKey|null[0]
+        constructor <init>() // com.steamstreet.dynamokt/Query.SortKey.<init>|<init>(){}[0]
+
+        final val values // com.steamstreet.dynamokt/Query.SortKey.values|{}values[0]
+            final fun <get-values>(): kotlin.collections/HashMap<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.dynamokt/Query.SortKey.values.<get-values>|<get-values>(){}[0]
+
+        final var expression // com.steamstreet.dynamokt/Query.SortKey.expression|{}expression[0]
+            final fun <get-expression>(): kotlin/String? // com.steamstreet.dynamokt/Query.SortKey.expression.<get-expression>|<get-expression>(){}[0]
+            final fun <set-expression>(kotlin/String?) // com.steamstreet.dynamokt/Query.SortKey.expression.<set-expression>|<set-expression>(kotlin.String?){}[0]
+
+        final fun between(kotlin.ranges/ClosedRange<kotlin/String>) // com.steamstreet.dynamokt/Query.SortKey.between|between(kotlin.ranges.ClosedRange<kotlin.String>){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.dynamokt/Query.SortKey.equals|equals(kotlin.Any?){}[0]
+        final fun greaterThan(kotlin/String) // com.steamstreet.dynamokt/Query.SortKey.greaterThan|greaterThan(kotlin.String){}[0]
+        final fun greaterThanOrEqualTo(kotlin/String) // com.steamstreet.dynamokt/Query.SortKey.greaterThanOrEqualTo|greaterThanOrEqualTo(kotlin.String){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.dynamokt/Query.SortKey.hashCode|hashCode(){}[0]
+        final fun isEqual(kotlin/String) // com.steamstreet.dynamokt/Query.SortKey.isEqual|isEqual(kotlin.String){}[0]
+        final fun lessThan(kotlin/String) // com.steamstreet.dynamokt/Query.SortKey.lessThan|lessThan(kotlin.String){}[0]
+        final fun lessThanOrEqualTo(kotlin/String) // com.steamstreet.dynamokt/Query.SortKey.lessThanOrEqualTo|lessThanOrEqualTo(kotlin.String){}[0]
+        final fun startsWith(kotlin/String) // com.steamstreet.dynamokt/Query.SortKey.startsWith|startsWith(kotlin.String){}[0]
+    }
+}
+
+final class com.steamstreet.dynamokt/Transaction : com.steamstreet.dynamokt/ItemUpdater, kotlin/AutoCloseable { // com.steamstreet.dynamokt/Transaction|null[0]
+    final fun close() // com.steamstreet.dynamokt/Transaction.close|close(){}[0]
+    final fun condition(kotlin/String, kotlin/String?, kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String>, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>) // com.steamstreet.dynamokt/Transaction.condition|condition(kotlin.String;kotlin.String?;kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>){}[0]
+    final suspend fun commit() // com.steamstreet.dynamokt/Transaction.commit|commit(){}[0]
+    final suspend fun delete(kotlin/String, kotlin/String?, kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/MutableItem, kotlin/Unit>) // com.steamstreet.dynamokt/Transaction.delete|delete(kotlin.String;kotlin.String?;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.MutableItem,kotlin.Unit>){}[0]
+    final suspend fun put(com.steamstreet.dynamokt/AttributeValue, com.steamstreet.dynamokt/AttributeValue?, kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/MutableItem, kotlin/Unit>): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/Transaction.put|put(com.steamstreet.dynamokt.AttributeValue;com.steamstreet.dynamokt.AttributeValue?;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.MutableItem,kotlin.Unit>){}[0]
+    final suspend fun put(kotlin/String, kotlin/String?, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/Transaction.put|put(kotlin.String;kotlin.String?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>){}[0]
+    final suspend fun update(kotlin/String, kotlin/String?, kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/MutableItem, kotlin/Unit>): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/Transaction.update|update(kotlin.String;kotlin.String?;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.MutableItem,kotlin.Unit>){}[0]
+}
+
+open class <#A: kotlin/Any?, #B: in com.steamstreet.dynamokt/ItemContainer> com.steamstreet.dynamokt/ItemAttributeDelegate : kotlin.properties/ReadWriteProperty<#B, #A> { // com.steamstreet.dynamokt/ItemAttributeDelegate|null[0]
+    constructor <init>(com.steamstreet.dynamokt/AttributeSerializer<#A>, kotlin/String? = ...) // com.steamstreet.dynamokt/ItemAttributeDelegate.<init>|<init>(com.steamstreet.dynamokt.AttributeSerializer<1:0>;kotlin.String?){}[0]
+
+    final fun withDefault(#A): com.steamstreet.dynamokt/ItemAttributeDelegate<#A, #B> // com.steamstreet.dynamokt/ItemAttributeDelegate.withDefault|withDefault(1:0){}[0]
+    open fun getValue(#B, kotlin.reflect/KProperty<*>): #A // com.steamstreet.dynamokt/ItemAttributeDelegate.getValue|getValue(1:1;kotlin.reflect.KProperty<*>){}[0]
+    open fun setValue(#B, kotlin.reflect/KProperty<*>, #A) // com.steamstreet.dynamokt/ItemAttributeDelegate.setValue|setValue(1:1;kotlin.reflect.KProperty<*>;1:0){}[0]
+}
+
+open class com.steamstreet.dynamokt/Item { // com.steamstreet.dynamokt/Item|null[0]
+    final val allAttributes // com.steamstreet.dynamokt/Item.allAttributes|{}allAttributes[0]
+        final fun <get-allAttributes>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.dynamokt/Item.allAttributes.<get-allAttributes>|<get-allAttributes>(){}[0]
+    final val dynamo // com.steamstreet.dynamokt/Item.dynamo|{}dynamo[0]
+        final fun <get-dynamo>(): com.steamstreet.dynamokt/DynamoKtSession // com.steamstreet.dynamokt/Item.dynamo.<get-dynamo>|<get-dynamo>(){}[0]
+    final val failOnLoading // com.steamstreet.dynamokt/Item.failOnLoading|{}failOnLoading[0]
+        final fun <get-failOnLoading>(): kotlin/Boolean // com.steamstreet.dynamokt/Item.failOnLoading.<get-failOnLoading>|<get-failOnLoading>(){}[0]
+    final val pk // com.steamstreet.dynamokt/Item.pk|{}pk[0]
+        final fun <get-pk>(): kotlin/String // com.steamstreet.dynamokt/Item.pk.<get-pk>|<get-pk>(){}[0]
+    final val sk // com.steamstreet.dynamokt/Item.sk|{}sk[0]
+        final fun <get-sk>(): kotlin/String? // com.steamstreet.dynamokt/Item.sk.<get-sk>|<get-sk>(){}[0]
+
+    final var loaded // com.steamstreet.dynamokt/Item.loaded|{}loaded[0]
+        final fun <get-loaded>(): kotlin/Boolean // com.steamstreet.dynamokt/Item.loaded.<get-loaded>|<get-loaded>(){}[0]
+        final fun <set-loaded>(kotlin/Boolean) // com.steamstreet.dynamokt/Item.loaded.<set-loaded>|<set-loaded>(kotlin.Boolean){}[0]
+
+    final suspend fun allAttributes(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue> // com.steamstreet.dynamokt/Item.allAttributes|allAttributes(){}[0]
+    final suspend fun getBoolean(kotlin/String): kotlin/Boolean? // com.steamstreet.dynamokt/Item.getBoolean|getBoolean(kotlin.String){}[0]
+    final suspend fun getInt(kotlin/String): kotlin/Int? // com.steamstreet.dynamokt/Item.getInt|getInt(kotlin.String){}[0]
+    final suspend fun getLong(kotlin/String): kotlin/Long? // com.steamstreet.dynamokt/Item.getLong|getLong(kotlin.String){}[0]
+    final suspend fun getString(kotlin/String): kotlin/String? // com.steamstreet.dynamokt/Item.getString|getString(kotlin.String){}[0]
+    final suspend fun update(com.steamstreet.dynamokt/ItemUpdater = ..., kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/MutableItem, kotlin/Unit>): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/Item.update|update(com.steamstreet.dynamokt.ItemUpdater;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.MutableItem,kotlin.Unit>){}[0]
+    open suspend fun get(kotlin/String): com.steamstreet.dynamokt/AttributeValue? // com.steamstreet.dynamokt/Item.get|get(kotlin.String){}[0]
+}
+
+final val com.steamstreet.dynamokt/instant // com.steamstreet.dynamokt/instant|@com.steamstreet.dynamokt.AttributeValue{}instant[0]
+    final fun (com.steamstreet.dynamokt/AttributeValue).<get-instant>(): kotlin.time/Instant? // com.steamstreet.dynamokt/instant.<get-instant>|<get-instant>@com.steamstreet.dynamokt.AttributeValue(){}[0]
+final val com.steamstreet.dynamokt/localDate // com.steamstreet.dynamokt/localDate|@com.steamstreet.dynamokt.AttributeValue{}localDate[0]
+    final fun (com.steamstreet.dynamokt/AttributeValue).<get-localDate>(): kotlinx.datetime/LocalDate? // com.steamstreet.dynamokt/localDate.<get-localDate>|<get-localDate>@com.steamstreet.dynamokt.AttributeValue(){}[0]
+final val com.steamstreet.dynamokt/localDateTime // com.steamstreet.dynamokt/localDateTime|@com.steamstreet.dynamokt.AttributeValue{}localDateTime[0]
+    final fun (com.steamstreet.dynamokt/AttributeValue).<get-localDateTime>(): kotlinx.datetime/LocalDateTime? // com.steamstreet.dynamokt/localDateTime.<get-localDateTime>|<get-localDateTime>@com.steamstreet.dynamokt.AttributeValue(){}[0]
+final val com.steamstreet.dynamokt/localTime // com.steamstreet.dynamokt/localTime|@com.steamstreet.dynamokt.AttributeValue{}localTime[0]
+    final fun (com.steamstreet.dynamokt/AttributeValue).<get-localTime>(): kotlinx.datetime/LocalTime? // com.steamstreet.dynamokt/localTime.<get-localTime>|<get-localTime>@com.steamstreet.dynamokt.AttributeValue(){}[0]
+
+final fun (com.steamstreet.dynamokt/AttributeValue).com.steamstreet.dynamokt/asJsonElement(): kotlinx.serialization.json/JsonElement // com.steamstreet.dynamokt/asJsonElement|asJsonElement@com.steamstreet.dynamokt.AttributeValue(){}[0]
+final fun (com.steamstreet.dynamokt/AttributeValue).com.steamstreet.dynamokt/update(com.steamstreet.dynamokt/AttributeAction = ...): com.steamstreet.dynamokt/AttributeValueUpdate // com.steamstreet.dynamokt/update|update@com.steamstreet.dynamokt.AttributeValue(com.steamstreet.dynamokt.AttributeAction){}[0]
+final fun (com.steamstreet.dynamokt/DynamoStreamEvent).com.steamstreet.dynamokt/diffs(): kotlin.collections/List<kotlin/String> // com.steamstreet.dynamokt/diffs|diffs@com.steamstreet.dynamokt.DynamoStreamEvent(){}[0]
+final fun (com.steamstreet.dynamokt/DynamoStreamEvent).com.steamstreet.dynamokt/items(com.steamstreet.dynamokt/DynamoKtSession): com.steamstreet.dynamokt/Items // com.steamstreet.dynamokt/items|items@com.steamstreet.dynamokt.DynamoStreamEvent(com.steamstreet.dynamokt.DynamoKtSession){}[0]
+final fun (com.steamstreet.dynamokt/DynamoStreamEvent).com.steamstreet.dynamokt/newItem(com.steamstreet.dynamokt/DynamoKtSession): com.steamstreet.dynamokt/Item? // com.steamstreet.dynamokt/newItem|newItem@com.steamstreet.dynamokt.DynamoStreamEvent(com.steamstreet.dynamokt.DynamoKtSession){}[0]
+final fun (com.steamstreet.dynamokt/DynamoStreamEvent).com.steamstreet.dynamokt/oldAndNew(com.steamstreet.dynamokt/DynamoKtSession): com.steamstreet.dynamokt/Items // com.steamstreet.dynamokt/oldAndNew|oldAndNew@com.steamstreet.dynamokt.DynamoStreamEvent(com.steamstreet.dynamokt.DynamoKtSession){}[0]
+final fun (com.steamstreet.dynamokt/DynamoStreamEvent).com.steamstreet.dynamokt/oldItem(com.steamstreet.dynamokt/DynamoKtSession): com.steamstreet.dynamokt/Item? // com.steamstreet.dynamokt/oldItem|oldItem@com.steamstreet.dynamokt.DynamoStreamEvent(com.steamstreet.dynamokt.DynamoKtSession){}[0]
+final fun (com.steamstreet.dynamokt/ExpressionBuilder).com.steamstreet.dynamokt/build(): com.steamstreet.dynamokt/FilterExpression? // com.steamstreet.dynamokt/build|build@com.steamstreet.dynamokt.ExpressionBuilder(){}[0]
+final fun (com.steamstreet.dynamokt/Item).com.steamstreet.dynamokt/getJson(): kotlinx.serialization.json/JsonObject // com.steamstreet.dynamokt/getJson|getJson@com.steamstreet.dynamokt.Item(){}[0]
+final fun (com.steamstreet.dynamokt/MutableItem).com.steamstreet.dynamokt/putJson(kotlinx.serialization.json/JsonObject) // com.steamstreet.dynamokt/putJson|putJson@com.steamstreet.dynamokt.MutableItem(kotlinx.serialization.json.JsonObject){}[0]
+final fun (com.steamstreet.dynamokt/MutableItem).com.steamstreet.dynamokt/set(kotlin/String, kotlinx.serialization.json/JsonElement) // com.steamstreet.dynamokt/set|set@com.steamstreet.dynamokt.MutableItem(kotlin.String;kotlinx.serialization.json.JsonElement){}[0]
+final fun (com.steamstreet.dynamokt/Query).com.steamstreet.dynamokt/buildFilter(kotlin/Function1<com.steamstreet.dynamokt/ExpressionBuilder, kotlin/Unit>) // com.steamstreet.dynamokt/buildFilter|buildFilter@com.steamstreet.dynamokt.Query(kotlin.Function1<com.steamstreet.dynamokt.ExpressionBuilder,kotlin.Unit>){}[0]
+final fun (kotlin.collections/HashMap<kotlin/String, com.steamstreet.dynamokt/AttributeValueUpdate>).com.steamstreet.dynamokt/delete(kotlin/String) // com.steamstreet.dynamokt/delete|delete@kotlin.collections.HashMap<kotlin.String,com.steamstreet.dynamokt.AttributeValueUpdate>(kotlin.String){}[0]
+final fun (kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>?).com.steamstreet.dynamokt/facade(com.steamstreet.dynamokt/DynamoKtSession): com.steamstreet.dynamokt/Item // com.steamstreet.dynamokt/facade|facade@kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?(com.steamstreet.dynamokt.DynamoKtSession){}[0]
+final fun (kotlin.time/Instant).com.steamstreet.dynamokt/attributeValue(): com.steamstreet.dynamokt/AttributeValue // com.steamstreet.dynamokt/attributeValue|attributeValue@kotlin.time.Instant(){}[0]
+final fun (kotlinx.serialization.json/JsonElement).com.steamstreet.dynamokt/toAttributeValue(): com.steamstreet.dynamokt/AttributeValue? // com.steamstreet.dynamokt/toAttributeValue|toAttributeValue@kotlinx.serialization.json.JsonElement(){}[0]
+final fun <#A: com.steamstreet.dynamokt/ItemContainer, #B: kotlin/Any?> (#A).com.steamstreet.dynamokt/stringBacked(kotlin/String? = ..., kotlin/Function1<com.steamstreet.dynamokt/Converter<#B, kotlin/String?>, kotlin/Unit>): com.steamstreet.dynamokt/ItemAttributeDelegate<#B, #A> // com.steamstreet.dynamokt/stringBacked|stringBacked@0:0(kotlin.String?;kotlin.Function1<com.steamstreet.dynamokt.Converter<0:1,kotlin.String?>,kotlin.Unit>){0§<com.steamstreet.dynamokt.ItemContainer>;1§<kotlin.Any?>}[0]
+final fun <#A: com.steamstreet.dynamokt/ItemContainer, #B: kotlin/Int?> (#A).com.steamstreet.dynamokt/intAttribute(kotlin/String? = ...): com.steamstreet.dynamokt/ItemAttributeDelegate<#B, #A> // com.steamstreet.dynamokt/intAttribute|intAttribute@0:0(kotlin.String?){0§<com.steamstreet.dynamokt.ItemContainer>;1§<kotlin.Int?>}[0]
+final fun <#A: com.steamstreet.dynamokt/ItemContainer, #B: kotlin/String?> (#A).com.steamstreet.dynamokt/stringAttribute(kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.dynamokt/ItemAttributeDelegate<#B, #A> // com.steamstreet.dynamokt/stringAttribute|stringAttribute@0:0(kotlin.String?;kotlin.String?){0§<com.steamstreet.dynamokt.ItemContainer>;1§<kotlin.String?>}[0]
+final fun <#A: com.steamstreet.dynamokt/ItemContainer> (#A).com.steamstreet.dynamokt/boolAttribute(kotlin/Boolean, kotlin/String? = ...): com.steamstreet.dynamokt/ItemAttributeDelegate<kotlin/Boolean, #A> // com.steamstreet.dynamokt/boolAttribute|boolAttribute@0:0(kotlin.Boolean;kotlin.String?){0§<com.steamstreet.dynamokt.ItemContainer>}[0]
+final fun <#A: com.steamstreet.dynamokt/ItemContainer> (#A).com.steamstreet.dynamokt/instantAttribute(kotlin.time/Instant, kotlin/String? = ...): com.steamstreet.dynamokt/ItemAttributeDelegate<kotlin.time/Instant, #A> // com.steamstreet.dynamokt/instantAttribute|instantAttribute@0:0(kotlin.time.Instant;kotlin.String?){0§<com.steamstreet.dynamokt.ItemContainer>}[0]
+final fun <#A: com.steamstreet.dynamokt/ItemContainer> (#A).com.steamstreet.dynamokt/instantAttribute(kotlin/String? = ...): com.steamstreet.dynamokt/ItemAttributeDelegate<kotlin.time/Instant?, #A> // com.steamstreet.dynamokt/instantAttribute|instantAttribute@0:0(kotlin.String?){0§<com.steamstreet.dynamokt.ItemContainer>}[0]
+final fun <#A: com.steamstreet.dynamokt/ItemContainer> (#A).com.steamstreet.dynamokt/intAttribute(kotlin/Int, kotlin/String? = ...): com.steamstreet.dynamokt/ItemAttributeDelegate<kotlin/Int, #A> // com.steamstreet.dynamokt/intAttribute|intAttribute@0:0(kotlin.Int;kotlin.String?){0§<com.steamstreet.dynamokt.ItemContainer>}[0]
+final fun <#A: com.steamstreet.dynamokt/ItemContainer> (#A).com.steamstreet.dynamokt/localDateAttribute(kotlin/String? = ...): com.steamstreet.dynamokt/ItemAttributeDelegate<kotlinx.datetime/LocalDate?, #A> // com.steamstreet.dynamokt/localDateAttribute|localDateAttribute@0:0(kotlin.String?){0§<com.steamstreet.dynamokt.ItemContainer>}[0]
+final fun <#A: com.steamstreet.dynamokt/ItemContainer> (#A).com.steamstreet.dynamokt/localDateAttribute(kotlinx.datetime/LocalDate, kotlin/String? = ...): com.steamstreet.dynamokt/ItemAttributeDelegate<kotlinx.datetime/LocalDate, #A> // com.steamstreet.dynamokt/localDateAttribute|localDateAttribute@0:0(kotlinx.datetime.LocalDate;kotlin.String?){0§<com.steamstreet.dynamokt.ItemContainer>}[0]
+final fun <#A: com.steamstreet.dynamokt/ItemContainer> (#A).com.steamstreet.dynamokt/stringListAttribute(kotlin.collections/List<kotlin/String> = ..., kotlin/String? = ...): com.steamstreet.dynamokt/ItemAttributeDelegate<kotlin.collections/List<kotlin/String>, #A> // com.steamstreet.dynamokt/stringListAttribute|stringListAttribute@0:0(kotlin.collections.List<kotlin.String>;kotlin.String?){0§<com.steamstreet.dynamokt.ItemContainer>}[0]
+final fun <#A: com.steamstreet.dynamokt/ItemContainer> (#A).com.steamstreet.dynamokt/stringSetAttribute(kotlin.collections/Set<kotlin/String> = ..., kotlin/String? = ...): com.steamstreet.dynamokt/ItemAttributeDelegate<kotlin.collections/Set<kotlin/String>, #A> // com.steamstreet.dynamokt/stringSetAttribute|stringSetAttribute@0:0(kotlin.collections.Set<kotlin.String>;kotlin.String?){0§<com.steamstreet.dynamokt.ItemContainer>}[0]
+final fun <#A: kotlin/Any?, #B: com.steamstreet.dynamokt/ItemContainer> com.steamstreet.dynamokt/attribute(kotlin/String? = ..., kotlin/Function1<com.steamstreet.dynamokt/AttributeSerializerBuilder<#A>, kotlin/Unit>): com.steamstreet.dynamokt/ItemAttributeDelegate<#A, #B> // com.steamstreet.dynamokt/attribute|attribute(kotlin.String?;kotlin.Function1<com.steamstreet.dynamokt.AttributeSerializerBuilder<0:0>,kotlin.Unit>){0§<kotlin.Any?>;1§<com.steamstreet.dynamokt.ItemContainer>}[0]
+final fun <#A: kotlin/Any?> (kotlin.collections/MutableMap<kotlin/String, com.steamstreet.dynamokt/AttributeValueUpdate>).com.steamstreet.dynamokt/update(kotlin/String, #A?) // com.steamstreet.dynamokt/update|update@kotlin.collections.MutableMap<kotlin.String,com.steamstreet.dynamokt.AttributeValueUpdate>(kotlin.String;0:0?){0§<kotlin.Any?>}[0]
+final fun com.steamstreet.dynamokt/diff(com.steamstreet.dynamokt/Item, com.steamstreet.dynamokt/Item): kotlin.collections/List<kotlin/String> // com.steamstreet.dynamokt/diff|diff(com.steamstreet.dynamokt.Item;com.steamstreet.dynamokt.Item){}[0]
+final fun com.steamstreet.dynamokt/diff(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>): kotlin.collections/List<kotlin/String> // com.steamstreet.dynamokt/diff|diff(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>){}[0]
+final fun com.steamstreet.dynamokt/findDifferences(kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>?, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>?): kotlin.collections/List<kotlin/String> // com.steamstreet.dynamokt/findDifferences|findDifferences(kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?){}[0]
+final inline fun <#A: reified kotlin/Any?> (com.steamstreet.dynamokt/AttributeValue).com.steamstreet.dynamokt/deserialize(): #A // com.steamstreet.dynamokt/deserialize|deserialize@com.steamstreet.dynamokt.AttributeValue(){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (com.steamstreet.dynamokt/Item).com.steamstreet.dynamokt/deserialize(): #A // com.steamstreet.dynamokt/deserialize|deserialize@com.steamstreet.dynamokt.Item(){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (com.steamstreet.dynamokt/MutableItem).com.steamstreet.dynamokt/put(#A) // com.steamstreet.dynamokt/put|put@com.steamstreet.dynamokt.MutableItem(0:0){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (com.steamstreet.dynamokt/MutableItem).com.steamstreet.dynamokt/setObject(kotlin/String, #A) // com.steamstreet.dynamokt/setObject|setObject@com.steamstreet.dynamokt.MutableItem(kotlin.String;0:0){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Enum<#A>, #B: com.steamstreet.dynamokt/ItemContainer> com.steamstreet.dynamokt/enumAttribute(#A, kotlin/String? = ...): com.steamstreet.dynamokt/ItemAttributeDelegate<#A, #B> // com.steamstreet.dynamokt/enumAttribute|enumAttribute(0:0;kotlin.String?){0§<kotlin.Enum<0:0>>;1§<com.steamstreet.dynamokt.ItemContainer>}[0]
+final inline fun <#A: reified kotlin/Enum<#A>, #B: com.steamstreet.dynamokt/ItemContainer> com.steamstreet.dynamokt/enumAttribute(): com.steamstreet.dynamokt/ItemAttributeDelegate<#A?, #B> // com.steamstreet.dynamokt/enumAttribute|enumAttribute(){0§<kotlin.Enum<0:0>>;1§<com.steamstreet.dynamokt.ItemContainer>}[0]
+final suspend fun (com.steamstreet.dynamokt/Item).com.steamstreet.dynamokt/getInstant(kotlin/String): kotlin.time/Instant? // com.steamstreet.dynamokt/getInstant|getInstant@com.steamstreet.dynamokt.Item(kotlin.String){}[0]
+final suspend inline fun <#A: reified kotlin/Any?> (com.steamstreet.dynamokt/Item).com.steamstreet.dynamokt/deserialize(kotlin/String): #A? // com.steamstreet.dynamokt/deserialize|deserialize@com.steamstreet.dynamokt.Item(kotlin.String){0§<kotlin.Any?>}[0]
+final suspend inline fun <#A: reified kotlin/Any?> (com.steamstreet.dynamokt/Item).com.steamstreet.dynamokt/getObject(kotlin/String): #A? // com.steamstreet.dynamokt/getObject|getObject@com.steamstreet.dynamokt.Item(kotlin.String){0§<kotlin.Any?>}[0]

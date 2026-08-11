@@ -30,15 +30,19 @@ abstract class DynamoKtTests {
     /**
      * Which implementation the suite runs against.
      *
-     * **M5a runs on `SdkBackedDynamoDb`**: the type swap is validated while behaviour underneath is
-     * still, byte for byte, the AWS SDK's, so a failure here means the swap is wrong rather than
-     * the hand-written client. M5b flips the default and is a one-line revert — which is the whole
-     * reason the adapter exists (plan Decision 3).
+     * **M5b runs on the hand-written `DefaultDynamoDb` by default.** `-Dawskt.dynamodb.impl=sdk`
+     * runs the identical suite against `SdkBackedDynamoDb`, whose behaviour is still, byte for
+     * byte, the AWS SDK's — so a failure that appears under the default and disappears under `sdk`
+     * is the hand-written client, and one that appears under both is the type swap. Being able to
+     * tell those apart in one command is the whole reason the adapter exists (plan Decision 3).
+     *
+     * The test defaults to native rather than reading the Gradle-supplied property strictly, so an
+     * IDE run — where no system property is set — exercises the shipping implementation too.
      */
     private fun buildClient(): DynamoDb {
         val endpoint = localstack.getEndpointOverride(LocalStackContainer.Service.DYNAMODB).toString()
 
-        return if (System.getProperty("awskt.dynamodb.impl") == "native") {
+        return if (System.getProperty("awskt.dynamodb.impl") != "sdk") {
             DynamoDb {
                 endpointUrl = endpoint
                 region = "us-east-1"

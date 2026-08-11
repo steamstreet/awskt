@@ -1,0 +1,156 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:aws-eventbridge>
+abstract interface com.steamstreet.awskt.eventbridge/EventBridgeApi : kotlin/AutoCloseable { // com.steamstreet.awskt.eventbridge/EventBridgeApi|null[0]
+    abstract val client // com.steamstreet.awskt.eventbridge/EventBridgeApi.client|{}client[0]
+        abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.eventbridge/EventBridgeApi.client.<get-client>|<get-client>(){}[0]
+
+    abstract suspend fun putEvents(kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsEntry>): com.steamstreet.awskt.eventbridge/PutEventsResponse // com.steamstreet.awskt.eventbridge/EventBridgeApi.putEvents|putEvents(kotlin.collections.List<com.steamstreet.awskt.eventbridge.PutEventsEntry>){}[0]
+}
+
+final class com.steamstreet.awskt.eventbridge/EventBridgeConfig { // com.steamstreet.awskt.eventbridge/EventBridgeConfig|null[0]
+    constructor <init>() // com.steamstreet.awskt.eventbridge/EventBridgeConfig.<init>|<init>(){}[0]
+
+    final var caInfo // com.steamstreet.awskt.eventbridge/EventBridgeConfig.caInfo|{}caInfo[0]
+        final fun <get-caInfo>(): kotlin/String? // com.steamstreet.awskt.eventbridge/EventBridgeConfig.caInfo.<get-caInfo>|<get-caInfo>(){}[0]
+        final fun <set-caInfo>(kotlin/String?) // com.steamstreet.awskt.eventbridge/EventBridgeConfig.caInfo.<set-caInfo>|<set-caInfo>(kotlin.String?){}[0]
+    final var credentialsProvider // com.steamstreet.awskt.eventbridge/EventBridgeConfig.credentialsProvider|{}credentialsProvider[0]
+        final fun <get-credentialsProvider>(): com.steamstreet.awskt.core/AwsCredentialsProvider? // com.steamstreet.awskt.eventbridge/EventBridgeConfig.credentialsProvider.<get-credentialsProvider>|<get-credentialsProvider>(){}[0]
+        final fun <set-credentialsProvider>(com.steamstreet.awskt.core/AwsCredentialsProvider?) // com.steamstreet.awskt.eventbridge/EventBridgeConfig.credentialsProvider.<set-credentialsProvider>|<set-credentialsProvider>(com.steamstreet.awskt.core.AwsCredentialsProvider?){}[0]
+    final var endpointUrl // com.steamstreet.awskt.eventbridge/EventBridgeConfig.endpointUrl|{}endpointUrl[0]
+        final fun <get-endpointUrl>(): kotlin/String? // com.steamstreet.awskt.eventbridge/EventBridgeConfig.endpointUrl.<get-endpointUrl>|<get-endpointUrl>(){}[0]
+        final fun <set-endpointUrl>(kotlin/String?) // com.steamstreet.awskt.eventbridge/EventBridgeConfig.endpointUrl.<set-endpointUrl>|<set-endpointUrl>(kotlin.String?){}[0]
+    final var httpClient // com.steamstreet.awskt.eventbridge/EventBridgeConfig.httpClient|{}httpClient[0]
+        final fun <get-httpClient>(): io.ktor.client/HttpClient? // com.steamstreet.awskt.eventbridge/EventBridgeConfig.httpClient.<get-httpClient>|<get-httpClient>(){}[0]
+        final fun <set-httpClient>(io.ktor.client/HttpClient?) // com.steamstreet.awskt.eventbridge/EventBridgeConfig.httpClient.<set-httpClient>|<set-httpClient>(io.ktor.client.HttpClient?){}[0]
+    final var region // com.steamstreet.awskt.eventbridge/EventBridgeConfig.region|{}region[0]
+        final fun <get-region>(): kotlin/String? // com.steamstreet.awskt.eventbridge/EventBridgeConfig.region.<get-region>|<get-region>(){}[0]
+        final fun <set-region>(kotlin/String?) // com.steamstreet.awskt.eventbridge/EventBridgeConfig.region.<set-region>|<set-region>(kotlin.String?){}[0]
+    final var retryConfig // com.steamstreet.awskt.eventbridge/EventBridgeConfig.retryConfig|{}retryConfig[0]
+        final fun <get-retryConfig>(): com.steamstreet.awskt.core/RetryConfig // com.steamstreet.awskt.eventbridge/EventBridgeConfig.retryConfig.<get-retryConfig>|<get-retryConfig>(){}[0]
+        final fun <set-retryConfig>(com.steamstreet.awskt.core/RetryConfig) // com.steamstreet.awskt.eventbridge/EventBridgeConfig.retryConfig.<set-retryConfig>|<set-retryConfig>(com.steamstreet.awskt.core.RetryConfig){}[0]
+}
+
+final class com.steamstreet.awskt.eventbridge/PutEventsEntry { // com.steamstreet.awskt.eventbridge/PutEventsEntry|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.eventbridge/PutEventsEntry.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val detail // com.steamstreet.awskt.eventbridge/PutEventsEntry.detail|{}detail[0]
+        final fun <get-detail>(): kotlin/String? // com.steamstreet.awskt.eventbridge/PutEventsEntry.detail.<get-detail>|<get-detail>(){}[0]
+    final val detailType // com.steamstreet.awskt.eventbridge/PutEventsEntry.detailType|{}detailType[0]
+        final fun <get-detailType>(): kotlin/String? // com.steamstreet.awskt.eventbridge/PutEventsEntry.detailType.<get-detailType>|<get-detailType>(){}[0]
+    final val eventBusName // com.steamstreet.awskt.eventbridge/PutEventsEntry.eventBusName|{}eventBusName[0]
+        final fun <get-eventBusName>(): kotlin/String? // com.steamstreet.awskt.eventbridge/PutEventsEntry.eventBusName.<get-eventBusName>|<get-eventBusName>(){}[0]
+    final val source // com.steamstreet.awskt.eventbridge/PutEventsEntry.source|{}source[0]
+        final fun <get-source>(): kotlin/String? // com.steamstreet.awskt.eventbridge/PutEventsEntry.source.<get-source>|<get-source>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.eventbridge/PutEventsEntry.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.eventbridge/PutEventsEntry.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.eventbridge/PutEventsEntry.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.eventbridge/PutEventsEntry.component4|component4(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.eventbridge/PutEventsEntry // com.steamstreet.awskt.eventbridge/PutEventsEntry.copy|copy(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.eventbridge/PutEventsEntry.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.eventbridge/PutEventsEntry.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.eventbridge/PutEventsEntry.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.eventbridge/PutEventsEntry> { // com.steamstreet.awskt.eventbridge/PutEventsEntry.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.eventbridge/PutEventsEntry.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.eventbridge/PutEventsEntry.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.eventbridge/PutEventsEntry.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.eventbridge/PutEventsEntry // com.steamstreet.awskt.eventbridge/PutEventsEntry.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.eventbridge/PutEventsEntry) // com.steamstreet.awskt.eventbridge/PutEventsEntry.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.eventbridge.PutEventsEntry){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.eventbridge/PutEventsEntry.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.eventbridge/PutEventsEntry> // com.steamstreet.awskt.eventbridge/PutEventsEntry.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.eventbridge/PutEventsResponse { // com.steamstreet.awskt.eventbridge/PutEventsResponse|null[0]
+    constructor <init>(kotlin/Int = ..., kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsResultEntry>? = ...) // com.steamstreet.awskt.eventbridge/PutEventsResponse.<init>|<init>(kotlin.Int;kotlin.collections.List<com.steamstreet.awskt.eventbridge.PutEventsResultEntry>?){}[0]
+
+    final val entries // com.steamstreet.awskt.eventbridge/PutEventsResponse.entries|{}entries[0]
+        final fun <get-entries>(): kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsResultEntry>? // com.steamstreet.awskt.eventbridge/PutEventsResponse.entries.<get-entries>|<get-entries>(){}[0]
+    final val failedEntryCount // com.steamstreet.awskt.eventbridge/PutEventsResponse.failedEntryCount|{}failedEntryCount[0]
+        final fun <get-failedEntryCount>(): kotlin/Int // com.steamstreet.awskt.eventbridge/PutEventsResponse.failedEntryCount.<get-failedEntryCount>|<get-failedEntryCount>(){}[0]
+
+    final fun component1(): kotlin/Int // com.steamstreet.awskt.eventbridge/PutEventsResponse.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsResultEntry>? // com.steamstreet.awskt.eventbridge/PutEventsResponse.component2|component2(){}[0]
+    final fun copy(kotlin/Int = ..., kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsResultEntry>? = ...): com.steamstreet.awskt.eventbridge/PutEventsResponse // com.steamstreet.awskt.eventbridge/PutEventsResponse.copy|copy(kotlin.Int;kotlin.collections.List<com.steamstreet.awskt.eventbridge.PutEventsResultEntry>?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.eventbridge/PutEventsResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.eventbridge/PutEventsResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.eventbridge/PutEventsResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.eventbridge/PutEventsResponse> { // com.steamstreet.awskt.eventbridge/PutEventsResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.eventbridge/PutEventsResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.eventbridge/PutEventsResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.eventbridge/PutEventsResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.eventbridge/PutEventsResponse // com.steamstreet.awskt.eventbridge/PutEventsResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.eventbridge/PutEventsResponse) // com.steamstreet.awskt.eventbridge/PutEventsResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.eventbridge.PutEventsResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.eventbridge/PutEventsResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.eventbridge/PutEventsResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.eventbridge/PutEventsResponse> // com.steamstreet.awskt.eventbridge/PutEventsResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.eventbridge/PutEventsResultEntry { // com.steamstreet.awskt.eventbridge/PutEventsResultEntry|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val errorCode // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.errorCode|{}errorCode[0]
+        final fun <get-errorCode>(): kotlin/String? // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.errorCode.<get-errorCode>|<get-errorCode>(){}[0]
+    final val errorMessage // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.errorMessage|{}errorMessage[0]
+        final fun <get-errorMessage>(): kotlin/String? // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.errorMessage.<get-errorMessage>|<get-errorMessage>(){}[0]
+    final val eventId // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.eventId|{}eventId[0]
+        final fun <get-eventId>(): kotlin/String? // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.eventId.<get-eventId>|<get-eventId>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.component3|component3(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.eventbridge/PutEventsResultEntry // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.copy|copy(kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.eventbridge/PutEventsResultEntry> { // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.eventbridge/PutEventsResultEntry // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.eventbridge/PutEventsResultEntry) // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.eventbridge.PutEventsResultEntry){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.eventbridge/PutEventsResultEntry> // com.steamstreet.awskt.eventbridge/PutEventsResultEntry.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.eventbridge/ResourceNotFoundException : com.steamstreet.awskt.eventbridge/EventBridgeException { // com.steamstreet.awskt.eventbridge/ResourceNotFoundException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ...) // com.steamstreet.awskt.eventbridge/ResourceNotFoundException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?){}[0]
+}
+
+final class com.steamstreet.awskt.eventbridge/ThrottlingException : com.steamstreet.awskt.eventbridge/EventBridgeException { // com.steamstreet.awskt.eventbridge/ThrottlingException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ...) // com.steamstreet.awskt.eventbridge/ThrottlingException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?){}[0]
+}
+
+final class com.steamstreet.awskt.eventbridge/ValidationException : com.steamstreet.awskt.eventbridge/EventBridgeException { // com.steamstreet.awskt.eventbridge/ValidationException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ...) // com.steamstreet.awskt.eventbridge/ValidationException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?){}[0]
+}
+
+open class com.steamstreet.awskt.eventbridge/EventBridgeException : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.eventbridge/EventBridgeException|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.eventbridge/EventBridgeException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+}
+
+final val com.steamstreet.awskt.eventbridge/EVENTBRIDGE_PROTOCOL // com.steamstreet.awskt.eventbridge/EVENTBRIDGE_PROTOCOL|{}EVENTBRIDGE_PROTOCOL[0]
+    final fun <get-EVENTBRIDGE_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.eventbridge/EVENTBRIDGE_PROTOCOL.<get-EVENTBRIDGE_PROTOCOL>|<get-EVENTBRIDGE_PROTOCOL>(){}[0]
+
+final fun com.steamstreet.awskt.eventbridge/EventBridge(kotlin/Function1<com.steamstreet.awskt.eventbridge/EventBridgeConfig, kotlin/Unit> = ...): com.steamstreet.awskt.eventbridge/EventBridgeApi // com.steamstreet.awskt.eventbridge/EventBridge|EventBridge(kotlin.Function1<com.steamstreet.awskt.eventbridge.EventBridgeConfig,kotlin.Unit>){}[0]

@@ -21,6 +21,7 @@ dependencyResolutionManagement {
 include(":aws:aws-signing")
 include(":aws:aws-core")
 include(":aws:aws-dynamodb")
+include(":aws:aws-eventbridge")
 include(":aws:aws-dynamodb-sdk-adapter")
 include("appsync")
 include("cognito")

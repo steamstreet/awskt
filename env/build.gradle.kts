@@ -13,6 +13,10 @@ kotlin {
         browser()
     }
 
+    linuxX64()
+    linuxArm64()
+    macosArm64()
+
     sourceSets {
         val commonMain by getting {
             dependencies {

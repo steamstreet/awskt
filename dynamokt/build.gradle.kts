@@ -21,6 +21,9 @@ kotlin {
     explicitApi()
 
     jvm()
+    linuxX64()
+    linuxArm64()
+    macosArm64()
 
     sourceSets {
         commonMain {
@@ -79,5 +82,10 @@ tasks.named<Test>("jvmTest") {
 tasks.withType<Test> {
     // Forwards the implementation switch into the test JVM. Without this, `-Dawskt.dynamodb.impl`
     // only ever reaches the Gradle daemon and the flip silently does nothing.
-    systemProperty("awskt.dynamodb.impl", System.getProperty("awskt.dynamodb.impl") ?: "sdk")
+    //
+    // **M5b flipped this default from `sdk` to `native`**: the suite now runs against the
+    // hand-written `DefaultDynamoDb`. `-Dawskt.dynamodb.impl=sdk` still runs the whole suite
+    // against `SdkBackedDynamoDb`, which is what lets a regression be bisected to "type swap" vs
+    // "client implementation" in one command.
+    systemProperty("awskt.dynamodb.impl", System.getProperty("awskt.dynamodb.impl") ?: "native")
 }
