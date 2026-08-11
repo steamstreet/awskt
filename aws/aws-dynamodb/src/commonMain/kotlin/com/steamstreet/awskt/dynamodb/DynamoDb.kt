@@ -7,16 +7,20 @@ import com.steamstreet.awskt.core.AwsServiceException
 import com.steamstreet.awskt.core.OperationSafety
 import com.steamstreet.awskt.core.RetryConfig
 import com.steamstreet.awskt.core.awsHttpClient
+import com.steamstreet.awskt.core.awsJson
 import com.steamstreet.awskt.core.callJson
 import com.steamstreet.awskt.core.defaultCredentialsProvider
 import com.steamstreet.awskt.core.resolveEndpoint
 import com.steamstreet.awskt.core.resolveRegion
-import com.steamstreet.awskt.core.transactionCancellationReasons
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
 import kotlin.random.Random
 
 /** DynamoDB's AWS-JSON 1.0 dialect. Public so a downstream service module can reuse the shape. */
@@ -238,6 +242,13 @@ public open class DynamoDbException(
     extendedRequestId: String? = null,
 ) : AwsServiceException(code, message, statusCode, requestId, extendedRequestId)
 
+/**
+ * A condition expression evaluated false.
+ *
+ * [item] is populated whenever the request asked for it with
+ * `ReturnValuesOnConditionCheckFailure = ALL_OLD` — DynamoDB then returns the item that failed the
+ * condition inside the *error* body, which is the only place it is ever available. Null otherwise.
+ */
 public class ConditionalCheckFailedException(
     message: String?,
     statusCode: Int,
@@ -245,10 +256,21 @@ public class ConditionalCheckFailedException(
     requestId: String? = null,
 ) : DynamoDbException("ConditionalCheckFailedException", message, statusCode, requestId)
 
+/**
+ * An atomic transaction AWS refused.
+ *
+ * [cancellationReasons] is positional: one entry per `TransactItems` entry, in the same order, with
+ * the literal code `"None"` for the items that were fine. That positional correspondence is the
+ * whole diagnostic value — dropping the successful entries would misalign every index.
+ *
+ * These codes are **diagnostic only** and never reach the retry classifier. They include
+ * `ThrottlingError` and `ProvisionedThroughputExceeded`, and treating either as retryable would
+ * replay a transaction AWS has already permanently refused — see `aws-core`'s `AwsJsonErrorParser`.
+ */
 public class TransactionCanceledException(
     message: String?,
     statusCode: Int,
-    public val cancellationReasons: List<String> = emptyList(),
+    public val cancellationReasons: List<CancellationReason> = emptyList(),
     requestId: String? = null,
 ) : DynamoDbException("TransactionCanceledException", message, statusCode, requestId)
 
@@ -268,6 +290,10 @@ public class IdempotentParameterMismatchException(message: String?, statusCode: 
 /**
  * Maps `aws-core`'s generic error onto DynamoDB's typed hierarchy.
  *
+ * Two of these carry structured payload that only exists in the error body, so they are lifted out
+ * of [AwsServiceException.rawErrorBody] here — in the module that knows DynamoDB's error schema —
+ * rather than in protocol-agnostic `aws-core`.
+ *
  * Unknown codes fall through to [DynamoDbException] rather than being swallowed, so an operation
  * added downstream still gets a useful, typed failure without registering anything.
  */
@@ -276,10 +302,12 @@ internal inline fun <T> mapErrors(block: () -> T): T = try {
 } catch (e: AwsServiceException) {
     throw when (e.code) {
         "ConditionalCheckFailedException" ->
-            ConditionalCheckFailedException(e.message, e.statusCode, null, e.requestId)
+            ConditionalCheckFailedException(e.message, e.statusCode, errorItem(e.rawErrorBody), e.requestId)
 
         "TransactionCanceledException" ->
-            TransactionCanceledException(e.message, e.statusCode, emptyList(), e.requestId)
+            TransactionCanceledException(
+                e.message, e.statusCode, cancellationReasons(e.rawErrorBody), e.requestId,
+            )
 
         "ProvisionedThroughputExceededException" ->
             ProvisionedThroughputExceededException(e.message, e.statusCode, e.requestId)
@@ -292,6 +320,29 @@ internal inline fun <T> mapErrors(block: () -> T): T = try {
         else -> DynamoDbException(e.code, e.message, e.statusCode, e.requestId, e.extendedRequestId)
     }
 }
+
+/**
+ * The `Item` a `ConditionalCheckFailedException` body carries.
+ *
+ * Every failure mode degrades to null. Throwing out of the error path would replace a useful
+ * service error with a parse error, which is strictly worse for whoever has to debug it — the same
+ * rule `aws-core`'s error parsers follow.
+ */
+internal fun errorItem(body: ByteArray?): Item? = runCatching {
+    val obj = awsJson.parseToJsonElement(body?.decodeToString() ?: return null) as? JsonObject
+    val item = obj?.get("Item") as? JsonObject ?: return null
+    awsJson.decodeFromJsonElement(ITEM_SERIALIZER, item)
+}.getOrNull()
+
+/** The positional `CancellationReasons` of a `TransactionCanceledException` body. Degrades to empty. */
+internal fun cancellationReasons(body: ByteArray?): List<CancellationReason> = runCatching {
+    val obj = awsJson.parseToJsonElement(body?.decodeToString() ?: return emptyList()) as? JsonObject
+    val reasons = obj?.get("CancellationReasons") as? JsonArray ?: return emptyList()
+    awsJson.decodeFromJsonElement(CANCELLATION_REASONS_SERIALIZER, reasons)
+}.getOrElse { emptyList() }
+
+private val ITEM_SERIALIZER = MapSerializer(String.serializer(), AttributeValueSerializer)
+private val CANCELLATION_REASONS_SERIALIZER = ListSerializer(CancellationReason.serializer())
 
 // -- Pagination and batching -------------------------------------------------------------------
 

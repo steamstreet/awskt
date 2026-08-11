@@ -12,6 +12,16 @@ import kotlinx.serialization.json.jsonPrimitive
  * [requestId] and [extendedRequestId] are carried for all services, not just S3. AWS Support will
  * not act on an S3 report without both, and DynamoDB benefits equally — but neither is available
  * once the response object has been discarded, so the transport captures them at the throw site.
+ *
+ * [rawErrorBody] exists for the same reason, one level further out. Some AWS errors carry
+ * *structured payload* beyond a code and a message — DynamoDB's `ConditionalCheckFailedException`
+ * returns the item that failed the condition, and its `TransactionCanceledException` returns a
+ * per-item reason list — and a service module cannot recover any of that once the transport has
+ * reduced the response to a code and a message. Carrying the bytes is what lets the mapping from
+ * generic error to *typed* error stay in the service module, where the schema knowledge is, rather
+ * than forcing protocol-agnostic `aws-core` to learn DynamoDB's error shapes.
+ *
+ * It is diagnostic data, not a mutable buffer: treat it as read-only.
  */
 public open class AwsServiceException(
     public val code: String?,
@@ -20,6 +30,7 @@ public open class AwsServiceException(
     public val requestId: String? = null,
     public val extendedRequestId: String? = null,
     cause: Throwable? = null,
+    public val rawErrorBody: ByteArray? = null,
 ) : Exception(message ?: code ?: "AWS request failed with status $statusCode", cause) {
     override fun toString(): String = buildString {
         append("AwsServiceException(code=").append(code)

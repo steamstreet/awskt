@@ -147,6 +147,80 @@ class AttributeValueCodecTest {
         assertTrue(AttributeValue.B(byteArrayOf(1)) != AttributeValue.B(byteArrayOf(2)))
     }
 
+    /**
+     * The three set types compare as sets, which is a deliberate divergence from the AWS SDK.
+     *
+     * DynamoDB returns set members in an arbitrary order — a real LocalStack round trip turned
+     * `NS: ["1","-2.5"]` into `["-2.5","1"]`. With order-sensitive equality a set-valued attribute
+     * is unequal to itself across a write and a read, which breaks every structural diff over items
+     * (`dynamokt`'s `findDifferences` most concretely). See the type's KDoc.
+     */
+    @Test
+    fun setTypesCompareAsSetsNotAsLists() {
+        assertEquals(AttributeValue.Ss(listOf("a", "b")), AttributeValue.Ss(listOf("b", "a")))
+        assertEquals(AttributeValue.Ns(listOf("1", "-2.5")), AttributeValue.Ns(listOf("-2.5", "1")))
+        assertEquals(
+            AttributeValue.Bs(listOf(byteArrayOf(1, 2), byteArrayOf(3))),
+            AttributeValue.Bs(listOf(byteArrayOf(3), byteArrayOf(1, 2))),
+        )
+    }
+
+    /** Equality is worthless without a matching hashCode — a reordered set must hash the same. */
+    @Test
+    fun reorderedSetsHashIdentically() {
+        assertEquals(
+            AttributeValue.Ss(listOf("a", "b")).hashCode(),
+            AttributeValue.Ss(listOf("b", "a")).hashCode(),
+        )
+        assertEquals(
+            AttributeValue.Ns(listOf("1", "2")).hashCode(),
+            AttributeValue.Ns(listOf("2", "1")).hashCode(),
+        )
+        assertEquals(
+            AttributeValue.Bs(listOf(byteArrayOf(1), byteArrayOf(2))).hashCode(),
+            AttributeValue.Bs(listOf(byteArrayOf(2), byteArrayOf(1))).hashCode(),
+        )
+        // The property that actually matters downstream: a reordered set is usable as a map key.
+        val index = mapOf<AttributeValue, String>(AttributeValue.Ss(listOf("a", "b")) to "found")
+        assertEquals("found", index[AttributeValue.Ss(listOf("b", "a"))])
+    }
+
+    /** Set semantics must not become "everything is equal". Different contents stay different. */
+    @Test
+    fun setsWithDifferentContentsAreStillUnequal() {
+        assertTrue(AttributeValue.Ss(listOf("a")) != AttributeValue.Ss(listOf("b")))
+        assertTrue(AttributeValue.Ss(listOf("a")) != AttributeValue.Ss(listOf("a", "b")))
+        assertTrue(AttributeValue.Ns(listOf("1")) != AttributeValue.Ns(listOf("1", "2")))
+        assertTrue(AttributeValue.Bs(listOf(byteArrayOf(1))) != AttributeValue.Bs(listOf(byteArrayOf(2))))
+        // Numbers compare as strings, deliberately: N carries an exact decimal so that nothing has
+        // to decide what "1" and "1.0" mean, and equality does not get to decide either.
+        assertTrue(AttributeValue.Ns(listOf("1")) != AttributeValue.Ns(listOf("1.0")))
+        // And a set type is never equal to a different variant holding the same members.
+        val strings: AttributeValue = AttributeValue.Ss(listOf("1"))
+        val numbers: AttributeValue = AttributeValue.Ns(listOf("1"))
+        assertTrue(strings != numbers)
+    }
+
+    /**
+     * A documented consequence rather than an accident: DynamoDB rejects duplicate set members, so a
+     * set carrying them was never going to round-trip. Collapsing them agrees with the service.
+     */
+    @Test
+    fun duplicateSetMembersCollapse() {
+        assertEquals(AttributeValue.Ss(listOf("a", "a")), AttributeValue.Ss(listOf("a")))
+        assertEquals(AttributeValue.Bs(listOf(byteArrayOf(1), byteArrayOf(1))), AttributeValue.Bs(listOf(byteArrayOf(1))))
+    }
+
+    /** Only equality ignores order. The wire form, and `value` itself, still preserve it. */
+    @Test
+    fun serializationStillPreservesSetOrder() {
+        assertEquals(
+            """{"SS":["b","a"]}""",
+            awsJson.encodeToString(AttributeValueSerializer, AttributeValue.Ss(listOf("b", "a"))),
+        )
+        assertEquals(listOf("b", "a"), AttributeValue.Ss(listOf("b", "a")).value)
+    }
+
     @Test
     fun accessorsMatchTheSdkShape() {
         val value: AttributeValue = AttributeValue.S("x")

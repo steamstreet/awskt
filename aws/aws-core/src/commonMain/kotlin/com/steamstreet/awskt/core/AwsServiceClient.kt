@@ -322,6 +322,10 @@ public class AwsServiceClient(
             statusCode = response.status,
             requestId = requestId,
             extendedRequestId = extendedRequestId,
+            // Carried so a service module can lift structured error payload — DynamoDB's failed
+            // `Item`, its `CancellationReasons` — out of an error the transport has already
+            // reduced to a code and a message.
+            rawErrorBody = response.body,
         )
     }
 

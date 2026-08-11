@@ -35,6 +35,28 @@ import kotlin.io.encoding.ExperimentalEncodingApi
  * [N] holds a **String**, not a Double or a Long. DynamoDB numbers carry up to 38 significant
  * digits; routing them through a floating-point type silently corrupts large identifiers and money
  * amounts. This is the single most important representational decision in the type.
+ *
+ * ### On sets, and a deliberate divergence from the AWS SDK
+ *
+ * [Ss], [Ns] and [Bs] compare as **sets**: `Ss(["a","b"]) == Ss(["b","a"])`. The AWS SDK's
+ * equivalents carry a `List` with generated, order-sensitive equality, so this is a divergence, and
+ * it is intentional (Jon, 2026-08-10).
+ *
+ * The reason is that DynamoDB's set types are genuinely unordered — the service returns members in
+ * whatever order it likes, and a LocalStack round trip demonstrated it immediately: `NS: ["1","-2.5"]`
+ * came back as `["-2.5","1"]`. Order-sensitive equality therefore makes a set-valued attribute
+ * **unequal to itself across a write and a read**, which is not a defensible contract. It breaks
+ * anything that diffs items structurally — `dynamokt`'s `findDifferences`/`diff()` in `attributes.kt`
+ * most concretely, which would report a spurious change for every set attribute the service
+ * reordered. This is the same class of bug that already forced hand-written equality on [B] and
+ * [Bs] for `ByteArray`, applied to the property that actually matters for sets.
+ *
+ * Two consequences worth stating rather than discovering:
+ *
+ * - **Duplicates collapse.** `Ss(["a","a"]) == Ss(["a"])`. That agrees with the service, which
+ *   rejects duplicate members outright — a set carrying them was never going to round-trip anyway.
+ * - **The `List` is kept in the constructor**, so element order still survives serialization and is
+ *   still visible to a caller that reads `value`. Only *equality* ignores it.
  */
 @Serializable(with = AttributeValueSerializer::class)
 public sealed class AttributeValue {
@@ -63,21 +85,46 @@ public sealed class AttributeValue {
 
     public data class L(public val value: List<AttributeValue>) : AttributeValue()
 
-    /** A string set. */
-    public data class Ss(public val value: List<String>) : AttributeValue()
+    /**
+     * A string set. Equality is **set equality** — see the note on the three set types below.
+     *
+     * Still a `data class`, so `copy()` and destructuring survive; declaring `equals`/`hashCode`
+     * explicitly simply suppresses the generated pair.
+     */
+    public data class Ss(public val value: List<String>) : AttributeValue() {
+        override fun equals(other: Any?): Boolean =
+            this === other || (other is Ss && value.toSet() == other.value.toSet())
 
-    /** A number set, each element an exact decimal string. */
-    public data class Ns(public val value: List<String>) : AttributeValue()
+        override fun hashCode(): Int = value.toSet().hashCode()
+    }
 
-    /** A binary set. */
+    /**
+     * A number set, each element an exact decimal string. Equality is **set equality**.
+     *
+     * Compared as strings, not as numbers: `N` deliberately carries an exact decimal string
+     * precisely so nothing has to decide what `"1"` and `"1.0"` mean. That question belongs to
+     * whoever wrote the values, not to `equals`.
+     */
+    public data class Ns(public val value: List<String>) : AttributeValue() {
+        override fun equals(other: Any?): Boolean =
+            this === other || (other is Ns && value.toSet() == other.value.toSet())
+
+        override fun hashCode(): Int = value.toSet().hashCode()
+    }
+
+    /**
+     * A binary set. Equality is **set equality over contents**.
+     *
+     * `ByteArray` has reference equality, so the elements are mapped to `List<Byte>` before the set
+     * comparison — that gets both content semantics and order independence in one step.
+     */
     public class Bs(public val value: List<ByteArray>) : AttributeValue() {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is Bs || value.size != other.value.size) return false
-            return value.indices.all { value[it].contentEquals(other.value[it]) }
-        }
+        private fun contents(): Set<List<Byte>> = value.mapTo(mutableSetOf()) { it.toList() }
 
-        override fun hashCode(): Int = value.fold(0) { acc, b -> acc * 31 + b.contentHashCode() }
+        override fun equals(other: Any?): Boolean =
+            this === other || (other is Bs && contents() == other.contents())
+
+        override fun hashCode(): Int = contents().hashCode()
         override fun toString(): String = "Bs(${value.size} blobs)"
     }
 

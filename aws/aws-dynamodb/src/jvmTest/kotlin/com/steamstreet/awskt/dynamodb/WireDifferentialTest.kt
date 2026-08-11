@@ -502,6 +502,66 @@ class WireDifferentialTest {
         DescribeTableRequest.serializer(),
     ) { sdk -> sdk.describeTable { tableName = "t" } }
 
+    /**
+     * `ReturnValuesOnConditionCheckFailure` is what makes `ConditionalCheckFailedException.item`
+     * reachable at all — DynamoDB returns the losing item only when asked, and only in the error
+     * body. Asserted on both a single-item write and a transact item, since the two carry the field
+     * on different shapes.
+     */
+    @Test
+    fun returnValuesOnConditionCheckFailureMatchesTheSdk() = assertSameWire(
+        "PutItem (ALL_OLD on condition failure)",
+        PutItemRequest(
+            tableName = "t",
+            item = mapOf("pk" to AttributeValue.S("a")),
+            conditionExpression = "attribute_not_exists(pk)",
+            returnValuesOnConditionCheckFailure = ReturnValuesOnConditionCheckFailure.AllOld,
+        ),
+        PutItemRequest.serializer(),
+    ) { sdk ->
+        sdk.putItem {
+            tableName = "t"
+            item = mapOf("pk" to SdkAttributeValue.S("a"))
+            conditionExpression = "attribute_not_exists(pk)"
+            returnValuesOnConditionCheckFailure =
+                aws.sdk.kotlin.services.dynamodb.model.ReturnValuesOnConditionCheckFailure.AllOld
+        }
+    }
+
+    @Test
+    fun transactWriteItemsCarriesReturnValuesOnConditionCheckFailure() = assertSameWire(
+        "TransactWriteItems (ALL_OLD on condition failure)",
+        TransactWriteItemsRequest(
+            transactItems = listOf(
+                TransactWriteItem(
+                    put = TransactPut(
+                        tableName = "t",
+                        item = mapOf("pk" to AttributeValue.S("a")),
+                        conditionExpression = "attribute_not_exists(pk)",
+                        returnValuesOnConditionCheckFailure = ReturnValuesOnConditionCheckFailure.AllOld,
+                    ),
+                ),
+            ),
+            clientRequestToken = "0123456789abcdef0123456789abcdef0123",
+        ),
+        TransactWriteItemsRequest.serializer(),
+    ) { sdk ->
+        sdk.transactWriteItems {
+            transactItems = listOf(
+                aws.sdk.kotlin.services.dynamodb.model.TransactWriteItem {
+                    put = aws.sdk.kotlin.services.dynamodb.model.Put {
+                        tableName = "t"
+                        item = mapOf("pk" to SdkAttributeValue.S("a"))
+                        conditionExpression = "attribute_not_exists(pk)"
+                        returnValuesOnConditionCheckFailure =
+                            aws.sdk.kotlin.services.dynamodb.model.ReturnValuesOnConditionCheckFailure.AllOld
+                    }
+                },
+            )
+            clientRequestToken = "0123456789abcdef0123456789abcdef0123"
+        }
+    }
+
     /** Guards the harness itself: if it stopped capturing, every comparison above would be vacuous. */
     @Test
     fun theHarnessActuallyCapturesARequest() {

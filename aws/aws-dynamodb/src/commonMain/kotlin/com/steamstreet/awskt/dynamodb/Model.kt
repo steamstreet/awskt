@@ -45,6 +45,14 @@ public enum class ReturnValue {
     @SerialName("UPDATED_NEW") UpdatedNew,
 }
 
+/**
+ * Whether a failed condition should return the item it failed against.
+ *
+ * `AllOld` is the only way to learn what the item actually held when a conditional write lost the
+ * race — DynamoDB puts it inside the *error* body, and it exists nowhere else. Without it a caller
+ * that needs the current state has to issue a second, separately-racy `GetItem`.
+ * [ConditionalCheckFailedException.item] and [CancellationReason.item] are populated from it.
+ */
 @Serializable
 public enum class ReturnValuesOnConditionCheckFailure {
     @SerialName("NONE") None,
@@ -89,6 +97,8 @@ public data class PutItemRequest(
     @SerialName("ExpressionAttributeNames") public val expressionAttributeNames: Map<String, String>? = null,
     @SerialName("ExpressionAttributeValues") public val expressionAttributeValues: Item? = null,
     @SerialName("ReturnValues") public val returnValues: ReturnValue? = null,
+    @SerialName("ReturnValuesOnConditionCheckFailure")
+    public val returnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure? = null,
 )
 
 @Serializable
@@ -107,6 +117,8 @@ public data class UpdateItemRequest(
     @SerialName("ExpressionAttributeNames") public val expressionAttributeNames: Map<String, String>? = null,
     @SerialName("ExpressionAttributeValues") public val expressionAttributeValues: Item? = null,
     @SerialName("ReturnValues") public val returnValues: ReturnValue? = null,
+    @SerialName("ReturnValuesOnConditionCheckFailure")
+    public val returnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure? = null,
 )
 
 @Serializable
@@ -124,6 +136,8 @@ public data class DeleteItemRequest(
     @SerialName("ExpressionAttributeNames") public val expressionAttributeNames: Map<String, String>? = null,
     @SerialName("ExpressionAttributeValues") public val expressionAttributeValues: Item? = null,
     @SerialName("ReturnValues") public val returnValues: ReturnValue? = null,
+    @SerialName("ReturnValuesOnConditionCheckFailure")
+    public val returnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure? = null,
 )
 
 @Serializable
@@ -232,6 +246,8 @@ public data class TransactPut(
     @SerialName("ConditionExpression") public val conditionExpression: String? = null,
     @SerialName("ExpressionAttributeNames") public val expressionAttributeNames: Map<String, String>? = null,
     @SerialName("ExpressionAttributeValues") public val expressionAttributeValues: Item? = null,
+    @SerialName("ReturnValuesOnConditionCheckFailure")
+    public val returnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure? = null,
 )
 
 @Serializable
@@ -242,6 +258,8 @@ public data class TransactUpdate(
     @SerialName("ConditionExpression") public val conditionExpression: String? = null,
     @SerialName("ExpressionAttributeNames") public val expressionAttributeNames: Map<String, String>? = null,
     @SerialName("ExpressionAttributeValues") public val expressionAttributeValues: Item? = null,
+    @SerialName("ReturnValuesOnConditionCheckFailure")
+    public val returnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure? = null,
 )
 
 @Serializable
@@ -251,6 +269,8 @@ public data class TransactDelete(
     @SerialName("ConditionExpression") public val conditionExpression: String? = null,
     @SerialName("ExpressionAttributeNames") public val expressionAttributeNames: Map<String, String>? = null,
     @SerialName("ExpressionAttributeValues") public val expressionAttributeValues: Item? = null,
+    @SerialName("ReturnValuesOnConditionCheckFailure")
+    public val returnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure? = null,
 )
 
 @Serializable
@@ -260,6 +280,8 @@ public data class ConditionCheck(
     @SerialName("ConditionExpression") public val conditionExpression: String,
     @SerialName("ExpressionAttributeNames") public val expressionAttributeNames: Map<String, String>? = null,
     @SerialName("ExpressionAttributeValues") public val expressionAttributeValues: Item? = null,
+    @SerialName("ReturnValuesOnConditionCheckFailure")
+    public val returnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure? = null,
 )
 
 @Serializable
