@@ -1,0 +1,32 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:lambda-native>
+final class com.steamstreet.aws.lambda.native/LambdaRuntime { // com.steamstreet.aws.lambda.native/LambdaRuntime|null[0]
+    constructor <init>(kotlin.coroutines/SuspendFunction1<kotlin/String, kotlin/String>) // com.steamstreet.aws.lambda.native/LambdaRuntime.<init>|<init>(kotlin.coroutines.SuspendFunction1<kotlin.String,kotlin.String>){}[0]
+
+    final suspend fun reportInitializationError(kotlin/Throwable) // com.steamstreet.aws.lambda.native/LambdaRuntime.reportInitializationError|reportInitializationError(kotlin.Throwable){}[0]
+    final suspend fun run() // com.steamstreet.aws.lambda.native/LambdaRuntime.run|run(){}[0]
+}
+
+final class com.steamstreet.aws.lambda.native/NativeLambdaContext : com.steamstreet.aws.lambda/LambdaContext { // com.steamstreet.aws.lambda.native/NativeLambdaContext|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/Long) // com.steamstreet.aws.lambda.native/NativeLambdaContext.<init>|<init>(kotlin.String;kotlin.String;kotlin.Long){}[0]
+
+    final val functionName // com.steamstreet.aws.lambda.native/NativeLambdaContext.functionName|{}functionName[0]
+        final fun <get-functionName>(): kotlin/String // com.steamstreet.aws.lambda.native/NativeLambdaContext.functionName.<get-functionName>|<get-functionName>(){}[0]
+    final val remainingTimeInMillis // com.steamstreet.aws.lambda.native/NativeLambdaContext.remainingTimeInMillis|{}remainingTimeInMillis[0]
+        final fun <get-remainingTimeInMillis>(): kotlin/Int // com.steamstreet.aws.lambda.native/NativeLambdaContext.remainingTimeInMillis.<get-remainingTimeInMillis>|<get-remainingTimeInMillis>(){}[0]
+    final val requestId // com.steamstreet.aws.lambda.native/NativeLambdaContext.requestId|{}requestId[0]
+        final fun <get-requestId>(): kotlin/String // com.steamstreet.aws.lambda.native/NativeLambdaContext.requestId.<get-requestId>|<get-requestId>(){}[0]
+}
+
+final fun <#A: kotlin/Any?, #B: kotlin/Any?> com.steamstreet.aws.lambda.native/nativeLambdaIO(kotlinx.serialization/KSerializer<#A>, kotlinx.serialization/KSerializer<#B>, kotlin.coroutines/SuspendFunction0<kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction1<#A, #B>) // com.steamstreet.aws.lambda.native/nativeLambdaIO|nativeLambdaIO(kotlinx.serialization.KSerializer<0:0>;kotlinx.serialization.KSerializer<0:1>;kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.coroutines.SuspendFunction1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> com.steamstreet.aws.lambda.native/nativeLambdaInput(kotlinx.serialization/KSerializer<#A>, kotlin.coroutines/SuspendFunction0<kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction1<#A, kotlin/Unit>) // com.steamstreet.aws.lambda.native/nativeLambdaInput|nativeLambdaInput(kotlinx.serialization.KSerializer<0:0>;kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun com.steamstreet.aws.lambda.native/lambdaHttpClient(kotlin/Function1<io.ktor.client/HttpClientConfig<io.ktor.client.engine.curl/CurlClientEngineConfig>, kotlin/Unit> = ...): io.ktor.client/HttpClient // com.steamstreet.aws.lambda.native/lambdaHttpClient|lambdaHttpClient(kotlin.Function1<io.ktor.client.HttpClientConfig<io.ktor.client.engine.curl.CurlClientEngineConfig>,kotlin.Unit>){}[0]
+final fun com.steamstreet.aws.lambda.native/nativeLambda(kotlin.coroutines/SuspendFunction0<kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction1<kotlin/String, kotlin/String>) // com.steamstreet.aws.lambda.native/nativeLambda|nativeLambda(kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.coroutines.SuspendFunction1<kotlin.String,kotlin.String>){}[0]
+final inline fun <#A: reified kotlin/Any?, #B: reified kotlin/Any?> com.steamstreet.aws.lambda.native/nativeLambdaIO(noinline kotlin.coroutines/SuspendFunction0<kotlin/Unit> = ..., crossinline kotlin.coroutines/SuspendFunction1<#A, #B>) // com.steamstreet.aws.lambda.native/nativeLambdaIO|nativeLambdaIO(kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.coroutines.SuspendFunction1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> com.steamstreet.aws.lambda.native/nativeLambdaInput(noinline kotlin.coroutines/SuspendFunction0<kotlin/Unit> = ..., crossinline kotlin.coroutines/SuspendFunction1<#A, kotlin/Unit>) // com.steamstreet.aws.lambda.native/nativeLambdaInput|nativeLambdaInput(kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]

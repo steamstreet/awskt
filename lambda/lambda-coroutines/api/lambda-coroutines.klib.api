@@ -1,0 +1,26 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:lambda-coroutines>
+abstract interface com.steamstreet.aws.lambda/LambdaContext { // com.steamstreet.aws.lambda/LambdaContext|null[0]
+    abstract val functionName // com.steamstreet.aws.lambda/LambdaContext.functionName|{}functionName[0]
+        abstract fun <get-functionName>(): kotlin/String // com.steamstreet.aws.lambda/LambdaContext.functionName.<get-functionName>|<get-functionName>(){}[0]
+    abstract val remainingTimeInMillis // com.steamstreet.aws.lambda/LambdaContext.remainingTimeInMillis|{}remainingTimeInMillis[0]
+        abstract fun <get-remainingTimeInMillis>(): kotlin/Int // com.steamstreet.aws.lambda/LambdaContext.remainingTimeInMillis.<get-remainingTimeInMillis>|<get-remainingTimeInMillis>(){}[0]
+    abstract val requestId // com.steamstreet.aws.lambda/LambdaContext.requestId|{}requestId[0]
+        abstract fun <get-requestId>(): kotlin/String // com.steamstreet.aws.lambda/LambdaContext.requestId.<get-requestId>|<get-requestId>(){}[0]
+}
+
+final val com.steamstreet.aws.lambda/lambdaJson // com.steamstreet.aws.lambda/lambdaJson|{}lambdaJson[0]
+    final fun <get-lambdaJson>(): kotlinx.serialization.json/Json // com.steamstreet.aws.lambda/lambdaJson.<get-lambdaJson>|<get-lambdaJson>(){}[0]
+
+final var com.steamstreet.aws.lambda/lambdaContext // com.steamstreet.aws.lambda/lambdaContext|{}lambdaContext[0]
+    final fun <get-lambdaContext>(): com.steamstreet.aws.lambda/LambdaContext // com.steamstreet.aws.lambda/lambdaContext.<get-lambdaContext>|<get-lambdaContext>(){}[0]
+    final fun <set-lambdaContext>(com.steamstreet.aws.lambda/LambdaContext) // com.steamstreet.aws.lambda/lambdaContext.<set-lambdaContext>|<set-lambdaContext>(com.steamstreet.aws.lambda.LambdaContext){}[0]
+final var com.steamstreet.aws.lambda/logIncoming // com.steamstreet.aws.lambda/logIncoming|{}logIncoming[0]
+    final fun <get-logIncoming>(): kotlin/Boolean // com.steamstreet.aws.lambda/logIncoming.<get-logIncoming>|<get-logIncoming>(){}[0]
+    final fun <set-logIncoming>(kotlin/Boolean) // com.steamstreet.aws.lambda/logIncoming.<set-logIncoming>|<set-logIncoming>(kotlin.Boolean){}[0]

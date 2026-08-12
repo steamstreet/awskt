@@ -9,7 +9,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.encodeToStream
 import net.logstash.logback.marker.Markers
@@ -20,15 +19,27 @@ import java.io.OutputStream
 
 public val logger: Logger = LoggerFactory.getLogger("Lambda")
 
-@OptIn(ExperimentalSerializationApi::class)
-public val lambdaJson: Json = Json {
-    ignoreUnknownKeys = true
-    encodeDefaults = true
-    explicitNulls = false
+/**
+ * Wraps an AWS Lambda [Context] as a common [LambdaContext].
+ *
+ * Every member delegates rather than copies, so [remainingTimeInMillis] stays live — the AWS
+ * `Context` recomputes it on each call.
+ */
+public class JvmLambdaContext(public val awsContext: Context) : LambdaContext {
+    override val requestId: String get() = awsContext.awsRequestId
+    override val functionName: String get() = awsContext.functionName
+    override val remainingTimeInMillis: Int get() = awsContext.remainingTimeInMillis
 }
 
-public var logIncoming: Boolean = System.getenv()["LogIncomingData"]?.toBoolean() ?: true
-public lateinit var lambdaContext: Context
+/**
+ * The underlying AWS [Context] for the current invocation.
+ *
+ * Use this when JVM-only handler code needs members that [LambdaContext] does not expose, such as
+ * the logger or the Cognito identity. Throws if the current invocation was not started by the JVM
+ * runtime.
+ */
+public val awsLambdaContext: Context
+    get() = (lambdaContext as JvmLambdaContext).awsContext
 
 /**
  * Read the incoming data stream as text and log if configured to do so.
@@ -54,7 +65,7 @@ public suspend fun InputStream.readIncoming(log: Boolean = logIncoming, handler:
  */
 public fun <T> lambda(context: Context = MockLambdaContext(), handler: suspend CoroutineScope.() -> T): T {
     return runBlocking {
-        lambdaContext = context
+        lambdaContext = JvmLambdaContext(context)
         withContext(Dispatchers.Default) {
             mdcContext("requestId" to context.awsRequestId, "@requestId" to context.awsRequestId) {
                 try {

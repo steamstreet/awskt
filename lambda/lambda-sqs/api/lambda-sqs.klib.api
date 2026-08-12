@@ -1,0 +1,133 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:lambda-sqs>
+final class com.steamstreet.aws.sqs/BatchResponse { // com.steamstreet.aws.sqs/BatchResponse|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.aws.sqs/RecordResponse>) // com.steamstreet.aws.sqs/BatchResponse.<init>|<init>(kotlin.collections.List<com.steamstreet.aws.sqs.RecordResponse>){}[0]
+
+    final val batchItemFailures // com.steamstreet.aws.sqs/BatchResponse.batchItemFailures|{}batchItemFailures[0]
+        final fun <get-batchItemFailures>(): kotlin.collections/List<com.steamstreet.aws.sqs/RecordResponse> // com.steamstreet.aws.sqs/BatchResponse.batchItemFailures.<get-batchItemFailures>|<get-batchItemFailures>(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.sqs/BatchResponse> { // com.steamstreet.aws.sqs/BatchResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.sqs/BatchResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.sqs/BatchResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.sqs/BatchResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.sqs/BatchResponse // com.steamstreet.aws.sqs/BatchResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.sqs/BatchResponse) // com.steamstreet.aws.sqs/BatchResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.sqs.BatchResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.sqs/BatchResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.aws.sqs/BatchResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.sqs/BatchResponse> // com.steamstreet.aws.sqs/BatchResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.sqs/RecordResponse { // com.steamstreet.aws.sqs/RecordResponse|null[0]
+    constructor <init>(kotlin/String) // com.steamstreet.aws.sqs/RecordResponse.<init>|<init>(kotlin.String){}[0]
+
+    final val itemIdentifier // com.steamstreet.aws.sqs/RecordResponse.itemIdentifier|{}itemIdentifier[0]
+        final fun <get-itemIdentifier>(): kotlin/String // com.steamstreet.aws.sqs/RecordResponse.itemIdentifier.<get-itemIdentifier>|<get-itemIdentifier>(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.sqs/RecordResponse> { // com.steamstreet.aws.sqs/RecordResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.sqs/RecordResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.sqs/RecordResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.sqs/RecordResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.sqs/RecordResponse // com.steamstreet.aws.sqs/RecordResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.sqs/RecordResponse) // com.steamstreet.aws.sqs/RecordResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.sqs.RecordResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.sqs/RecordResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.sqs/RecordResponse> // com.steamstreet.aws.sqs/RecordResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.sqs/SQSEvent { // com.steamstreet.aws.sqs/SQSEvent|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.aws.sqs/SQSRecord>) // com.steamstreet.aws.sqs/SQSEvent.<init>|<init>(kotlin.collections.List<com.steamstreet.aws.sqs.SQSRecord>){}[0]
+
+    final val Records // com.steamstreet.aws.sqs/SQSEvent.Records|{}Records[0]
+        final fun <get-Records>(): kotlin.collections/List<com.steamstreet.aws.sqs/SQSRecord> // com.steamstreet.aws.sqs/SQSEvent.Records.<get-Records>|<get-Records>(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.sqs/SQSEvent> { // com.steamstreet.aws.sqs/SQSEvent.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.sqs/SQSEvent.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.sqs/SQSEvent.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.sqs/SQSEvent.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.sqs/SQSEvent // com.steamstreet.aws.sqs/SQSEvent.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.sqs/SQSEvent) // com.steamstreet.aws.sqs/SQSEvent.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.sqs.SQSEvent){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.sqs/SQSEvent.Companion|null[0]
+        final val $childSerializers // com.steamstreet.aws.sqs/SQSEvent.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.sqs/SQSEvent> // com.steamstreet.aws.sqs/SQSEvent.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.sqs/SQSRecord { // com.steamstreet.aws.sqs/SQSRecord|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String, com.steamstreet.aws.sqs/SQSRecordAttributes? = ..., kotlinx.serialization.json/JsonObject? = ..., kotlin/String? = ..., kotlin/String, kotlin/String, kotlin/String) // com.steamstreet.aws.sqs/SQSRecord.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;com.steamstreet.aws.sqs.SQSRecordAttributes?;kotlinx.serialization.json.JsonObject?;kotlin.String?;kotlin.String;kotlin.String;kotlin.String){}[0]
+
+    final val attributes // com.steamstreet.aws.sqs/SQSRecord.attributes|{}attributes[0]
+        final fun <get-attributes>(): com.steamstreet.aws.sqs/SQSRecordAttributes? // com.steamstreet.aws.sqs/SQSRecord.attributes.<get-attributes>|<get-attributes>(){}[0]
+    final val awsRegion // com.steamstreet.aws.sqs/SQSRecord.awsRegion|{}awsRegion[0]
+        final fun <get-awsRegion>(): kotlin/String // com.steamstreet.aws.sqs/SQSRecord.awsRegion.<get-awsRegion>|<get-awsRegion>(){}[0]
+    final val body // com.steamstreet.aws.sqs/SQSRecord.body|{}body[0]
+        final fun <get-body>(): kotlin/String // com.steamstreet.aws.sqs/SQSRecord.body.<get-body>|<get-body>(){}[0]
+    final val eventSource // com.steamstreet.aws.sqs/SQSRecord.eventSource|{}eventSource[0]
+        final fun <get-eventSource>(): kotlin/String // com.steamstreet.aws.sqs/SQSRecord.eventSource.<get-eventSource>|<get-eventSource>(){}[0]
+    final val eventSourceARN // com.steamstreet.aws.sqs/SQSRecord.eventSourceARN|{}eventSourceARN[0]
+        final fun <get-eventSourceARN>(): kotlin/String // com.steamstreet.aws.sqs/SQSRecord.eventSourceARN.<get-eventSourceARN>|<get-eventSourceARN>(){}[0]
+    final val md5OfBody // com.steamstreet.aws.sqs/SQSRecord.md5OfBody|{}md5OfBody[0]
+        final fun <get-md5OfBody>(): kotlin/String? // com.steamstreet.aws.sqs/SQSRecord.md5OfBody.<get-md5OfBody>|<get-md5OfBody>(){}[0]
+    final val messageAttributes // com.steamstreet.aws.sqs/SQSRecord.messageAttributes|{}messageAttributes[0]
+        final fun <get-messageAttributes>(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.sqs/SQSRecord.messageAttributes.<get-messageAttributes>|<get-messageAttributes>(){}[0]
+    final val messageId // com.steamstreet.aws.sqs/SQSRecord.messageId|{}messageId[0]
+        final fun <get-messageId>(): kotlin/String // com.steamstreet.aws.sqs/SQSRecord.messageId.<get-messageId>|<get-messageId>(){}[0]
+    final val receiptHandle // com.steamstreet.aws.sqs/SQSRecord.receiptHandle|{}receiptHandle[0]
+        final fun <get-receiptHandle>(): kotlin/String // com.steamstreet.aws.sqs/SQSRecord.receiptHandle.<get-receiptHandle>|<get-receiptHandle>(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.sqs/SQSRecord> { // com.steamstreet.aws.sqs/SQSRecord.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.sqs/SQSRecord.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.sqs/SQSRecord.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.sqs/SQSRecord.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.sqs/SQSRecord // com.steamstreet.aws.sqs/SQSRecord.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.sqs/SQSRecord) // com.steamstreet.aws.sqs/SQSRecord.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.sqs.SQSRecord){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.sqs/SQSRecord.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.sqs/SQSRecord> // com.steamstreet.aws.sqs/SQSRecord.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.sqs/SQSRecordAttributes { // com.steamstreet.aws.sqs/SQSRecordAttributes|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.aws.sqs/SQSRecordAttributes.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val ApproximateFirstReceiveTimestamp // com.steamstreet.aws.sqs/SQSRecordAttributes.ApproximateFirstReceiveTimestamp|{}ApproximateFirstReceiveTimestamp[0]
+        final fun <get-ApproximateFirstReceiveTimestamp>(): kotlin/String? // com.steamstreet.aws.sqs/SQSRecordAttributes.ApproximateFirstReceiveTimestamp.<get-ApproximateFirstReceiveTimestamp>|<get-ApproximateFirstReceiveTimestamp>(){}[0]
+    final val ApproximateReceiveCount // com.steamstreet.aws.sqs/SQSRecordAttributes.ApproximateReceiveCount|{}ApproximateReceiveCount[0]
+        final fun <get-ApproximateReceiveCount>(): kotlin/String? // com.steamstreet.aws.sqs/SQSRecordAttributes.ApproximateReceiveCount.<get-ApproximateReceiveCount>|<get-ApproximateReceiveCount>(){}[0]
+    final val SenderId // com.steamstreet.aws.sqs/SQSRecordAttributes.SenderId|{}SenderId[0]
+        final fun <get-SenderId>(): kotlin/String? // com.steamstreet.aws.sqs/SQSRecordAttributes.SenderId.<get-SenderId>|<get-SenderId>(){}[0]
+    final val SentTimestamp // com.steamstreet.aws.sqs/SQSRecordAttributes.SentTimestamp|{}SentTimestamp[0]
+        final fun <get-SentTimestamp>(): kotlin/String? // com.steamstreet.aws.sqs/SQSRecordAttributes.SentTimestamp.<get-SentTimestamp>|<get-SentTimestamp>(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.sqs/SQSRecordAttributes> { // com.steamstreet.aws.sqs/SQSRecordAttributes.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.sqs/SQSRecordAttributes.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.sqs/SQSRecordAttributes.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.sqs/SQSRecordAttributes.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.sqs/SQSRecordAttributes // com.steamstreet.aws.sqs/SQSRecordAttributes.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.sqs/SQSRecordAttributes) // com.steamstreet.aws.sqs/SQSRecordAttributes.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.sqs.SQSRecordAttributes){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.sqs/SQSRecordAttributes.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.sqs/SQSRecordAttributes> // com.steamstreet.aws.sqs/SQSRecordAttributes.Companion.serializer|serializer(){}[0]
+    }
+}

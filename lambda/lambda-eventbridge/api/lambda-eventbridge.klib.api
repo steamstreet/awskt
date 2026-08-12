@@ -1,0 +1,118 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:lambda-eventbridge>
+abstract interface com.steamstreet.aws.lambda.eventbridge/Event { // com.steamstreet.aws.lambda.eventbridge/Event|null[0]
+    abstract val detail // com.steamstreet.aws.lambda.eventbridge/Event.detail|{}detail[0]
+        abstract fun <get-detail>(): kotlinx.serialization.json/JsonObject // com.steamstreet.aws.lambda.eventbridge/Event.detail.<get-detail>|<get-detail>(){}[0]
+    abstract val id // com.steamstreet.aws.lambda.eventbridge/Event.id|{}id[0]
+        abstract fun <get-id>(): kotlin/String // com.steamstreet.aws.lambda.eventbridge/Event.id.<get-id>|<get-id>(){}[0]
+    abstract val resources // com.steamstreet.aws.lambda.eventbridge/Event.resources|{}resources[0]
+        abstract fun <get-resources>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.aws.lambda.eventbridge/Event.resources.<get-resources>|<get-resources>(){}[0]
+    abstract val source // com.steamstreet.aws.lambda.eventbridge/Event.source|{}source[0]
+        abstract fun <get-source>(): kotlin/String? // com.steamstreet.aws.lambda.eventbridge/Event.source.<get-source>|<get-source>(){}[0]
+    abstract val sourceAccount // com.steamstreet.aws.lambda.eventbridge/Event.sourceAccount|{}sourceAccount[0]
+        abstract fun <get-sourceAccount>(): kotlin/String? // com.steamstreet.aws.lambda.eventbridge/Event.sourceAccount.<get-sourceAccount>|<get-sourceAccount>(){}[0]
+    abstract val sourceEvent // com.steamstreet.aws.lambda.eventbridge/Event.sourceEvent|{}sourceEvent[0]
+        abstract fun <get-sourceEvent>(): kotlin/Any? // com.steamstreet.aws.lambda.eventbridge/Event.sourceEvent.<get-sourceEvent>|<get-sourceEvent>(){}[0]
+    abstract val time // com.steamstreet.aws.lambda.eventbridge/Event.time|{}time[0]
+        abstract fun <get-time>(): kotlin.time/Instant? // com.steamstreet.aws.lambda.eventbridge/Event.time.<get-time>|<get-time>(){}[0]
+    abstract val type // com.steamstreet.aws.lambda.eventbridge/Event.type|{}type[0]
+        abstract fun <get-type>(): kotlin/String // com.steamstreet.aws.lambda.eventbridge/Event.type.<get-type>|<get-type>(){}[0]
+
+    abstract fun failed(kotlin/Throwable?) // com.steamstreet.aws.lambda.eventbridge/Event.failed|failed(kotlin.Throwable?){}[0]
+}
+
+abstract interface com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig { // com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig|null[0]
+    abstract var logEventProcessing // com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig.logEventProcessing|{}logEventProcessing[0]
+        abstract fun <get-logEventProcessing>(): kotlin/Boolean // com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig.logEventProcessing.<get-logEventProcessing>|<get-logEventProcessing>(){}[0]
+        abstract fun <set-logEventProcessing>(kotlin/Boolean) // com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig.logEventProcessing.<set-logEventProcessing>|<set-logEventProcessing>(kotlin.Boolean){}[0]
+
+    abstract fun allEvents(): kotlin.collections/List<com.steamstreet.aws.lambda.eventbridge/Event> // com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig.allEvents|allEvents(){}[0]
+    abstract fun eventsOfType(kotlin/String): kotlin.collections/List<com.steamstreet.aws.lambda.eventbridge/Event> // com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig.eventsOfType|eventsOfType(kotlin.String){}[0]
+    open suspend fun <#A1: kotlin/Any?> (com.steamstreet.events/EventSchema<#A1>).invoke(kotlin.coroutines/SuspendFunction2<com.steamstreet.aws.lambda.eventbridge/Event, #A1, kotlin/Unit>) // com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig.invoke|invoke@com.steamstreet.events.EventSchema<0:0>(kotlin.coroutines.SuspendFunction2<com.steamstreet.aws.lambda.eventbridge.Event,0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
+}
+
+final class com.steamstreet.aws.lambda.eventbridge/DefaultEventBridgeHandlerConfig : com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig { // com.steamstreet.aws.lambda.eventbridge/DefaultEventBridgeHandlerConfig|null[0]
+    constructor <init>(com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent) // com.steamstreet.aws.lambda.eventbridge/DefaultEventBridgeHandlerConfig.<init>|<init>(com.steamstreet.aws.lambda.eventbridge.EventBridgeEvent){}[0]
+
+    final var error // com.steamstreet.aws.lambda.eventbridge/DefaultEventBridgeHandlerConfig.error|{}error[0]
+        final fun <get-error>(): kotlin/Throwable? // com.steamstreet.aws.lambda.eventbridge/DefaultEventBridgeHandlerConfig.error.<get-error>|<get-error>(){}[0]
+        final fun <set-error>(kotlin/Throwable?) // com.steamstreet.aws.lambda.eventbridge/DefaultEventBridgeHandlerConfig.error.<set-error>|<set-error>(kotlin.Throwable?){}[0]
+    final var logEventProcessing // com.steamstreet.aws.lambda.eventbridge/DefaultEventBridgeHandlerConfig.logEventProcessing|{}logEventProcessing[0]
+        final fun <get-logEventProcessing>(): kotlin/Boolean // com.steamstreet.aws.lambda.eventbridge/DefaultEventBridgeHandlerConfig.logEventProcessing.<get-logEventProcessing>|<get-logEventProcessing>(){}[0]
+        final fun <set-logEventProcessing>(kotlin/Boolean) // com.steamstreet.aws.lambda.eventbridge/DefaultEventBridgeHandlerConfig.logEventProcessing.<set-logEventProcessing>|<set-logEventProcessing>(kotlin.Boolean){}[0]
+
+    final fun allEvents(): kotlin.collections/List<com.steamstreet.aws.lambda.eventbridge/Event> // com.steamstreet.aws.lambda.eventbridge/DefaultEventBridgeHandlerConfig.allEvents|allEvents(){}[0]
+    final fun eventsOfType(kotlin/String): kotlin.collections/List<com.steamstreet.aws.lambda.eventbridge/Event> // com.steamstreet.aws.lambda.eventbridge/DefaultEventBridgeHandlerConfig.eventsOfType|eventsOfType(kotlin.String){}[0]
+}
+
+final class com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent { // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent|null[0]
+    constructor <init>(kotlin/String = ..., kotlin/String = ..., kotlin/String, kotlin/String? = ..., kotlin.time/Instant = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlinx.serialization.json/JsonObject? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.String?;kotlin.time.Instant;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlinx.serialization.json.JsonObject?;kotlin.String?;kotlin.String?){}[0]
+
+    final val account // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.account|{}account[0]
+        final fun <get-account>(): kotlin/String? // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.account.<get-account>|<get-account>(){}[0]
+    final val detail // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.detail|{}detail[0]
+        final fun <get-detail>(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.detail.<get-detail>|<get-detail>(){}[0]
+    final val detailType // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.detailType|{}detailType[0]
+        final fun <get-detailType>(): kotlin/String // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.detailType.<get-detailType>|<get-detailType>(){}[0]
+    final val id // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.id|{}id[0]
+        final fun <get-id>(): kotlin/String // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.id.<get-id>|<get-id>(){}[0]
+    final val region // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.region|{}region[0]
+        final fun <get-region>(): kotlin/String? // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.region.<get-region>|<get-region>(){}[0]
+    final val replayName // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.replayName|{}replayName[0]
+        final fun <get-replayName>(): kotlin/String? // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.replayName.<get-replayName>|<get-replayName>(){}[0]
+    final val resources // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.resources|{}resources[0]
+        final fun <get-resources>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.resources.<get-resources>|<get-resources>(){}[0]
+    final val source // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.source|{}source[0]
+        final fun <get-source>(): kotlin/String? // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.source.<get-source>|<get-source>(){}[0]
+    final val time // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.time|{}time[0]
+        final fun <get-time>(): kotlin.time/Instant // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.time.<get-time>|<get-time>(){}[0]
+    final val version // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.version|{}version[0]
+        final fun <get-version>(): kotlin/String // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.version.<get-version>|<get-version>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.component1|component1(){}[0]
+    final fun component10(): kotlin/String? // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.component10|component10(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.component2|component2(){}[0]
+    final fun component3(): kotlin/String // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.component4|component4(){}[0]
+    final fun component5(): kotlin.time/Instant // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.component5|component5(){}[0]
+    final fun component6(): kotlin/String? // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.component6|component6(){}[0]
+    final fun component7(): kotlin.collections/List<kotlin/String>? // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.component7|component7(){}[0]
+    final fun component8(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.component8|component8(){}[0]
+    final fun component9(): kotlin/String? // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.component9|component9(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String? = ..., kotlin.time/Instant = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlinx.serialization.json/JsonObject? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.copy|copy(kotlin.String;kotlin.String;kotlin.String;kotlin.String?;kotlin.time.Instant;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlinx.serialization.json.JsonObject?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent> { // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent) // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.eventbridge.EventBridgeEvent){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.Companion|null[0]
+        final val $childSerializers // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent> // com.steamstreet.aws.lambda.eventbridge/EventBridgeEvent.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final fun (kotlinx.serialization.json/JsonElement).com.steamstreet.aws.lambda.eventbridge/string(): kotlin/String? // com.steamstreet.aws.lambda.eventbridge/string|string@kotlinx.serialization.json.JsonElement(){}[0]
+final fun (kotlinx.serialization.json/JsonElement).com.steamstreet.aws.lambda.eventbridge/string(kotlin/String): kotlin/String? // com.steamstreet.aws.lambda.eventbridge/string|string@kotlinx.serialization.json.JsonElement(kotlin.String){}[0]
+final fun (kotlinx.serialization.json/JsonElement).com.steamstreet.aws.lambda.eventbridge/strings(): kotlin.collections/List<kotlin/String> // com.steamstreet.aws.lambda.eventbridge/strings|strings@kotlinx.serialization.json.JsonElement(){}[0]
+final suspend fun (com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig).com.steamstreet.aws.lambda.eventbridge/any(kotlin.coroutines/SuspendFunction1<kotlin.collections/List<com.steamstreet.aws.lambda.eventbridge/Event>, kotlin.collections/List<kotlin/Boolean>>) // com.steamstreet.aws.lambda.eventbridge/any|any@com.steamstreet.aws.lambda.eventbridge.EventBridgeHandlerConfig(kotlin.coroutines.SuspendFunction1<kotlin.collections.List<com.steamstreet.aws.lambda.eventbridge.Event>,kotlin.collections.List<kotlin.Boolean>>){}[0]
+final suspend fun (com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig).com.steamstreet.aws.lambda.eventbridge/type(kotlin/String, kotlin.coroutines/SuspendFunction2<com.steamstreet.aws.lambda.eventbridge/Event, kotlinx.serialization.json/JsonObject, kotlin/Any?>) // com.steamstreet.aws.lambda.eventbridge/type|type@com.steamstreet.aws.lambda.eventbridge.EventBridgeHandlerConfig(kotlin.String;kotlin.coroutines.SuspendFunction2<com.steamstreet.aws.lambda.eventbridge.Event,kotlinx.serialization.json.JsonObject,kotlin.Any?>){}[0]
+final suspend fun <#A: kotlin/Any?, #B: kotlin/Any?> (com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig).com.steamstreet.aws.lambda.eventbridge/type(com.steamstreet.events/EventSchema<#A>, kotlin.coroutines/SuspendFunction1<#A, #B>) // com.steamstreet.aws.lambda.eventbridge/type|type@com.steamstreet.aws.lambda.eventbridge.EventBridgeHandlerConfig(com.steamstreet.events.EventSchema<0:0>;kotlin.coroutines.SuspendFunction1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final suspend fun <#A: kotlin/Any?, #B: kotlin/Any?> (com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig).com.steamstreet.aws.lambda.eventbridge/type(com.steamstreet.events/EventSchema<#A>, kotlin.coroutines/SuspendFunction2<com.steamstreet.aws.lambda.eventbridge/Event, #A, #B>) // com.steamstreet.aws.lambda.eventbridge/type|type@com.steamstreet.aws.lambda.eventbridge.EventBridgeHandlerConfig(com.steamstreet.events.EventSchema<0:0>;kotlin.coroutines.SuspendFunction2<com.steamstreet.aws.lambda.eventbridge.Event,0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final suspend fun <#A: kotlin/Any?, #B: kotlin/Any?> (com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig).com.steamstreet.aws.lambda.eventbridge/typeWithContext(com.steamstreet.events/EventSchema<#A>, kotlin.coroutines/SuspendFunction2<com.steamstreet.aws.lambda.eventbridge/Event, #A, #B>) // com.steamstreet.aws.lambda.eventbridge/typeWithContext|typeWithContext@com.steamstreet.aws.lambda.eventbridge.EventBridgeHandlerConfig(com.steamstreet.events.EventSchema<0:0>;kotlin.coroutines.SuspendFunction2<com.steamstreet.aws.lambda.eventbridge.Event,0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final suspend fun <#A: kotlin/Any?> (com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig).com.steamstreet.aws.lambda.eventbridge/any(kotlin.coroutines/SuspendFunction2<com.steamstreet.aws.lambda.eventbridge/Event, com.steamstreet.aws.lambda.eventbridge/Event, #A>) // com.steamstreet.aws.lambda.eventbridge/any|any@com.steamstreet.aws.lambda.eventbridge.EventBridgeHandlerConfig(kotlin.coroutines.SuspendFunction2<com.steamstreet.aws.lambda.eventbridge.Event,com.steamstreet.aws.lambda.eventbridge.Event,0:0>){0§<kotlin.Any?>}[0]
+final suspend fun <#A: kotlin/Any?> (com.steamstreet.aws.lambda.eventbridge/EventBridgeHandlerConfig).com.steamstreet.aws.lambda.eventbridge/on(com.steamstreet.events/EventSchema<#A>, kotlin.coroutines/SuspendFunction2<com.steamstreet.aws.lambda.eventbridge/Event, #A, kotlin/Any?>) // com.steamstreet.aws.lambda.eventbridge/on|on@com.steamstreet.aws.lambda.eventbridge.EventBridgeHandlerConfig(com.steamstreet.events.EventSchema<0:0>;kotlin.coroutines.SuspendFunction2<com.steamstreet.aws.lambda.eventbridge.Event,0:0,kotlin.Any?>){0§<kotlin.Any?>}[0]

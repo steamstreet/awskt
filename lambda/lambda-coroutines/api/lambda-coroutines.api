@@ -1,15 +1,19 @@
 public final class com/steamstreet/aws/lambda/CoroutinesKt {
-	public static field lambdaContext Lcom/amazonaws/services/lambda/runtime/Context;
-	public static final fun getLambdaContext ()Lcom/amazonaws/services/lambda/runtime/Context;
+	public static field lambdaContext Lcom/steamstreet/aws/lambda/LambdaContext;
+	public static final fun getLambdaContext ()Lcom/steamstreet/aws/lambda/LambdaContext;
 	public static final fun getLambdaJson ()Lkotlinx/serialization/json/Json;
 	public static final fun getLogIncoming ()Z
+	public static final fun setLambdaContext (Lcom/steamstreet/aws/lambda/LambdaContext;)V
+	public static final fun setLogIncoming (Z)V
+}
+
+public final class com/steamstreet/aws/lambda/Coroutines_jvmKt {
+	public static final fun getAwsLambdaContext ()Lcom/amazonaws/services/lambda/runtime/Context;
 	public static final fun getLogger ()Lorg/slf4j/Logger;
 	public static final fun lambda (Lcom/amazonaws/services/lambda/runtime/Context;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static synthetic fun lambda$default (Lcom/amazonaws/services/lambda/runtime/Context;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun readIncoming (Ljava/io/InputStream;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun readIncoming$default (Ljava/io/InputStream;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static final fun setLambdaContext (Lcom/amazonaws/services/lambda/runtime/Context;)V
-	public static final fun setLogIncoming (Z)V
 }
 
 public abstract class com/steamstreet/aws/lambda/IOLambda : com/steamstreet/aws/lambda/SuspendingLambda {
@@ -32,6 +36,20 @@ public abstract class com/steamstreet/aws/lambda/InputLambda : com/steamstreet/a
 	public abstract fun handle (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun setLogIncoming (Z)V
 	public fun setLogOutgoing (Z)V
+}
+
+public final class com/steamstreet/aws/lambda/JvmLambdaContext : com/steamstreet/aws/lambda/LambdaContext {
+	public fun <init> (Lcom/amazonaws/services/lambda/runtime/Context;)V
+	public final fun getAwsContext ()Lcom/amazonaws/services/lambda/runtime/Context;
+	public fun getFunctionName ()Ljava/lang/String;
+	public fun getRemainingTimeInMillis ()I
+	public fun getRequestId ()Ljava/lang/String;
+}
+
+public abstract interface class com/steamstreet/aws/lambda/LambdaContext {
+	public abstract fun getFunctionName ()Ljava/lang/String;
+	public abstract fun getRemainingTimeInMillis ()I
+	public abstract fun getRequestId ()Ljava/lang/String;
 }
 
 public abstract interface class com/steamstreet/aws/lambda/SuspendingLambda {

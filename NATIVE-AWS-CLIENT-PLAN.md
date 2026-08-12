@@ -1624,21 +1624,21 @@ This is one atomic merge across `dynamo`, `dynamokt`, `dynamokt-exposed` **and `
 
 ### M7 — Native targets, Lambda runtime, packaging (10.5 days)
 
-- [ ] Add `linuxArm64()`, `linuxX64()`, `macosArm64()` to `dynamo` and `dynamokt`. **`macosArm64` is not optional** — `linuxArm64` is Tier 2 with test execution unsupported, so omitting it leaves the native port compile-verified only, exactly the gap 2.3.x left (`ref-2.3.x/dynamo/build.gradle.kts:5-8` and `ref-2.3.x/dynamokt/build.gradle.kts:5-8` declare only jvm + linuxArm64).
-- [ ] Promote `gradle-plugin/` to an included build with `java-gradle-plugin` + `maven-publish` and plugin id `com.steamstreet.awskt.native-lambda`; add `includeBuild("gradle-plugin")` to `settings.gradle.kts` `pluginManagement`. Port the 36-line `packageLambda` Zip task from `ref-2.3.x/buildSrc/src/main/kotlin/steamstreet-common.native-lambda-conventions.gradle.kts` (linuxArm64 + rename `*.kexe` → `bootstrap` with `rwxr-xr-x`).
-- [ ] Cherry-pick `ref-2.3.x/lambda/lambda-native` (`LambdaRuntime.kt`, `HttpClient.kt`, `nativeLambda.kt`); add `include(":lambda:lambda-native")`. Then fix five spec gaps 2.3.x left:
+- [x] ~~Add `linuxArm64()`, `linuxX64()`, `macosArm64()` to `dynamo` and `dynamokt`.~~ **Already done before M7 started** — `dynamo` from M3, `dynamokt` from M4. No target-addition work existed. **`macosArm64` is not optional** — `linuxArm64` is Tier 2 with test execution unsupported, so omitting it leaves the native port compile-verified only, exactly the gap 2.3.x left (`ref-2.3.x/dynamo/build.gradle.kts:5-8` and `ref-2.3.x/dynamokt/build.gradle.kts:5-8` declare only jvm + linuxArm64).
+- [x] Promote `gradle-plugin/` to an included build with `java-gradle-plugin` + `maven-publish` and plugin id `com.steamstreet.awskt.native-lambda`; add `includeBuild("gradle-plugin")` to `settings.gradle.kts` `pluginManagement`. Port the 36-line `packageLambda` Zip task from `ref-2.3.x/buildSrc/src/main/kotlin/steamstreet-common.native-lambda-conventions.gradle.kts` (linuxArm64 + rename `*.kexe` → `bootstrap` with `rwxr-xr-x`).
+- [x] Cherry-pick `ref-2.3.x/lambda/lambda-native` (`LambdaRuntime.kt`, `HttpClient.kt`, `nativeLambda.kt`); add `include(":lambda:lambda-native")`. Then fix five spec gaps 2.3.x left:
   1. No `POST /runtime/init/error` — lines 36-37 call `error()` on a missing `AWS_LAMBDA_RUNTIME_API` and crash unreported.
   2. No `Lambda-Runtime-Function-Error-Type` header on the error POST (`:85-88`).
   3. `Lambda-Runtime-Trace-Id` never read and `_X_AMZN_TRACE_ID` never exported — X-Ray is silently dead.
   4. `catch (e: Exception)` at `:79` lets a `Throwable` kill the poll loop → catch `Throwable`.
   5. `remainingTimeInMillis` is a per-invocation snapshot (`:60-62`, passed as a `val` to `NativeLambdaContext`) — make it a live function computed from the stored deadline, matching the JVM `Context`.
   Also: `LambdaRuntime` constructs `HttpClient(Curl) { expectSuccess = false }` directly instead of using its own `lambdaHttpClient()` helper — wire them together, and add a source comment that the `/invocation/next` GET must have **no** request timeout (installing Ktor's `HttpTimeout` plugin globally on that client would break idle Lambdas in a hard-to-diagnose way).
-- [ ] Implement `packageNativeLayer` — named at `ref-2.3.x/NATIVE-LAMBDA-PLAN.md:148-152` but never written. A Lambda Layer zip containing `lib/libcrypt.so.1` extracted from the `amazonlinux:2` arm64 image, used with `LD_LIBRARY_PATH=/opt/lib:/lib64:/usr/lib64`. KT-55643 is Open, unassigned, no fix version, affected since Kotlin 1.8 — this is long-lived infrastructure and belongs in the published artifact set, not in per-consumer copy-paste.
-- [ ] **Native handler entry points** — this is the largest unbudgeted item the draft missed. 2.3.x's `nativeLambda()` accepts only `suspend (String) -> String` and no `nativeMain` exists in `lambda-eventbridge` or `lambda-sqs`. The 2.3.x work that *was* done shows the shape: `lambda-eventbridge/eventbridge.kt` moved from the default package into `com.steamstreet.aws.lambda.eventbridge` with 313 lines rewritten plus an 82-line `eventbridge.jvm.kt`, and `lambda-sqs` split into `com.steamstreet.aws.sqs/sqs.kt` (+40) and `handlers.kt` (41 changed). **The package move is a public API rename requiring its own approval** (see §9).
-- [ ] Split CI into an ubuntu + macos matrix per §6.1.
-- [ ] Add a deployed-Lambda smoke invocation to CI — the only coverage `linuxArm64` can ever get.
+- [x] Implement `packageNativeLayer` — named at `ref-2.3.x/NATIVE-LAMBDA-PLAN.md:148-152` but never written. A Lambda Layer zip containing `lib/libcrypt.so.1` extracted from the `amazonlinux:2` arm64 image, used with `LD_LIBRARY_PATH=/opt/lib:/lib64:/usr/lib64`. KT-55643 is Open, unassigned, no fix version, affected since Kotlin 1.8 — this is long-lived infrastructure and belongs in the published artifact set, not in per-consumer copy-paste.
+- [x] **Native handler entry points** — this is the largest unbudgeted item the draft missed. 2.3.x's `nativeLambda()` accepts only `suspend (String) -> String` and no `nativeMain` exists in `lambda-eventbridge` or `lambda-sqs`. The 2.3.x work that *was* done shows the shape: `lambda-eventbridge/eventbridge.kt` moved from the default package into `com.steamstreet.aws.lambda.eventbridge` with 313 lines rewritten plus an 82-line `eventbridge.jvm.kt`, and `lambda-sqs` split into `com.steamstreet.aws.sqs/sqs.kt` (+40) and `handlers.kt` (41 changed). **The package move is a public API rename requiring its own approval** (see §9).
+- [x] Split CI into an ubuntu + macos matrix per §6.1.
+- [x] Add a deployed-Lambda smoke invocation to CI — the only coverage `linuxArm64` can ever get.
 
-- [ ] **(+0.5 d) Extend the deployed-Lambda smoke to cover S3.** No other M7 work is needed for it — `aws-s3` declares its native targets from birth, so there is no target-addition task.
+- [x] **(+0.5 d) Extend the deployed-Lambda smoke to cover S3.** No other M7 work is needed for it — `aws-s3` declares its native targets from birth, so there is no target-addition task.
 
 **Verification**: `./gradlew packageLambda packageNativeLayer` produces a bootstrap zip and a libcrypt layer zip; the layer plus binary deploy to `provided.al2023` / arm64; a real invocation
 1. performs a DynamoDB PutItem then GetItem against a real table and returns the round-tripped item, **and**
@@ -1648,6 +1648,130 @@ This is one atomic merge across `dynamo`, `dynamokt`, `dynamokt-exposed` **and `
 `./gradlew :dynamokt:macosArm64Test` runs the `commonTest` sources split out in M5a (non-vacuously — assert the test count is > 0).
 
 *Why (2) and (3) are mandatory rather than nice-to-have*: per §6.1, `linuxArm64` is Tier 2 with test execution unsupported, so the deployed-Lambda smoke is the **only** coverage the actual deployment target can ever receive. S3 is now part of the stated requirement for that target, so omitting it would leave the headline new capability compile-verified only — precisely the 2.3.x mistake this milestone opens by calling out.
+
+> **STATUS: M7 IS COMPLETE (2026-08-11). The deployed-Lambda smoke passes on real Graviton.**
+> `./gradlew build` is green at **753 tests / 0 failures**, up from the **709 / 0** measured on a
+> clean worktree at `75ca412`. The delta is exactly +44 and nothing was lost: `lambda-native`
+> contributes 10 `macosArm64` tests, `dynamokt` gains 17 `commonTest` tests which run **twice**
+> (17 `macosArm64` + 17 added to `jvmTest`, 20 → 37).
+>
+> **The mandatory verification ran against real AWS and passed.** `packageLambda` and
+> `packageNativeLayer` produce a 4.8 MB bootstrap zip (one entry, `bootstrap`, mode `rwxr-xr-x`,
+> confirmed `ELF 64-bit LSB executable, ARM aarch64`) and a 20 KB layer zip containing
+> `lib/libcrypt.so.1` (75 536 bytes, confirmed `ELF 64-bit LSB shared object, ARM aarch64`). Both
+> deploy to `provided.al2023` / arm64, and one invocation round-tripped a DynamoDB PutItem/GetItem,
+> round-tripped an S3 PutObject/GetObject, and returned presigned GET URLs that CI then fetched
+> **unauthenticated** for HTTP 200 and a byte comparison. Driver: `.github/scripts/native-smoke.sh`,
+> gated on `AWSKT_LIVE_SMOKE=1` and verified in both directions (0 s when gated off against ~90 s
+> for a real run).
+>
+> **The smoke deliberately exceeds the stated criteria in two places, because they were free.**
+> It writes and reads an S3 key of `smoke/<id>/a b/c..d/e+f/日本語.txt` — a space, a `..` segment,
+> a `+` and non-ASCII, i.e. precisely the inputs S3's `normalizeUriPath=false` +
+> `doubleUriEncode=false` combination changes and which **Risk 25 records as having no AWS fixture
+> coverage at all**. The unauthenticated presigned fetch of that key returning 200 is the first
+> end-to-end evidence that combination is right. It also asserts a 38-digit `N`
+> (`12345678901234567890.0987654321`) survives the round trip, which is Risk 13's precision bug
+> observed on the deployment target rather than in a unit test.
+>
+> **The libcrypt layer is proven load-bearing, not assumed.** Detaching the layer and re-invoking
+> gives `Runtime.ExitError … exit status 127`; re-attaching restores a passing smoke. KT-55643 is
+> real on `provided.al2023` and the layer is the thing that fixes it.
+>
+> **All five spec gaps are fixed, and each is proven by sabotage.** Reverting a fix makes exactly
+> the test that targets it fail: `catch (Throwable)` → `Exception` fails
+> `reportsAThrowableThatIsNotAnException`; dropping the `Lambda-Runtime-Function-Error-Type` header
+> fails three tests; dropping the `_X_AMZN_TRACE_ID` export fails `exportsTheTraceIdIntoTheEnvironment`;
+> making `remainingTimeInMillis` a construction-time snapshot fails
+> `remainingTimeCountsDownAsTheInvocationRuns`; pointing the init POST away from
+> `/runtime/init/error` fails `reportsInitializationFailureToTheInitErrorEndpoint`. `LambdaRuntime`
+> takes its client from `lambdaHttpClient()` through an `internal` constructor, which is also what
+> makes the loop testable against a `MockEngine`, and the no-`HttpTimeout` rule is a comment at the
+> field it applies to.
+>
+> `remainingTimeInMillis` stayed a `val` with a computed getter rather than becoming a `fun`. The
+> task said "live function"; a property with a getter *is* recomputed per read, it matches the JVM
+> `Context` shape, and it keeps `LambdaContext` idiomatic. The test asserts the value falls across a
+> real delay, so the distinction that mattered is the one that is enforced.
+>
+> ### Four places the plan was wrong
+>
+> **1. The §9 item (j) package rename was already done.** M7's task list and §9 both describe
+> `lambda-eventbridge` / `lambda-sqs` renaming into `com.steamstreet.aws.lambda.eventbridge` /
+> `com.steamstreet.aws.sqs` as pending work needing its own approval. Both modules were **already**
+> in those packages on `3.0.x` — verified in the sources and in the committed `.api` dumps. There
+> was no rename to approve. Row (j) should be struck, not decided.
+>
+> **2. `lambda-coroutines` had to become multiplatform, and nothing in M7 says so.** 2.3.x's
+> `lambda-native` imports `LambdaContext` and `lambdaContext` from `com.steamstreet.aws.lambda`,
+> which on 2.3.x lives in a **multiplatform** `lambda-coroutines/src/commonMain`. On `3.0.x` that
+> module is still JVM-only (`src/main/kotlin`), so the cherry-pick could not have compiled as
+> written. Converting it is a prerequisite for every native handler, and it carries **a public API
+> break the plan never inventoried**: `lambdaContext` is retyped from the AWS
+> `com.amazonaws.services.lambda.runtime.Context` to the new common `LambdaContext`. Blast radius
+> inside this repo is **zero** — a repo-wide grep finds `lambdaContext` only at its own declaration
+> and its one assignment — and `awsLambdaContext` plus `JvmLambdaContext.awsContext` are the
+> migration path for consumers. It belongs in the §9 inventory as a new row.
+>
+> **3. `dynamokt` has no `commonTest`, and M5a never created one.** M7's verification says
+> `:dynamokt:macosArm64Test` runs "the `commonTest` sources split out in M5a". No such source set
+> existed — `dynamokt/src` held only `commonMain`, `jvmMain`, `jvmTest` and `nativeMain`, and the
+> `commonTest` block in its `build.gradle.kts` declared dependencies for a directory with no files.
+> The native targets therefore ran **zero** tests while reporting success, which is exactly the
+> vacuous-pass failure mode this project has been caught by twice. 17 tests were written from
+> scratch (`AttributeDiffTest`, `ExpressionBuilderTest`), chosen to need no AWS, LocalStack or
+> Docker so they run on all three hosts. They bite: swapping `AttributeValue.B`'s content equality
+> for reference equality fails `treatsBinaryAttributesWithEqualContentAsUnchanged` — the Risk 11
+> defect, which until now had no test anywhere in the repo.
+>
+> **4. `settings.gradle.kts` had `pluginManagement` nested inside `dependencyResolutionManagement`.**
+> It resolved against the outer `Settings` receiver and worked by accident. `includeBuild` for
+> plugin resolution does not tolerate it, so the block moved to the top of the file where it belongs.
+>
+> ### Other findings
+>
+> **The logging helpers are JVM-only — the same wall M6 hit.** `logWarning`, `logError`, `logInfo`,
+> `logJson` and `mdcContext` all live in `logging/src/jvmMain`; only the `Log` class is common. The
+> EventBridge DSL needed one log call in `commonMain`, so it goes through an `internal expect fun
+> logProcessingEvent`, whose JVM actual is the original `logger.logJson(...)` verbatim. That keeps
+> the logstash JSON shape existing JVM consumers parse **byte-identical**; routing the DSL onto the
+> common `Log` API instead would have changed it silently.
+>
+> **`linuxArm64` cross-compiles from macOS.** `linkReleaseExecutableLinuxArm64` and therefore
+> `packageLambda` both work on a developer machine, so producing a deployable artifact does not
+> require a Linux host. Only *running* tests on the target is unavailable.
+>
+> **The EventBridge JVM facade class changed name.** Splitting `eventbridge.kt` into
+> `commonMain/EventBridge.kt` + `jvmMain/EventBridge.jvm.kt` moves the JVM-only top-level functions
+> from `EventbridgeKt` to `EventBridge_jvmKt`. Source-compatible for Kotlin callers, who resolve by
+> package; a binary break for any **Java** caller of `EventbridgeKt.eventBridge(...)`. The split
+> makes it unavoidable. `lambda-sqs`'s JVM `.api` is byte-identical after its conversion, so only
+> EventBridge is affected.
+>
+> **The `gradle-plugin` included build compiles against Gradle's embedded Kotlin**, where
+> `org.gradle.kotlin.dsl` receiver-style extensions win overload resolution. `tasks.register<T>(…) { }`
+> and `exec { commandLine(…) }` are required; the `Action`-with-`it` forms do not compile.
+>
+> **`packageNativeLayer` extracts via `cat`, not `docker cp`.** `/usr/lib64/libcrypt.so.1` is a
+> symlink to `libcrypt-2.26.so`, and `docker cp` preserves symlinks — a dangling link in a layer
+> resolves to nothing at runtime and fails the function at cold start with a loader error that names
+> the library but not the reason. The task also fails the build if an extracted file is under 1 KB,
+> so a wrong path cannot ship a broken layer.
+>
+> ### What remains
+>
+> - **The CI matrix is written but unexercised.** `.github/workflows/build.yml` now splits into an
+>   `ubuntu` job (full `build`, including the Docker-gated suites and `checkLegacyAbi`) and a `macos`
+>   job (Apple targets, `macosArm64Test`, plus the `linuxArm64` link), because ubuntu cannot build
+>   Apple targets and macOS runners have no Docker daemon. Nothing has been pushed, so no run exists.
+>   The `deployed-smoke` job needs an `AWSKT_SMOKE_ROLE_ARN` OIDC secret and skips cleanly without it.
+> - **`AwsServiceClient.callRaw`'s trailing `inspectBeforeBody` parameter is still unruled** — the
+>   M3.5b item is untouched by this milestone.
+> - **Nothing is committed or pushed.** The whole 3.0 line still exists only on this machine.
+> - **The live AWS resources the smoke created are still in place** in account 443844975891:
+>   table `awskt-native-smoke`, role `awskt-native-smoke-role`, layer `awskt-native-libcrypt:1`, and
+>   function `awskt-native-smoke`. They are cheap (PAY_PER_REQUEST, no provisioned concurrency) and
+>   re-used by the script, but they are real and were not there before.
 
 ---
 
@@ -1731,7 +1855,7 @@ The full inventory:
 | (g) | **`EnumSerializer` / `NullableEnumSerializer` public constructors take `List<T>` instead of `KClass<T>`** | `delegates.kt:242,255` |
 | (h) | **`api(libs.aws.dynamodb)` removed from `dynamo`, `dynamokt`, `dynamokt-exposed` POMs** — a transitive-dependency break independent of everything above | three `build.gradle.kts:6-7` |
 | (i) | **`dynamo`, `dynamokt`, `dynamokt-exposed` go from a single jar to KMP root-metadata + `-jvm`** | convention-plugin change |
-| (j) | *(M7 only)* `lambda-eventbridge` / `lambda-sqs` package renames into `com.steamstreet.aws.lambda.eventbridge` / `com.steamstreet.aws.sqs` | deferred; can be decided at M7 |
+| (j) | ~~*(M7 only)* `lambda-eventbridge` / `lambda-sqs` package renames~~ | **STRUCK 2026-08-11 — already done.** Both modules were already in those packages on `3.0.x`; there was never a rename to approve. See M7's STATUS. |
 | (k) | *(only if Q7 resolves to "delete")* **`public class S3Local` removed from the published `awskt-test` artifact, and `api(libs.aws.s3)` removed from its POM** — the same transitive-dependency break class as (h) | `test/src/jvmMain/.../S3Mock.kt:6`, `test/build.gradle.kts:17` |
 
 Items (f), (g), (h) and (i) were absent from the draft plan and are the reason M5a is 9.5 days rather than 8.

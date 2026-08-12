@@ -1,19 +1,41 @@
 plugins {
-    id("steamstreet-common.jvm-library-conventions")
+    id("steamstreet-common.multiplatform-library-conventions")
 }
 
-dependencies {
-    api(libs.kotlin.date.time)
+// Multiplatform so the event model and the handler-registration DSL compile for Kotlin/Native.
+// The Lambda plumbing (InputStream/OutputStream, the AWS `Context`, the SQS-wrapped variant) stays
+// in jvmMain.
+kotlin {
+    explicitApi()
 
-    api(project(":events"))
-    api(project(":logging"))
-    api(project(":lambda:lambda-coroutines"))
-    api(project(":lambda:lambda-sqs"))
+    jvm()
+    linuxX64()
+    linuxArm64()
+    macosArm64()
 
-    testImplementation(kotlin("test"))
-    testImplementation(libs.kotlin.coroutines.test)
-    testImplementation(libs.kluent)
-    testImplementation(project(":lambda:lambda-logging"))
+    sourceSets {
+        commonMain {
+            dependencies {
+                api(libs.kotlin.date.time)
+                api(projects.events)
+                api(projects.logging)
+                api(projects.lambda.lambdaCoroutines)
+                api(projects.lambda.lambdaSqs)
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.kotlin.coroutines.test)
+                implementation(libs.kluent)
+                implementation(projects.lambda.lambdaLogging)
+            }
+        }
+    }
+
+    compilerOptions {
+        optIn.add("kotlin.uuid.ExperimentalUuidApi")
+    }
 }
 
 publishing {

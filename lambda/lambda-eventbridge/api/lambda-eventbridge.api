@@ -92,15 +92,10 @@ public final class com/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConf
 	public static fun invoke (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Lcom/steamstreet/events/EventSchema;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class com/steamstreet/aws/lambda/eventbridge/EventbridgeKt {
+public final class com/steamstreet/aws/lambda/eventbridge/EventBridgeKt {
 	public static final fun any (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun any (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun eventBridge (Ljava/io/InputStream;Lcom/amazonaws/services/lambda/runtime/Context;Ljava/io/OutputStream;ZZZLkotlin/jvm/functions/Function2;)V
-	public static synthetic fun eventBridge$default (Ljava/io/InputStream;Lcom/amazonaws/services/lambda/runtime/Context;Ljava/io/OutputStream;ZZZLkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
 	public static final fun on (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Lcom/steamstreet/events/EventSchema;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun processEvent (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lcom/steamstreet/events/EventSchema;Ljava/lang/Object;Ljava/lang/String;)V
-	public static final fun processEvent (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Ljava/lang/String;)V
-	public static synthetic fun processEvent$default (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lcom/steamstreet/events/EventSchema;Ljava/lang/Object;Ljava/lang/String;ILjava/lang/Object;)V
 	public static final fun string (Lkotlinx/serialization/json/JsonElement;)Ljava/lang/String;
 	public static final fun string (Lkotlinx/serialization/json/JsonElement;Ljava/lang/String;)Ljava/lang/String;
 	public static final fun strings (Lkotlinx/serialization/json/JsonElement;)Ljava/util/List;
@@ -108,5 +103,13 @@ public final class com/steamstreet/aws/lambda/eventbridge/EventbridgeKt {
 	public static final fun type (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Lcom/steamstreet/events/EventSchema;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun type (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Ljava/lang/String;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun typeWithContext (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Lcom/steamstreet/events/EventSchema;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/aws/lambda/eventbridge/EventBridge_jvmKt {
+	public static final fun eventBridge (Ljava/io/InputStream;Lcom/amazonaws/services/lambda/runtime/Context;Ljava/io/OutputStream;ZZZLkotlin/jvm/functions/Function2;)V
+	public static synthetic fun eventBridge$default (Ljava/io/InputStream;Lcom/amazonaws/services/lambda/runtime/Context;Ljava/io/OutputStream;ZZZLkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
+	public static final fun processEvent (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lcom/steamstreet/events/EventSchema;Ljava/lang/Object;Ljava/lang/String;)V
+	public static final fun processEvent (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Ljava/lang/String;)V
+	public static synthetic fun processEvent$default (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeFunction;Lcom/steamstreet/events/EventSchema;Ljava/lang/Object;Ljava/lang/String;ILjava/lang/Object;)V
 }
 
