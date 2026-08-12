@@ -58,6 +58,10 @@ if ! aws dynamodb describe-table --table-name "$TABLE" >/dev/null 2>&1; then
   aws dynamodb wait table-exists --table-name "$TABLE"
 fi
 
+# A fixed row, so the perf harness's `get` mode measures a hit rather than a miss. Idempotent.
+aws dynamodb put-item --table-name "$TABLE" --item \
+  '{"pk":{"S":"perf#fixed"},"value":{"S":"fixed-perf-row"}}' >/dev/null
+
 # --- Execution role -----------------------------------------------------------------------------
 if ! command aws iam get-role --role-name "$ROLE_NAME" >/dev/null 2>&1; then
   echo "Creating role $ROLE_NAME"
@@ -80,7 +84,9 @@ command aws iam put-role-policy --role-name "$ROLE_NAME" --policy-name smoke-acc
       {\"Effect\":\"Allow\",\"Action\":[\"dynamodb:PutItem\",\"dynamodb:GetItem\"],
        \"Resource\":\"arn:aws:dynamodb:$REGION:$ACCOUNT:table/$TABLE\"},
       {\"Effect\":\"Allow\",\"Action\":[\"s3:PutObject\",\"s3:GetObject\"],
-       \"Resource\":\"arn:aws:s3:::$BUCKET/*\"}
+       \"Resource\":\"arn:aws:s3:::$BUCKET/*\"},
+      {\"Effect\":\"Allow\",\"Action\":[\"events:PutEvents\"],
+       \"Resource\":\"arn:aws:events:$REGION:$ACCOUNT:event-bus/default\"}
     ]
   }" >/dev/null
 

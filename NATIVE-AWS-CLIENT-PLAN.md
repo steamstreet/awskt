@@ -524,7 +524,7 @@ A throwaway `linuxArm64` executable that hand-signs one `GetItem`, links against
 - [ ] Minimal SigV4 implementation, correctness not required beyond this one request shape.
 - [ ] `HttpClient(Curl)` with `caInfo`; build the libcrypt.so.1 layer from the `amazonlinux:2` arm64 image; deploy with `LD_LIBRARY_PATH=/opt/lib:/lib64:/usr/lib64`.
 - [ ] Deploy to a real Lambda, invoke, `GetItem` from a real DynamoDB table with real execution-role credentials (`AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_SESSION_TOKEN` from the environment — note the session token is on the hot path for 100% of Lambda requests).
-- [ ] Record measured cold-start and binary size. 2.3.x's claimed ~35–60 ms init and ~4.1 MB zipped are **unverified** and are the only quantitative basis for the whole cold-start argument.
+- [x] **Record measured cold-start and binary size — DONE 2026-08-12, on the deployed function.** 2.3.x's claimed ~35–60 ms init was optimistic: measured `Init Duration` is **54–90 ms, median ~65 ms**, and it is **flat across 128/512/1024 MB** — process start is binary load, not CPU, so memory does not buy it down. Binary is **4.62 MiB zipped / 11.93 MiB unzipped** against the claimed ~4.1 MB, though this one also carries S3, presigning and the signer. Full numbers in M7's STATUS.
 - [ ] **KILL CRITERION — from the same `linuxArm64` binary, perform one S3 `GetObject`** of a small fixed object, using the same hand-rolled signer in **S3 mode** (`doubleUriEncode=false`, `normalizeUriPath=false`, `x-amz-content-sha256` = the real empty-body SHA-256, virtual-host authority). +0.25 day. This proves a second host and a second endpoint shape resolve through the same Curl/TLS/libcrypt stack, which is exactly what the spike exists to test.
 - [ ] **DIAGNOSTIC, NOT A KILL CRITERION — generate one presigned GET URL** for that object and fetch it with a plain HTTPS GET from inside the spike. +0.25 day. Record the result; **do not fail the spike on it.**
 
@@ -1757,6 +1757,51 @@ This is one atomic merge across `dynamo`, `dynamokt`, `dynamokt-exposed` **and `
 > resolves to nothing at runtime and fails the function at cold start with a loader error that names
 > the library but not the reason. The task also fails the build if an extracted file is under 1 KB,
 > so a wrong path cannot ship a broken layer.
+>
+> ### Measured performance (2026-08-12, on the deployed function)
+>
+> Numbers are Lambda's own REPORT values via `--log-type Tail`, not caller wall-clock. Cold starts
+> are forced by rewriting an environment variable to a nonce, which is what actually recycles the
+> execution environment; any sample returning without an `Init Duration` is discarded rather than
+> averaged in. Harness: `.github/scripts/native-perf.py`. Handler modes are selected by the event
+> payload, so one deployed function serves all rows.
+>
+> | Workload | Memory | Total cold (init + handler) | Warm | Peak mem |
+> |---|---|---|---|---|
+> | `ping` (no AWS) | 1024 MB | 73 ms | **1.8 ms** | 41 MB |
+> | `get` (one DynamoDB GetItem) | 512 MB | 210 ms | 4.8 ms | 50 MB |
+> | `get` | 1024 MB | **141 ms** | **4.7 ms** | 50 MB |
+> | `event` (one EventBridge PutEvents) | 1024 MB | 159 ms | 5.4 ms | 50 MB |
+> | `getevent` (read then emit) | 1024 MB | 199 ms | 8.3 ms | 54 MB |
+> | `full` (6 round trips, S3 + presign) | 1024 MB | 272 ms | 162 ms | 127 MB |
+>
+> **Three findings that change how these functions should be written and configured.**
+>
+> **1. Hold the service clients across invocations — it is worth more than any memory setting.**
+> The `full` workload builds its clients inside the handler and closes them with `use { }`, so it
+> pays a fresh TLS handshake to every service on every invocation: ~35 ms per round trip warm. The
+> minimal modes hold them in `lazy` module state and cost ~4 ms per round trip. Nearly an order of
+> magnitude, from connection reuse alone. This is invisible to a correctness test — `full` passes
+> the smoke either way — which is precisely why it needs to be written down.
+>
+> **2. `Init Duration` is flat at ~65 ms across 128/512/1024 MB.** Process start is binary load, not
+> computation, so buying memory does not buy a faster cold start. What memory *does* buy is the
+> first invocation: `ping`'s cold handler falls 124 ms → 19 ms → 8.8 ms across the three sizes, which
+> is CPU-throttled lazy initialization, not init. A measurement that looked only at `Init Duration`
+> would have missed ~110 ms of real cold-start cost at 128 MB.
+>
+> **3. 128 MB is a trap.** Peak usage never exceeds 55 MB on any minimal workload, so 128 MB looks
+> generously sized — but it triples warm latency (32.9 ms vs 4.8 ms for `get`) and quintuples cold
+> handler time, because Lambda scales vCPU with memory and every one of these calls is TLS-bound.
+> **512 MB is the sweet spot**; 1024 MB halves cold handler again and buys nothing warm.
+>
+> This also closes the sizing question §M5a deferred to "a measured native Lambda": at ≤55 MB peak
+> and these CPU curves there is no case for `newFixedThreadPoolContext` over `Dispatchers.Default`.
+>
+> For context on why any of this matters, the JVM baseline was not re-measured — a basic Kotlin
+> DynamoDB Lambda is a 3 s+ cold start, which the maintainer has years of production experience with.
+> Against that, 141 ms for the same read is ~21×, and ~65 ms of it is fixed cost that does not grow
+> with the workload.
 >
 > ### What remains
 >

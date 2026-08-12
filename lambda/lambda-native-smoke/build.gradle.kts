@@ -29,6 +29,7 @@ kotlin {
                 implementation(projects.lambda.lambdaNative)
                 implementation(projects.aws.awsDynamodb)
                 implementation(projects.aws.awsS3)
+                implementation(projects.aws.awsEventbridge)
                 implementation(projects.dynamo)
                 implementation(projects.env)
                 implementation(libs.kotlin.serialization.json)
