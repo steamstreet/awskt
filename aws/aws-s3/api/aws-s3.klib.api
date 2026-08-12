@@ -1,0 +1,479 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:aws-s3>
+final enum class com.steamstreet.awskt.s3/PresignMethod : kotlin/Enum<com.steamstreet.awskt.s3/PresignMethod> { // com.steamstreet.awskt.s3/PresignMethod|null[0]
+    enum entry DELETE // com.steamstreet.awskt.s3/PresignMethod.DELETE|null[0]
+    enum entry GET // com.steamstreet.awskt.s3/PresignMethod.GET|null[0]
+    enum entry HEAD // com.steamstreet.awskt.s3/PresignMethod.HEAD|null[0]
+    enum entry PUT // com.steamstreet.awskt.s3/PresignMethod.PUT|null[0]
+
+    final val entries // com.steamstreet.awskt.s3/PresignMethod.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.steamstreet.awskt.s3/PresignMethod> // com.steamstreet.awskt.s3/PresignMethod.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val httpMethod // com.steamstreet.awskt.s3/PresignMethod.httpMethod|{}httpMethod[0]
+        final fun <get-httpMethod>(): kotlin/String // com.steamstreet.awskt.s3/PresignMethod.httpMethod.<get-httpMethod>|<get-httpMethod>(){}[0]
+
+    final fun valueOf(kotlin/String): com.steamstreet.awskt.s3/PresignMethod // com.steamstreet.awskt.s3/PresignMethod.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.steamstreet.awskt.s3/PresignMethod> // com.steamstreet.awskt.s3/PresignMethod.values|values#static(){}[0]
+}
+
+final enum class com.steamstreet.awskt.s3/S3AddressingStyle : kotlin/Enum<com.steamstreet.awskt.s3/S3AddressingStyle> { // com.steamstreet.awskt.s3/S3AddressingStyle|null[0]
+    enum entry PATH // com.steamstreet.awskt.s3/S3AddressingStyle.PATH|null[0]
+    enum entry VIRTUAL_HOSTED // com.steamstreet.awskt.s3/S3AddressingStyle.VIRTUAL_HOSTED|null[0]
+
+    final val entries // com.steamstreet.awskt.s3/S3AddressingStyle.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.steamstreet.awskt.s3/S3AddressingStyle> // com.steamstreet.awskt.s3/S3AddressingStyle.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.steamstreet.awskt.s3/S3AddressingStyle // com.steamstreet.awskt.s3/S3AddressingStyle.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.steamstreet.awskt.s3/S3AddressingStyle> // com.steamstreet.awskt.s3/S3AddressingStyle.values|values#static(){}[0]
+}
+
+abstract interface com.steamstreet.awskt.s3/S3 : kotlin/AutoCloseable { // com.steamstreet.awskt.s3/S3|null[0]
+    abstract val client // com.steamstreet.awskt.s3/S3.client|{}client[0]
+        abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.s3/S3.client.<get-client>|<get-client>(){}[0]
+
+    abstract suspend fun deleteObject(com.steamstreet.awskt.s3/DeleteObjectRequest): com.steamstreet.awskt.s3/DeleteObjectResponse // com.steamstreet.awskt.s3/S3.deleteObject|deleteObject(com.steamstreet.awskt.s3.DeleteObjectRequest){}[0]
+    abstract suspend fun getObject(com.steamstreet.awskt.s3/GetObjectRequest): com.steamstreet.awskt.s3/GetObjectResponse // com.steamstreet.awskt.s3/S3.getObject|getObject(com.steamstreet.awskt.s3.GetObjectRequest){}[0]
+    abstract suspend fun headObject(com.steamstreet.awskt.s3/HeadObjectRequest): com.steamstreet.awskt.s3/HeadObjectResponse // com.steamstreet.awskt.s3/S3.headObject|headObject(com.steamstreet.awskt.s3.HeadObjectRequest){}[0]
+    abstract suspend fun putObject(com.steamstreet.awskt.s3/PutObjectRequest): com.steamstreet.awskt.s3/PutObjectResponse // com.steamstreet.awskt.s3/S3.putObject|putObject(com.steamstreet.awskt.s3.PutObjectRequest){}[0]
+}
+
+final class com.steamstreet.awskt.s3/AccessDeniedException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/AccessDeniedException|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/AccessDeniedException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+}
+
+final class com.steamstreet.awskt.s3/ConditionalRequestConflictException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/ConditionalRequestConflictException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/ConditionalRequestConflictException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+}
+
+final class com.steamstreet.awskt.s3/DeleteObjectRequest { // com.steamstreet.awskt.s3/DeleteObjectRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String? = ...) // com.steamstreet.awskt.s3/DeleteObjectRequest.<init>|<init>(kotlin.String;kotlin.String;kotlin.String?){}[0]
+
+    final val bucket // com.steamstreet.awskt.s3/DeleteObjectRequest.bucket|{}bucket[0]
+        final fun <get-bucket>(): kotlin/String // com.steamstreet.awskt.s3/DeleteObjectRequest.bucket.<get-bucket>|<get-bucket>(){}[0]
+    final val key // com.steamstreet.awskt.s3/DeleteObjectRequest.key|{}key[0]
+        final fun <get-key>(): kotlin/String // com.steamstreet.awskt.s3/DeleteObjectRequest.key.<get-key>|<get-key>(){}[0]
+    final val versionId // com.steamstreet.awskt.s3/DeleteObjectRequest.versionId|{}versionId[0]
+        final fun <get-versionId>(): kotlin/String? // com.steamstreet.awskt.s3/DeleteObjectRequest.versionId.<get-versionId>|<get-versionId>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.s3/DeleteObjectRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.s3/DeleteObjectRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.s3/DeleteObjectRequest.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String? = ...): com.steamstreet.awskt.s3/DeleteObjectRequest // com.steamstreet.awskt.s3/DeleteObjectRequest.copy|copy(kotlin.String;kotlin.String;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.s3/DeleteObjectRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.s3/DeleteObjectRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.s3/DeleteObjectRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.s3/DeleteObjectResponse { // com.steamstreet.awskt.s3/DeleteObjectResponse|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/Boolean = ...) // com.steamstreet.awskt.s3/DeleteObjectResponse.<init>|<init>(kotlin.String?;kotlin.Boolean){}[0]
+
+    final val deleteMarker // com.steamstreet.awskt.s3/DeleteObjectResponse.deleteMarker|{}deleteMarker[0]
+        final fun <get-deleteMarker>(): kotlin/Boolean // com.steamstreet.awskt.s3/DeleteObjectResponse.deleteMarker.<get-deleteMarker>|<get-deleteMarker>(){}[0]
+    final val versionId // com.steamstreet.awskt.s3/DeleteObjectResponse.versionId|{}versionId[0]
+        final fun <get-versionId>(): kotlin/String? // com.steamstreet.awskt.s3/DeleteObjectResponse.versionId.<get-versionId>|<get-versionId>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.s3/DeleteObjectResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/Boolean // com.steamstreet.awskt.s3/DeleteObjectResponse.component2|component2(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/Boolean = ...): com.steamstreet.awskt.s3/DeleteObjectResponse // com.steamstreet.awskt.s3/DeleteObjectResponse.copy|copy(kotlin.String?;kotlin.Boolean){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.s3/DeleteObjectResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.s3/DeleteObjectResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.s3/DeleteObjectResponse.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.s3/GetObjectRequest { // com.steamstreet.awskt.s3/GetObjectRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.s3/GetObjectRequest.<init>|<init>(kotlin.String;kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val bucket // com.steamstreet.awskt.s3/GetObjectRequest.bucket|{}bucket[0]
+        final fun <get-bucket>(): kotlin/String // com.steamstreet.awskt.s3/GetObjectRequest.bucket.<get-bucket>|<get-bucket>(){}[0]
+    final val ifMatch // com.steamstreet.awskt.s3/GetObjectRequest.ifMatch|{}ifMatch[0]
+        final fun <get-ifMatch>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.ifMatch.<get-ifMatch>|<get-ifMatch>(){}[0]
+    final val ifModifiedSince // com.steamstreet.awskt.s3/GetObjectRequest.ifModifiedSince|{}ifModifiedSince[0]
+        final fun <get-ifModifiedSince>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.ifModifiedSince.<get-ifModifiedSince>|<get-ifModifiedSince>(){}[0]
+    final val ifNoneMatch // com.steamstreet.awskt.s3/GetObjectRequest.ifNoneMatch|{}ifNoneMatch[0]
+        final fun <get-ifNoneMatch>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.ifNoneMatch.<get-ifNoneMatch>|<get-ifNoneMatch>(){}[0]
+    final val ifUnmodifiedSince // com.steamstreet.awskt.s3/GetObjectRequest.ifUnmodifiedSince|{}ifUnmodifiedSince[0]
+        final fun <get-ifUnmodifiedSince>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.ifUnmodifiedSince.<get-ifUnmodifiedSince>|<get-ifUnmodifiedSince>(){}[0]
+    final val key // com.steamstreet.awskt.s3/GetObjectRequest.key|{}key[0]
+        final fun <get-key>(): kotlin/String // com.steamstreet.awskt.s3/GetObjectRequest.key.<get-key>|<get-key>(){}[0]
+    final val range // com.steamstreet.awskt.s3/GetObjectRequest.range|{}range[0]
+        final fun <get-range>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.range.<get-range>|<get-range>(){}[0]
+    final val responseCacheControl // com.steamstreet.awskt.s3/GetObjectRequest.responseCacheControl|{}responseCacheControl[0]
+        final fun <get-responseCacheControl>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.responseCacheControl.<get-responseCacheControl>|<get-responseCacheControl>(){}[0]
+    final val responseContentDisposition // com.steamstreet.awskt.s3/GetObjectRequest.responseContentDisposition|{}responseContentDisposition[0]
+        final fun <get-responseContentDisposition>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.responseContentDisposition.<get-responseContentDisposition>|<get-responseContentDisposition>(){}[0]
+    final val responseContentEncoding // com.steamstreet.awskt.s3/GetObjectRequest.responseContentEncoding|{}responseContentEncoding[0]
+        final fun <get-responseContentEncoding>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.responseContentEncoding.<get-responseContentEncoding>|<get-responseContentEncoding>(){}[0]
+    final val responseContentLanguage // com.steamstreet.awskt.s3/GetObjectRequest.responseContentLanguage|{}responseContentLanguage[0]
+        final fun <get-responseContentLanguage>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.responseContentLanguage.<get-responseContentLanguage>|<get-responseContentLanguage>(){}[0]
+    final val responseContentType // com.steamstreet.awskt.s3/GetObjectRequest.responseContentType|{}responseContentType[0]
+        final fun <get-responseContentType>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.responseContentType.<get-responseContentType>|<get-responseContentType>(){}[0]
+    final val versionId // com.steamstreet.awskt.s3/GetObjectRequest.versionId|{}versionId[0]
+        final fun <get-versionId>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.versionId.<get-versionId>|<get-versionId>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.s3/GetObjectRequest.component1|component1(){}[0]
+    final fun component10(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.component10|component10(){}[0]
+    final fun component11(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.component11|component11(){}[0]
+    final fun component12(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.component12|component12(){}[0]
+    final fun component13(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.component13|component13(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.s3/GetObjectRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.component5|component5(){}[0]
+    final fun component6(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.component7|component7(){}[0]
+    final fun component8(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.component8|component8(){}[0]
+    final fun component9(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectRequest.component9|component9(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.s3/GetObjectRequest // com.steamstreet.awskt.s3/GetObjectRequest.copy|copy(kotlin.String;kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.s3/GetObjectRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.s3/GetObjectRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.s3/GetObjectRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.s3/GetObjectResponse { // com.steamstreet.awskt.s3/GetObjectResponse|null[0]
+    constructor <init>(kotlin/ByteArray, kotlin/Long, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ...) // com.steamstreet.awskt.s3/GetObjectResponse.<init>|<init>(kotlin.ByteArray;kotlin.Long;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
+
+    final val body // com.steamstreet.awskt.s3/GetObjectResponse.body|{}body[0]
+        final fun <get-body>(): kotlin/ByteArray // com.steamstreet.awskt.s3/GetObjectResponse.body.<get-body>|<get-body>(){}[0]
+    final val cacheControl // com.steamstreet.awskt.s3/GetObjectResponse.cacheControl|{}cacheControl[0]
+        final fun <get-cacheControl>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectResponse.cacheControl.<get-cacheControl>|<get-cacheControl>(){}[0]
+    final val contentDisposition // com.steamstreet.awskt.s3/GetObjectResponse.contentDisposition|{}contentDisposition[0]
+        final fun <get-contentDisposition>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectResponse.contentDisposition.<get-contentDisposition>|<get-contentDisposition>(){}[0]
+    final val contentEncoding // com.steamstreet.awskt.s3/GetObjectResponse.contentEncoding|{}contentEncoding[0]
+        final fun <get-contentEncoding>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectResponse.contentEncoding.<get-contentEncoding>|<get-contentEncoding>(){}[0]
+    final val contentLength // com.steamstreet.awskt.s3/GetObjectResponse.contentLength|{}contentLength[0]
+        final fun <get-contentLength>(): kotlin/Long // com.steamstreet.awskt.s3/GetObjectResponse.contentLength.<get-contentLength>|<get-contentLength>(){}[0]
+    final val contentRange // com.steamstreet.awskt.s3/GetObjectResponse.contentRange|{}contentRange[0]
+        final fun <get-contentRange>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectResponse.contentRange.<get-contentRange>|<get-contentRange>(){}[0]
+    final val contentType // com.steamstreet.awskt.s3/GetObjectResponse.contentType|{}contentType[0]
+        final fun <get-contentType>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectResponse.contentType.<get-contentType>|<get-contentType>(){}[0]
+    final val eTag // com.steamstreet.awskt.s3/GetObjectResponse.eTag|{}eTag[0]
+        final fun <get-eTag>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectResponse.eTag.<get-eTag>|<get-eTag>(){}[0]
+    final val lastModified // com.steamstreet.awskt.s3/GetObjectResponse.lastModified|{}lastModified[0]
+        final fun <get-lastModified>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectResponse.lastModified.<get-lastModified>|<get-lastModified>(){}[0]
+    final val metadata // com.steamstreet.awskt.s3/GetObjectResponse.metadata|{}metadata[0]
+        final fun <get-metadata>(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.awskt.s3/GetObjectResponse.metadata.<get-metadata>|<get-metadata>(){}[0]
+    final val versionId // com.steamstreet.awskt.s3/GetObjectResponse.versionId|{}versionId[0]
+        final fun <get-versionId>(): kotlin/String? // com.steamstreet.awskt.s3/GetObjectResponse.versionId.<get-versionId>|<get-versionId>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.s3/GetObjectResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.s3/GetObjectResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.s3/GetObjectResponse.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.s3/HeadObjectRequest { // com.steamstreet.awskt.s3/HeadObjectRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String? = ...) // com.steamstreet.awskt.s3/HeadObjectRequest.<init>|<init>(kotlin.String;kotlin.String;kotlin.String?){}[0]
+
+    final val bucket // com.steamstreet.awskt.s3/HeadObjectRequest.bucket|{}bucket[0]
+        final fun <get-bucket>(): kotlin/String // com.steamstreet.awskt.s3/HeadObjectRequest.bucket.<get-bucket>|<get-bucket>(){}[0]
+    final val key // com.steamstreet.awskt.s3/HeadObjectRequest.key|{}key[0]
+        final fun <get-key>(): kotlin/String // com.steamstreet.awskt.s3/HeadObjectRequest.key.<get-key>|<get-key>(){}[0]
+    final val versionId // com.steamstreet.awskt.s3/HeadObjectRequest.versionId|{}versionId[0]
+        final fun <get-versionId>(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectRequest.versionId.<get-versionId>|<get-versionId>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.s3/HeadObjectRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.s3/HeadObjectRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectRequest.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String? = ...): com.steamstreet.awskt.s3/HeadObjectRequest // com.steamstreet.awskt.s3/HeadObjectRequest.copy|copy(kotlin.String;kotlin.String;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.s3/HeadObjectRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.s3/HeadObjectRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.s3/HeadObjectRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.s3/HeadObjectResponse { // com.steamstreet.awskt.s3/HeadObjectResponse|null[0]
+    constructor <init>(kotlin/Long, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ...) // com.steamstreet.awskt.s3/HeadObjectResponse.<init>|<init>(kotlin.Long;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
+
+    final val contentLength // com.steamstreet.awskt.s3/HeadObjectResponse.contentLength|{}contentLength[0]
+        final fun <get-contentLength>(): kotlin/Long // com.steamstreet.awskt.s3/HeadObjectResponse.contentLength.<get-contentLength>|<get-contentLength>(){}[0]
+    final val contentType // com.steamstreet.awskt.s3/HeadObjectResponse.contentType|{}contentType[0]
+        final fun <get-contentType>(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectResponse.contentType.<get-contentType>|<get-contentType>(){}[0]
+    final val eTag // com.steamstreet.awskt.s3/HeadObjectResponse.eTag|{}eTag[0]
+        final fun <get-eTag>(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectResponse.eTag.<get-eTag>|<get-eTag>(){}[0]
+    final val lastModified // com.steamstreet.awskt.s3/HeadObjectResponse.lastModified|{}lastModified[0]
+        final fun <get-lastModified>(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectResponse.lastModified.<get-lastModified>|<get-lastModified>(){}[0]
+    final val metadata // com.steamstreet.awskt.s3/HeadObjectResponse.metadata|{}metadata[0]
+        final fun <get-metadata>(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.awskt.s3/HeadObjectResponse.metadata.<get-metadata>|<get-metadata>(){}[0]
+    final val versionId // com.steamstreet.awskt.s3/HeadObjectResponse.versionId|{}versionId[0]
+        final fun <get-versionId>(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectResponse.versionId.<get-versionId>|<get-versionId>(){}[0]
+
+    final fun component1(): kotlin/Long // com.steamstreet.awskt.s3/HeadObjectResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectResponse.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectResponse.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectResponse.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectResponse.component5|component5(){}[0]
+    final fun component6(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.awskt.s3/HeadObjectResponse.component6|component6(){}[0]
+    final fun copy(kotlin/Long = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ...): com.steamstreet.awskt.s3/HeadObjectResponse // com.steamstreet.awskt.s3/HeadObjectResponse.copy|copy(kotlin.Long;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.s3/HeadObjectResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.s3/HeadObjectResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.s3/HeadObjectResponse.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.s3/InsecureEndpointException : kotlin/Exception { // com.steamstreet.awskt.s3/InsecureEndpointException|null[0]
+    constructor <init>(kotlin/String) // com.steamstreet.awskt.s3/InsecureEndpointException.<init>|<init>(kotlin.String){}[0]
+}
+
+final class com.steamstreet.awskt.s3/InvalidBucketNameException : kotlin/Exception { // com.steamstreet.awskt.s3/InvalidBucketNameException|null[0]
+    constructor <init>(kotlin/String) // com.steamstreet.awskt.s3/InvalidBucketNameException.<init>|<init>(kotlin.String){}[0]
+}
+
+final class com.steamstreet.awskt.s3/InvalidObjectStateException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/InvalidObjectStateException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/InvalidObjectStateException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+}
+
+final class com.steamstreet.awskt.s3/NoSuchBucketException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/NoSuchBucketException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/NoSuchBucketException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+}
+
+final class com.steamstreet.awskt.s3/NoSuchKeyException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/NoSuchKeyException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/NoSuchKeyException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+}
+
+final class com.steamstreet.awskt.s3/NotModifiedException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/NotModifiedException|null[0]
+    constructor <init>(kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/NotModifiedException.<init>|<init>(kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+}
+
+final class com.steamstreet.awskt.s3/PermanentRedirectException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/PermanentRedirectException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/PermanentRedirectException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+}
+
+final class com.steamstreet.awskt.s3/PreconditionFailedException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/PreconditionFailedException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/PreconditionFailedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+}
+
+final class com.steamstreet.awskt.s3/PresignExpiryException : kotlin/Exception { // com.steamstreet.awskt.s3/PresignExpiryException|null[0]
+    constructor <init>(kotlin/String) // com.steamstreet.awskt.s3/PresignExpiryException.<init>|<init>(kotlin.String){}[0]
+}
+
+final class com.steamstreet.awskt.s3/PresignRequest { // com.steamstreet.awskt.s3/PresignRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String, com.steamstreet.awskt.s3/PresignMethod, kotlin.time/Duration, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ...) // com.steamstreet.awskt.s3/PresignRequest.<init>|<init>(kotlin.String;kotlin.String;com.steamstreet.awskt.s3.PresignMethod;kotlin.time.Duration;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>){}[0]
+
+    final val bucket // com.steamstreet.awskt.s3/PresignRequest.bucket|{}bucket[0]
+        final fun <get-bucket>(): kotlin/String // com.steamstreet.awskt.s3/PresignRequest.bucket.<get-bucket>|<get-bucket>(){}[0]
+    final val contentType // com.steamstreet.awskt.s3/PresignRequest.contentType|{}contentType[0]
+        final fun <get-contentType>(): kotlin/String? // com.steamstreet.awskt.s3/PresignRequest.contentType.<get-contentType>|<get-contentType>(){}[0]
+    final val expiresIn // com.steamstreet.awskt.s3/PresignRequest.expiresIn|{}expiresIn[0]
+        final fun <get-expiresIn>(): kotlin.time/Duration // com.steamstreet.awskt.s3/PresignRequest.expiresIn.<get-expiresIn>|<get-expiresIn>(){}[0]
+    final val key // com.steamstreet.awskt.s3/PresignRequest.key|{}key[0]
+        final fun <get-key>(): kotlin/String // com.steamstreet.awskt.s3/PresignRequest.key.<get-key>|<get-key>(){}[0]
+    final val method // com.steamstreet.awskt.s3/PresignRequest.method|{}method[0]
+        final fun <get-method>(): com.steamstreet.awskt.s3/PresignMethod // com.steamstreet.awskt.s3/PresignRequest.method.<get-method>|<get-method>(){}[0]
+    final val responseCacheControl // com.steamstreet.awskt.s3/PresignRequest.responseCacheControl|{}responseCacheControl[0]
+        final fun <get-responseCacheControl>(): kotlin/String? // com.steamstreet.awskt.s3/PresignRequest.responseCacheControl.<get-responseCacheControl>|<get-responseCacheControl>(){}[0]
+    final val responseContentDisposition // com.steamstreet.awskt.s3/PresignRequest.responseContentDisposition|{}responseContentDisposition[0]
+        final fun <get-responseContentDisposition>(): kotlin/String? // com.steamstreet.awskt.s3/PresignRequest.responseContentDisposition.<get-responseContentDisposition>|<get-responseContentDisposition>(){}[0]
+    final val responseContentEncoding // com.steamstreet.awskt.s3/PresignRequest.responseContentEncoding|{}responseContentEncoding[0]
+        final fun <get-responseContentEncoding>(): kotlin/String? // com.steamstreet.awskt.s3/PresignRequest.responseContentEncoding.<get-responseContentEncoding>|<get-responseContentEncoding>(){}[0]
+    final val responseContentLanguage // com.steamstreet.awskt.s3/PresignRequest.responseContentLanguage|{}responseContentLanguage[0]
+        final fun <get-responseContentLanguage>(): kotlin/String? // com.steamstreet.awskt.s3/PresignRequest.responseContentLanguage.<get-responseContentLanguage>|<get-responseContentLanguage>(){}[0]
+    final val responseContentType // com.steamstreet.awskt.s3/PresignRequest.responseContentType|{}responseContentType[0]
+        final fun <get-responseContentType>(): kotlin/String? // com.steamstreet.awskt.s3/PresignRequest.responseContentType.<get-responseContentType>|<get-responseContentType>(){}[0]
+    final val responseExpires // com.steamstreet.awskt.s3/PresignRequest.responseExpires|{}responseExpires[0]
+        final fun <get-responseExpires>(): kotlin/String? // com.steamstreet.awskt.s3/PresignRequest.responseExpires.<get-responseExpires>|<get-responseExpires>(){}[0]
+    final val signedHeaders // com.steamstreet.awskt.s3/PresignRequest.signedHeaders|{}signedHeaders[0]
+        final fun <get-signedHeaders>(): kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> // com.steamstreet.awskt.s3/PresignRequest.signedHeaders.<get-signedHeaders>|<get-signedHeaders>(){}[0]
+    final val versionId // com.steamstreet.awskt.s3/PresignRequest.versionId|{}versionId[0]
+        final fun <get-versionId>(): kotlin/String? // com.steamstreet.awskt.s3/PresignRequest.versionId.<get-versionId>|<get-versionId>(){}[0]
+
+    final fun toString(): kotlin/String // com.steamstreet.awskt.s3/PresignRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.s3/PresignedUrl { // com.steamstreet.awskt.s3/PresignedUrl|null[0]
+    constructor <init>(kotlin/String, com.steamstreet.awskt.s3/PresignMethod, kotlin.collections/List<kotlin/String>, com.steamstreet.awskt.s3/PresignExpiry) // com.steamstreet.awskt.s3/PresignedUrl.<init>|<init>(kotlin.String;com.steamstreet.awskt.s3.PresignMethod;kotlin.collections.List<kotlin.String>;com.steamstreet.awskt.s3.PresignExpiry){}[0]
+
+    final val expiry // com.steamstreet.awskt.s3/PresignedUrl.expiry|{}expiry[0]
+        final fun <get-expiry>(): com.steamstreet.awskt.s3/PresignExpiry // com.steamstreet.awskt.s3/PresignedUrl.expiry.<get-expiry>|<get-expiry>(){}[0]
+    final val method // com.steamstreet.awskt.s3/PresignedUrl.method|{}method[0]
+        final fun <get-method>(): com.steamstreet.awskt.s3/PresignMethod // com.steamstreet.awskt.s3/PresignedUrl.method.<get-method>|<get-method>(){}[0]
+    final val signedHeaderNames // com.steamstreet.awskt.s3/PresignedUrl.signedHeaderNames|{}signedHeaderNames[0]
+        final fun <get-signedHeaderNames>(): kotlin.collections/List<kotlin/String> // com.steamstreet.awskt.s3/PresignedUrl.signedHeaderNames.<get-signedHeaderNames>|<get-signedHeaderNames>(){}[0]
+    final val url // com.steamstreet.awskt.s3/PresignedUrl.url|{}url[0]
+        final fun <get-url>(): kotlin/String // com.steamstreet.awskt.s3/PresignedUrl.url.<get-url>|<get-url>(){}[0]
+
+    final fun toString(): kotlin/String // com.steamstreet.awskt.s3/PresignedUrl.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.s3/PutObjectRequest { // com.steamstreet.awskt.s3/PutObjectRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/ByteArray, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ..., kotlin/String? = ...) // com.steamstreet.awskt.s3/PutObjectRequest.<init>|<init>(kotlin.String;kotlin.String;kotlin.ByteArray;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.String?){}[0]
+
+    final val body // com.steamstreet.awskt.s3/PutObjectRequest.body|{}body[0]
+        final fun <get-body>(): kotlin/ByteArray // com.steamstreet.awskt.s3/PutObjectRequest.body.<get-body>|<get-body>(){}[0]
+    final val bucket // com.steamstreet.awskt.s3/PutObjectRequest.bucket|{}bucket[0]
+        final fun <get-bucket>(): kotlin/String // com.steamstreet.awskt.s3/PutObjectRequest.bucket.<get-bucket>|<get-bucket>(){}[0]
+    final val cacheControl // com.steamstreet.awskt.s3/PutObjectRequest.cacheControl|{}cacheControl[0]
+        final fun <get-cacheControl>(): kotlin/String? // com.steamstreet.awskt.s3/PutObjectRequest.cacheControl.<get-cacheControl>|<get-cacheControl>(){}[0]
+    final val contentDisposition // com.steamstreet.awskt.s3/PutObjectRequest.contentDisposition|{}contentDisposition[0]
+        final fun <get-contentDisposition>(): kotlin/String? // com.steamstreet.awskt.s3/PutObjectRequest.contentDisposition.<get-contentDisposition>|<get-contentDisposition>(){}[0]
+    final val contentEncoding // com.steamstreet.awskt.s3/PutObjectRequest.contentEncoding|{}contentEncoding[0]
+        final fun <get-contentEncoding>(): kotlin/String? // com.steamstreet.awskt.s3/PutObjectRequest.contentEncoding.<get-contentEncoding>|<get-contentEncoding>(){}[0]
+    final val contentType // com.steamstreet.awskt.s3/PutObjectRequest.contentType|{}contentType[0]
+        final fun <get-contentType>(): kotlin/String? // com.steamstreet.awskt.s3/PutObjectRequest.contentType.<get-contentType>|<get-contentType>(){}[0]
+    final val ifNoneMatch // com.steamstreet.awskt.s3/PutObjectRequest.ifNoneMatch|{}ifNoneMatch[0]
+        final fun <get-ifNoneMatch>(): kotlin/String? // com.steamstreet.awskt.s3/PutObjectRequest.ifNoneMatch.<get-ifNoneMatch>|<get-ifNoneMatch>(){}[0]
+    final val key // com.steamstreet.awskt.s3/PutObjectRequest.key|{}key[0]
+        final fun <get-key>(): kotlin/String // com.steamstreet.awskt.s3/PutObjectRequest.key.<get-key>|<get-key>(){}[0]
+    final val metadata // com.steamstreet.awskt.s3/PutObjectRequest.metadata|{}metadata[0]
+        final fun <get-metadata>(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.awskt.s3/PutObjectRequest.metadata.<get-metadata>|<get-metadata>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.s3/PutObjectRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.s3/PutObjectRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.s3/PutObjectRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.s3/PutObjectResponse { // com.steamstreet.awskt.s3/PutObjectResponse|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.s3/PutObjectResponse.<init>|<init>(kotlin.String?;kotlin.String?){}[0]
+
+    final val eTag // com.steamstreet.awskt.s3/PutObjectResponse.eTag|{}eTag[0]
+        final fun <get-eTag>(): kotlin/String? // com.steamstreet.awskt.s3/PutObjectResponse.eTag.<get-eTag>|<get-eTag>(){}[0]
+    final val versionId // com.steamstreet.awskt.s3/PutObjectResponse.versionId|{}versionId[0]
+        final fun <get-versionId>(): kotlin/String? // com.steamstreet.awskt.s3/PutObjectResponse.versionId.<get-versionId>|<get-versionId>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.s3/PutObjectResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.s3/PutObjectResponse.component2|component2(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.s3/PutObjectResponse // com.steamstreet.awskt.s3/PutObjectResponse.copy|copy(kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.s3/PutObjectResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.s3/PutObjectResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.s3/PutObjectResponse.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.s3/ResolvedS3Endpoint { // com.steamstreet.awskt.s3/ResolvedS3Endpoint|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String, com.steamstreet.awskt.s3/S3AddressingStyle) // com.steamstreet.awskt.s3/ResolvedS3Endpoint.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;com.steamstreet.awskt.s3.S3AddressingStyle){}[0]
+
+    final val authority // com.steamstreet.awskt.s3/ResolvedS3Endpoint.authority|{}authority[0]
+        final fun <get-authority>(): kotlin/String // com.steamstreet.awskt.s3/ResolvedS3Endpoint.authority.<get-authority>|<get-authority>(){}[0]
+    final val basePath // com.steamstreet.awskt.s3/ResolvedS3Endpoint.basePath|{}basePath[0]
+        final fun <get-basePath>(): kotlin/String // com.steamstreet.awskt.s3/ResolvedS3Endpoint.basePath.<get-basePath>|<get-basePath>(){}[0]
+    final val origin // com.steamstreet.awskt.s3/ResolvedS3Endpoint.origin|{}origin[0]
+        final fun <get-origin>(): kotlin/String // com.steamstreet.awskt.s3/ResolvedS3Endpoint.origin.<get-origin>|<get-origin>(){}[0]
+    final val scheme // com.steamstreet.awskt.s3/ResolvedS3Endpoint.scheme|{}scheme[0]
+        final fun <get-scheme>(): kotlin/String // com.steamstreet.awskt.s3/ResolvedS3Endpoint.scheme.<get-scheme>|<get-scheme>(){}[0]
+    final val style // com.steamstreet.awskt.s3/ResolvedS3Endpoint.style|{}style[0]
+        final fun <get-style>(): com.steamstreet.awskt.s3/S3AddressingStyle // com.steamstreet.awskt.s3/ResolvedS3Endpoint.style.<get-style>|<get-style>(){}[0]
+
+    final fun toString(): kotlin/String // com.steamstreet.awskt.s3/ResolvedS3Endpoint.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.s3/S3Config { // com.steamstreet.awskt.s3/S3Config|null[0]
+    constructor <init>() // com.steamstreet.awskt.s3/S3Config.<init>|<init>(){}[0]
+
+    final var allowInsecureEndpoint // com.steamstreet.awskt.s3/S3Config.allowInsecureEndpoint|{}allowInsecureEndpoint[0]
+        final fun <get-allowInsecureEndpoint>(): kotlin/Boolean // com.steamstreet.awskt.s3/S3Config.allowInsecureEndpoint.<get-allowInsecureEndpoint>|<get-allowInsecureEndpoint>(){}[0]
+        final fun <set-allowInsecureEndpoint>(kotlin/Boolean) // com.steamstreet.awskt.s3/S3Config.allowInsecureEndpoint.<set-allowInsecureEndpoint>|<set-allowInsecureEndpoint>(kotlin.Boolean){}[0]
+    final var caInfo // com.steamstreet.awskt.s3/S3Config.caInfo|{}caInfo[0]
+        final fun <get-caInfo>(): kotlin/String? // com.steamstreet.awskt.s3/S3Config.caInfo.<get-caInfo>|<get-caInfo>(){}[0]
+        final fun <set-caInfo>(kotlin/String?) // com.steamstreet.awskt.s3/S3Config.caInfo.<set-caInfo>|<set-caInfo>(kotlin.String?){}[0]
+    final var credentialsProvider // com.steamstreet.awskt.s3/S3Config.credentialsProvider|{}credentialsProvider[0]
+        final fun <get-credentialsProvider>(): com.steamstreet.awskt.core/AwsCredentialsProvider? // com.steamstreet.awskt.s3/S3Config.credentialsProvider.<get-credentialsProvider>|<get-credentialsProvider>(){}[0]
+        final fun <set-credentialsProvider>(com.steamstreet.awskt.core/AwsCredentialsProvider?) // com.steamstreet.awskt.s3/S3Config.credentialsProvider.<set-credentialsProvider>|<set-credentialsProvider>(com.steamstreet.awskt.core.AwsCredentialsProvider?){}[0]
+    final var endpointUrl // com.steamstreet.awskt.s3/S3Config.endpointUrl|{}endpointUrl[0]
+        final fun <get-endpointUrl>(): kotlin/String? // com.steamstreet.awskt.s3/S3Config.endpointUrl.<get-endpointUrl>|<get-endpointUrl>(){}[0]
+        final fun <set-endpointUrl>(kotlin/String?) // com.steamstreet.awskt.s3/S3Config.endpointUrl.<set-endpointUrl>|<set-endpointUrl>(kotlin.String?){}[0]
+    final var forcePathStyle // com.steamstreet.awskt.s3/S3Config.forcePathStyle|{}forcePathStyle[0]
+        final fun <get-forcePathStyle>(): kotlin/Boolean // com.steamstreet.awskt.s3/S3Config.forcePathStyle.<get-forcePathStyle>|<get-forcePathStyle>(){}[0]
+        final fun <set-forcePathStyle>(kotlin/Boolean) // com.steamstreet.awskt.s3/S3Config.forcePathStyle.<set-forcePathStyle>|<set-forcePathStyle>(kotlin.Boolean){}[0]
+    final var httpClient // com.steamstreet.awskt.s3/S3Config.httpClient|{}httpClient[0]
+        final fun <get-httpClient>(): io.ktor.client/HttpClient? // com.steamstreet.awskt.s3/S3Config.httpClient.<get-httpClient>|<get-httpClient>(){}[0]
+        final fun <set-httpClient>(io.ktor.client/HttpClient?) // com.steamstreet.awskt.s3/S3Config.httpClient.<set-httpClient>|<set-httpClient>(io.ktor.client.HttpClient?){}[0]
+    final var maxBufferedDownloadBytes // com.steamstreet.awskt.s3/S3Config.maxBufferedDownloadBytes|{}maxBufferedDownloadBytes[0]
+        final fun <get-maxBufferedDownloadBytes>(): kotlin/Long // com.steamstreet.awskt.s3/S3Config.maxBufferedDownloadBytes.<get-maxBufferedDownloadBytes>|<get-maxBufferedDownloadBytes>(){}[0]
+        final fun <set-maxBufferedDownloadBytes>(kotlin/Long) // com.steamstreet.awskt.s3/S3Config.maxBufferedDownloadBytes.<set-maxBufferedDownloadBytes>|<set-maxBufferedDownloadBytes>(kotlin.Long){}[0]
+    final var maxBufferedUploadBytes // com.steamstreet.awskt.s3/S3Config.maxBufferedUploadBytes|{}maxBufferedUploadBytes[0]
+        final fun <get-maxBufferedUploadBytes>(): kotlin/Long // com.steamstreet.awskt.s3/S3Config.maxBufferedUploadBytes.<get-maxBufferedUploadBytes>|<get-maxBufferedUploadBytes>(){}[0]
+        final fun <set-maxBufferedUploadBytes>(kotlin/Long) // com.steamstreet.awskt.s3/S3Config.maxBufferedUploadBytes.<set-maxBufferedUploadBytes>|<set-maxBufferedUploadBytes>(kotlin.Long){}[0]
+    final var region // com.steamstreet.awskt.s3/S3Config.region|{}region[0]
+        final fun <get-region>(): kotlin/String? // com.steamstreet.awskt.s3/S3Config.region.<get-region>|<get-region>(){}[0]
+        final fun <set-region>(kotlin/String?) // com.steamstreet.awskt.s3/S3Config.region.<set-region>|<set-region>(kotlin.String?){}[0]
+    final var retryConfig // com.steamstreet.awskt.s3/S3Config.retryConfig|{}retryConfig[0]
+        final fun <get-retryConfig>(): com.steamstreet.awskt.core/RetryConfig // com.steamstreet.awskt.s3/S3Config.retryConfig.<get-retryConfig>|<get-retryConfig>(){}[0]
+        final fun <set-retryConfig>(com.steamstreet.awskt.core/RetryConfig) // com.steamstreet.awskt.s3/S3Config.retryConfig.<set-retryConfig>|<set-retryConfig>(com.steamstreet.awskt.core.RetryConfig){}[0]
+}
+
+final class com.steamstreet.awskt.s3/S3IncompleteDownloadException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/S3IncompleteDownloadException|null[0]
+    constructor <init>(kotlin/Long, kotlin/Long, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/S3IncompleteDownloadException.<init>|<init>(kotlin.Long;kotlin.Long;kotlin.String?;kotlin.String?){}[0]
+
+    final val actualBytes // com.steamstreet.awskt.s3/S3IncompleteDownloadException.actualBytes|{}actualBytes[0]
+        final fun <get-actualBytes>(): kotlin/Long // com.steamstreet.awskt.s3/S3IncompleteDownloadException.actualBytes.<get-actualBytes>|<get-actualBytes>(){}[0]
+    final val expectedBytes // com.steamstreet.awskt.s3/S3IncompleteDownloadException.expectedBytes|{}expectedBytes[0]
+        final fun <get-expectedBytes>(): kotlin/Long // com.steamstreet.awskt.s3/S3IncompleteDownloadException.expectedBytes.<get-expectedBytes>|<get-expectedBytes>(){}[0]
+}
+
+final class com.steamstreet.awskt.s3/S3PayloadTooLargeException : kotlin/Exception { // com.steamstreet.awskt.s3/S3PayloadTooLargeException|null[0]
+    constructor <init>(kotlin/String) // com.steamstreet.awskt.s3/S3PayloadTooLargeException.<init>|<init>(kotlin.String){}[0]
+}
+
+final class com.steamstreet.awskt.s3/S3Presigner { // com.steamstreet.awskt.s3/S3Presigner|null[0]
+    constructor <init>(kotlin/Function1<com.steamstreet.awskt.s3/S3PresignerConfig, kotlin/Unit> = ...) // com.steamstreet.awskt.s3/S3Presigner.<init>|<init>(kotlin.Function1<com.steamstreet.awskt.s3.S3PresignerConfig,kotlin.Unit>){}[0]
+
+    final suspend fun presign(com.steamstreet.awskt.s3/PresignRequest): com.steamstreet.awskt.s3/PresignedUrl // com.steamstreet.awskt.s3/S3Presigner.presign|presign(com.steamstreet.awskt.s3.PresignRequest){}[0]
+    final suspend fun presignGetObject(kotlin/String, kotlin/String, kotlin.time/Duration, kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.s3/PresignedUrl // com.steamstreet.awskt.s3/S3Presigner.presignGetObject|presignGetObject(kotlin.String;kotlin.String;kotlin.time.Duration;kotlin.String?;kotlin.String?){}[0]
+    final suspend fun presignPutObject(kotlin/String, kotlin/String, kotlin.time/Duration, kotlin/String? = ...): com.steamstreet.awskt.s3/PresignedUrl // com.steamstreet.awskt.s3/S3Presigner.presignPutObject|presignPutObject(kotlin.String;kotlin.String;kotlin.time.Duration;kotlin.String?){}[0]
+
+    final object Companion { // com.steamstreet.awskt.s3/S3Presigner.Companion|null[0]
+        final val MAX_PRESIGN_EXPIRY // com.steamstreet.awskt.s3/S3Presigner.Companion.MAX_PRESIGN_EXPIRY|{}MAX_PRESIGN_EXPIRY[0]
+            final fun <get-MAX_PRESIGN_EXPIRY>(): kotlin.time/Duration // com.steamstreet.awskt.s3/S3Presigner.Companion.MAX_PRESIGN_EXPIRY.<get-MAX_PRESIGN_EXPIRY>|<get-MAX_PRESIGN_EXPIRY>(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.s3/S3PresignerConfig { // com.steamstreet.awskt.s3/S3PresignerConfig|null[0]
+    constructor <init>() // com.steamstreet.awskt.s3/S3PresignerConfig.<init>|<init>(){}[0]
+
+    final var allowInsecureEndpoint // com.steamstreet.awskt.s3/S3PresignerConfig.allowInsecureEndpoint|{}allowInsecureEndpoint[0]
+        final fun <get-allowInsecureEndpoint>(): kotlin/Boolean // com.steamstreet.awskt.s3/S3PresignerConfig.allowInsecureEndpoint.<get-allowInsecureEndpoint>|<get-allowInsecureEndpoint>(){}[0]
+        final fun <set-allowInsecureEndpoint>(kotlin/Boolean) // com.steamstreet.awskt.s3/S3PresignerConfig.allowInsecureEndpoint.<set-allowInsecureEndpoint>|<set-allowInsecureEndpoint>(kotlin.Boolean){}[0]
+    final var allowPresignBeyondUnknownSessionExpiry // com.steamstreet.awskt.s3/S3PresignerConfig.allowPresignBeyondUnknownSessionExpiry|{}allowPresignBeyondUnknownSessionExpiry[0]
+        final fun <get-allowPresignBeyondUnknownSessionExpiry>(): kotlin/Boolean // com.steamstreet.awskt.s3/S3PresignerConfig.allowPresignBeyondUnknownSessionExpiry.<get-allowPresignBeyondUnknownSessionExpiry>|<get-allowPresignBeyondUnknownSessionExpiry>(){}[0]
+        final fun <set-allowPresignBeyondUnknownSessionExpiry>(kotlin/Boolean) // com.steamstreet.awskt.s3/S3PresignerConfig.allowPresignBeyondUnknownSessionExpiry.<set-allowPresignBeyondUnknownSessionExpiry>|<set-allowPresignBeyondUnknownSessionExpiry>(kotlin.Boolean){}[0]
+    final var clockSkewOffsetMillis // com.steamstreet.awskt.s3/S3PresignerConfig.clockSkewOffsetMillis|{}clockSkewOffsetMillis[0]
+        final fun <get-clockSkewOffsetMillis>(): kotlin/Function0<kotlin/Long> // com.steamstreet.awskt.s3/S3PresignerConfig.clockSkewOffsetMillis.<get-clockSkewOffsetMillis>|<get-clockSkewOffsetMillis>(){}[0]
+        final fun <set-clockSkewOffsetMillis>(kotlin/Function0<kotlin/Long>) // com.steamstreet.awskt.s3/S3PresignerConfig.clockSkewOffsetMillis.<set-clockSkewOffsetMillis>|<set-clockSkewOffsetMillis>(kotlin.Function0<kotlin.Long>){}[0]
+    final var credentialsProvider // com.steamstreet.awskt.s3/S3PresignerConfig.credentialsProvider|{}credentialsProvider[0]
+        final fun <get-credentialsProvider>(): com.steamstreet.awskt.core/AwsCredentialsProvider? // com.steamstreet.awskt.s3/S3PresignerConfig.credentialsProvider.<get-credentialsProvider>|<get-credentialsProvider>(){}[0]
+        final fun <set-credentialsProvider>(com.steamstreet.awskt.core/AwsCredentialsProvider?) // com.steamstreet.awskt.s3/S3PresignerConfig.credentialsProvider.<set-credentialsProvider>|<set-credentialsProvider>(com.steamstreet.awskt.core.AwsCredentialsProvider?){}[0]
+    final var endpointUrl // com.steamstreet.awskt.s3/S3PresignerConfig.endpointUrl|{}endpointUrl[0]
+        final fun <get-endpointUrl>(): kotlin/String? // com.steamstreet.awskt.s3/S3PresignerConfig.endpointUrl.<get-endpointUrl>|<get-endpointUrl>(){}[0]
+        final fun <set-endpointUrl>(kotlin/String?) // com.steamstreet.awskt.s3/S3PresignerConfig.endpointUrl.<set-endpointUrl>|<set-endpointUrl>(kotlin.String?){}[0]
+    final var forcePathStyle // com.steamstreet.awskt.s3/S3PresignerConfig.forcePathStyle|{}forcePathStyle[0]
+        final fun <get-forcePathStyle>(): kotlin/Boolean // com.steamstreet.awskt.s3/S3PresignerConfig.forcePathStyle.<get-forcePathStyle>|<get-forcePathStyle>(){}[0]
+        final fun <set-forcePathStyle>(kotlin/Boolean) // com.steamstreet.awskt.s3/S3PresignerConfig.forcePathStyle.<set-forcePathStyle>|<set-forcePathStyle>(kotlin.Boolean){}[0]
+    final var region // com.steamstreet.awskt.s3/S3PresignerConfig.region|{}region[0]
+        final fun <get-region>(): kotlin/String? // com.steamstreet.awskt.s3/S3PresignerConfig.region.<get-region>|<get-region>(){}[0]
+        final fun <set-region>(kotlin/String?) // com.steamstreet.awskt.s3/S3PresignerConfig.region.<set-region>|<set-region>(kotlin.String?){}[0]
+}
+
+final class com.steamstreet.awskt.s3/SlowDownException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/SlowDownException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/SlowDownException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+}
+
+open class com.steamstreet.awskt.s3/S3Exception : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.s3/S3Exception|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.s3/S3Exception.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+}
+
+sealed class com.steamstreet.awskt.s3/PresignExpiry { // com.steamstreet.awskt.s3/PresignExpiry|null[0]
+    final class BoundedByUnknownSession : com.steamstreet.awskt.s3/PresignExpiry { // com.steamstreet.awskt.s3/PresignExpiry.BoundedByUnknownSession|null[0]
+        constructor <init>(kotlin/Long) // com.steamstreet.awskt.s3/PresignExpiry.BoundedByUnknownSession.<init>|<init>(kotlin.Long){}[0]
+
+        final val requestedEpochMillis // com.steamstreet.awskt.s3/PresignExpiry.BoundedByUnknownSession.requestedEpochMillis|{}requestedEpochMillis[0]
+            final fun <get-requestedEpochMillis>(): kotlin/Long // com.steamstreet.awskt.s3/PresignExpiry.BoundedByUnknownSession.requestedEpochMillis.<get-requestedEpochMillis>|<get-requestedEpochMillis>(){}[0]
+
+        final fun toString(): kotlin/String // com.steamstreet.awskt.s3/PresignExpiry.BoundedByUnknownSession.toString|toString(){}[0]
+    }
+
+    final class Known : com.steamstreet.awskt.s3/PresignExpiry { // com.steamstreet.awskt.s3/PresignExpiry.Known|null[0]
+        constructor <init>(kotlin/Long) // com.steamstreet.awskt.s3/PresignExpiry.Known.<init>|<init>(kotlin.Long){}[0]
+
+        final val epochMillis // com.steamstreet.awskt.s3/PresignExpiry.Known.epochMillis|{}epochMillis[0]
+            final fun <get-epochMillis>(): kotlin/Long // com.steamstreet.awskt.s3/PresignExpiry.Known.epochMillis.<get-epochMillis>|<get-epochMillis>(){}[0]
+
+        final fun toString(): kotlin/String // com.steamstreet.awskt.s3/PresignExpiry.Known.toString|toString(){}[0]
+    }
+}
+
+final val com.steamstreet.awskt.s3/S3_PROTOCOL // com.steamstreet.awskt.s3/S3_PROTOCOL|{}S3_PROTOCOL[0]
+    final fun <get-S3_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.s3/S3_PROTOCOL.<get-S3_PROTOCOL>|<get-S3_PROTOCOL>(){}[0]
+
+final fun com.steamstreet.awskt.s3/S3(kotlin/Function1<com.steamstreet.awskt.s3/S3Config, kotlin/Unit> = ...): com.steamstreet.awskt.s3/S3 // com.steamstreet.awskt.s3/S3|S3(kotlin.Function1<com.steamstreet.awskt.s3.S3Config,kotlin.Unit>){}[0]
+final fun com.steamstreet.awskt.s3/redactPresignedUrl(kotlin/String): kotlin/String // com.steamstreet.awskt.s3/redactPresignedUrl|redactPresignedUrl(kotlin.String){}[0]
+final fun com.steamstreet.awskt.s3/resolveS3Endpoint(kotlin/String, kotlin/String, kotlin/String? = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Function1<kotlin/String, kotlin/String?> = ...): com.steamstreet.awskt.s3/ResolvedS3Endpoint // com.steamstreet.awskt.s3/resolveS3Endpoint|resolveS3Endpoint(kotlin.String;kotlin.String;kotlin.String?;kotlin.Boolean;kotlin.Boolean;kotlin.Function1<kotlin.String,kotlin.String?>){}[0]

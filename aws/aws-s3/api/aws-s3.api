@@ -1,0 +1,372 @@
+public final class com/steamstreet/awskt/s3/AccessDeniedException : com/steamstreet/awskt/s3/S3Exception {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)V
+}
+
+public final class com/steamstreet/awskt/s3/ConditionalRequestConflictException : com/steamstreet/awskt/s3/S3Exception {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)V
+}
+
+public final class com/steamstreet/awskt/s3/DeleteObjectRequest {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/s3/DeleteObjectRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/s3/DeleteObjectRequest;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/s3/DeleteObjectRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBucket ()Ljava/lang/String;
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getVersionId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/s3/DeleteObjectResponse {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Z)V
+	public synthetic fun <init> (Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Z
+	public final fun copy (Ljava/lang/String;Z)Lcom/steamstreet/awskt/s3/DeleteObjectResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/s3/DeleteObjectResponse;Ljava/lang/String;ZILjava/lang/Object;)Lcom/steamstreet/awskt/s3/DeleteObjectResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDeleteMarker ()Z
+	public final fun getVersionId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/s3/GetObjectRequest {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/lang/String;
+	public final fun component11 ()Ljava/lang/String;
+	public final fun component12 ()Ljava/lang/String;
+	public final fun component13 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ljava/lang/String;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/s3/GetObjectRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/s3/GetObjectRequest;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/s3/GetObjectRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBucket ()Ljava/lang/String;
+	public final fun getIfMatch ()Ljava/lang/String;
+	public final fun getIfModifiedSince ()Ljava/lang/String;
+	public final fun getIfNoneMatch ()Ljava/lang/String;
+	public final fun getIfUnmodifiedSince ()Ljava/lang/String;
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getRange ()Ljava/lang/String;
+	public final fun getResponseCacheControl ()Ljava/lang/String;
+	public final fun getResponseContentDisposition ()Ljava/lang/String;
+	public final fun getResponseContentEncoding ()Ljava/lang/String;
+	public final fun getResponseContentLanguage ()Ljava/lang/String;
+	public final fun getResponseContentType ()Ljava/lang/String;
+	public final fun getVersionId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/s3/GetObjectResponse {
+	public fun <init> ([BJLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
+	public synthetic fun <init> ([BJLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBody ()[B
+	public final fun getCacheControl ()Ljava/lang/String;
+	public final fun getContentDisposition ()Ljava/lang/String;
+	public final fun getContentEncoding ()Ljava/lang/String;
+	public final fun getContentLength ()J
+	public final fun getContentRange ()Ljava/lang/String;
+	public final fun getContentType ()Ljava/lang/String;
+	public final fun getETag ()Ljava/lang/String;
+	public final fun getLastModified ()Ljava/lang/String;
+	public final fun getMetadata ()Ljava/util/Map;
+	public final fun getVersionId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/s3/HeadObjectRequest {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/s3/HeadObjectRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/s3/HeadObjectRequest;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/s3/HeadObjectRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBucket ()Ljava/lang/String;
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getVersionId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/s3/HeadObjectResponse {
+	public fun <init> (JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
+	public synthetic fun <init> (JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()J
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/util/Map;
+	public final fun copy (JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lcom/steamstreet/awskt/s3/HeadObjectResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/s3/HeadObjectResponse;JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/s3/HeadObjectResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContentLength ()J
+	public final fun getContentType ()Ljava/lang/String;
+	public final fun getETag ()Ljava/lang/String;
+	public final fun getLastModified ()Ljava/lang/String;
+	public final fun getMetadata ()Ljava/util/Map;
+	public final fun getVersionId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/s3/InsecureEndpointException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/steamstreet/awskt/s3/InvalidBucketNameException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/steamstreet/awskt/s3/InvalidObjectStateException : com/steamstreet/awskt/s3/S3Exception {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)V
+}
+
+public final class com/steamstreet/awskt/s3/NoSuchBucketException : com/steamstreet/awskt/s3/S3Exception {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)V
+}
+
+public final class com/steamstreet/awskt/s3/NoSuchKeyException : com/steamstreet/awskt/s3/S3Exception {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)V
+}
+
+public final class com/steamstreet/awskt/s3/NotModifiedException : com/steamstreet/awskt/s3/S3Exception {
+	public fun <init> (ILjava/lang/String;Ljava/lang/String;)V
+}
+
+public final class com/steamstreet/awskt/s3/PermanentRedirectException : com/steamstreet/awskt/s3/S3Exception {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)V
+}
+
+public final class com/steamstreet/awskt/s3/PreconditionFailedException : com/steamstreet/awskt/s3/S3Exception {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)V
+}
+
+public abstract class com/steamstreet/awskt/s3/PresignExpiry {
+}
+
+public final class com/steamstreet/awskt/s3/PresignExpiry$BoundedByUnknownSession : com/steamstreet/awskt/s3/PresignExpiry {
+	public fun <init> (J)V
+	public final fun getRequestedEpochMillis ()J
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/s3/PresignExpiry$Known : com/steamstreet/awskt/s3/PresignExpiry {
+	public fun <init> (J)V
+	public final fun getEpochMillis ()J
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/s3/PresignExpiryException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/steamstreet/awskt/s3/PresignMethod : java/lang/Enum {
+	public static final field DELETE Lcom/steamstreet/awskt/s3/PresignMethod;
+	public static final field GET Lcom/steamstreet/awskt/s3/PresignMethod;
+	public static final field HEAD Lcom/steamstreet/awskt/s3/PresignMethod;
+	public static final field PUT Lcom/steamstreet/awskt/s3/PresignMethod;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getHttpMethod ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/s3/PresignMethod;
+	public static fun values ()[Lcom/steamstreet/awskt/s3/PresignMethod;
+}
+
+public final class com/steamstreet/awskt/s3/PresignRequest {
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/s3/PresignMethod;JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/s3/PresignMethod;JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getBucket ()Ljava/lang/String;
+	public final fun getContentType ()Ljava/lang/String;
+	public final fun getExpiresIn-UwyO8pc ()J
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getMethod ()Lcom/steamstreet/awskt/s3/PresignMethod;
+	public final fun getResponseCacheControl ()Ljava/lang/String;
+	public final fun getResponseContentDisposition ()Ljava/lang/String;
+	public final fun getResponseContentEncoding ()Ljava/lang/String;
+	public final fun getResponseContentLanguage ()Ljava/lang/String;
+	public final fun getResponseContentType ()Ljava/lang/String;
+	public final fun getResponseExpires ()Ljava/lang/String;
+	public final fun getSignedHeaders ()Ljava/util/List;
+	public final fun getVersionId ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/s3/PresignedUrl {
+	public fun <init> (Ljava/lang/String;Lcom/steamstreet/awskt/s3/PresignMethod;Ljava/util/List;Lcom/steamstreet/awskt/s3/PresignExpiry;)V
+	public final fun getExpiry ()Lcom/steamstreet/awskt/s3/PresignExpiry;
+	public final fun getMethod ()Lcom/steamstreet/awskt/s3/PresignMethod;
+	public final fun getSignedHeaderNames ()Ljava/util/List;
+	public final fun getUrl ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/s3/PresignedUrlKt {
+	public static final fun redactPresignedUrl (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/s3/PutObjectRequest {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;[BLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;[BLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBody ()[B
+	public final fun getBucket ()Ljava/lang/String;
+	public final fun getCacheControl ()Ljava/lang/String;
+	public final fun getContentDisposition ()Ljava/lang/String;
+	public final fun getContentEncoding ()Ljava/lang/String;
+	public final fun getContentType ()Ljava/lang/String;
+	public final fun getIfNoneMatch ()Ljava/lang/String;
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getMetadata ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/s3/PutObjectResponse {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/s3/PutObjectResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/s3/PutObjectResponse;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/s3/PutObjectResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getETag ()Ljava/lang/String;
+	public final fun getVersionId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/s3/ResolvedS3Endpoint {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/s3/S3AddressingStyle;)V
+	public final fun getAuthority ()Ljava/lang/String;
+	public final fun getBasePath ()Ljava/lang/String;
+	public final fun getOrigin ()Ljava/lang/String;
+	public final fun getScheme ()Ljava/lang/String;
+	public final fun getStyle ()Lcom/steamstreet/awskt/s3/S3AddressingStyle;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/steamstreet/awskt/s3/S3 : java/lang/AutoCloseable {
+	public abstract fun deleteObject (Lcom/steamstreet/awskt/s3/DeleteObjectRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getClient ()Lcom/steamstreet/awskt/core/AwsServiceClient;
+	public abstract fun getObject (Lcom/steamstreet/awskt/s3/GetObjectRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun headObject (Lcom/steamstreet/awskt/s3/HeadObjectRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun putObject (Lcom/steamstreet/awskt/s3/PutObjectRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/s3/S3AddressingStyle : java/lang/Enum {
+	public static final field PATH Lcom/steamstreet/awskt/s3/S3AddressingStyle;
+	public static final field VIRTUAL_HOSTED Lcom/steamstreet/awskt/s3/S3AddressingStyle;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/s3/S3AddressingStyle;
+	public static fun values ()[Lcom/steamstreet/awskt/s3/S3AddressingStyle;
+}
+
+public final class com/steamstreet/awskt/s3/S3Config {
+	public fun <init> ()V
+	public final fun getAllowInsecureEndpoint ()Z
+	public final fun getCaInfo ()Ljava/lang/String;
+	public final fun getCredentialsProvider ()Lcom/steamstreet/awskt/core/AwsCredentialsProvider;
+	public final fun getEndpointUrl ()Ljava/lang/String;
+	public final fun getForcePathStyle ()Z
+	public final fun getHttpClient ()Lio/ktor/client/HttpClient;
+	public final fun getMaxBufferedDownloadBytes ()J
+	public final fun getMaxBufferedUploadBytes ()J
+	public final fun getRegion ()Ljava/lang/String;
+	public final fun getRetryConfig ()Lcom/steamstreet/awskt/core/RetryConfig;
+	public final fun setAllowInsecureEndpoint (Z)V
+	public final fun setCaInfo (Ljava/lang/String;)V
+	public final fun setCredentialsProvider (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;)V
+	public final fun setEndpointUrl (Ljava/lang/String;)V
+	public final fun setForcePathStyle (Z)V
+	public final fun setHttpClient (Lio/ktor/client/HttpClient;)V
+	public final fun setMaxBufferedDownloadBytes (J)V
+	public final fun setMaxBufferedUploadBytes (J)V
+	public final fun setRegion (Ljava/lang/String;)V
+	public final fun setRetryConfig (Lcom/steamstreet/awskt/core/RetryConfig;)V
+}
+
+public final class com/steamstreet/awskt/s3/S3EndpointKt {
+	public static final fun resolveS3Endpoint (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZZLkotlin/jvm/functions/Function1;)Lcom/steamstreet/awskt/s3/ResolvedS3Endpoint;
+	public static synthetic fun resolveS3Endpoint$default (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/steamstreet/awskt/s3/ResolvedS3Endpoint;
+}
+
+public class com/steamstreet/awskt/s3/S3Exception : com/steamstreet/awskt/core/AwsServiceException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/s3/S3IncompleteDownloadException : com/steamstreet/awskt/s3/S3Exception {
+	public fun <init> (JJLjava/lang/String;Ljava/lang/String;)V
+	public final fun getActualBytes ()J
+	public final fun getExpectedBytes ()J
+}
+
+public final class com/steamstreet/awskt/s3/S3Kt {
+	public static final fun S3 (Lkotlin/jvm/functions/Function1;)Lcom/steamstreet/awskt/s3/S3;
+	public static synthetic fun S3$default (Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/steamstreet/awskt/s3/S3;
+	public static final fun getS3_PROTOCOL ()Lcom/steamstreet/awskt/core/AwsProtocol;
+}
+
+public final class com/steamstreet/awskt/s3/S3PayloadTooLargeException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/steamstreet/awskt/s3/S3Presigner {
+	public static final field Companion Lcom/steamstreet/awskt/s3/S3Presigner$Companion;
+	public fun <init> ()V
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun presign (Lcom/steamstreet/awskt/s3/PresignRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun presignGetObject-WPi__2c (Ljava/lang/String;Ljava/lang/String;JLjava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun presignGetObject-WPi__2c$default (Lcom/steamstreet/awskt/s3/S3Presigner;Ljava/lang/String;Ljava/lang/String;JLjava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun presignPutObject-1Y68eR8 (Ljava/lang/String;Ljava/lang/String;JLjava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun presignPutObject-1Y68eR8$default (Lcom/steamstreet/awskt/s3/S3Presigner;Ljava/lang/String;Ljava/lang/String;JLjava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/s3/S3Presigner$Companion {
+	public final fun getMAX_PRESIGN_EXPIRY-UwyO8pc ()J
+}
+
+public final class com/steamstreet/awskt/s3/S3PresignerConfig {
+	public fun <init> ()V
+	public final fun getAllowInsecureEndpoint ()Z
+	public final fun getAllowPresignBeyondUnknownSessionExpiry ()Z
+	public final fun getClockSkewOffsetMillis ()Lkotlin/jvm/functions/Function0;
+	public final fun getCredentialsProvider ()Lcom/steamstreet/awskt/core/AwsCredentialsProvider;
+	public final fun getEndpointUrl ()Ljava/lang/String;
+	public final fun getForcePathStyle ()Z
+	public final fun getRegion ()Ljava/lang/String;
+	public final fun setAllowInsecureEndpoint (Z)V
+	public final fun setAllowPresignBeyondUnknownSessionExpiry (Z)V
+	public final fun setClockSkewOffsetMillis (Lkotlin/jvm/functions/Function0;)V
+	public final fun setCredentialsProvider (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;)V
+	public final fun setEndpointUrl (Ljava/lang/String;)V
+	public final fun setForcePathStyle (Z)V
+	public final fun setRegion (Ljava/lang/String;)V
+}
+
+public final class com/steamstreet/awskt/s3/SlowDownException : com/steamstreet/awskt/s3/S3Exception {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)V
+}
+

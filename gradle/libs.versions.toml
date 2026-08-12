@@ -30,6 +30,7 @@ aws-dynamodb = { group = "aws.sdk.kotlin", name = "dynamodb", version.ref = "aws
 aws-dynamodbstreams = { group = "aws.sdk.kotlin", name = "dynamodbstreams", version.ref = "aws" }
 aws-lambda = { group = "aws.sdk.kotlin", name = "lambda", version.ref = "aws" }
 aws-eventbridge = { group = "aws.sdk.kotlin", name = "eventbridge", version.ref = "aws" }
+aws-sdk-config = { group = "aws.sdk.kotlin", name = "aws-config", version.ref = "aws" }
 aws-kinesis = { group = "aws.sdk.kotlin", name = "kinesis", version.ref = "aws" }
 aws-s3 = { group = "aws.sdk.kotlin", name = "s3", version.ref = "aws" }
 aws-sqs = { group = "aws.sdk.kotlin", name = "sqs", version.ref = "aws" }

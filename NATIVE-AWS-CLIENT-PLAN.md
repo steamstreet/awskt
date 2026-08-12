@@ -997,35 +997,35 @@ The ordering rationale is Decision 3's, applied to a new problem. If S3-mode sig
 **There is no signer work in this milestone.** Query-string signing is entirely M1's (see the note at the top of M1). M3.5a consumes a finished signer.
 
 **Tasks**:
-- [ ] Create `aws/aws-s3` with `steamstreet-common.multiplatform-library-conventions`, `explicitApi()`, targets `jvm/linuxX64/linuxArm64/macosArm64`. Dependencies: **`aws-core` only**. NOT `:dynamo`, NOT `:standards`/`:env`/`:logging`. Add `include(":aws:aws-s3")` to `settings.gradle.kts`. Commit the `.api` dump.
-- [ ] **PRECONDITION on M1**: verify the 37 query-mode vector assertions are green on all three targets before starting, and that `get-percent-single-encoded` and the seven `*-unnormalized` cases pass in query mode as well as header mode. If they are not, stop — the rest of this milestone is built on them.
-- [ ] `S3Endpoint.kt` — `resolve(bucket, region, endpointOverride, forcePathStyle) -> ResolvedS3Endpoint(scheme, authority, basePath)`. Virtual-hosted default `{bucket}.s3.{region}.amazonaws.com` with `basePath = ""`; path-style `s3.{region}.amazonaws.com` with `basePath = "/{bucket}"`. `us-east-1` emits `s3.us-east-1.amazonaws.com`, **never** the legacy global endpoint (Regions launched after 2019-03-20 return HTTP 400 from it). Honor `AWS_ENDPOINT_URL_S3` with the M2 precedence rules.
-- [ ] **Force path-style** when ANY of: `forcePathStyle = true`; an explicit endpoint override is set (LocalStack and MinIO are path-style); or the bucket name is not DNS-compatible over https. The dotted-bucket case is an **automatic, documented fallback**, not an error — AWS's wildcard certificate matches only buckets without dots, and path-style deprecation was delayed indefinitely, so falling back is strictly better than an opaque TLS failure.
-- [ ] **Bucket names: an ADDRESSING-STYLE DECISION, not a validation gate.** The modern rule (3–63 chars, lowercase `[a-z0-9.-]`, no leading/trailing `-`/`.`, not an IPv4 literal) determines *how* we address the bucket, not *whether* we will call it. `us-east-1` buckets created under the legacy rules may contain uppercase letters and underscores and be up to 255 characters; they still exist and are still reachable path-style, and AWS's own worked path-style example uses the dotted bucket `example.com`. So: DNS-compatible ⇒ virtual-hosted; dots, uppercase, underscores, length > 63 or an IP literal ⇒ **path-style**. Reject with a typed error only names that cannot be expressed in a URI authority or path at all. Unit test: an uppercase legacy name resolves to path-style, it does **not** throw. "Fail fast rather than take an opaque 400" does not justify refusing to try; a 400 from S3 is strictly more informative than a client that will not call.
-- [ ] **S3 key encoding**: `sigV4UriEncode(key, encodeSlash = false)`, applied **once**, with **no** path normalization. The **same byte-identical string** builds the outbound URL and the canonical request. Set it on the Ktor request as an already-encoded path so the engine cannot re-encode it (Risk 5), and assert the invariant mechanically per the M2 `callRaw` task.
-- [ ] **`x-id` per Decision 17**: emit `x-id=GetObject` / `x-id=PutObject` / `x-id=DeleteObject`; **none** for `HeadObject`. It is in the outbound query, therefore it is in the canonical query, therefore it is covered by `X-Amz-Signature`. This is why the differential below can be byte-identical.
-- [ ] `presign(PresignRequest) -> PresignedUrl` with `PayloadHash.Unsigned`, `SignedBodyHeader.NONE`, `expiresIn` **required** (no default, no zero-arg overload) and hard-capped at 604 800 s.
+- [x] Create `aws/aws-s3` with `steamstreet-common.multiplatform-library-conventions`, `explicitApi()`, targets `jvm/linuxX64/linuxArm64/macosArm64`. Dependencies: **`aws-core` only**. NOT `:dynamo`, NOT `:standards`/`:env`/`:logging`. Add `include(":aws:aws-s3")` to `settings.gradle.kts`. Commit the `.api` dump.
+- [x] **PRECONDITION on M1**: verify the 37 query-mode vector assertions are green on all three targets before starting, and that `get-percent-single-encoded` and the seven `*-unnormalized` cases pass in query mode as well as header mode. If they are not, stop — the rest of this milestone is built on them.
+- [x] `S3Endpoint.kt` — `resolve(bucket, region, endpointOverride, forcePathStyle) -> ResolvedS3Endpoint(scheme, authority, basePath)`. Virtual-hosted default `{bucket}.s3.{region}.amazonaws.com` with `basePath = ""`; path-style `s3.{region}.amazonaws.com` with `basePath = "/{bucket}"`. `us-east-1` emits `s3.us-east-1.amazonaws.com`, **never** the legacy global endpoint (Regions launched after 2019-03-20 return HTTP 400 from it). Honor `AWS_ENDPOINT_URL_S3` with the M2 precedence rules.
+- [x] **Force path-style** when ANY of: `forcePathStyle = true`; an explicit endpoint override is set (LocalStack and MinIO are path-style); or the bucket name is not DNS-compatible over https. The dotted-bucket case is an **automatic, documented fallback**, not an error — AWS's wildcard certificate matches only buckets without dots, and path-style deprecation was delayed indefinitely, so falling back is strictly better than an opaque TLS failure.
+- [x] **Bucket names: an ADDRESSING-STYLE DECISION, not a validation gate.** The modern rule (3–63 chars, lowercase `[a-z0-9.-]`, no leading/trailing `-`/`.`, not an IPv4 literal) determines *how* we address the bucket, not *whether* we will call it. `us-east-1` buckets created under the legacy rules may contain uppercase letters and underscores and be up to 255 characters; they still exist and are still reachable path-style, and AWS's own worked path-style example uses the dotted bucket `example.com`. So: DNS-compatible ⇒ virtual-hosted; dots, uppercase, underscores, length > 63 or an IP literal ⇒ **path-style**. Reject with a typed error only names that cannot be expressed in a URI authority or path at all. Unit test: an uppercase legacy name resolves to path-style, it does **not** throw. "Fail fast rather than take an opaque 400" does not justify refusing to try; a 400 from S3 is strictly more informative than a client that will not call.
+- [x] **S3 key encoding**: `sigV4UriEncode(key, encodeSlash = false)`, applied **once**, with **no** path normalization. The **same byte-identical string** builds the outbound URL and the canonical request. Set it on the Ktor request as an already-encoded path so the engine cannot re-encode it (Risk 5), and assert the invariant mechanically per the M2 `callRaw` task.
+- [x] **`x-id` per Decision 17**: emit `x-id=GetObject` / `x-id=PutObject` / `x-id=DeleteObject`; **none** for `HeadObject`. It is in the outbound query, therefore it is in the canonical query, therefore it is covered by `X-Amz-Signature`. This is why the differential below can be byte-identical.
+- [x] `presign(PresignRequest) -> PresignedUrl` with `PayloadHash.Unsigned`, `SignedBodyHeader.NONE`, `expiresIn` **required** (no default, no zero-arg overload) and hard-capped at 604 800 s.
   - `PresignMethod` is **GET | PUT | HEAD | DELETE**, an explicit required parameter, never inferred. A URL signed for one method is rejected for the other, and inferring it from context is how a read URL becomes a write URL.
   - `PresignRequest` carries **signed response-header overrides** (`response-content-type`, `response-content-disposition`, `response-cache-control`, `response-content-encoding`, `response-content-language`, `response-expires`) as first-class fields. These are `@httpQuery` members of `GetObjectRequest` in the model, so they are canonicalized; **a caller cannot append them to the returned URL afterwards** — that yields `SignatureDoesNotMatch`. Without them the most common presigned-GET use case (a browser download with a controlled filename and content type) is impossible in v1 and cannot be added by the caller. Decide this before `aws-s3`'s `.api` is frozen.
   - No free-form header bag applied after the fact. Everything the fetcher will send is declared at presign time via `PresignRequest.signedHeaders` and appears in `X-Amz-SignedHeaders`; `PresignedUrl.signedHeaderNames` is public so the caller can be told exactly what to send. An unsigned `x-amz-*` header at fetch time is a hard 403 `AccessDenied` / `HeadersNotSigned`, and there is one non-obvious non-`x-amz-` trap: **when `Range` is signed, S3 requires `If-Range` to be signed too if present.**
   - `contentType` is a first-class parameter on `presignPutObject`, not an afterthought.
   - **Presign applies the learned clock-skew offset from shared client state, not the raw clock.** M2's skew correction is driven by *observing* a response; presign performs no round trip and so gets no signal, and AWS names clock drift as the first cause of presigned-URL `SignatureDoesNotMatch`. At minimum, read the offset; never read the raw clock directly.
-- [ ] **Expiry: model the unknown case as unrepresentable, do not publish a false number.** See Risk 24 — this is the highest-severity new item in the re-scope and it was nearly shipped as a silently-inert mitigation.
+- [x] **Expiry: model the unknown case as unrepresentable, do not publish a false number.** See Risk 24 — this is the highest-severity new item in the re-scope and it was nearly shipped as a silently-inert mitigation.
   - `PresignedUrl.expiry` is a **sealed value**: `Known(epochMillis)` when the credential's own expiry is known, `BoundedByUnknownSession(requestedEpochMillis)` otherwise. **Never a bare `Long` that reads as truth.**
   - When `AwsCredentials.expiresAtEpochMillis` is non-null, clamp: `min(now + expiresIn, credentialExpiry)`, surfaced as `Known`.
   - When a **session token is present and the expiry is unknown** — which, in Lambda, is *always* — cap `expiresIn` at **1 hour** (the STS `AssumeRole` default session length) by default, and require an explicit `S3Config.allowPresignBeyondUnknownSessionExpiry = true` to exceed it. The hazard is then opted into at the call site instead of being discovered when a link dies mid-life.
   - Read `AWS_CREDENTIAL_EXPIRATION` when present (the ECS / `credential_process` convention) as a **bonus, not the fix** — Lambda does not set it.
-- [ ] **`PresignedUrl.toString()` redacts by plain string work, not by regex.** Split on `&`, blank the value of any pair whose key is `X-Amz-Signature` **or `X-Amz-Security-Token`**, rejoin. Do **not** use a lookbehind (`(?<=X-Amz-Signature=)…`): Kotlin/Native ships a separate regex implementation from the JVM's, lookbehind is the least portable construct across KMP backends, and a silent non-match is indistinguishable from success — the security property would fail open on the only target that matters while passing every JVM test. Note the presigned URL carries the **session token in full**, which the draft redaction pattern did not touch even though the `AwsCredentials.toString()` rule already forbids it. **Run the redaction test on `macosArm64Test` and `linuxX64Test`, not only `jvmTest`.**
-- [ ] **PRESIGN DIFFERENTIAL HARNESS (`jvmTest`, `testImplementation aws.sdk.kotlin:s3`) — BUILD THIS FIRST**, exactly as M3 builds its harness first.
+- [x] **`PresignedUrl.toString()` redacts by plain string work, not by regex.** Split on `&`, blank the value of any pair whose key is `X-Amz-Signature` **or `X-Amz-Security-Token`**, rejoin. Do **not** use a lookbehind (`(?<=X-Amz-Signature=)…`): Kotlin/Native ships a separate regex implementation from the JVM's, lookbehind is the least portable construct across KMP backends, and a silent non-match is indistinguishable from success — the security property would fail open on the only target that matters while passing every JVM test. Note the presigned URL carries the **session token in full**, which the draft redaction pattern did not touch even though the `AwsCredentials.toString()` rule already forbids it. **Run the redaction test on `macosArm64Test` and `linuxX64Test`, not only `jvmTest`.**
+- [x] **PRESIGN DIFFERENTIAL HARNESS (`jvmTest`, `testImplementation aws.sdk.kotlin:s3`) — BUILD THIS FIRST**, exactly as M3 builds its harness first.
   - **The M3 `Interceptor` mechanism structurally cannot be reused**: presigning never transmits. `presignRequest` sets `unsignedRequestBuilder.body = HttpBody.Empty` and **returns** an `HttpRequest` (`smithy-kotlin/.../awssigning/Presigner.kt:30,54-65`), so `readBeforeTransmit` never fires. The replacement is *simpler*: on JVM the SDK presigner hands back the signed request as an ordinary value.
   - **The clock trick matters.** The SDK presigner takes no injectable signing clock, so parse `X-Amz-Date` back out of **its** returned URL and feed that exact instant into ours. Without it the comparison is either flaky at second boundaries or has to exclude `X-Amz-Signature`, which is the only field worth comparing.
   - Matrix: GET and PUT (and HEAD); with and without a session token; keys containing a space, `+`, `//`, `..`, `%`, `:` and non-ASCII; **one case with `response-content-disposition` containing a space and a non-ASCII filename** (that combination exercises the S3-mode query encoder, the thinnest-covered code in the milestone); expiries of 1 s, 900 s and 604 800 s.
-- [ ] Security tests: `expiresIn > 7.days` throws with S3's own error text; `PresignedUrl.toString()` redacts both signature and session token; the secret, the session token and the signature appear in no `toString()`, no exception `message` and no `stackTraceToString()`.
-- [ ] **Module KDoc — say the uncomfortable things plainly.** A presigned URL is a **bearer token carrying the SIGNING ROLE's permissions, not the end user's**; it is reusable until expiry; **it cannot be revoked** (the only controls are the `s3:signatureAge` bucket-policy condition and network-path conditions, both of which live in IAM, not in the code); and a Lambda-minted URL dies with the role session.
+- [x] Security tests: `expiresIn > 7.days` throws with S3's own error text; `PresignedUrl.toString()` redacts both signature and session token; the secret, the session token and the signature appear in no `toString()`, no exception `message` and no `stackTraceToString()`.
+- [x] **Module KDoc — say the uncomfortable things plainly.** A presigned URL is a **bearer token carrying the SIGNING ROLE's permissions, not the end user's**; it is reusable until expiry; **it cannot be revoked** (the only controls are the `s3:signatureAge` bucket-policy condition and network-path conditions, both of which live in IAM, not in the code); and a Lambda-minted URL dies with the role session.
   - **`presignPutObject` is the highest-blast-radius call in the library and must not read like the sibling of `presignGetObject`.** Because `UNSIGNED-PAYLOAD` is used, the URL accepts **any body, of any content, up to S3's 5 GiB single-PUT limit, from anyone holding the link**. The URL constrains bucket, key, method, expiry and the signed headers — nothing else. Callers needing content or size constraints must enforce them with a bucket policy (`s3:content-length-range` via a POST policy) or a post-upload check, not with the URL.
   - Signing `Content-Type` trades flexibility for enforcement: once signed, the uploader must reproduce it byte-for-byte, and browser `fetch` with a `Blob` — like many HTTP clients — appends or normalises a charset and produces a 403 naming a header, not a rule. **Omitting it is the safer default unless the caller controls the uploader.**
   - Presigning performs **no network I/O** beyond credential resolution. State this as a security property, not just a performance one: there is no transport, no proxy and no log sink between the signer and the returned string, so the only way a presigned URL leaks is if the caller logs it.
-- [ ] **HTTPS only.** `UNSIGNED-PAYLOAD` relies on TLS for body integrity. Reject an `http://` endpoint override unless an explicit `allowInsecureEndpoint` flag is set, and even then only for a loopback host — that is the LocalStack/MinIO case and nothing else.
+- [x] **HTTPS only.** `UNSIGNED-PAYLOAD` relies on TLS for body integrity. Reject an `http://` endpoint override unless an explicit `allowInsecureEndpoint` flag is set, and even then only for a loopback host — that is the LocalStack/MinIO case and nothing else.
 
 **Verification**:
 - (a) `./gradlew :aws:aws-s3:jvmTest` — the presign differential is **byte-identical** to `aws.sdk.kotlin`'s S3 presigner across the full key / token / expiry / response-override matrix, **INCLUDING `X-Amz-Signature`**. (Decision 17 is what makes this achievable.)
@@ -1036,6 +1036,75 @@ The ordering rationale is Decision 3's, applied to a new problem. If S3-mode sig
 - (f) A 403 or a `SignatureDoesNotMatch` anywhere in (d) **FAILS the milestone**.
 - (g) `./gradlew :aws:aws-s3:apiCheck` — the `.api` dump is committed and reviewed.
 
+> **STATUS: M3.5a IS CODE-COMPLETE (2026-08-11); the two credentialed criteria (d) and (e) are
+> unrun, exactly as M3's (d) is.** `aws/aws-s3` exists with **54 jvm / 39 macosArm64 tests, 0
+> failures**; `linuxX64` and `linuxArm64` link. Repo-wide `./gradlew build` is green at **660 tests**.
+>
+> **The headline result: the presign differential is green against the real `aws.sdk.kotlin` S3
+> presigner, `X-Amz-Signature` included**, across all 15 cases — keys with a space, `+`, `//`, `..`,
+> `%`, `:` and non-ASCII; with and without a session token; 1 s / 900 s / 7-day expiries; and the
+> `response-content-disposition` case carrying a space *and* a non-ASCII filename. GET, PUT and
+> DELETE.
+>
+> **The precondition was checked before any code was written**, as this section demands.
+> `querySigningMatchesAwsVectors` is green on `jvm` and `macosArm64` and carries an internal
+> `assertEquals(37, asserted)` guard, so it cannot pass vacuously. `get-percent-single-encoded` and
+> all seven `*-unnormalized` cases carry full query-mode expectation files and are outside the
+> three-case `skipped` set. (`linuxX64Test` cannot execute on a macOS host; that stays CI's.)
+>
+> **The differential was verified to bite, not merely to pass.** Flipping `doubleUriEncode` to
+> `true` fails **8** cases; flipping `normalizeUriPath` to `true` fails **exactly one** —
+> `getKeyWithDoubleSlashAndDots`, the only case containing `//` and `..`. Those are the two flags
+> the whole milestone exists to validate, and the harness localizes each one precisely.
+>
+> **Two corrections to this section:**
+> 1. **The AWS SDK ships no HeadObject presigner** (`PresignersKt` exposes GetObject, PutObject,
+>    DeleteObject and UploadPart only). The matrix's HEAD case therefore cannot be a *differential*;
+>    HEAD is covered structurally instead, including the assertion that it carries **no** `x-id`.
+> 2. **"Byte-identical" needs one qualification.** Origin and encoded path are compared as exact
+>    strings and every query pair — signature included — is compared exactly, but as a *sorted*
+>    multiset. Query emission order is not a wire-correctness property: the canonical request sorts,
+>    so two URLs differing only in parameter order carry the same signature and behave identically.
+>    Pinning the order would assert on an SDK implementation detail, not on our correctness.
+>
+> **`aws-core` gained one function**: `awsEnv(name)`, a public wrapper over the existing `internal
+> expect platformGetEnv`. `aws-s3` needs `AWS_ENDPOINT_URL_S3` and `AWS_CREDENTIAL_EXPIRATION`, and
+> the alternative was a second `expect`/`actual` pair for `getenv` in a module whose whole point is
+> to depend on `aws-core` and nothing else. Purely additive; visible in `aws-core.api`.
+>
+> **Everything the section asks to be uncomfortable about is in the KDoc**, on the types a caller
+> actually touches: a presigned URL is a bearer token carrying the *signing role's* permissions, is
+> reusable until expiry, and **cannot be revoked**; `presignPutObject` accepts any body of any
+> content up to 5 GiB from anyone holding the link, because `UNSIGNED-PAYLOAD` is mandatory when the
+> body does not yet exist; signing `Content-Type` trades flexibility for enforcement and is best
+> omitted unless you control the uploader; and presigning performs no network I/O, which is a
+> security property rather than a performance note.
+>
+> **Design points worth carrying forward:**
+> - `PresignExpiry` is a sealed type with `Known` and `BoundedByUnknownSession`, never a bare `Long`.
+>   With a session token and no discoverable expiry — the Lambda case, always — an `expiresIn` over
+>   one hour is **refused** unless `allowPresignBeyondUnknownSessionExpiry` is set. The differential's
+>   7-day cases had to opt in, which is the guard working rather than a workaround.
+> - Redaction is plain string splitting, per this section's instruction, and blanks **both**
+>   `X-Amz-Signature` and `X-Amz-Security-Token`. The test runs on `macosArm64`, not only the JVM.
+> - Addressing style is a routing decision, never a validation gate: uppercase, underscored,
+>   over-63-character and dotted buckets all resolve to **path-style** and none of them throw. Only
+>   a blank name or one containing a character that cannot appear in a URI is refused.
+> - `us-east-1` resolves to `s3.us-east-1.amazonaws.com`, never the legacy global endpoint.
+>
+> **UPDATE — (d) AND (e) ARE NOW GREEN AGAINST REAL S3 (2026-08-11).** Jon supplied bucket
+> `kotlin-native-test-443844975891-us-west-2-an` (us-west-2) and the `vegasful-test` profile.
+> `LiveS3Test` passes all four cases:
+> - **(d) read half** — a presigned GET fetched by a bare `HttpClient` carrying **no credentials and
+>   no signer** returns HTTP 200 with byte-identical content.
+> - **(d) write half** — a presigned PUT is accepted from that same unauthenticated client, and the
+>   object read back afterwards matches what was written.
+> - **(e)** — a 1-second URL fetched after expiry returns **403 with `Request has expired`**.
+> - **No `SignatureDoesNotMatch` anywhere, so (f) is satisfied.**
+>
+> **M3.5a IS THEREFORE COMPLETE.** The presigner is validated end to end: identical to the SDK's
+> bytes *and* accepted by S3.
+
 ---
 
 ### M3.5b — `aws-s3`: GetObject, PutObject, HeadObject, DeleteObject (8 days)
@@ -1045,25 +1114,25 @@ The ordering rationale is Decision 3's, applied to a new problem. If S3-mode sig
 **On the estimate**: 8 days, revised up from a first-pass 6. Calibrated against this plan's own numbers — M6 is **5 days for ONE operation** (PutEvents, ~120 lines) on an existing protocol, existing endpoint scheme and existing error parser. M3.5b is four operations **plus** a new error protocol **plus** new endpoint/bucket addressing **plus** a new LocalStack service **plus** a four-operation request differential **plus** a credentialed live smoke **plus** retry/idempotency classification **plus** the memory ceiling and completeness check. It also has **zero head start from `ref-2.3.x`** — verified: grepping that branch for `s3`/`presign` matches only `settings.gradle.kts`, `test/build.gradle.kts`, an unused `libs.versions.toml` catalog entry and the same `S3Mock` stub. Unlike M4 and M7, nothing here can be cherry-picked.
 
 **Tasks**:
-- [ ] `S3` interface, `S3Config`, `internal class DefaultS3` wired onto `aws-core`'s `AwsServiceClient` with signing name / endpoint prefix `s3`, `RestXmlErrorParser`, `doubleUriEncode = false`, `normalizeUriPath = false`, `signedBodyHeader = X_AMZ_CONTENT_SHA256`, `maxAttempts = 3`, `followRedirects = false` (inherited from M2).
-- [ ] **Request/response types are NOT data classes where they carry a `ByteArray`.** `GetObjectResponse` and `PutObjectRequest` are plain classes with hand-written `equals`/`hashCode` over `contentEquals`/`contentHashCode` — **the same rule Decision 2 applies to `AttributeValue.B`/`Bs`**, which states plainly that they "must NOT be data classes". A generated `copy()`/`componentN()`/`toString()` still exposes the array, and the plan deliberately banned the pattern. They are also **not `@Serializable`**: nothing here is serialized (§2's census), and if you find yourself adding `@SerialName` to an S3 type you have wandered into bucket/list/multipart operations.
-- [ ] **Every date-shaped S3 response header is carried as an unparsed `String` in v1, and no parse failure can fail a response.** State the rule once rather than deciding it per header. `Last-Modified` is IMF-fixdate pass-through; `Expires` is modelled as a timestamp but S3 returns whatever string the uploader set — frequently not a valid IMF-fixdate, which is why the AWS SDKs added a separate `ExpiresString`. v1 omits `Expires` entirely; if it is ever added it is a `String`.
-- [ ] `getObject`: GET, empty body, `PayloadHash.EmptyBody`. Bind the ~10 request headers actually needed (`Range`, `If-Match`, `If-None-Match`, `If-Modified-Since`, `If-Unmodified-Since`), plus `versionId` and the `response-*` overrides as query params. Harvest into `GetObjectResponse` including the `x-amz-meta-*` prefix map (prefix stripped). `ETag` quotes stripped.
-- [ ] **`getObject` MEMORY CEILING — this is the operation whose payload size the caller does NOT control**, and the draft put the cap only on `putObject`, where the caller already controls it. In a Lambda an unbounded download is an OOM kill: no stack trace, no typed exception, no CloudWatch error entry, only a truncated invocation.
+- [x] `S3` interface, `S3Config`, `internal class DefaultS3` wired onto `aws-core`'s `AwsServiceClient` with signing name / endpoint prefix `s3`, `RestXmlErrorParser`, `doubleUriEncode = false`, `normalizeUriPath = false`, `signedBodyHeader = X_AMZ_CONTENT_SHA256`, `maxAttempts = 3`, `followRedirects = false` (inherited from M2).
+- [x] **Request/response types are NOT data classes where they carry a `ByteArray`.** `GetObjectResponse` and `PutObjectRequest` are plain classes with hand-written `equals`/`hashCode` over `contentEquals`/`contentHashCode` — **the same rule Decision 2 applies to `AttributeValue.B`/`Bs`**, which states plainly that they "must NOT be data classes". A generated `copy()`/`componentN()`/`toString()` still exposes the array, and the plan deliberately banned the pattern. They are also **not `@Serializable`**: nothing here is serialized (§2's census), and if you find yourself adding `@SerialName` to an S3 type you have wandered into bucket/list/multipart operations.
+- [x] **Every date-shaped S3 response header is carried as an unparsed `String` in v1, and no parse failure can fail a response.** State the rule once rather than deciding it per header. `Last-Modified` is IMF-fixdate pass-through; `Expires` is modelled as a timestamp but S3 returns whatever string the uploader set — frequently not a valid IMF-fixdate, which is why the AWS SDKs added a separate `ExpiresString`. v1 omits `Expires` entirely; if it is ever added it is a `String`.
+- [x] `getObject`: GET, empty body, `PayloadHash.EmptyBody`. Bind the ~10 request headers actually needed (`Range`, `If-Match`, `If-None-Match`, `If-Modified-Since`, `If-Unmodified-Since`), plus `versionId` and the `response-*` overrides as query params. Harvest into `GetObjectResponse` including the `x-amz-meta-*` prefix map (prefix stripped). `ETag` quotes stripped.
+- [x] **`getObject` MEMORY CEILING — this is the operation whose payload size the caller does NOT control**, and the draft put the cap only on `putObject`, where the caller already controls it. In a Lambda an unbounded download is an OOM kill: no stack trace, no typed exception, no CloudWatch error entry, only a truncated invocation.
   - Check `Content-Length` against `S3Config.maxBufferedDownloadBytes` (default 64 MB) and throw `S3PayloadTooLargeException` **before consuming the body**. S3 always returns `Content-Length` on GetObject.
   - **Separately** bound the bytes actually accumulated, so an absent or understated `Content-Length` cannot bypass the cap.
   - Enforce on **every retry attempt**, not once.
   - Name `Range` in the exception message — it is the documented escape hatch.
   - The config field is **split** (`maxBufferedUploadBytes` / `maxBufferedDownloadBytes`) so the asymmetry cannot be silently re-introduced.
-- [ ] **`getObject` COMPLETENESS CHECK (Decision 16).** After materializing the body, assert `body.size == contentLength` (and on a 206, that the length matches the `Content-Range` span) and throw a typed `S3IncompleteDownloadException` classified **Transient/retryable** so the existing retry loop handles it. TLS gives per-record integrity, not stream completeness; a connection dying mid-body yields a well-formed short array, and "the engine will throw" is an untested assumption on linuxArm64 at the very Ktor version this plan is bumping for Curl body defects. MockEngine cases: a short body with an honest `Content-Length`; a missing `Content-Length`.
-- [ ] `putObject`: PUT with a pre-materialized `ByteArray` body and an **explicit `Content-Length`**. Send `accept-encoding: identity`. Do **not** send `x-amz-sdk-checksum-algorithm` (AWS explicitly tells REST callers not to). Throw `S3PayloadTooLargeException` above `S3Config.maxBufferedUploadBytes` rather than allowing an OOM.
-- [ ] **`x-amz-content-sha256` is ALWAYS the real computed hex in v1. There is no size-triggered switch.** The draft proposed `unsignedPayloadThresholdBytes = 8 MB`, flipping to `UNSIGNED-PAYLOAD` above it. **Rejected**: that silently forks the request's *security class* on payload size. Against a bucket or IAM policy conditioning on `s3:x-amz-content-sha256` — AWS's documented control for exactly this — small objects succeed and large ones 403, a production failure that scales with payload size and that no fixture, MockEngine test or LocalStack run can reproduce. It is the same shape as Risks 3 and 4: passes 100% of CI, fails a subset of production. The 64 MB buffered ceiling bounds the cost of always hashing to a single SHA-256 pass over at most 64 MB, so `Always` is affordable.
+- [x] **`getObject` COMPLETENESS CHECK (Decision 16).** After materializing the body, assert `body.size == contentLength` (and on a 206, that the length matches the `Content-Range` span) and throw a typed `S3IncompleteDownloadException` classified **Transient/retryable** so the existing retry loop handles it. TLS gives per-record integrity, not stream completeness; a connection dying mid-body yields a well-formed short array, and "the engine will throw" is an untested assumption on linuxArm64 at the very Ktor version this plan is bumping for Curl body defects. MockEngine cases: a short body with an honest `Content-Length`; a missing `Content-Length`.
+- [x] `putObject`: PUT with a pre-materialized `ByteArray` body and an **explicit `Content-Length`**. Send `accept-encoding: identity`. Do **not** send `x-amz-sdk-checksum-algorithm` (AWS explicitly tells REST callers not to). Throw `S3PayloadTooLargeException` above `S3Config.maxBufferedUploadBytes` rather than allowing an OOM.
+- [x] **`x-amz-content-sha256` is ALWAYS the real computed hex in v1. There is no size-triggered switch.** The draft proposed `unsignedPayloadThresholdBytes = 8 MB`, flipping to `UNSIGNED-PAYLOAD` above it. **Rejected**: that silently forks the request's *security class* on payload size. Against a bucket or IAM policy conditioning on `s3:x-amz-content-sha256` — AWS's documented control for exactly this — small objects succeed and large ones 403, a production failure that scales with payload size and that no fixture, MockEngine test or LocalStack run can reproduce. It is the same shape as Risks 3 and 4: passes 100% of CI, fails a subset of production. The 64 MB buffered ceiling bounds the cost of always hashing to a single SHA-256 pass over at most 64 MB, so `Always` is affordable.
   - If it is ever wanted, expose it as an explicit **per-request** choice (`PayloadSigning { Always | Never | AboveSize(bytes) }` defaulting from `S3Config`), default `Always`, document the bucket-policy interaction, include the effective mode in request telemetry so a size-dependent 403 is diagnosable from a log line, and add MockEngine assertions at threshold−1 and threshold+1 bytes. `UNSIGNED-PAYLOAD` remains **mandatory and unconditional for presign only**, where the body genuinely does not exist yet.
-- [ ] `headObject` and `deleteObject`. **HeadObject has no response body by protocol**, so its errors classify from status alone (404 → NotFound, 412 → PreconditionFailed) — the AWS docs state the exact exception is not retrievable for HEAD. DeleteObject returns 204.
-- [ ] `XmlError.kt` — the ~60-line scanner specified in M2, mapped to typed exceptions: `NoSuchKeyException` (404), `NoSuchBucketException` (404), `AccessDeniedException` (403, also `HeadersNotSigned`), `InvalidObjectStateException` (403, GLACIER/DEEP_ARCHIVE), `PreconditionFailedException` (412), `NotModifiedException` (304 — **no body**), `SlowDownException` (503 → Throttling, not Transient), `PermanentRedirectException` (301 — wrong region, **never retried**), `ConditionalRequestConflictException` (409 — **retried**), plus the `S3Exception` fallback. All extend `aws-core`'s `AwsServiceException` and always capture `x-amz-request-id` **and** `x-amz-id-2`.
-- [ ] Request-side differential harness for all four operations, via the same smithy-kotlin `Interceptor` pattern M3 uses. Assert the **request line** (which is where S3-mode key encoding and `x-id` live), the header-name set, and the header values.
+- [x] `headObject` and `deleteObject`. **HeadObject has no response body by protocol**, so its errors classify from status alone (404 → NotFound, 412 → PreconditionFailed) — the AWS docs state the exact exception is not retrievable for HEAD. DeleteObject returns 204.
+- [x] `XmlError.kt` — the ~60-line scanner specified in M2, mapped to typed exceptions: `NoSuchKeyException` (404), `NoSuchBucketException` (404), `AccessDeniedException` (403, also `HeadersNotSigned`), `InvalidObjectStateException` (403, GLACIER/DEEP_ARCHIVE), `PreconditionFailedException` (412), `NotModifiedException` (304 — **no body**), `SlowDownException` (503 → Throttling, not Transient), `PermanentRedirectException` (301 — wrong region, **never retried**), `ConditionalRequestConflictException` (409 — **retried**), plus the `S3Exception` fallback. All extend `aws-core`'s `AwsServiceException` and always capture `x-amz-request-id` **and** `x-amz-id-2`.
+- [x] Request-side differential harness for all four operations, via the same smithy-kotlin `Interceptor` pattern M3 uses. Assert the **request line** (which is where S3-mode key encoding and `x-id` live), the header-name set, and the header values.
 - [ ] LocalStack integration tests: add `LocalStackContainer.Service.S3` to the container config — **no existing config enables it** (verified: `DynamoKtTests.kt:16`, `ExposedTestBase.kt:17`, `DynamoStreamTest.kt:29-30` list only DYNAMODB and DYNAMODB_STREAMS) — and set `forcePathStyle = true`, since every existing test reaches LocalStack via `getEndpointOverride` on an ephemeral localhost port. Remember Risk 2: LocalStack never verifies a signature, so these tests prove behaviour, not correctness of signing.
-- [ ] Module KDoc: the `ByteArray` object-size ceiling table (128 MB Lambda → ~30 MB objects; 256 → ~70; 512 → ~150; 1024 → ~350), and the explicit statement that a `ByteReadChannel` overload is a purely additive v2 addition.
+- [x] Module KDoc: the `ByteArray` object-size ceiling table (128 MB Lambda → ~30 MB objects; 256 → ~70; 512 → ~150; 1024 → ~350), and the explicit statement that a `ByteReadChannel` overload is a purely additive v2 addition.
 
 **Verification**:
 - (a) `./gradlew :aws:aws-s3:jvmTest` — the request differential passes for `getObject`, `putObject`, `headObject` and `deleteObject`, including the `x-id` query literal and its absence on HEAD.
@@ -1072,6 +1141,85 @@ The ordering rationale is Decision 3's, applied to a new problem. If S3-mode sig
 - (d) LocalStack integration green.
 - (e) **HARD, CREDENTIALED LIVE SMOKE — mandatory exit criterion.** Against a real bucket: `putObject` then `getObject` a key containing `` `a b/c..d/e+f/日本語` `` and assert the returned bytes are byte-identical; then a `Range` request for bytes 0-9 returns HTTP 206 with exactly those 10 bytes and a `Content-Range` header; then `headObject` returns the same ETag; then `deleteObject` and confirm a subsequent `getObject` throws `NoSuchKeyException`. **A `SignatureDoesNotMatch` on the awkward key fails the milestone** — that key is the whole point, because it is the input the `doubleUriEncode`/`normalizeUriPath` flags change.
 - (f) `./gradlew :aws:aws-s3:apiCheck` green with the dump re-committed. M3.5b adds `S3`, `S3Config`, nine exception types and four request/response pairs; the binary-compatibility check is the artifact proving this plan's "additive only, no API break" claim, so it is an explicit exit criterion on **both** halves.
+
+> **STATUS: M3.5b IS CODE-COMPLETE (2026-08-11); LocalStack (d) and the live smoke (e) are unrun.**
+> `aws-s3` carries **74 jvm / 59 macosArm64 tests, 0 failures**; Linux targets link.
+>
+> **Verification (a) is green: the request differential matches the real SDK for all four
+> operations**, on the key `a b/c..d/e+f/日本語` — request line and `x-amz-content-sha256` both,
+> including `x-id` on GET/PUT/DELETE and its **absence** on HEAD. Sabotaging HEAD to emit `x-id`
+> fails both the unit test and the differential, so the assertion is load-bearing.
+>
+> **⚠️ THIS MILESTONE BROKE A DELIBERATELY FROZEN SIGNATURE, and it needs sign-off.** M3's status
+> records that `AwsServiceClient.callRaw`'s signature was **frozen in the ABI dump**. It has gained a
+> trailing `inspectBeforeBody: ((Int, Map<String, String>) -> Unit)? = null`. Source-compatible;
+> **binary-incompatible** (the JVM descriptor gains a `Function2`).
+>
+> It was not avoidable at the S3 layer, and the reason is worth recording because the task list as
+> written cannot be satisfied without it. This section requires the download ceiling to throw
+> "**before consuming the body**" — but `callRaw` calls `response.readRawBytes()` and hands back an
+> `AwsHttpResponse` whose `body` is already a materialized `ByteArray`. A ceiling checked on the
+> returned object therefore runs *after* the allocation it exists to prevent, which is precisely the
+> OOM this section says must not happen: in Lambda that is no stack trace, no typed exception and no
+> CloudWatch error entry, only a truncated invocation. The hook is invoked between the response
+> headers arriving and the body being read — the only point where the check can do its job. **If the
+> frozen signature matters more than the ceiling being real, the alternative is to accept a ceiling
+> that only prevents returning an oversized object, and to say so in the KDoc.**
+>
+> **`aws-core` also gained `awsEnv(name)`** in M3.5a — purely additive.
+>
+> **A finding on the completeness check.** Ktor's own `MockEngine` validates `Content-Length` and
+> raises `IllegalStateException` before any client-level check can see the body, so the truncation
+> case **cannot be staged through the mock transport** — the plan's "MockEngine cases: a short body
+> with an honest Content-Length" is not achievable as written. The logic was extracted to
+> `checkDownloadComplete` and is asserted directly instead. That is not a weaker test of the logic,
+> but it does mean the *integration* of the check is unexercised, and it also reveals that on the
+> JVM the check is defence in depth rather than the primary guard. Whether the real engine notices a
+> stream that died mid-body remains engine-dependent, which is the whole reason Decision 16 exists —
+> and Curl on `linuxArm64` is both the least-tested engine here and the one that cannot run tests
+> locally.
+>
+> **Other design points:**
+> - `x-amz-content-sha256` is **always** the real computed hash. There is no size-triggered switch to
+>   `UNSIGNED-PAYLOAD`; a bucket policy conditioning on `s3:x-amz-content-sha256` would otherwise
+>   pass small objects and 403 large ones. `UNSIGNED-PAYLOAD` stays mandatory for presign only.
+> - `putObject` with `ifNoneMatch` is classified `NOT_IDEMPOTENT`: a replay after an ambiguous
+>   failure would see its own successful write and report a 412 conflict that never happened. Without
+>   `ifNoneMatch` it is an unconditional overwrite and is retried. Both directions are tested.
+> - `GetObjectResponse` and `PutObjectRequest` are **not** data classes and hand-write
+>   `equals`/`hashCode` over `contentEquals`, per Decision 2's rule for `ByteArray` carriers. Nothing
+>   is `@Serializable`.
+> - Every date-shaped header is an unparsed `String`; `Expires` is omitted entirely.
+> - The client keeps one `AwsServiceClient` **per bucket**, because S3 puts the bucket in the
+>   authority and therefore in the signed `host`. This is a difference from every other service
+>   module in the repo and is easy to miss when reading `DefaultS3` against `DefaultDynamoDb`.
+>
+> **(e) THE MANDATORY LIVE SMOKE IS GREEN AGAINST REAL S3 (2026-08-11).** Against
+> `kotlin-native-test-443844975891-us-west-2-an` in us-west-2 via the `vegasful-test` profile,
+> `LiveS3Test.liveObjectRoundTrip` does the whole sequence on the key
+> `` `a b/c..d/e+f/日本語` ``: `putObject`, `getObject` byte-identical, a `Range` read returning
+> exactly ten bytes with a `Content-Range`, `headObject` agreeing with `getObject` on the ETag,
+> `deleteObject`, and a final `getObject` throwing `NoSuchKeyException`. User metadata round-trips
+> too. **No `SignatureDoesNotMatch` on the awkward key**, which was the stated fail condition —
+> the `doubleUriEncode = false` / `normalizeUriPath = false` pair is now confirmed against S3
+> itself rather than only against the SDK's bytes.
+>
+> **The live suite is gated and the gate was verified in both directions**, because a suite that
+> silently no-ops reports exactly the same green as one that passed: with `AWSKT_LIVE_BUCKET` set the
+> four tests take **16.8 s** (the expiry case alone 6.6 s); without it they take **0.001 s**. Test
+> counts alone would not have distinguished those.
+>
+> **Credentials come from a named profile, resolved by the AWS SDK inside the test JVM** and bridged
+> into our `AwsCredentialsProvider`. This was necessary rather than stylistic: our
+> `defaultCredentialsProvider()` is environment-variables-only — no profile file, no SSO, no IMDS —
+> so there is otherwise no way to run a live test from a developer machine without exporting raw
+> keys into a shell. **Worth a follow-up:** that limitation is invisible until someone tries exactly
+> this, and it will bite again for the S3 and EventBridge live tests.
+>
+> **STILL NOT DONE:**
+> - **(d) LocalStack integration.** No existing container config enables `Service.S3`, and the tests
+>   would need `forcePathStyle = true`. Not started — and note the live smoke is the *stronger*
+>   signal, since LocalStack never verifies a signature (Risk 2).
 
 ---
 

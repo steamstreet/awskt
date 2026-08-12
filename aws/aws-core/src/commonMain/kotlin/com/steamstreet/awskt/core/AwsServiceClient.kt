@@ -130,6 +130,7 @@ public class AwsServiceClient(
         signedBodyHeader: SignedBodyHeader = SignedBodyHeader.NONE,
         doubleUriEncode: Boolean = true,
         normalizeUriPath: Boolean = true,
+        inspectBeforeBody: ((status: Int, headers: Map<String, String>) -> Unit)? = null,
     ): AwsHttpResponse {
         val invocationId = newInvocationId()
         val deadline = clock() + retryConfig.maxTotalRetryDuration.inWholeMilliseconds
@@ -177,7 +178,7 @@ public class AwsServiceClient(
 
             val response: AwsHttpResponse
             try {
-                response = send(method, path, query, signed.headers, body)
+                response = send(method, path, query, signed.headers, body, inspectBeforeBody)
             } catch (failure: Throwable) {
                 lastFailure = failure
                 val kind = classifyTransportFailure(failure)
@@ -253,6 +254,7 @@ public class AwsServiceClient(
         query: List<Pair<String, String>>,
         signedHeaders: List<Pair<String, String>>,
         body: ByteArray,
+        inspectBeforeBody: ((status: Int, headers: Map<String, String>) -> Unit)?,
     ): AwsHttpResponse {
         val builder = HttpRequestBuilder()
         builder.method = HttpMethod.parse(method)
@@ -294,6 +296,13 @@ public class AwsServiceClient(
         val responseHeaders = buildMap {
             response.headers.forEach { name, values -> put(name.lowercase(), values.joinToString(",")) }
         }
+
+        // The last point at which a caller can refuse a response without paying for it. Everything
+        // after this line has the whole body in memory, so a size check performed by the caller on
+        // the returned `AwsHttpResponse` is a check that runs *after* the allocation it exists to
+        // prevent — which is no protection at all against an OOM kill.
+        inspectBeforeBody?.invoke(response.status.value, responseHeaders)
+
         return AwsHttpResponse(response.status.value, responseHeaders, response.readRawBytes())
     }
 
