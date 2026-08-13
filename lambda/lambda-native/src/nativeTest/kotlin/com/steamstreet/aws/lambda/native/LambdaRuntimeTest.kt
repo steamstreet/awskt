@@ -15,9 +15,11 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -133,6 +135,28 @@ class LambdaRuntimeTest {
         val post = recorder.posts.single()
         assertContains(post.url.toString(), "/error")
         assertEquals("NotImplementedError", post.headers["Lambda-Runtime-Function-Error-Type"])
+    }
+
+    /**
+     * The counterpart to [reportsAThrowableThatIsNotAnException], and a carve-out from it rather
+     * than a reversal: cancellation means the scope running the loop is being torn down, so there
+     * is nothing left to report against and reporting anyway attributes a shutdown to the handler's
+     * code. Remove the `CancellationException` catch and the runtime POSTs a function error here.
+     */
+    @Test
+    fun doesNotReportCancellationAsAFunctionError() = runBlocking {
+        val recorder = Recorder()
+        val runtime = LambdaRuntime(
+            { throw CancellationException("scope cancelled") },
+            clientFor(recorder)
+        )
+
+        assertFailsWith<CancellationException> { runtime.processNextInvocation(BASE_URL) }
+
+        assertTrue(
+            recorder.posts.isEmpty(),
+            "cancellation must not be POSTed to /error, but was: ${recorder.posts.map { it.url }}"
+        )
     }
 
     /**

@@ -3,6 +3,7 @@ package com.steamstreet.awskt.core
 import com.steamstreet.awskt.signing.AwsCredentials
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -73,6 +74,12 @@ public class CredentialsProviderChain(
         for (provider in providers) {
             try {
                 return provider.resolve()
+            } catch (cancellation: CancellationException) {
+                // A cancelled scope is not "this provider had nothing to offer". Treating it as a
+                // per-provider failure walks the rest of the chain — doing more I/O on the way —
+                // and then reports AwsCredentialsNotFoundException, which blames the environment
+                // for what was actually a caller that went away.
+                throw cancellation
             } catch (e: Throwable) {
                 if (firstFailure == null) firstFailure = e else firstFailure.addSuppressed(e)
                 if (tried.isNotEmpty()) tried.append(", ")

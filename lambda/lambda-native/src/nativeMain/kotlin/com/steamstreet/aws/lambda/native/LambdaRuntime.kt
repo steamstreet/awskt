@@ -16,6 +16,7 @@ import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonArray
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
 
 /**
@@ -138,6 +139,14 @@ public class LambdaRuntime internal constructor(
                 contentType(ContentType.Application.Json)
                 setBody(result)
             }
+        } catch (cancellation: CancellationException) {
+            // A narrow carve-out from the Throwable catch below, and *only* that: cancellation means
+            // the scope running this loop is being torn down, so there is no invocation left to
+            // report against and the runtime must unwind rather than tell Lambda the function
+            // failed. Reporting it would attribute a shutdown to the handler's code.
+            //
+            // This does not reopen the catch below to `Exception` — see the comment there.
+            throw cancellation
         } catch (t: Throwable) {
             // Throwable, not Exception. A handler that throws an Error — StackOverflowError from a
             // runaway recursion, or any of the Kotlin/Native runtime's own errors — would otherwise

@@ -2,6 +2,7 @@ package com.steamstreet.awskt.core
 
 import com.steamstreet.awskt.signing.AwsCredentials
 import kotlinx.coroutines.test.runTest
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -77,6 +78,28 @@ class CredentialsTest {
         }
         assertTrue(error.message!!.contains("Tried:"))
         assertFalse(SECRET in error.stackTraceToString())
+    }
+
+    /**
+     * The chain catches `Throwable` per provider so that one broken provider cannot sink the rest.
+     * A cancelled scope is not a broken provider: falling through would do the remaining providers'
+     * I/O after the caller has gone away, and would then report `AwsCredentialsNotFoundException` —
+     * blaming the environment for a caller that was cancelled. Remove the `CancellationException`
+     * carve-out in `CredentialsProviderChain.resolve` and this test fails on both counts.
+     */
+    @Test
+    fun cancellationStopsTheChainInsteadOfFallingThrough() = runTest {
+        var laterProvidersConsulted = 0
+        val cancelling = AwsCredentialsProvider { throw CancellationException("scope cancelled") }
+        val working = AwsCredentialsProvider {
+            laterProvidersConsulted++
+            AwsCredentials("AKID", SECRET)
+        }
+
+        assertFailsWith<CancellationException> {
+            CredentialsProviderChain(cancelling, working).resolve()
+        }
+        assertEquals(0, laterProvidersConsulted, "a cancelled scope must not walk the chain")
     }
 
     @Test

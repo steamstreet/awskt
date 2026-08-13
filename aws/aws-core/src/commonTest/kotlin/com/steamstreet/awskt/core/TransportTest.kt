@@ -8,7 +8,12 @@ import io.ktor.client.request.HttpRequestData
 import io.ktor.http.Headers
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -226,6 +231,55 @@ class TransportIdempotencyTest {
 
         client.callRaw("POST", operation = "UpdateItem", safety = OperationSafety.NOT_IDEMPOTENT)
         assertEquals(2, call)
+    }
+}
+
+/**
+ * Cancellation is not a transport failure. `classifyTransportFailure` answers AMBIGUOUS for
+ * anything it does not recognise, and AMBIGUOUS on an IDEMPOTENT operation retries — so without
+ * the `CancellationException` carve-out in the send catch, cancelling a scope makes the client
+ * answer by issuing the request again. Remove that carve-out and both tests here fail.
+ */
+class TransportCancellationTest {
+
+    @Test
+    fun cancellingTheScopeStopsTheClientRatherThanRetrying() = runTest {
+        val harness = Harness()
+        val inFlight = CompletableDeferred<Unit>()
+        val client = harnessClient(harness) {
+            inFlight.complete(Unit)
+            awaitCancellation()
+        }
+
+        val call = launch { client.callRaw("POST", operation = "GetItem") }
+        inFlight.await()
+        call.cancelAndJoin()
+
+        assertEquals(1, harness.requests.size, "a cancelled scope must not produce a second request")
+        // The sleep hook records without suspending, so it runs even when every other suspension
+        // point is already cancelled: it registers a retry the request count could miss if the
+        // Ktor pipeline short-circuits before reaching the engine.
+        assertTrue(harness.sleeps.isEmpty(), "cancellation must not schedule a retry backoff")
+    }
+
+    /**
+     * The same rule at the exact catch site: a cancellation surfacing out of `send` — which is what
+     * a cancelled scope produces at the suspension point inside it — must propagate untouched.
+     */
+    @Test
+    fun aCancellationOutOfSendIsNeitherClassifiedNorRetried() = runTest {
+        val harness = Harness()
+        var sends = 0
+        val client = harnessClient(harness) {
+            sends++
+            throw CancellationException("scope cancelled")
+        }
+
+        assertFailsWith<CancellationException> {
+            client.callRaw("POST", operation = "GetItem", safety = OperationSafety.IDEMPOTENT)
+        }
+        assertEquals(1, sends, "an idempotent operation must still not retry a cancellation")
+        assertTrue(harness.sleeps.isEmpty())
     }
 }
 

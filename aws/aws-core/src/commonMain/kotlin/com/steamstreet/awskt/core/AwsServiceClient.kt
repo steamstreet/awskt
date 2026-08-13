@@ -15,6 +15,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.content.OutgoingContent
 import kotlinx.coroutines.delay
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.random.Random
 
 /** A raw, already-classified AWS response. */
@@ -192,6 +193,13 @@ public class AwsServiceClient(
             val response: AwsHttpResponse
             try {
                 response = send(method, path, query, signed.headers, body, inspectBeforeBody)
+            } catch (cancellation: CancellationException) {
+                // Cancellation is not a transport failure, and must never reach the classifier:
+                // `classifyTransportFailure` answers AMBIGUOUS for anything it does not recognise,
+                // and AMBIGUOUS on an IDEMPOTENT operation retries. So a cancelled scope would be
+                // answered by sending the request again — the client keeps issuing calls precisely
+                // when the caller has said to stop.
+                throw cancellation
             } catch (failure: Throwable) {
                 lastFailure = failure
                 val kind = classifyTransportFailure(failure)
