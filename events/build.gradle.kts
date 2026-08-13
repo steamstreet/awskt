@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 plugins {
     id("steamstreet-common.multiplatform-library-conventions")
 }
@@ -30,6 +32,14 @@ kotlin {
          * Built by hand rather than through `applyDefaultHierarchyTemplate`: the default template
          * has no jvm+native group, and adding one there would restructure every other source set
          * in the module as a side effect.
+         *
+         * Note what the hand-built edges below cost us: the first manual `dependsOn` in a module
+         * switches the default hierarchy template **off**. `jvmMain` survives that because the
+         * `jvm()` target creates it, but every intermediate set the template used to supply —
+         * `nativeMain`, `linuxMain`, `appleMain` — stops existing. Wiring this source set through
+         * `nativeMain` therefore silently compiled nothing: the set was real, and attached to no
+         * compilation. Attach to the targets' own default source sets instead; those are created
+         * by the targets, so they are there whether the template is on or off.
          */
         val jvmNativeMain by creating {
             dependsOn(commonMain.get())
@@ -52,8 +62,17 @@ kotlin {
             }
         }
 
-        nativeMain {
-            dependsOn(jvmNativeMain)
+        /**
+         * Every native target's main compilation, and deliberately not `js`: `aws-eventbridge` has
+         * no `js` target, so leaking this set into the js compilation breaks `compileKotlinJs`.
+         *
+         * Driven off the target list rather than naming `linuxX64Main`/`linuxArm64Main`/
+         * `macosArm64Main` by hand so that declaring a new native target above wires it up here
+         * too. Hand-written names would leave a new target quietly missing these classes, which is
+         * the exact failure this replaced.
+         */
+        targets.withType<KotlinNativeTarget>().configureEach {
+            compilations.getByName("main").defaultSourceSet.dependsOn(jvmNativeMain)
         }
 
         commonMain {

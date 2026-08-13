@@ -1570,6 +1570,8 @@ This is one atomic merge across `dynamo`, `dynamokt`, `dynamokt-exposed` **and `
 
 **Verification**: `./gradlew :events:build :test:jvmTest` green including the existing EventBridge rule-matching tests, plus request- and response-differential assertions for PutEvents. `:events:jsBrowserTest` (or at minimum `compileKotlinJs`) still passes.
 
+**`compileKotlinJs` is only half the verification, and it is the half that cannot fail usefully.** It proves `jvmNativeMain` is *excluded* from `js`; nothing in the line above proves it is *included* in native. Those are independent, and a green build is consistent with the source set reaching no native compilation at all — which is exactly what happened (see STATUS). The inclusion half must be checked against the emitted artifact, not the build's exit code: `events.klib.api` must list `EventBridgeSubmitter` and `postEvent` under `// Targets: [native]`, which `checkLegacyAbi` enforces on every build.
+
 > **STATUS: M6 IS COMPLETE (2026-08-11).**
 > `aws/aws-eventbridge` exists with **17 jvm / 13 macosArm64 tests, 0 failures**, and `linuxX64` /
 > `linuxArm64` link. `events` carries the three native targets, and `test` no longer depends on the
@@ -1585,10 +1587,37 @@ This is one atomic merge across `dynamo`, `dynamokt`, `dynamokt-exposed` **and `
 >
 > **`jvmNativeMain` was built by hand, not with `applyDefaultHierarchyTemplate`.** The task list
 > offered both; the manual `dependsOn` won because the default template has no jvm+native group and
-> adding one restructures every other source set in the module as a side effect. It is three lines:
-> `jvmNativeMain.dependsOn(commonMain)`, then `jvmMain` and `nativeMain` both `dependsOn` it.
-> `compileKotlinJs` still passes, which is also the proof that `jvmNativeMain` is correctly excluded
+> adding one restructures every other source set in the module as a side effect.
+>
+> > **CORRECTION (2026-08-12): as originally written, the native half of this did nothing.** The
+> > wiring was `jvmNativeMain.dependsOn(commonMain)`, then `jvmMain` and `nativeMain` both
+> > `dependsOn` it — and `nativeMain` was an orphan. The first manual `dependsOn` in a module turns
+> > the default hierarchy template **off**; `jvmMain` survives that because the `jvm()` target
+> > creates it, but `nativeMain` is *only* ever created by the template. So the build was
+> > configuring a source set attached to no compilation, and said so on every run: "The Kotlin
+> > source set nativeMain was configured but not added to any Kotlin compilation." The klib proved
+> > it — `events/build/classes/kotlin/linuxX64/main/klib/` contained `ApplicationEventPoster` and
+> > `EventSchema` from `commonMain` and **zero** occurrences of `EventBridgeSubmitter`. For the
+> > entire time this section read "COMPLETE", a native Lambda could not post an event, which is the
+> > one thing the milestone exists to deliver.
+> >
+> > Fixed by attaching `jvmNativeMain` to each native target's own default source set
+> > (`targets.withType<KotlinNativeTarget>().configureEach { compilations.getByName("main").defaultSourceSet.dependsOn(jvmNativeMain) }`)
+> > rather than to the template-supplied `nativeMain`. Target-created source sets exist whether the
+> > template is on or off. Driving it off the target list rather than naming the three source sets
+> > by hand means a fourth native target is wired automatically instead of silently missing the
+> > classes. `events/build.gradle.kts` still emits "Default Kotlin Hierarchy Template Not Applied
+> > Correctly" — that warning is expected and inherent to the manual-`dependsOn` choice above; the
+> > actionable one, about `nativeMain`, is gone.
+>
+> `compileKotlinJs` still passes, which is the proof that `jvmNativeMain` is correctly excluded
 > from `js` — it references `aws-eventbridge`, which has no `js` target, so a leak would not compile.
+> It is **not** proof of the converse, and it was originally offered as though it were: exclusion
+> from `js` and inclusion in native are independent, and the build was green while the second was
+> false. Inclusion is now pinned by `events.klib.api`, which lists `EventBridgeSubmitter`, `poster`,
+> `postEvent` and the `post` extensions under `// Targets: [native]`. Verified by sabotage:
+> restoring `nativeMain { dependsOn(jvmNativeMain) }` makes `checkLegacyAbi` fail with those
+> declarations as a deletion diff.
 >
 > **More moved to `jvmNativeMain` than this section lists, and it should.** The task names only
 > `EventBridgeSubmitter.kt`, but `EventPoster.kt`, `ApplicationEvent.kt` and `EventSchemaJvm.kt` are
@@ -1637,6 +1666,13 @@ This is one atomic merge across `dynamo`, `dynamokt`, `dynamokt-exposed` **and `
 > **ABI:** `test.api` sheds ~40 SDK-typed methods as `EventBridgeMock` stops delegating to
 > `EventBridgeClient`; `events.api` re-types the submitter's constructor; `events.klib.api` gains the
 > three native targets; `aws-eventbridge/api/` is new. All expected, all reviewable.
+>
+> > **CORRECTION (2026-08-12):** "`events.klib.api` gains the three native targets" was true only of
+> > the dump's `// Targets:` header. The body gained nothing — no `EventBridgeSubmitter`, no
+> > `postEvent` — because none of it was compiled for native. The reviewable diff this bullet points
+> > at was itself the evidence that the milestone had not landed, and it read as routine instead.
+> > **A klib ABI dump that omits the milestone's headline class is a finding, not a formality.** The
+> > regenerated dump now carries those declarations under `// Targets: [native]`.
 >
 > **Still not covered:** `events` itself has no tests on any platform, so `EventBridgeSubmitter`'s
 > re-typing is verified only by the mock's contract and the differential, not by a test of the

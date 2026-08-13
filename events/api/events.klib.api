@@ -1,5 +1,6 @@
 // Klib ABI Dump
 // Targets: [js, linuxArm64, linuxX64, macosArm64]
+// Alias: native => [linuxArm64, linuxX64, macosArm64]
 // Rendering settings:
 // - Signature version: 2
 // - Show manifest properties: true
@@ -43,3 +44,31 @@ final val com.steamstreet.events/eventSchemaJson // com.steamstreet.events/event
     final fun <get-eventSchemaJson>(): kotlinx.serialization.json/Json // com.steamstreet.events/eventSchemaJson.<get-eventSchemaJson>|<get-eventSchemaJson>(){}[0]
 
 final inline fun <#A: reified kotlin/Any?> com.steamstreet.events/eventSchema(kotlin/String, kotlin/String? = ...): com.steamstreet.events/EventSchema<#A> // com.steamstreet.events/eventSchema|eventSchema(kotlin.String;kotlin.String?){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
+final class com.steamstreet.events/EventBridgeSubmitter : com.steamstreet.events/ApplicationEventPoster { // com.steamstreet.events/EventBridgeSubmitter|null[0]
+    constructor <init>(kotlin/String, kotlin/String, com.steamstreet.awskt.eventbridge/EventBridgeApi = ...) // com.steamstreet.events/EventBridgeSubmitter.<init>|<init>(kotlin.String;kotlin.String;com.steamstreet.awskt.eventbridge.EventBridgeApi){}[0]
+
+    final suspend fun post(kotlin.collections/Collection<com.steamstreet.events/Event>): kotlin.collections/List<kotlin/String?> // com.steamstreet.events/EventBridgeSubmitter.post|post(kotlin.collections.Collection<com.steamstreet.events.Event>){}[0]
+    final suspend fun post(kotlin/String, kotlin/String, kotlin/String?): kotlin/String? // com.steamstreet.events/EventBridgeSubmitter.post|post(kotlin.String;kotlin.String;kotlin.String?){}[0]
+}
+
+// Targets: [native]
+final var com.steamstreet.events/poster // com.steamstreet.events/poster|{}poster[0]
+    final fun <get-poster>(): com.steamstreet.events/ApplicationEventPoster // com.steamstreet.events/poster.<get-poster>|<get-poster>(){}[0]
+    final fun <set-poster>(com.steamstreet.events/ApplicationEventPoster) // com.steamstreet.events/poster.<set-poster>|<set-poster>(com.steamstreet.events.ApplicationEventPoster){}[0]
+
+// Targets: [native]
+final suspend fun <#A: kotlin/Any?> (com.steamstreet.events/ApplicationEventPoster).com.steamstreet.events/post(com.steamstreet.events/EventSchema<#A>, #A, kotlin/String? = ...): kotlin/String? // com.steamstreet.events/post|post@com.steamstreet.events.ApplicationEventPoster(com.steamstreet.events.EventSchema<0:0>;0:0;kotlin.String?){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
+final suspend fun <#A: kotlin/Any?> (com.steamstreet.events/ApplicationEventPoster).com.steamstreet.events/post(com.steamstreet.events/EventSchema<#A>, kotlin.collections/Collection<#A>, kotlin/String? = ...): kotlin.collections/List<kotlin/String?> // com.steamstreet.events/post|post@com.steamstreet.events.ApplicationEventPoster(com.steamstreet.events.EventSchema<0:0>;kotlin.collections.Collection<0:0>;kotlin.String?){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
+final suspend fun <#A: kotlin/Any?> (com.steamstreet.events/EventSchema<#A>).com.steamstreet.events/post(#A, kotlin/String? = ..., com.steamstreet.events/ApplicationEventPoster = ...): kotlin/String? // com.steamstreet.events/post|post@com.steamstreet.events.EventSchema<0:0>(0:0;kotlin.String?;com.steamstreet.events.ApplicationEventPoster){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
+final suspend fun <#A: kotlin/Any?> (com.steamstreet.events/EventSchema<#A>).com.steamstreet.events/post(kotlin.collections/Collection<#A>, kotlin/String? = ..., com.steamstreet.events/ApplicationEventPoster = ...): kotlin.collections/List<kotlin/String?> // com.steamstreet.events/post|post@com.steamstreet.events.EventSchema<0:0>(kotlin.collections.Collection<0:0>;kotlin.String?;com.steamstreet.events.ApplicationEventPoster){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
+final suspend fun com.steamstreet.events/postEvent(kotlin/String, kotlin/String, kotlin/String? = ...): kotlin/String? // com.steamstreet.events/postEvent|postEvent(kotlin.String;kotlin.String;kotlin.String?){}[0]
