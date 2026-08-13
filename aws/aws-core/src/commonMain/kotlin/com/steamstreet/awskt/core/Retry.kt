@@ -8,20 +8,29 @@ import kotlin.time.Duration.Companion.seconds
 public enum class RetryErrorType { TRANSIENT, THROTTLING }
 
 /**
- * Whether an operation may be retried when we cannot tell whether the request reached AWS.
+ * Whether a call may be retried when we cannot tell whether the request reached AWS.
  *
- * This is per-operation, not per-client, because it is a property of what the request *does*.
+ * Per-**request**, not per-client and not even per-operation: `PutItem` is replayable, and the same
+ * `PutItem` carrying `ConditionExpression` or `ReturnValues=ALL_OLD` is not. A service module that
+ * picks this value from the operation name alone will be wrong for the operations whose safety the
+ * caller decides — see `aws-dynamodb`'s `writeSafety` and `aws-s3`'s `PutObject`/`ifNoneMatch`.
  */
 public enum class OperationSafety {
-    /** Replaying is harmless: the second call produces the same end state as the first. */
+    /** Replaying is harmless: the second call produces the same end state *and the same answer*. */
     IDEMPOTENT,
 
     /**
-     * Replaying may double-apply.
+     * Replaying may double-apply, or may report a failure for work that actually succeeded.
      *
-     * `UpdateItem` is the motivating case: `MutableItem` emits an unconditional numeric `ADD` and
-     * a `list_append`, and `dynamokt-exposed` emits `ADD` too. If the bytes reached DynamoDB and
-     * the socket died before the response came back, a retry increments twice.
+     * `UpdateItem` is the motivating case for double-application: `MutableItem` emits an
+     * unconditional numeric `ADD` and a `list_append`, and `dynamokt-exposed` emits `ADD` too. If
+     * the bytes reached DynamoDB and the socket died before the response came back, a retry
+     * increments twice.
+     *
+     * The second failure mode does not touch the end state at all. A conditional create replayed
+     * after its own successful write fails the condition and surfaces
+     * `ConditionalCheckFailedException`; a replayed `CreateTable` surfaces `ResourceInUseException`.
+     * Both are the transport lying to the caller about a write that landed.
      */
     NOT_IDEMPOTENT,
 }

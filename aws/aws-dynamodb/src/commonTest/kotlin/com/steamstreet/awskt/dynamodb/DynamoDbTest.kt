@@ -3,6 +3,7 @@ package com.steamstreet.awskt.dynamodb
 import com.steamstreet.dynamokt.AttributeValue
 import com.steamstreet.dynamokt.AttributeValueSerializer
 import com.steamstreet.awskt.core.AwsServiceClient
+import com.steamstreet.awskt.core.OperationSafety
 import com.steamstreet.awskt.core.StaticCredentialsProvider
 import com.steamstreet.awskt.core.awsJson
 import com.steamstreet.awskt.core.callJson
@@ -368,6 +369,193 @@ class RequestSerializationTest {
         }
         queryDb.query(QueryRequest("t"))
         assertEquals(2, queries.requests.size, "a read is safe to replay")
+    }
+}
+
+/**
+ * Replay safety is a property of the **request**, not of the operation name.
+ *
+ * `putItem` and `deleteItem` were hardcoded `IDEMPOTENT` on the reasoning "a full overwrite:
+ * replaying produces the same end state". True for the request shape that reasoning was written
+ * against, and false for two others the same types expose — a condition expression and a
+ * `ReturnValues` that reads prior state. Each test below fails against the hardcoded version.
+ */
+class AmbiguousWriteSafetyTest {
+
+    /** DynamoDB's reply to a conditional create whose *own earlier attempt* already wrote the item. */
+    private val conditionFailed =
+        """{"__type":"com.amazon.coral.service#ConditionalCheckFailedException","Message":"cond"}"""
+
+    private val key = mapOf("pk" to AttributeValue.S("a"))
+
+    /**
+     * Runs [call] against a transport that dies ambiguously on every attempt, and reports how many
+     * attempts were made. One means the request was classified NOT_IDEMPOTENT; more means it was
+     * replayed. `RuntimeException("read timed out")` matches none of `classifyTransportFailure`'s
+     * provably-not-sent markers, so it lands in the AMBIGUOUS bucket — the one this governs.
+     */
+    private suspend fun attemptsUnderAmbiguousFailure(call: suspend (DynamoDb) -> Unit): Int {
+        val harness = DynamoHarness()
+        val db = harnessDynamoDb(harness) { throw RuntimeException("read timed out") }
+        assertFailsWith<RuntimeException> { call(db) }
+        return harness.requests.size
+    }
+
+    /**
+     * The headline failure, end to end: the write **succeeded** on AWS, its response was lost, and
+     * the replay is refused by the condition the first attempt itself satisfied.
+     *
+     * The assertion that matters is the exception *type*. A caller guarding a create with
+     * `attribute_not_exists` treats `ConditionalCheckFailedException` as "somebody else got there
+     * first" — which is exactly what it is for, and exactly what did not happen here. Surfacing the
+     * transport error instead is honest: the call's outcome is genuinely unknown.
+     */
+    @Test
+    fun aConditionalCreateNeverReportsAConflictItsOwnRetryCaused() = runTest {
+        val harness = DynamoHarness()
+        var call = 0
+        val db = harnessDynamoDb(harness) {
+            if (call++ == 0) throw RuntimeException("read timed out")
+            conditionFailed to HttpStatusCode.BadRequest
+        }
+
+        // Deliberately `Throwable`, not `RuntimeException`: `DynamoDbException` descends from
+        // `Exception`, so the narrower form would fail on the *type mismatch* and never reach the
+        // assertion that names the actual defect.
+        val failure = assertFailsWith<Throwable> {
+            db.putItem(
+                PutItemRequest("t", key, conditionExpression = "attribute_not_exists(pk)"),
+            )
+        }
+
+        assertTrue(
+            failure !is ConditionalCheckFailedException,
+            "the caller must not be told its create lost a race it actually won; got $failure",
+        )
+        assertEquals("read timed out", failure.message)
+        assertEquals(1, harness.requests.size, "the conditional write must not be replayed")
+    }
+
+    @Test
+    fun aConditionalPutItemIsNotReplayed() = runTest {
+        assertEquals(
+            1,
+            attemptsUnderAmbiguousFailure {
+                it.putItem(PutItemRequest("t", key, conditionExpression = "attribute_not_exists(pk)"))
+            },
+        )
+    }
+
+    @Test
+    fun anUnconditionalPutItemIsStillReplayed() = runTest {
+        // The regression guard on the other side: fixing the conditional case must not make every
+        // ordinary overwrite give up on the first blip.
+        assertTrue(attemptsUnderAmbiguousFailure { it.putItem(PutItemRequest("t", key)) } > 1)
+    }
+
+    /**
+     * `ALL_OLD` does not change the end state — it changes the **answer**. The first attempt would
+     * have returned the prior item; the replay returns what the first attempt just wrote.
+     */
+    @Test
+    fun aPutItemReturningAllOldIsNotReplayed() = runTest {
+        assertEquals(
+            1,
+            attemptsUnderAmbiguousFailure {
+                it.putItem(PutItemRequest("t", key, returnValues = ReturnValue.AllOld))
+            },
+        )
+    }
+
+    @Test
+    fun aPutItemReturningNoneIsStillReplayed() = runTest {
+        assertTrue(
+            attemptsUnderAmbiguousFailure {
+                it.putItem(PutItemRequest("t", key, returnValues = ReturnValue.None))
+            } > 1,
+        )
+    }
+
+    @Test
+    fun aConditionalDeleteItemIsNotReplayed() = runTest {
+        assertEquals(
+            1,
+            attemptsUnderAmbiguousFailure {
+                it.deleteItem(DeleteItemRequest("t", key, conditionExpression = "version = :v"))
+            },
+        )
+    }
+
+    @Test
+    fun aDeleteItemReturningAllOldIsNotReplayed() = runTest {
+        assertEquals(
+            1,
+            attemptsUnderAmbiguousFailure {
+                it.deleteItem(DeleteItemRequest("t", key, returnValues = ReturnValue.AllOld))
+            },
+        )
+    }
+
+    @Test
+    fun anUnconditionalDeleteItemIsStillReplayed() = runTest {
+        assertTrue(attemptsUnderAmbiguousFailure { it.deleteItem(DeleteItemRequest("t", key)) } > 1)
+    }
+
+    /**
+     * Same ambiguity, control plane: the replay of a create that landed returns
+     * `ResourceInUseException`, which reads as "that name is taken" rather than "you already own
+     * it".
+     */
+    @Test
+    fun createTableIsNotReplayed() = runTest {
+        assertEquals(
+            1,
+            attemptsUnderAmbiguousFailure {
+                it.createTable(
+                    CreateTableRequest(
+                        tableName = "t",
+                        attributeDefinitions = listOf(AttributeDefinition("pk", ScalarAttributeType.S)),
+                        keySchema = listOf(KeySchemaElement("pk", KeyType.Hash)),
+                    ),
+                )
+            },
+        )
+    }
+
+    /** Mirror image: a replayed delete reports `ResourceNotFoundException` for a table it removed. */
+    @Test
+    fun deleteTableIsNotReplayed() = runTest {
+        assertEquals(1, attemptsUnderAmbiguousFailure { it.deleteTable(DeleteTableRequest("t")) })
+    }
+
+    /** `describeTable` reads; the fix must not have swept the whole control plane up with it. */
+    @Test
+    fun describeTableIsStillReplayed() = runTest {
+        assertTrue(
+            attemptsUnderAmbiguousFailure { it.describeTable(DescribeTableRequest("t")) } > 1,
+        )
+    }
+
+    /** The rule itself, stated once, over every [ReturnValue]. */
+    @Test
+    fun writeSafetyIsDerivedFromConditionAndReturnValues() {
+        assertEquals(OperationSafety.IDEMPOTENT, writeSafety(null, null))
+        assertEquals(OperationSafety.IDEMPOTENT, writeSafety(null, ReturnValue.None))
+
+        // Post-state: a replay of an unconditional write reproduces it exactly.
+        assertEquals(OperationSafety.IDEMPOTENT, writeSafety(null, ReturnValue.AllNew))
+        assertEquals(OperationSafety.IDEMPOTENT, writeSafety(null, ReturnValue.UpdatedNew))
+
+        // Prior state: the replay reads what the first attempt wrote.
+        assertEquals(OperationSafety.NOT_IDEMPOTENT, writeSafety(null, ReturnValue.AllOld))
+        assertEquals(OperationSafety.NOT_IDEMPOTENT, writeSafety(null, ReturnValue.UpdatedOld))
+
+        // A condition dominates, whatever the ReturnValues.
+        assertEquals(OperationSafety.NOT_IDEMPOTENT, writeSafety("attribute_not_exists(pk)", null))
+        assertEquals(
+            OperationSafety.NOT_IDEMPOTENT,
+            writeSafety("attribute_not_exists(pk)", ReturnValue.AllNew),
+        )
     }
 }
 

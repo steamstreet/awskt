@@ -134,20 +134,27 @@ internal class DefaultDynamoDb(
         call("GetItem", request, GetItemRequest.serializer(), GetItemResponse.serializer(), OperationSafety.IDEMPOTENT)
 
     override suspend fun putItem(request: PutItemRequest): PutItemResponse =
-        // A full overwrite: replaying produces the same end state.
-        call("PutItem", request, PutItemRequest.serializer(), PutItemResponse.serializer(), OperationSafety.IDEMPOTENT)
+        // An unconditional overwrite replays to the same end state; a conditional one does not.
+        // See [writeSafety].
+        call(
+            "PutItem", request, PutItemRequest.serializer(), PutItemResponse.serializer(),
+            writeSafety(request.conditionExpression, request.returnValues),
+        )
 
     override suspend fun updateItem(request: UpdateItemRequest): UpdateItemResponse =
-        // NOT idempotent: `ADD` and `list_append` double-apply if the first attempt landed.
+        // Unconditionally NOT idempotent, and deliberately not routed through `writeSafety`: `ADD`
+        // and `list_append` double-apply if the first attempt landed, whatever the request's
+        // condition and `ReturnValues` say.
         call(
             "UpdateItem", request, UpdateItemRequest.serializer(), UpdateItemResponse.serializer(),
             OperationSafety.NOT_IDEMPOTENT,
         )
 
     override suspend fun deleteItem(request: DeleteItemRequest): DeleteItemResponse =
+        // Same rule as `putItem` — a conditional delete is not replayable. See [writeSafety].
         call(
             "DeleteItem", request, DeleteItemRequest.serializer(), DeleteItemResponse.serializer(),
-            OperationSafety.IDEMPOTENT,
+            writeSafety(request.conditionExpression, request.returnValues),
         )
 
     override suspend fun query(request: QueryRequest): QueryResponse =
@@ -189,11 +196,16 @@ internal class DefaultDynamoDb(
         )
 
     override suspend fun createTable(request: CreateTableRequest): CreateTableResponse =
-        // Creating a table that already exists returns ResourceInUseException rather than
-        // duplicating it, so a replay is safe.
+        // NOT idempotent, for the reason `putItem` with a condition is not. It is true that a
+        // second CreateTable cannot duplicate the table — but that is safety of the *end state*,
+        // not of the *result the caller sees*. If the first attempt created the table and the
+        // response was lost mid-flight, the replay returns ResourceInUseException, and the caller
+        // is told its create failed when the table exists and is theirs. Reporting a table it
+        // owns as one somebody else already took is the worse of the two failures, and it is
+        // silent: nothing distinguishes it from a genuine name collision.
         call(
             "CreateTable", request, CreateTableRequest.serializer(), CreateTableResponse.serializer(),
-            OperationSafety.IDEMPOTENT,
+            OperationSafety.NOT_IDEMPOTENT,
         )
 
     override suspend fun describeTable(request: DescribeTableRequest): DescribeTableResponse =
@@ -203,9 +215,11 @@ internal class DefaultDynamoDb(
         )
 
     override suspend fun deleteTable(request: DeleteTableRequest): DeleteTableResponse =
+        // Mirror image of `createTable`: the replay of a delete that already landed returns
+        // ResourceNotFoundException, which is indistinguishable from "the table was never there".
         call(
             "DeleteTable", request, DeleteTableRequest.serializer(), DeleteTableResponse.serializer(),
-            OperationSafety.IDEMPOTENT,
+            OperationSafety.NOT_IDEMPOTENT,
         )
 
     override fun close() {
@@ -215,6 +229,46 @@ internal class DefaultDynamoDb(
     private companion object {
         val json: Json = com.steamstreet.awskt.core.awsJson
     }
+}
+
+/**
+ * Whether a single-item write may be replayed after an **ambiguous** transport failure — one where
+ * the bytes may or may not have reached DynamoDB.
+ *
+ * Derived from the request, not from the operation name, because that is where the property
+ * actually lives. `PutItem` was previously hardcoded [OperationSafety.IDEMPOTENT] on the reasoning
+ * "a full overwrite: replaying produces the same end state". That reasoning holds for exactly the
+ * request shape it was written against — no condition, no returned values — and silently fails for
+ * the other two:
+ *
+ * - **A condition expression.** A create guarded by `attribute_not_exists(pk)` succeeds on AWS, the
+ *   response is lost mid-flight, the replay evaluates the condition against the item the *first*
+ *   attempt wrote, and the caller gets `ConditionalCheckFailedException` for a write that
+ *   succeeded. That is not a false alarm the caller can safely ignore: for an idempotency guard or
+ *   an optimistic-concurrency check, "somebody else got there first" is precisely the signal it is
+ *   there to produce, so the caller does the thing it does on a genuine lost race.
+ * - **`ReturnValues` that read prior state.** `ALL_OLD` on the first attempt returns the item as it
+ *   was; on the replay it returns what the first attempt just wrote. Same end state, different
+ *   answer — and the answer is the whole reason the caller asked.
+ *
+ * `ALL_NEW` / `UPDATED_NEW` describe the post-state, which a replay of an unconditional write
+ * reproduces exactly, so they stay replayable. The `when` is exhaustive without an `else` on
+ * purpose: a new [ReturnValue] entry must fail to compile here rather than default to replayable.
+ *
+ * `aws-s3` already reasons this way for `PutObject` with `ifNoneMatch`; this is the same rule
+ * arriving in the module that has three ways to trip it instead of one.
+ */
+internal fun writeSafety(
+    conditionExpression: String?,
+    returnValues: ReturnValue?,
+): OperationSafety {
+    if (conditionExpression != null) return OperationSafety.NOT_IDEMPOTENT
+
+    val readsPriorState = when (returnValues) {
+        ReturnValue.AllOld, ReturnValue.UpdatedOld -> true
+        ReturnValue.AllNew, ReturnValue.UpdatedNew, ReturnValue.None, null -> false
+    }
+    return if (readsPriorState) OperationSafety.NOT_IDEMPOTENT else OperationSafety.IDEMPOTENT
 }
 
 /**
