@@ -117,6 +117,19 @@ public class AwsServiceClient(
      * @param path already percent-encoded, and **never re-encoded here**. The byte-identical string
      *   used to build the outbound URL is the string that was signed.
      * @param safety whether an ambiguous mid-flight failure may be retried.
+     * @param inspectBeforeBody called with the status and response headers **after they arrive but
+     *   before the body is read**, so a caller can reject a response without paying to materialize
+     *   it. Throwing from here aborts the call. This is the only point at which that is possible:
+     *   everything past it has the whole body in memory, so a check made on the returned
+     *   [AwsHttpResponse] runs after the allocation it exists to prevent. `aws-s3` uses it for
+     *   `maxBufferedDownloadBytes`, where the failure being prevented is an OOM kill inside Lambda —
+     *   which produces no stack trace, no typed exception and no CloudWatch error entry, only a
+     *   truncated invocation.
+     *
+     *   This parameter was added in M3.5b, *after* this signature was frozen in the ABI dump at M2.
+     *   Source-compatible, binary-incompatible. Ratified 2026-08-12 on the grounds that `aws-core`
+     *   had no released version and no external consumer at the time. Do not read the precedent
+     *   more broadly than that.
      */
     public suspend fun callRaw(
         method: String,

@@ -442,6 +442,12 @@ No client code is written in this milestone.
 > with its generalized `(method, path, query, headers, body, …)` signature, so M3.5 can be developed
 > against a fixed seam. M3's `AwsServiceException.rawErrorBody` addition is recorded in both dumps.
 >
+> **AMENDED 2026-08-12 — the freeze was subsequently and deliberately broken.** M3.5b added a
+> trailing `inspectBeforeBody` parameter; see M3.5b's STATUS for why it was unavoidable and for the
+> ratification recorded there. This criterion is left as written rather than rewritten, because "frozen, then
+> broken once with a recorded reason" is the accurate history and a silently-edited criterion would
+> hide it.
+>
 > **The guard was mutation-tested rather than assumed.** Adding one public function to `aws-core`
 > makes `checkLegacyAbi` fail with a readable diff naming it, in *both* the `.api` and the
 > `.klib.api`. A frozen-API artifact that never fires would be worse than none, since it reads as
@@ -697,7 +703,8 @@ So the ceiling is **40 header-capable + 40 query-capable = 80 case-assertions**,
 > module now parses the full `CancellationReason` including its `Item`.
 >
 > Still outstanding from this section: `linuxX64Test` *execution* (needs a Linux host). The `.api`
-> dump is done — see the M0 task; `callRaw`'s signature is frozen in `aws-core.klib.api`.
+> dump is done — see the M0 task; `callRaw`'s signature is frozen in `aws-core.klib.api`
+> (with the one later exception ratified 2026-08-12 — see M3.5b's STATUS).
 
 **Tasks**:
 - [ ] `aws/aws-core/build.gradle.kts` — MPP conventions, `explicitApi()`, jvm/linuxX64/linuxArm64/macosArm64. commonMain: aws-signing, ktor-client-core, kotlinx-serialization-json, kotlinx-coroutines-core. jvmMain: ktor-client-cio. nativeMain: ktor-client-curl. commonTest: `kotlin("test")`, ktor-client-mock. **No `:standards`, `:env`, `:logging`.**
@@ -755,7 +762,7 @@ So the ceiling is **40 header-capable + 40 query-capable = 80 case-assertions**,
   - a `HEAD` 404 with **no body at all** still produces a typed exception;
   - `x-amz-request-id` and `x-amz-id-2` both reach the thrown `AwsServiceException`;
   - a 301 with a `Location` header is **surfaced, not followed**, and no `Authorization` header is emitted to the redirect target.
-- `:aws:aws-core:updateLegacyAbi` committed, and `AwsServiceClient.callRaw`'s signature is frozen in it (see §5). ✅ *(done — `aws-core.klib.api:112`)*
+- `:aws:aws-core:updateLegacyAbi` committed, and `AwsServiceClient.callRaw`'s signature is frozen in it (see §5). ✅ *(done — `aws-core.klib.api:112`; broken once in M3.5b for `inspectBeforeBody`, ratified 2026-08-12)*
 
 ---
 
@@ -1165,6 +1172,21 @@ The ordering rationale is Decision 3's, applied to a new problem. If S3-mode sig
 > headers arriving and the body being read — the only point where the check can do its job. **If the
 > frozen signature matters more than the ceiling being real, the alternative is to accept a ceiling
 > that only prevents returning an oversized object, and to say so in the KDoc.**
+>
+> > **RATIFIED 2026-08-12 — the parameter stays, as-is.** The break is real but it is a *process*
+> > breach, not a compatibility incident: `aws-core` has never been released (the entire 3.0 line was
+> > local-only until 2026-08-11 and its version is still `3.0.0-dev.*`), so the artifact has zero
+> > published versions and zero external consumers. Every caller is in-repo — `TypedCalls.kt`,
+> > `S3.getObject`, and tests. Weighed against that, the ceiling is protection against a failure that
+> > is otherwise *silent*: an OOM kill inside Lambda produces no stack trace, no typed exception and
+> > no CloudWatch error entry, only a truncated invocation. The alternative offered above — a ceiling
+> > that merely declines to return an oversized object — would run after the allocation it exists to
+> > prevent and so would not prevent anything.
+> >
+> > The lesson recorded, rather than the signature reverted: **freezing an ABI on an unreleased
+> > artifact before its second consumer exists buys nothing and costs a ratification round.** The
+> > freeze was worth having for `aws-signing`, which is pitched as independently publishable; for
+> > `aws-core` at M2, with only DynamoDB written against it, it was premature.
 >
 > **`aws-core` also gained `awsEnv(name)`** in M3.5a — purely additive.
 >
@@ -1810,8 +1832,10 @@ This is one atomic merge across `dynamo`, `dynamokt`, `dynamokt-exposed` **and `
 >   job (Apple targets, `macosArm64Test`, plus the `linuxArm64` link), because ubuntu cannot build
 >   Apple targets and macOS runners have no Docker daemon. Nothing has been pushed, so no run exists.
 >   The `deployed-smoke` job needs an `AWSKT_SMOKE_ROLE_ARN` OIDC secret and skips cleanly without it.
-> - **`AwsServiceClient.callRaw`'s trailing `inspectBeforeBody` parameter is still unruled** — the
->   M3.5b item is untouched by this milestone.
+> - ~~**`AwsServiceClient.callRaw`'s trailing `inspectBeforeBody` parameter is still unruled.**~~
+>   **RULED 2026-08-12: it stays as-is.** See the ratification note in M3.5b's STATUS. `aws-core` has
+>   no released version and no external consumer, so the binary incompatibility has no blast radius,
+>   and the ceiling it enables guards a failure mode that is otherwise silent in Lambda.
 > - **Nothing is committed or pushed.** The whole 3.0 line still exists only on this machine.
 > - **The live AWS resources the smoke created are still in place** in account 443844975891:
 >   table `awskt-native-smoke`, role `awskt-native-smoke-role`, layer `awskt-native-libcrypt:1`, and
