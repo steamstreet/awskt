@@ -1,8 +1,12 @@
 name: Build
 
+# Automatic triggers disabled: the suite is run locally instead. Restore the key below to re-enable.
+#
+# on:
+#   pull_request:
+#     types: [ opened, reopened ]
 on:
-  pull_request:
-    types: [ opened, reopened ]
+  workflow_dispatch:
 
 jobs:
   build:

@@ -1,9 +1,17 @@
 name: Build
 
+# Automatic triggers disabled: the suite is run locally instead. Restore the two keys below to
+# re-enable. Note that the linuxX64 and linuxArm64 native tests cannot run on a macOS host at all,
+# so while this is disabled nothing verifies the Linux targets — which is what lambda-native
+# actually deploys to. Run this workflow by hand (Actions tab, or `gh workflow run build.yml`)
+# before anything ships to Lambda.
+#
+# on:
+#   push:
+#     branches: [ "2.0", "2.1", "2.2.x", "3.0.x" ]
+#   pull_request:
 on:
-  push:
-    branches: [ "2.0", "2.1", "2.2.x", "3.0.x" ]
-  pull_request:
+  workflow_dispatch:
 
 # Two hosts, because neither can do the whole job:
 #   - ubuntu-latest cannot build Apple targets at all, and

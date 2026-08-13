@@ -1,9 +1,18 @@
 name: Publish
 
+# Automatic triggers disabled: builds are run locally instead. Restore the key below to re-enable.
+#
+# This is the release path. The Publish-to-Central and Create-GitHub-Release steps further down are
+# themselves still commented out, so this workflow currently only builds — but re-enable BOTH this
+# trigger and those steps before cutting a release, or a push to a release branch will silently
+# produce no artifacts.
+#
+# on:
+#   push:
+#     branches:
+#     - '[0-9]+.[0-9]+.x'
 on:
-  push:
-    branches:
-    - '[0-9]+.[0-9]+.x'
+  workflow_dispatch:
 
 permissions:
   id-token: write
