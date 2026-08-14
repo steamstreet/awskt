@@ -267,8 +267,8 @@ public final class com/steamstreet/awskt/s3/ResolvedS3Endpoint {
 }
 
 public abstract interface class com/steamstreet/awskt/s3/S3 : java/lang/AutoCloseable {
+	public abstract fun clientFor (Ljava/lang/String;)Lcom/steamstreet/awskt/core/AwsServiceClient;
 	public abstract fun deleteObject (Lcom/steamstreet/awskt/s3/DeleteObjectRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun getClient ()Lcom/steamstreet/awskt/core/AwsServiceClient;
 	public abstract fun getObject (Lcom/steamstreet/awskt/s3/GetObjectRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun headObject (Lcom/steamstreet/awskt/s3/HeadObjectRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun putObject (Lcom/steamstreet/awskt/s3/PutObjectRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

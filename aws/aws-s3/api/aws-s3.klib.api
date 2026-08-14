@@ -33,9 +33,7 @@ final enum class com.steamstreet.awskt.s3/S3AddressingStyle : kotlin/Enum<com.st
 }
 
 abstract interface com.steamstreet.awskt.s3/S3 : kotlin/AutoCloseable { // com.steamstreet.awskt.s3/S3|null[0]
-    abstract val client // com.steamstreet.awskt.s3/S3.client|{}client[0]
-        abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.s3/S3.client.<get-client>|<get-client>(){}[0]
-
+    abstract fun clientFor(kotlin/String): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.s3/S3.clientFor|clientFor(kotlin.String){}[0]
     abstract suspend fun deleteObject(com.steamstreet.awskt.s3/DeleteObjectRequest): com.steamstreet.awskt.s3/DeleteObjectResponse // com.steamstreet.awskt.s3/S3.deleteObject|deleteObject(com.steamstreet.awskt.s3.DeleteObjectRequest){}[0]
     abstract suspend fun getObject(com.steamstreet.awskt.s3/GetObjectRequest): com.steamstreet.awskt.s3/GetObjectResponse // com.steamstreet.awskt.s3/S3.getObject|getObject(com.steamstreet.awskt.s3.GetObjectRequest){}[0]
     abstract suspend fun headObject(com.steamstreet.awskt.s3/HeadObjectRequest): com.steamstreet.awskt.s3/HeadObjectResponse // com.steamstreet.awskt.s3/S3.headObject|headObject(com.steamstreet.awskt.s3.HeadObjectRequest){}[0]

@@ -46,12 +46,59 @@ public val S3_PROTOCOL: AwsProtocol = AwsProtocol.restXml(endpointPrefix = "s3")
  *
  * ### Extending it
  *
- * As with `DynamoDb` (Decision 18), [client] is public and the four operations have no privileged
- * access to it.
+ * As with `DynamoDb` (Decision 18), the signed transport is public and the four operations have no
+ * privileged access to it — each is a `callRaw` on exactly the object [clientFor] hands back. An
+ * operation this library does not ship (`ListObjectsV2`, `CopyObject`, the multipart calls) is
+ * therefore an extension function downstream, with identical signing, retry and error handling:
+ *
+ * ```kotlin
+ * suspend fun S3.listObjectsV2(bucket: String, region: String, prefix: String): AwsHttpResponse =
+ *     clientFor(bucket).callRaw(
+ *         method = "GET",
+ *         // "" under virtual-hosted addressing, "/{bucket}" under path-style. The client from
+ *         // clientFor is already pointed at the matching authority, and the path must agree with
+ *         // the same decision — resolveS3Endpoint is what made it.
+ *         path = resolveS3Endpoint(bucket, region).basePath.ifEmpty { "/" },
+ *         query = listOf("list-type" to "2", "prefix" to prefix),
+ *         operation = "ListObjectsV2",
+ *         payloadHash = PayloadHash.EmptyBody,
+ *         signedBodyHeader = SignedBodyHeader.X_AMZ_CONTENT_SHA256,
+ *         doubleUriEncode = false,
+ *         normalizeUriPath = false,
+ *     )
+ * ```
+ *
+ * Those last four arguments are S3's dialect rather than `callRaw`'s defaults: S3 carries the
+ * payload hash in `x-amz-content-sha256`, and it neither double-encodes nor normalizes the path.
+ * `S3ExtensionSeamTest` drives that exact shape from outside this file, so the seam is proven
+ * rather than merely documented.
+ *
+ * The example takes the region — and would have to take [S3Config.endpointUrl] and
+ * [S3Config.forcePathStyle] as well — because addressing is resolved from configuration this
+ * interface does not expose, while the *path* has to agree with the addressing decision the client
+ * was built from. Handing the resolved endpoint back per bucket is a plausible additive follow-up;
+ * it is not needed for the operations shipped here.
+ *
+ * ### Why the seam takes a bucket
+ *
+ * Not a convenience. S3 addresses the bucket in the *authority*, so under virtual-hosted addressing
+ * the signed `Host` differs per bucket — a transport that is not bound to a bucket is bound to the
+ * **wrong** one. This interface therefore has no bucket-less `client` property, and the omission is
+ * deliberate: the one it used to carry returned whichever bucket's client happened to be built
+ * first, or — on an instance that had issued no call yet — one built for a literal placeholder
+ * bucket name. Either signs an authority the request is not sent to, which S3 answers with
+ * `SignatureDoesNotMatch`, and whether it appeared at all depended on call order.
  */
 public interface S3 : AutoCloseable {
-    /** The signed transport. Public because it is the extension seam. */
-    public val client: AwsServiceClient
+    /**
+     * The signed transport for [bucket] — **the** extension seam, and the same object the four
+     * operations below send on.
+     *
+     * One client per bucket, built on demand and cached, so this is a map lookup on the hot path
+     * and safe to call per request. [bucket] must be expressible in a URI; a blank one raises
+     * [InvalidBucketNameException] here rather than quietly signing for somewhere else.
+     */
+    public fun clientFor(bucket: String): AwsServiceClient
 
     public suspend fun getObject(request: GetObjectRequest): GetObjectResponse
     public suspend fun putObject(request: PutObjectRequest): PutObjectResponse
@@ -147,16 +194,14 @@ internal class DefaultS3(
      */
     private val clientsByBucket = AtomicReference<Map<String, AwsServiceClient>>(emptyMap())
 
-    override val client: AwsServiceClient
-        get() = clientsByBucket.load().values.firstOrNull() ?: clientFor("")
-
     /** The buckets currently cached. Internal so a concurrency test can assert on the cache. */
     internal val cachedBuckets: Set<String> get() = clientsByBucket.load().keys
 
-    // Internal, not private, so a concurrency test can hammer it directly. Driving it through
-    // `getObject` instead would put an HTTP round trip between the cache read and the cache write,
-    // which serialises the callers and hides the very interleaving the test exists to catch.
-    internal fun clientFor(bucket: String): AwsServiceClient {
+    // Public through the interface, which is also what lets a concurrency test hammer it directly.
+    // Driving it through `getObject` instead would put an HTTP round trip between the cache read
+    // and the cache write, which serialises the callers and hides the very interleaving the test
+    // exists to catch.
+    override fun clientFor(bucket: String): AwsServiceClient {
         clientsByBucket.load()[bucket]?.let { return it }
         val built = buildClientFor(bucket)
 
@@ -174,13 +219,19 @@ internal class DefaultS3(
     }
 
     private fun buildClientFor(bucket: String): AwsServiceClient {
+        // No placeholder substitution for a blank bucket. There used to be one, to feed the
+        // bucket-less `client` property this interface no longer has; with that gone, a blank
+        // bucket is a caller mistake, and `resolveS3Endpoint` says so as an
+        // `InvalidBucketNameException` instead of building a client aimed at a bucket that does
+        // not exist.
         val endpoint = resolveS3Endpoint(
-            bucket = bucket.ifBlank { "placeholder-bucket" },
+            bucket = bucket,
             region = region,
             endpointOverride = config.endpointUrl,
             forcePathStyle = config.forcePathStyle,
             allowInsecureEndpoint = config.allowInsecureEndpoint,
         )
+        val (host, explicitPort) = splitAuthority(endpoint.authority)
         return AwsServiceClient(
             httpClient = httpClient,
             credentialsProvider = config.credentialsProvider ?: defaultCredentialsProvider(),
@@ -188,9 +239,8 @@ internal class DefaultS3(
                 url = endpoint.origin,
                 authority = endpoint.authority,
                 protocol = if (endpoint.scheme == "https") URLProtocol.HTTPS else URLProtocol.HTTP,
-                host = endpoint.authority.substringBefore(':'),
-                port = endpoint.authority.substringAfter(':', "").toIntOrNull()
-                    ?: if (endpoint.scheme == "https") 443 else 80,
+                host = host,
+                port = explicitPort ?: if (endpoint.scheme == "https") 443 else 80,
             ),
             region = region,
             protocol = S3_PROTOCOL,
