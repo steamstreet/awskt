@@ -51,7 +51,8 @@ public class EnvironmentCredentialsProvider(
             accessKeyId = accessKeyId,
             secretAccessKey = secretAccessKey,
             sessionToken = getEnv("AWS_SESSION_TOKEN")?.takeIf { it.isNotEmpty() },
-            expiresAtEpochMillis = getEnv("AWS_CREDENTIAL_EXPIRATION")?.let(::parseIso8601UtcOrNull),
+            expiresAtEpochMillis =
+                getEnv("AWS_CREDENTIAL_EXPIRATION")?.let(::parseAwsCredentialExpirationOrNull),
         )
     }
 
@@ -134,26 +135,20 @@ public fun defaultCredentialsProvider(): AwsCredentialsProvider =
     CachedCredentialsProvider(CredentialsProviderChain(EnvironmentCredentialsProvider()))
 
 /**
- * Parses `yyyy-MM-ddTHH:mm:ss[.SSS]Z` to epoch millis, returning null on anything unexpected —
- * a malformed expiry must degrade to "unknown", never throw out of credential resolution.
+ * Parses the `AWS_CREDENTIAL_EXPIRATION` convention to epoch millis — the one parser for that
+ * variable, shared by every service module rather than re-implemented per module.
+ *
+ * Accepts what the convention actually emits: `2026-08-14T12:34:56Z`, a numeric offset such as
+ * `2026-08-14T12:34:56-07:00`, and fractional seconds (`...T12:34:56.123Z`).
+ *
+ * **The offset is honoured, not ignored.** Some `credential_process` implementations publish an
+ * offset form, and reading its digits as if they were UTC yields a value wrong by the offset — up
+ * to fourteen hours, silently. Too late and a dead credential is cached and signed with; too early
+ * and every call re-resolves. Neither surfaces as a parse error, so it must be right here.
+ *
+ * Returns null on anything unexpected: a malformed expiry degrades to "unknown", which callers
+ * already handle, and must never throw out of credential resolution.
  */
-internal fun parseIso8601UtcOrNull(value: String): Long? = try {
-    val year = value.substring(0, 4).toLong()
-    val month = value.substring(5, 7).toLong()
-    val day = value.substring(8, 10).toLong()
-    val hour = value.substring(11, 13).toLong()
-    val minute = value.substring(14, 16).toLong()
-    val second = value.substring(17, 19).toLong()
-
-    val y = if (month <= 2L) year - 1L else year
-    val era = (if (y >= 0L) y else y - 399L) / 400L
-    val yearOfEra = y - era * 400L
-    val monthPrime = if (month > 2L) month - 3L else month + 9L
-    val dayOfYear = (153L * monthPrime + 2L) / 5L + day - 1L
-    val dayOfEra = yearOfEra * 365L + yearOfEra / 4L - yearOfEra / 100L + dayOfYear
-    val days = era * 146_097L + dayOfEra - 719_468L
-
-    ((days * 86_400L) + hour * 3_600L + minute * 60L + second) * 1_000L
-} catch (e: Exception) {
-    null
-}
+public fun parseAwsCredentialExpirationOrNull(value: String): Long? = runCatching {
+    kotlin.time.Instant.parse(value).toEpochMilliseconds()
+}.getOrNull()

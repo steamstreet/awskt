@@ -3,6 +3,7 @@ package com.steamstreet.awskt.s3
 import com.steamstreet.awskt.core.AwsCredentialsProvider
 import com.steamstreet.awskt.core.awsEnv
 import com.steamstreet.awskt.core.defaultCredentialsProvider
+import com.steamstreet.awskt.core.parseAwsCredentialExpirationOrNull
 import com.steamstreet.awskt.core.resolveRegion
 import com.steamstreet.awskt.signing.PayloadHash
 import com.steamstreet.awskt.signing.SigV4
@@ -168,9 +169,11 @@ public class S3Presigner(configure: S3PresignerConfig.() -> Unit = {}) {
         val credentials = credentialsProvider.resolve()
         val now = config.clock() + config.clockSkewOffsetMillis()
 
-        // A bonus, not the fix: ECS and `credential_process` publish this, Lambda does not.
+        // A bonus, not the fix: ECS and `credential_process` publish this, Lambda does not. Parsed
+        // by aws-core's one parser for the variable, so a presign and a credential resolution can
+        // never disagree about when the same string says the credential dies.
         val credentialExpiry = credentials.expiresAtEpochMillis
-            ?: config.getEnv("AWS_CREDENTIAL_EXPIRATION")?.let(::parseIso8601Millis)
+            ?: config.getEnv("AWS_CREDENTIAL_EXPIRATION")?.let(::parseAwsCredentialExpirationOrNull)
 
         val sessionExpiryUnknown = credentials.sessionToken != null && credentialExpiry == null
         if (sessionExpiryUnknown &&
@@ -276,13 +279,3 @@ public class S3Presigner(configure: S3PresignerConfig.() -> Unit = {}) {
 
 /** A presign was refused because the URL's advertised lifetime would have been a lie. */
 public class PresignExpiryException(message: String) : Exception(message)
-
-/**
- * Parses the `AWS_CREDENTIAL_EXPIRATION` convention (`2026-08-11T12:34:56Z`).
- *
- * Returns null rather than throwing on anything unexpected: this value is a bonus signal, and a
- * malformed one must never be able to fail a presign that would otherwise succeed.
- */
-internal fun parseIso8601Millis(value: String): Long? = runCatching {
-    kotlin.time.Instant.parse(value).toEpochMilliseconds()
-}.getOrNull()

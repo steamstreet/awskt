@@ -47,7 +47,46 @@ class CredentialsTest {
             ),
         ).resolve()
 
-        assertEquals(parseIso8601UtcOrNull("2026-08-10T06:30:00Z"), credentials.expiresAtEpochMillis)
+        assertEquals(
+            parseAwsCredentialExpirationOrNull("2026-08-10T06:30:00Z"),
+            credentials.expiresAtEpochMillis,
+        )
+    }
+
+    /**
+     * `credential_process` implementations are free to publish an offset form, and the digits of
+     * `12:34:56-07:00` are not the digits of a UTC time. Reading them as UTC used to hand the
+     * provider — and therefore [CachedCredentialsProvider]'s effective expiry — a value seven hours
+     * early with no error anywhere. Asserted end to end, and against a literal instant, because the
+     * failure mode is a wrong number rather than a thrown one.
+     */
+    @Test
+    fun environmentProviderHonoursAnOffsetInTheExpiry() = runTest {
+        val credentials = EnvironmentCredentialsProvider(
+            env(
+                "AWS_ACCESS_KEY_ID" to "AKID",
+                "AWS_SECRET_ACCESS_KEY" to SECRET,
+                "AWS_CREDENTIAL_EXPIRATION" to "2026-08-14T12:34:56-07:00",
+            ),
+        ).resolve()
+
+        // 2026-08-14T19:34:56Z — the same instant, seven hours after the digits shown.
+        assertEquals(1_786_736_096_000L, credentials.expiresAtEpochMillis)
+    }
+
+    /** A malformed expiry is "unknown", not a failed resolution. */
+    @Test
+    fun environmentProviderKeepsCredentialsWhenTheExpiryIsMalformed() = runTest {
+        val credentials = EnvironmentCredentialsProvider(
+            env(
+                "AWS_ACCESS_KEY_ID" to "AKID",
+                "AWS_SECRET_ACCESS_KEY" to SECRET,
+                "AWS_CREDENTIAL_EXPIRATION" to "yesterday",
+            ),
+        ).resolve()
+
+        assertEquals("AKID", credentials.accessKeyId)
+        assertNull(credentials.expiresAtEpochMillis)
     }
 
     @Test
@@ -165,9 +204,37 @@ class CredentialsTest {
 
     @Test
     fun malformedExpiryDegradesToUnknownRatherThanThrowing() {
-        assertNull(parseIso8601UtcOrNull("not a date"))
-        assertNull(parseIso8601UtcOrNull(""))
-        assertEquals(0L, parseIso8601UtcOrNull("1970-01-01T00:00:00Z"))
+        assertNull(parseAwsCredentialExpirationOrNull("not a date"))
+        assertNull(parseAwsCredentialExpirationOrNull(""))
+        // Well-formed shape, impossible date: still null rather than a silently rolled-over instant.
+        assertNull(parseAwsCredentialExpirationOrNull("2026-13-45T99:99:99Z"))
+        assertEquals(0L, parseAwsCredentialExpirationOrNull("1970-01-01T00:00:00Z"))
+    }
+
+    /**
+     * The three forms `AWS_CREDENTIAL_EXPIRATION` is published in. The offset case is the
+     * regression: the previous parser read fixed substring positions and discarded everything after
+     * the seconds, so this input came back as the UTC reading of its digits — wrong by the offset,
+     * with nothing to indicate it.
+     */
+    @Test
+    fun expiryAcceptsZOffsetAndFractionalForms() {
+        assertEquals(1_786_710_896_000L, parseAwsCredentialExpirationOrNull("2026-08-14T12:34:56Z"))
+        assertEquals(
+            1_786_736_096_000L,
+            parseAwsCredentialExpirationOrNull("2026-08-14T12:34:56-07:00"),
+            "an offset must move the instant, not be ignored",
+        )
+        assertEquals(
+            1_786_710_896_000L,
+            parseAwsCredentialExpirationOrNull("2026-08-14T12:34:56+00:00"),
+            "+00:00 is the same instant as Z",
+        )
+        assertEquals(
+            1_786_710_896_123L,
+            parseAwsCredentialExpirationOrNull("2026-08-14T12:34:56.123Z"),
+            "fractional seconds are kept to millisecond precision",
+        )
     }
 }
 

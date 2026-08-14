@@ -102,6 +102,7 @@ public final class com/steamstreet/awskt/core/CachedCredentialsProvider : com/st
 
 public final class com/steamstreet/awskt/core/CredentialsKt {
 	public static final fun defaultCredentialsProvider ()Lcom/steamstreet/awskt/core/AwsCredentialsProvider;
+	public static final fun parseAwsCredentialExpirationOrNull (Ljava/lang/String;)Ljava/lang/Long;
 }
 
 public final class com/steamstreet/awskt/core/CredentialsProviderChain : com/steamstreet/awskt/core/AwsCredentialsProvider {
