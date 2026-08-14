@@ -81,6 +81,19 @@ internal enum class TransportFailure { NOT_SENT, AMBIGUOUS }
 private class InspectionRefusal(val refusal: Throwable) : Throwable(refusal)
 
 /**
+ * The retry capacity one [AwsServiceClient.callRaw] invocation has taken from the shared bucket and
+ * not yet handed back.
+ *
+ * A plain `var` rather than an atomic, and that is not an oversight: this object is created inside
+ * one call and touched only by the coroutine running it, so there is nothing to race against. The
+ * shared state is the bucket it draws from, which is atomic. Making this atomic too would suggest a
+ * sharing that does not exist.
+ */
+private class RetryBudget {
+    var spent: Int = 0
+}
+
+/**
  * A pre-materialized body with an explicit content type.
  *
  * Pre-materialized on purpose: the payload hash covers these exact bytes, so the engine must not be
@@ -124,10 +137,20 @@ public class AwsServiceClient(
     private val sleep: suspend (Long) -> Unit = { delay(it) },
 ) {
     /**
-     * Internal rather than private so a test can assert the retry budget balances after a parallel
-     * run. Every acquire in [prepareRetry] is paired with a refund, so a client that has finished
-     * its work must be back at full capacity — an invariant with no observable proxy from outside.
-     * Internal declarations do not appear in the ABI dump, so this is not published surface.
+     * Internal rather than private so a test can assert the retry budget's invariant after a run —
+     * a property with no observable proxy from outside. Internal declarations do not appear in the
+     * ABI dump, so this is not published surface.
+     *
+     * The invariant is **not** "back at full capacity once the work is done". That held only while
+     * [prepareRetry] refunded unconditionally, and it was precisely why the breaker could never
+     * open: the bucket then bounded only *concurrently sleeping* retries, so a warm container
+     * calling a hard-down dependency retried at full `maxAttempts` forever.
+     *
+     * What holds now: the capacity missing from the bucket is the summed retry cost of every call
+     * that never succeeded, plus the cost already acquired by calls still in flight, less the +1
+     * credited by each clean first-attempt success since (saturating at capacity). A call that
+     * succeeds refunds exactly what it acquired, so a run of calls that all eventually work still
+     * ends at full capacity; a run that all fail does not, and that is the point.
      */
     internal val tokenBucket = RetryTokenBucket()
 
@@ -200,6 +223,7 @@ public class AwsServiceClient(
     ): AwsHttpResponse {
         val invocationId = newInvocationId()
         val deadline = clock() + retryConfig.maxTotalRetryDuration.inWholeMilliseconds
+        val budget = RetryBudget()
         var attempt = 0
         var skewCorrectionUsed = false
         var lastFailure: Throwable? = null
@@ -274,7 +298,9 @@ public class AwsServiceClient(
                 if (!mayRetry) throw transportFailure
 
                 attempt++
-                if (!prepareRetry(RetryErrorType.TRANSIENT, attempt, deadline, null)) throw transportFailure
+                if (!prepareRetry(RetryErrorType.TRANSIENT, attempt, deadline, null, budget)) {
+                    throw transportFailure
+                }
                 continue
             }
 
@@ -295,7 +321,13 @@ public class AwsServiceClient(
                 }
 
                 if (rejection == null) {
+                    // "Returned by succeeding": whatever retries this call paid for bought a working
+                    // response, so their cost goes back. The +1 credit is a different thing and is
+                    // reserved for a call that needed no retry at all — it is the only way the
+                    // bucket refills past what it lent out, and a call that had to retry is not the
+                    // evidence of health that earns it.
                     if (attempt == 0) tokenBucket.onCleanSuccess()
+                    else tokenBucket.refundCost(budget.spent)
                     return response
                 }
 
@@ -303,7 +335,9 @@ public class AwsServiceClient(
                 lastFailure = rejection
 
                 attempt++
-                if (!prepareRetry(RetryErrorType.TRANSIENT, attempt, deadline, null)) throw rejection
+                if (!prepareRetry(RetryErrorType.TRANSIENT, attempt, deadline, null, budget)) {
+                    throw rejection
+                }
                 continue
             }
 
@@ -332,30 +366,42 @@ public class AwsServiceClient(
 
             attempt++
             val retryAfter = response.headers.headerValue("x-amz-retry-after")
-            if (!prepareRetry(type, attempt, deadline, retryAfter)) throw exception
+            if (!prepareRetry(type, attempt, deadline, retryAfter, budget)) throw exception
         }
     }
 
-    /** Returns false when the caller should give up rather than sleep. */
+    /**
+     * Returns false when the caller should give up rather than sleep, and charges [budget] for the
+     * capacity a retry it green-lights has taken.
+     *
+     * The charge is *not* returned here. It is returned by [callRaw] when the call it belongs to
+     * finally succeeds, and by nothing else — see [tokenBucket]. The one exception is the deadline
+     * abort below, where the retry this paid for is not going to happen at all.
+     */
     private suspend fun prepareRetry(
         type: RetryErrorType,
         attempt: Int,
         deadlineMillis: Long,
         retryAfterHeader: String?,
+        budget: RetryBudget,
     ): Boolean {
         if (attempt >= retryConfig.maxAttempts) return false
         if (!tokenBucket.tryAcquire(type)) return false
+        val cost = tokenBucket.costOf(type)
+        budget.spent += cost
 
         val delayMillis = applyRetryAfter(
             backoffMillis(type, attempt - 1, retryConfig, random),
             retryAfterHeader,
         )
         if (clock() + delayMillis > deadlineMillis) {
+            // Nothing was retried, so nothing is owed. Charging for a retry the deadline cancelled
+            // would open the breaker on evidence that was never gathered.
             tokenBucket.refund(type)
+            budget.spent -= cost
             return false
         }
         sleep(delayMillis)
-        tokenBucket.refund(type)
         return true
     }
 

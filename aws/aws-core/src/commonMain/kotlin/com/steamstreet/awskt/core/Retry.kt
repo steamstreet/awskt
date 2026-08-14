@@ -164,9 +164,47 @@ internal fun applyRetryAfter(computedMillis: Long, retryAfterHeader: String?): L
 /**
  * Circuit breaker over retries.
  *
- * Capacity is consumed by retrying and returned by succeeding, so a dependency that is failing
- * broadly stops absorbing retry traffic instead of amplifying an outage. There is no time-based
- * refill: recovery is driven by successful calls, which is the only real evidence of recovery.
+ * A retry **spends** capacity, and only a call that ultimately **succeeds** hands that spending
+ * back. A call that fails for good keeps its cost spent — that omission is the entire mechanism.
+ * Sustained failure therefore drains the bucket, [tryAcquire] starts answering false, and the client
+ * degrades to a single attempt per call against a dependency that is hard down, instead of
+ * multiplying the load on it by [RetryConfig.maxAttempts]. Getting that wrong is not a small
+ * inefficiency: a warm Lambda issuing sequential calls against a dead dependency is the exact shape
+ * that turns someone else's outage into a retry storm.
+ *
+ * On top of the refund, a **clean first-attempt success credits one extra token**. That is the only
+ * way the bucket refills past what it lent out, and it is deliberately reserved for calls that
+ * needed no retry at all: a call that had to retry proved that something is still wrong, so it gets
+ * its loan forgiven and nothing more. There is no time-based refill anywhere, because time passing
+ * is not evidence that anything got better; only a call that worked is.
+ *
+ * ### Provenance, and where this deviates
+ *
+ * The shape is `smithy-kotlin`'s `StandardRetryTokenBucket`, read from the 1.5.27 artifact this
+ * repository already resolves rather than from memory: `maxCapacity` 500 and
+ * `initialTrySuccessIncrement` 1 are its defaults, circuit-breaker mode is its default (no refill
+ * per second), its `notifyFailure` is a no-op, and its `notifySuccess` returns the capacity that was
+ * checked out. [capacity]'s 500 and [onCleanSuccess]'s +1 are those numbers.
+ *
+ * One deliberate difference: a smithy token carries only the **most recent** checkout, so a success
+ * after several retries returns just the last one's cost. [AwsServiceClient] instead refunds the sum
+ * of everything the call acquired. Refunding less would slowly bleed capacity out of a client whose
+ * calls succeed on their second or third attempt — a client that is working.
+ *
+ * ### The costs
+ *
+ * [RetryErrorType.THROTTLING]'s 5 is smithy's `retryCost` exactly. [RetryErrorType.TRANSIENT]'s 14
+ * is **ours, not a ported constant** — smithy's nearest relative is `timeoutRetryCost`, which is 10
+ * — and the ordering between the two is inverted on purpose. Throttling is a healthy service saying
+ * "slower", answered by a one-second base backoff that is already doing the shedding; TRANSIENT
+ * covers 5xx and every ambiguous transport failure, which is the population where a retry is most
+ * likely to be pure added load on something already hurting.
+ *
+ * The sizing that follows, at the default capacity and `maxAttempts = 4`: a call that burns all
+ * three of its retries on transient failures spends 42, so roughly a dozen consecutively failing
+ * calls open the breaker; throttling retries are cheaper and about a hundred of them fit. Refilling
+ * at +1 per clean call means ~42 healthy calls buy back one dead call's worth of retries, which is
+ * the intended asymmetry — quick to stop, slow to resume.
  *
  * ### Why this is atomic, and why it is not a `Mutex`
  *
@@ -198,12 +236,29 @@ internal class RetryTokenBucket(private val capacity: Int = 500) {
         }
     }
 
+    /** Refunds a single acquire that never turned into a retry — see `prepareRetry`'s deadline. */
     fun refund(type: RetryErrorType) {
         credit(costOf(type))
     }
 
+    /**
+     * Refunds everything one call acquired, which is what "returned by succeeding" means here.
+     *
+     * Takes an amount rather than a type because a single call can mix them: a throttle followed by
+     * a 503 costs 5 then 14, and the caller is the only thing that knows the total.
+     */
+    fun refundCost(amount: Int) {
+        if (amount > 0) credit(amount)
+    }
+
     fun onCleanSuccess() {
         credit(1)
+    }
+
+    /** Exposed so a caller can remember what an acquire cost it and hand back exactly that. */
+    fun costOf(type: RetryErrorType): Int = when (type) {
+        RetryErrorType.TRANSIENT -> 14
+        RetryErrorType.THROTTLING -> 5
     }
 
     /** Adds [amount], saturating at [capacity]. */
@@ -213,11 +268,6 @@ internal class RetryTokenBucket(private val capacity: Int = 500) {
             if (current >= capacity) return
             if (tokens.compareAndSet(current, minOf(capacity, current + amount))) return
         }
-    }
-
-    private fun costOf(type: RetryErrorType) = when (type) {
-        RetryErrorType.TRANSIENT -> 14
-        RetryErrorType.THROTTLING -> 5
     }
 }
 

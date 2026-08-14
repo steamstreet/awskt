@@ -105,6 +105,28 @@ class RetryClassificationTest {
         bucket.onCleanSuccess()
         assertEquals(20, bucket.available, "must never exceed capacity")
     }
+
+    /**
+     * One call can spend on more than one kind of failure — a throttle, then a 503 — so what a
+     * successful call hands back is a summed amount rather than a type. The two must agree on the
+     * price of a retry, which is what [RetryTokenBucket.costOf] is for.
+     */
+    @Test
+    fun refundCostReturnsExactlyTheSummedCostOfAMixedCall() {
+        val bucket = RetryTokenBucket(capacity = 100)
+        assertEquals(5, bucket.costOf(RetryErrorType.THROTTLING))
+        assertEquals(14, bucket.costOf(RetryErrorType.TRANSIENT))
+
+        assertTrue(bucket.tryAcquire(RetryErrorType.THROTTLING)) // 100 -> 95
+        assertTrue(bucket.tryAcquire(RetryErrorType.TRANSIENT))  // 95 -> 81
+        assertEquals(81, bucket.available)
+
+        bucket.refundCost(5 + 14)
+        assertEquals(100, bucket.available, "a call that succeeds returns everything it acquired")
+        // A no-op rather than a spin or a stray credit, which is what a call that never retried does.
+        bucket.refundCost(0)
+        assertEquals(100, bucket.available)
+    }
 }
 
 class TransportFailureClassificationTest {
