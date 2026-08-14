@@ -42,7 +42,7 @@ Three things are settled by evidence, not opinion:
 
 ## 1. Module Overview
 
-**Module Name**: `aws/aws-signing`, `aws/aws-core`, `aws/aws-dynamodb`, `aws/aws-eventbridge`, `aws/aws-s3`
+**Module Name**: `aws/aws-signing`, `aws/aws-core`, `aws/aws-dynamodb`, `aws/aws-eventbridge`, `aws/aws-s3`, `aws/aws-secretsmanager`, `aws/aws-kms`
 
 **Dependencies**:
 - `aws-signing` → KotlinCrypto only. **No Ktor. No awskt modules.** That constraint is what lets AWS's own fixture corpus drive the signer directly. It carries **both** header and query-string (presign) signing — query signing is pure string/byte work with no S3 knowledge, no HTTP client and no I/O.
@@ -50,6 +50,8 @@ Three things are settled by evidence, not opinion:
 - `aws-dynamodb` → `:dynamo` (for `AttributeValue`), `aws-core`.
 - `aws-eventbridge` → `aws-core`.
 - `aws-s3` → `aws-core`. **NOT `:dynamo`, NOT `:standards`/`:env`/`:logging`** (Decision 6 applies unchanged). Declares `jvm, linuxX64, linuxArm64, macosArm64` from birth, so M7 has no target-addition task for it. `aws-s3/src/jvmTest` additionally carries `aws.sdk.kotlin:s3` as a **test-only** dependency for the presign differential — see §11 criterion 9.
+- `aws-secretsmanager` → `aws-core`. **NOT `:env`**, even though `env`'s `SecretsProvider` is the obvious consumer — the dependency has to run the other way (`env` may depend on this) or a caller who wants to read one secret acquires a logging framework and an AppConfig client. Decision 6 again.
+- `aws-kms` → `aws-core`. Same constraint, same reason.
 
 **Goal**: Replace `aws.sdk.kotlin` in `dynamo`, `dynamokt`, `dynamokt-exposed` and `events` with a hand-written, Kotlin-Multiplatform-native client that runs on `linuxArm64` inside an AWS Lambda custom runtime, while keeping all 100 existing DynamoDB integration tests green and preserving pagination-token wire compatibility — **and** to provide a native S3 client (GetObject, PutObject, HeadObject, DeleteObject, presigned GET/PUT URLs) which has no `aws.sdk.kotlin` counterpart in this repo today and is therefore purely **additive** to the public API.
 
@@ -121,7 +123,17 @@ There is nothing for a serializer to serialize. The service trait is `aws.protoc
 
 ### Out of scope — for v1, revisit later
 
-- Kinesis (2 ops), Secrets Manager (1 op), AppConfigData (2 ops). All live in JVM-only modules (`lambda-dynamo-streams`, `env/src/jvmMain`) and none blocks a native dynamokt-based Lambda. **The draft's stated reason for AppConfigData — "the only restJson1 consumer, would force a second codec into `aws-core`" — goes stale once `aws-core` carries a protocol seam and an `AwsErrorParser` strategy for S3 (M2).** The honest reason is simply that a native Lambda does not need it. They stay out; the rationale is corrected so it is not later discovered to be false and read as licence to pull them in.
+- ~~Kinesis (2 ops), Secrets Manager (1 op), AppConfigData (2 ops).~~ **Secrets Manager and KMS were moved back into scope on 2026-08-14 (M8). Kinesis and AppConfigData stay out.** The original entry is kept below rather than deleted, because the reasoning it was overturned by is the point.
+
+  The original text: *"All live in JVM-only modules (`lambda-dynamo-streams`, `env/src/jvmMain`) and none blocks a native dynamokt-based Lambda. The draft's stated reason for AppConfigData — 'the only restJson1 consumer, would force a second codec into `aws-core`' — goes stale once `aws-core` carries a protocol seam and an `AwsErrorParser` strategy for S3 (M2). The honest reason is simply that a native Lambda does not need it. They stay out; the rationale is corrected so it is not later discovered to be false and read as licence to pull them in."*
+
+  **Why it was wrong for Secrets Manager, and why that is the same mistake §2 already caught once.** The test applied was "is there code to *port*?" — Secrets Manager has exactly one call site, in a JVM-only module, so porting it buys nothing. That is the identical inference the S3 re-scope note at the top of this document was written to prevent, and it failed the same way: the requirement is not "port the existing call site", it is **"can a Kotlin/Native Lambda call the service?"** A native Lambda that cannot read a secret cannot hold a database password, an API key or a signing secret, which is most of what a Lambda needs configuration for. One JVM call site was never evidence about that. The paragraph above closes with a warning against reading its own rationale as licence to pull these in later; that warning was aimed at scope creep, and it does not apply to a requirement the test never measured.
+
+  **KMS was not on the out-of-scope list at all**, because nothing in this repo calls it — which under the old test made it invisible rather than excluded. It is in scope for the same reason: envelope encryption and `Decrypt` are the other half of what a Lambda does with secret material, and Secrets Manager's own `DecryptionFailure` is a KMS failure surfaced through it.
+
+  **The cost was low precisely because the earlier milestones did their job.** Both services speak AWS-JSON 1.1 — the dialect M6 already proved with EventBridge — so M8 needed no new protocol, no new error parser and no transport change. The one addition to `aws-core` is `Base64BlobSerializer` (`Blobs.kt`), because AWS-JSON blobs are base64 strings and both services carry them.
+
+  **Kinesis and AppConfigData remain out**, and now on the corrected test rather than the stale one: a native Lambda is *invoked with* Kinesis records rather than calling Kinesis, and AppConfigData is a polling configuration client whose one consumer (`env/src/jvmMain/AppConfig.kt`) is JVM-only by construction. Neither is something a native Lambda is blocked on. Revisit if that changes.
 - **`S3Local` / `S3Mock.kt`.** Recommend deletion, pending Q7. Zero usages repo-wide; a `mockk(relaxed = true)` over an S3 client returns empty objects, which is a worse test double than none. This is a **deletion from a published artifact**, not a no-op — see Q1 row (k).
 - Container (ECS/EKS/CodeBuild) credentials. Real but JVM-only demand.
 - Native targets for `dynamokt-exposed`. It is forced into scope for *compilation* but no Lambda handler uses it.
@@ -377,9 +389,15 @@ awskt/
 | M5b | Implementation flip — 100 tests on the hand-written client | 3 | M5a | **yes** |
 | M6 | EventBridge client + `events` module | 5 | M4, M5b | yes |
 | M7 | Native targets, Lambda runtime, packaging | 10.5 | M6 | yes |
+| **M8** | **`aws-secretsmanager` + `aws-kms` data planes** | **2** | M6 | **yes** |
 | | **Planned (1 FTE)** | **78.5** | | |
 | | **With 20% contingency** | **~94** | | |
 | | *Critical path with a 2nd developer* | *63 (~76)* | | |
+
+**M8 is deliberately outside the totals.** It was added on 2026-08-14, after M7 landed, and folding
+2 days into a "78.5 planned" figure that was quoted in a staffing decision would rewrite history to
+make the estimate look better than it was. The v1 plan was 78.5 days for seven milestones; M8 is a
+scope addition on top of a delivered plan, and is counted separately for that reason.
 
 ### Parallelization, stated honestly
 
@@ -1961,6 +1979,145 @@ This is one atomic merge across `dynamo`, `dynamokt`, `dynamokt-exposed` **and `
 >   table `awskt-native-smoke`, role `awskt-native-smoke-role`, layer `awskt-native-libcrypt:1`, and
 >   function `awskt-native-smoke`. They are cheap (PAY_PER_REQUEST, no provisioned concurrency) and
 >   re-used by the script, but they are real and were not there before.
+
+---
+
+### M8 — Secrets Manager and KMS data planes (2 days)
+
+Added 2026-08-14, after M7 landed. See the §2 "Out of scope" entry for why these were excluded and
+why that exclusion was wrong. Both services speak **AWS-JSON 1.1**, the dialect M6 already proved
+with EventBridge, so this milestone adds two modules and one shared serializer and changes nothing
+below them.
+
+**Scope, stated as a test rather than a list**: an operation is in if it reads, writes or uses
+secret *material*. Everything that manages the *existence* of a key or a secret is out.
+
+- `aws-secretsmanager`: `GetSecretValue`, `BatchGetSecretValue`, `PutSecretValue`.
+- `aws-kms`: `Encrypt`, `Decrypt`, `ReEncrypt`, `GenerateDataKey`,
+  `GenerateDataKeyWithoutPlaintext`, `GenerateRandom`, `Sign`, `Verify`.
+- Out: `CreateSecret`/`DeleteSecret`/`DescribeSecret`/`RotateSecret`, `CreateKey`/
+  `ScheduleKeyDeletion`/`CreateAlias`/`CreateGrant`. Infrastructure provisions these; a Lambda
+  consumes them. All reachable through the extension seam (Decision 18).
+- Out: KMS `Recipient`/`CiphertextForRecipient` (Nitro Enclaves — not a target this repo builds
+  for), `GenerateDataKeyPair`, `GenerateMac`/`VerifyMac`, and Secrets Manager's
+  `UpdateSecretVersionStage`. The last one is the closest call: a rotation function needs it, but
+  it needs `DescribeSecret` too, and shipping half a rotation flow is more misleading than shipping
+  none of it.
+
+**Tasks**
+
+- [x] `Base64BlobSerializer` in `aws-core` (`Blobs.kt`). AWS-JSON blobs are base64 strings and both
+      new modules carry them — KMS five of them, Secrets Manager one. In `aws-core` rather than
+      duplicated, because two implementations of the same wire rule drift. Deliberately not shared
+      with `aws-dynamodb`, whose `B`/`BS` base64 lives inside `AttributeValueSerializer`'s
+      polymorphic union and cannot delegate to a primitive serializer.
+- [x] `aws/aws-secretsmanager`: protocol, three operations, typed errors, `getSecretString` /
+      `putSecretString` / `getSecretValues` conveniences.
+- [x] `aws/aws-kms`: protocol, eight operations, typed errors, `verifySignature` /
+      `encrypt` / `decrypt` conveniences.
+- [x] Both declare `jvm, linuxX64, linuxArm64, macosArm64` from birth. No M7-style target-addition
+      task exists for them.
+- [x] JVM ABI dumps (`api/aws-kms.api`, `api/aws-secretsmanager.api`) checked in, and `aws-core.api`
+      updated with the one new public object.
+- [ ] **klib ABI dumps are NOT generated** — see the STATUS note. `checkLegacyAbi` is red until they
+      are, on all three modules.
+
+**Four decisions worth recording, because none of them is obvious from the diff**
+
+1. **Nothing carrying secret material is a `data class`.** `aws-s3`'s rule ("nothing carrying a
+   `ByteArray`") extends to `SecretString`, which is an ordinary `String` and is the *plaintext
+   secret itself*. A generated `toString()` puts it in CloudWatch Logs from any
+   `logger.info("$response")`, where it outlives the incident by the log group's retention period.
+   Every secret-bearing type has a hand-written `toString()` that reports presence or a byte count,
+   asserted by tests that fail if the redaction regresses. Secrets Manager reports **presence
+   only**; KMS reports a byte count, because there the bytes are ciphertext or an opaque payload
+   whose size is the useful diagnostic and a secret's *length* is a free hint to a brute-forcer.
+
+2. **`PutSecretValue` is `IDEMPOTENT`, and the token is what makes it true.** The
+   `ClientRequestToken` is minted **once per call, before the first attempt**, and reused verbatim
+   across retries — the same construction `aws-dynamodb` uses for `TransactWriteItems`. Under a
+   stable token an ambiguous replay of byte-identical content is a defined no-op returning the
+   version the first attempt created. A token minted *inside* the loop would make every retry a
+   fresh write and burn a secret version per attempt. There is a test that fails if that regresses.
+
+3. **KMS's algorithm and key-spec fields are `String`, not `enum class`** — a deliberate departure
+   from `aws-dynamodb`'s `ReturnValue` and `Select`. Those are closed sets this library only ever
+   *sends*; KMS's come back on responses too, and AWS extends them (`SM2PKE`, `SM2DSA` postdate the
+   original set). An enum on a response field turns "AWS added an algorithm" into a
+   `SerializationException` for every caller, including callers not using it, fixable only by a
+   release. Documented values are `const val`s on `EncryptionAlgorithm`, `SigningAlgorithm`,
+   `DataKeySpec` and `MessageType`.
+
+4. **`getSecretValues` exists because `BatchGetSecretValue` reports failures inside an HTTP 200.**
+   The third instance of this trap in the library, after EventBridge's `PutEvents` and DynamoDB's
+   `UnprocessedKeys`, and it is solved the same way: the helper chunks to 20, follows `NextToken`
+   under a page bound, returns entries in **request order**, and raises
+   `BatchGetSecretValuePartialFailureException` rather than returning a list that is silently short.
+   Unlike EventBridge's version this failure is fully recoverable — reading a secret has no side
+   effect — so the partition is carried for the caller to act on rather than merely to explain.
+
+**Two `aws-core` behaviours left deliberately unchanged, and documented at the point of surprise**
+
+- **KMS's `LimitExceededException` is retried as throttling and should not be.** It is in
+  `KNOWN_ERROR_TYPES` from the AWS SDK's shared table, where it means "you are going too fast"; for
+  KMS it means "you have too many keys", a standing condition no backoff clears. Special-casing it
+  means either editing a table every service shares or adding a per-service override that exists
+  for one code — both cost more than the seconds they save on a request that is failing anyway.
+  KMS's actual rate limit is `ThrottlingException`, which the same table paces correctly.
+- **KMS says `NotFoundException`, not `ResourceNotFoundException`**, so `NEVER_RETRY_CODES` does not
+  match it. Harmless — KMS answers 400 and no status rule fires — but a reader comparing the two
+  new modules should know the protection comes from a different place in each.
+
+**Verification**: `./gradlew :aws:aws-kms:jvmTest :aws:aws-secretsmanager:jvmTest` — **22 + 30 = 52
+tests, 0 failures**.
+
+> **STATUS: M8's CODE IS COMPLETE (2026-08-14). TWO VERIFICATION STEPS COULD NOT BE RUN AND ARE
+> OUTSTANDING — this milestone is not finished until they are.**
+>
+> **1. Neither module has been compiled for any native target, and the ABI dumps are half-written.**
+> Not a property of the code: the authoring host could not reach `download.jetbrains.com`, which is
+> blocked by egress policy, so the Kotlin/Native distribution never downloaded and every
+> `compileKotlinLinux*` / `compileKotlinMacos*` task failed before it started. `updateLegacyAbi`
+> fails for the same reason — the klib dump *is* a native compilation — so what is checked in is the
+> **JVM `.api` dumps only**. That leaves `checkLegacyAbi` red on three modules: `aws-kms` and
+> `aws-secretsmanager` have no `.klib.api` at all, and **`aws-core`'s existing one is now stale**,
+> missing `Base64BlobSerializer`.
+>
+> The first thing to run on a host with network access, before anything else in this milestone is
+> believed:
+>
+> ```
+> ./gradlew :aws:aws-core:updateLegacyAbi :aws:aws-kms:updateLegacyAbi \
+>           :aws:aws-secretsmanager:updateLegacyAbi
+> ./gradlew :aws:aws-kms:build :aws:aws-secretsmanager:build
+> ```
+>
+> The risk that native compilation actually fails is low — both modules are pure `commonMain` with
+> no `expect`/`actual` and no platform API beyond `kotlin.io.encoding.Base64`, and their build files
+> are `aws-eventbridge`'s with the names changed — but low is not zero, and M6's own STATUS block
+> records a native source set that was configured, reported green, and compiled nothing for days.
+> Do not mark this line done from a JVM-green build.
+>
+> **2. There is no SDK differential harness for either module, unlike M3, M3.5 and M6 — and this
+> one is a deliberate omission rather than a blocked step.** Those milestones compared our wire
+> bytes against `aws.sdk.kotlin`'s for a protocol we were implementing for the first time.
+> Here the protocol is the one M6 shipped and the differential already proved: same `awsJson1_1`
+> factory, same `AwsJsonErrorParser`, same `callJson`. What is genuinely new is the **base64 blob
+> encoding**, and that is covered directly — `KmsBlobEncodingTest` asserts the exact base64 string
+> on the wire and the exact bytes back — rather than transitively through an SDK comparison.
+>
+> What a differential *would* still catch is a wrong `@SerialName` on a field neither the tests nor
+> a reviewer noticed. Adding one is cheap (`aws.sdk.kotlin:secretsmanager` is already in the version
+> catalog; KMS is not) and is the obvious next increment if either module misbehaves against the
+> real service. **No live or LocalStack suite has been run against either module**: this milestone
+> was verified against `MockEngine` only. That is the honest limit of what "52 tests, 0 failures"
+> means here.
+>
+> **`env`'s `SecretsManagerSecretsProvider` was not rewired**, and that is scope, not oversight. It
+> lives in `env/src/jvmMain`, still uses the AWS SDK, and still works. Pointing it at
+> `aws-secretsmanager` would let `env` drop its `compileOnly(libs.aws.secretsmanager)` and would
+> make the provider available on native — which is the natural follow-on, and a change to a
+> published module's dependency graph that deserves its own commit rather than riding along here.
 
 ---
 

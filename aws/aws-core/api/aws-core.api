@@ -121,6 +121,15 @@ public class com/steamstreet/awskt/core/AwsServiceException : java/lang/Exceptio
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/steamstreet/awskt/core/Base64BlobSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/core/Base64BlobSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)[B
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;[B)V
+}
+
 public final class com/steamstreet/awskt/core/BatchRetry {
 	public static final field Companion Lcom/steamstreet/awskt/core/BatchRetry$Companion;
 	public fun <init> ()V
