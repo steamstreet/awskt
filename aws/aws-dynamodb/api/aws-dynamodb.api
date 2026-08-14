@@ -575,12 +575,14 @@ public final class com/steamstreet/awskt/dynamodb/DynamoDbConfig {
 	public final fun getCredentialsProvider ()Lcom/steamstreet/awskt/core/AwsCredentialsProvider;
 	public final fun getEndpointUrl ()Ljava/lang/String;
 	public final fun getHttpClient ()Lio/ktor/client/HttpClient;
+	public final fun getHttpTimeouts ()Lcom/steamstreet/awskt/core/AwsHttpTimeouts;
 	public final fun getRegion ()Ljava/lang/String;
 	public final fun getRetryConfig ()Lcom/steamstreet/awskt/core/RetryConfig;
 	public final fun setCaInfo (Ljava/lang/String;)V
 	public final fun setCredentialsProvider (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;)V
 	public final fun setEndpointUrl (Ljava/lang/String;)V
 	public final fun setHttpClient (Lio/ktor/client/HttpClient;)V
+	public final fun setHttpTimeouts (Lcom/steamstreet/awskt/core/AwsHttpTimeouts;)V
 	public final fun setRegion (Ljava/lang/String;)V
 	public final fun setRetryConfig (Lcom/steamstreet/awskt/core/RetryConfig;)V
 }

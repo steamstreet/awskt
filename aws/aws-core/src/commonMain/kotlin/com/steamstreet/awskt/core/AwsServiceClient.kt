@@ -253,25 +253,28 @@ public class AwsServiceClient(
                 // answers "this object is too big to buffer" by fetching the same too-big object
                 // several more times, with backoff, before surfacing the identical exception.
                 throw refusal.refusal
-            } catch (cancellation: CancellationException) {
+            } catch (failure: Throwable) {
                 // Cancellation is not a transport failure, and must never reach the classifier:
                 // `classifyTransportFailure` answers AMBIGUOUS for anything it does not recognise,
                 // and AMBIGUOUS on an IDEMPOTENT operation retries. So a cancelled scope would be
                 // answered by sending the request again — the client keeps issuing calls precisely
-                // when the caller has said to stop.
-                throw cancellation
-            } catch (failure: Throwable) {
-                lastFailure = failure
-                val kind = classifyTransportFailure(failure)
+                // when the caller has said to stop. `transportFailureOrNull` answers null for one,
+                // and this rethrows it untouched.
+                val transportFailure = transportFailureOrNull(failure) ?: throw failure
+                lastFailure = transportFailure
+                val kind = classifyTransportFailure(transportFailure)
                 val mayRetry = when (kind) {
                     TransportFailure.NOT_SENT -> true
                     TransportFailure.AMBIGUOUS ->
                         safety == OperationSafety.IDEMPOTENT || retryConfig.retryAmbiguousWrites
                 }
-                if (!mayRetry) throw failure
+                // `transportFailure`, not `failure`: the two differ only for a timeout that arrived
+                // dressed as a cancellation, and there the caller wants the timeout. Surfacing the
+                // cancellation instead would report a live call as a cancelled scope.
+                if (!mayRetry) throw transportFailure
 
                 attempt++
-                if (!prepareRetry(RetryErrorType.TRANSIENT, attempt, deadline, null)) throw failure
+                if (!prepareRetry(RetryErrorType.TRANSIENT, attempt, deadline, null)) throw transportFailure
                 continue
             }
 
@@ -488,10 +491,52 @@ public class AwsServiceClient(
 }
 
 /**
+ * The failure to hand to [classifyTransportFailure], or null when this is the caller's cancellation
+ * and must simply propagate.
+ *
+ * Everything that is not a [CancellationException] is itself. The interesting case is the one that
+ * is: Ktor's `HttpTimeout` plugin enforces `requestTimeoutMillis` by **cancelling the call's job**
+ * with an `HttpRequestTimeoutException` as the cancellation cause. Ktor unwraps that back to the
+ * typed exception on the paths that go through `unwrapRequestTimeoutException`, but a streaming read
+ * outside those paths surfaces the cancellation as-is — and read as a cancelled scope, the timeout
+ * this library just added would be neither retried nor reported as a timeout.
+ *
+ * A cause that is itself a [CancellationException] is skipped rather than unwrapped, and that
+ * exclusion is the whole safety of this function: a caller's `withTimeout` cancels with a
+ * `TimeoutCancellationException`, whose name matches the same pattern. Unwrapping it would answer a
+ * caller's "stop now" by sending the request again.
+ */
+internal fun transportFailureOrNull(failure: Throwable): Throwable? {
+    if (failure !is CancellationException) return failure
+    var current: Throwable? = failure.cause
+    var depth = 0
+    while (current != null && depth < 8) {
+        if (current !is CancellationException && current::class.simpleName.orEmpty().contains("Timeout")) {
+            return current
+        }
+        current = current.cause
+        depth++
+    }
+    return null
+}
+
+/**
  * Classifies a transport failure.
  *
  * The default is [TransportFailure.AMBIGUOUS] on purpose: an unrecognised failure might have
  * reached AWS, and treating it as provably-not-sent would let a non-idempotent write replay.
+ *
+ * ### The three timeouts land on two different answers
+ *
+ * A connect timeout (`ConnectTimeoutException`, matched by name below and again by its message) is
+ * [TransportFailure.NOT_SENT]: the socket never carried a byte, so replaying it cannot double-apply
+ * anything, and it is retried even for a write.
+ *
+ * A request or socket timeout (`HttpRequestTimeoutException`, `SocketTimeoutException`) is
+ * **deliberately left to the AMBIGUOUS default**, and neither name nor message may be added to the
+ * list above it: both fire after the request was already on the wire, so AWS may well have applied
+ * it. Retried for an IDEMPOTENT operation, surfaced for a write. Matching either as NOT_SENT would
+ * silently make every timed-out `PutEvents` replayable.
  */
 internal fun classifyTransportFailure(failure: Throwable): TransportFailure {
     var current: Throwable? = failure
@@ -507,6 +552,13 @@ internal fun classifyTransportFailure(failure: Throwable): TransportFailure {
             name.contains("TlsHandshake") ||
             "connection refused" in message ||
             "failed to connect" in message ||
+            // Belt to the name check's braces. `ConnectTimeoutException` (Ktor's wording) covers
+            // CIO and Curl; "connect timed out" is the JDK's, which some engines raise as a plain
+            // `java.net.SocketTimeoutException` — a name that must otherwise stay AMBIGUOUS,
+            // because the same class also carries "Read timed out". Both are narrow enough not to
+            // collide with "Request timeout has expired".
+            "connect timeout has expired" in message ||
+            "connect timed out" in message ||
             "unresolved address" in message ||
             "nodename nor servname" in message
         if (notSent) return TransportFailure.NOT_SENT

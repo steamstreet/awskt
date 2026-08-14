@@ -2,6 +2,7 @@ package com.steamstreet.awskt.dynamodb
 
 import com.steamstreet.dynamokt.AttributeValueSerializer
 import com.steamstreet.awskt.core.AwsCredentialsProvider
+import com.steamstreet.awskt.core.AwsHttpTimeouts
 import com.steamstreet.awskt.core.AwsProtocol
 import com.steamstreet.awskt.core.AwsServiceClient
 import com.steamstreet.awskt.core.AwsServiceException
@@ -86,11 +87,28 @@ public class DynamoDbConfig {
     public var region: String? = null
     public var endpointUrl: String? = null
     public var credentialsProvider: AwsCredentialsProvider? = null
+
+    /**
+     * A client to send on, instead of one built here.
+     *
+     * Supplying one **bypasses [caInfo] and [httpTimeouts]**: they are arguments to the client this
+     * factory would have built, and a client the caller already owns is configured by the caller.
+     * A caller-supplied client with no `HttpTimeout` plugin has no attempt bound at all — see
+     * [AwsHttpTimeouts] for what that costs inside a Lambda.
+     */
     public var httpClient: HttpClient? = null
     public var retryConfig: RetryConfig = RetryConfig()
 
     /** CA bundle for the native Curl engine. Null uses the system trust store. */
     public var caInfo: String? = null
+
+    /**
+     * Per-attempt time limits for the client this factory builds. Ignored when [httpClient] is set.
+     *
+     * The defaults suit DynamoDB, whose responses are bounded at 1 MB per page — a request that has
+     * not finished in 30 seconds is not going to.
+     */
+    public var httpTimeouts: AwsHttpTimeouts = AwsHttpTimeouts()
 }
 
 /** Builds a DynamoDB client. */
@@ -102,7 +120,7 @@ public fun DynamoDb(configure: DynamoDbConfig.() -> Unit = {}): DynamoDb {
     // case where `ownsHttpClient` is true — the caller supplied none, so we built one — the
     // reference was null and `close()` was a null-safe no-op, leaking the client we had just
     // created. The flag was right; the reference was not.
-    val httpClient = config.httpClient ?: awsHttpClient(config.caInfo)
+    val httpClient = config.httpClient ?: awsHttpClient(config.caInfo, config.httpTimeouts)
     return DefaultDynamoDb(
         client = AwsServiceClient(
             httpClient = httpClient,

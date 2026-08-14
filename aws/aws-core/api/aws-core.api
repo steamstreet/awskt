@@ -34,6 +34,16 @@ public final class com/steamstreet/awskt/core/AwsHttpResponse {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/steamstreet/awskt/core/AwsHttpTimeouts {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Long;)V
+	public synthetic fun <init> (Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Long;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getConnectTimeoutMillis ()Ljava/lang/Long;
+	public final fun getRequestTimeoutMillis ()Ljava/lang/Long;
+	public final fun getSocketTimeoutMillis ()Ljava/lang/Long;
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/steamstreet/awskt/core/AwsJsonErrorParser : com/steamstreet/awskt/core/AwsErrorParser {
 	public static final field INSTANCE Lcom/steamstreet/awskt/core/AwsJsonErrorParser;
 	public fun parse (ILjava/util/Map;[B)Lcom/steamstreet/awskt/core/ErrorDetails;
@@ -127,8 +137,8 @@ public final class com/steamstreet/awskt/core/ErrorsKt {
 }
 
 public final class com/steamstreet/awskt/core/HttpClient_jvmKt {
-	public static final fun awsHttpClient (Ljava/lang/String;)Lio/ktor/client/HttpClient;
-	public static synthetic fun awsHttpClient$default (Ljava/lang/String;ILjava/lang/Object;)Lio/ktor/client/HttpClient;
+	public static final fun awsHttpClient (Ljava/lang/String;Lcom/steamstreet/awskt/core/AwsHttpTimeouts;)Lio/ktor/client/HttpClient;
+	public static synthetic fun awsHttpClient$default (Ljava/lang/String;Lcom/steamstreet/awskt/core/AwsHttpTimeouts;ILjava/lang/Object;)Lio/ktor/client/HttpClient;
 }
 
 public final class com/steamstreet/awskt/core/OperationSafety : java/lang/Enum {

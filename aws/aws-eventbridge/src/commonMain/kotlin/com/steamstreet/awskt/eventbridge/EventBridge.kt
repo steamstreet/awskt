@@ -1,6 +1,7 @@
 package com.steamstreet.awskt.eventbridge
 
 import com.steamstreet.awskt.core.AwsCredentialsProvider
+import com.steamstreet.awskt.core.AwsHttpTimeouts
 import com.steamstreet.awskt.core.AwsProtocol
 import com.steamstreet.awskt.core.AwsServiceClient
 import com.steamstreet.awskt.core.OperationSafety
@@ -43,11 +44,29 @@ public class EventBridgeConfig {
     public var region: String? = null
     public var endpointUrl: String? = null
     public var credentialsProvider: AwsCredentialsProvider? = null
+
+    /**
+     * A client to send on, instead of one built here.
+     *
+     * Supplying one **bypasses [caInfo] and [httpTimeouts]**: those are arguments to the client this
+     * factory would have built, and a client the caller already owns is configured by the caller. A
+     * caller-supplied client with no `HttpTimeout` plugin has no attempt bound at all.
+     */
     public var httpClient: HttpClient? = null
     public var retryConfig: RetryConfig = RetryConfig()
 
     /** CA bundle for the native Curl engine. Null uses the system trust store. */
     public var caInfo: String? = null
+
+    /**
+     * Per-attempt time limits for the client this factory builds. Ignored when [httpClient] is set.
+     *
+     * Worth reading together with [EventBridgeApi.putEvents]'s `NOT_IDEMPOTENT` safety: a request
+     * timeout may have landed, so a timed-out `PutEvents` is surfaced rather than replayed and the
+     * caller decides whether to republish. Shortening this value therefore converts hangs into
+     * *decisions*, not into duplicate deliveries.
+     */
+    public var httpTimeouts: AwsHttpTimeouts = AwsHttpTimeouts()
 }
 
 /** Builds an EventBridge client. */
@@ -56,7 +75,7 @@ public fun EventBridge(configure: EventBridgeConfig.() -> Unit = {}): EventBridg
     val region = resolveRegion(config.region)
     // One binding for the effective client, handed to both the transport and the close path — see
     // the same note in `DynamoDb()`, where splitting the two leaked the client we had just built.
-    val httpClient = config.httpClient ?: awsHttpClient(config.caInfo)
+    val httpClient = config.httpClient ?: awsHttpClient(config.caInfo, config.httpTimeouts)
     return DefaultEventBridge(
         client = AwsServiceClient(
             httpClient = httpClient,

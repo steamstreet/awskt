@@ -3,6 +3,7 @@ package com.steamstreet.awskt.s3
 import com.steamstreet.awskt.core.AwsCredentialsProvider
 import com.steamstreet.awskt.core.AwsEndpoint
 import com.steamstreet.awskt.core.AwsHttpResponse
+import com.steamstreet.awskt.core.AwsHttpTimeouts
 import com.steamstreet.awskt.core.AwsProtocol
 import com.steamstreet.awskt.core.AwsServiceClient
 import com.steamstreet.awskt.core.OperationSafety
@@ -63,9 +64,29 @@ public class S3Config {
     public var region: String? = null
     public var endpointUrl: String? = null
     public var credentialsProvider: AwsCredentialsProvider? = null
+
+    /**
+     * A client to send on, instead of one built here.
+     *
+     * Supplying one **bypasses [caInfo] and [httpTimeouts]**: those are arguments to the client this
+     * factory would have built, and a client the caller already owns is configured by the caller. A
+     * caller-supplied client with no `HttpTimeout` plugin has no attempt bound at all, which for S3
+     * is the difference between a slow download and a hung Lambda.
+     */
     public var httpClient: HttpClient? = null
     public var retryConfig: RetryConfig = RetryConfig(maxAttempts = 3)
     public var caInfo: String? = null
+
+    /**
+     * Per-attempt time limits for the client this factory builds. Ignored when [httpClient] is set.
+     *
+     * **This is the module where the default request timeout can bite.** It is a whole-attempt
+     * budget covering the body transfer, and [maxBufferedDownloadBytes] permits 64 MB by default —
+     * which inside the default 30 s needs a sustained ~2.2 MB/s. In-Region that is comfortable;
+     * over the public internet, or with the ceiling raised, it is not. Raise the two together, or a
+     * download that would have completed is turned into a timeout that is then retried from zero.
+     */
+    public var httpTimeouts: AwsHttpTimeouts = AwsHttpTimeouts()
 
     /** Every local S3 implementation is path-style. Set with [endpointUrl]. */
     public var forcePathStyle: Boolean = false
@@ -97,7 +118,7 @@ public class S3Config {
 public fun S3(configure: S3Config.() -> Unit = {}): S3 {
     val config = S3Config().apply(configure)
     val region = resolveRegion(config.region)
-    val httpClient = config.httpClient ?: awsHttpClient(config.caInfo)
+    val httpClient = config.httpClient ?: awsHttpClient(config.caInfo, config.httpTimeouts)
     return DefaultS3(
         region = region,
         config = config,

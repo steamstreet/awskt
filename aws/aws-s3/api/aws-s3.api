@@ -290,6 +290,7 @@ public final class com/steamstreet/awskt/s3/S3Config {
 	public final fun getEndpointUrl ()Ljava/lang/String;
 	public final fun getForcePathStyle ()Z
 	public final fun getHttpClient ()Lio/ktor/client/HttpClient;
+	public final fun getHttpTimeouts ()Lcom/steamstreet/awskt/core/AwsHttpTimeouts;
 	public final fun getMaxBufferedDownloadBytes ()J
 	public final fun getMaxBufferedUploadBytes ()J
 	public final fun getRegion ()Ljava/lang/String;
@@ -300,6 +301,7 @@ public final class com/steamstreet/awskt/s3/S3Config {
 	public final fun setEndpointUrl (Ljava/lang/String;)V
 	public final fun setForcePathStyle (Z)V
 	public final fun setHttpClient (Lio/ktor/client/HttpClient;)V
+	public final fun setHttpTimeouts (Lcom/steamstreet/awskt/core/AwsHttpTimeouts;)V
 	public final fun setMaxBufferedDownloadBytes (J)V
 	public final fun setMaxBufferedUploadBytes (J)V
 	public final fun setRegion (Ljava/lang/String;)V

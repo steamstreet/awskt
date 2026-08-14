@@ -76,6 +76,19 @@ final class com.steamstreet.awskt.core/AwsHttpResponse { // com.steamstreet.awsk
     final fun toString(): kotlin/String // com.steamstreet.awskt.core/AwsHttpResponse.toString|toString(){}[0]
 }
 
+final class com.steamstreet.awskt.core/AwsHttpTimeouts { // com.steamstreet.awskt.core/AwsHttpTimeouts|null[0]
+    constructor <init>(kotlin/Long? = ..., kotlin/Long? = ..., kotlin/Long? = ...) // com.steamstreet.awskt.core/AwsHttpTimeouts.<init>|<init>(kotlin.Long?;kotlin.Long?;kotlin.Long?){}[0]
+
+    final val connectTimeoutMillis // com.steamstreet.awskt.core/AwsHttpTimeouts.connectTimeoutMillis|{}connectTimeoutMillis[0]
+        final fun <get-connectTimeoutMillis>(): kotlin/Long? // com.steamstreet.awskt.core/AwsHttpTimeouts.connectTimeoutMillis.<get-connectTimeoutMillis>|<get-connectTimeoutMillis>(){}[0]
+    final val requestTimeoutMillis // com.steamstreet.awskt.core/AwsHttpTimeouts.requestTimeoutMillis|{}requestTimeoutMillis[0]
+        final fun <get-requestTimeoutMillis>(): kotlin/Long? // com.steamstreet.awskt.core/AwsHttpTimeouts.requestTimeoutMillis.<get-requestTimeoutMillis>|<get-requestTimeoutMillis>(){}[0]
+    final val socketTimeoutMillis // com.steamstreet.awskt.core/AwsHttpTimeouts.socketTimeoutMillis|{}socketTimeoutMillis[0]
+        final fun <get-socketTimeoutMillis>(): kotlin/Long? // com.steamstreet.awskt.core/AwsHttpTimeouts.socketTimeoutMillis.<get-socketTimeoutMillis>|<get-socketTimeoutMillis>(){}[0]
+
+    final fun toString(): kotlin/String // com.steamstreet.awskt.core/AwsHttpTimeouts.toString|toString(){}[0]
+}
+
 final class com.steamstreet.awskt.core/AwsProtocol { // com.steamstreet.awskt.core/AwsProtocol|null[0]
     constructor <init>(kotlin/String, kotlin/String, kotlin/String?, kotlin/String?, com.steamstreet.awskt.core/AwsErrorParser) // com.steamstreet.awskt.core/AwsProtocol.<init>|<init>(kotlin.String;kotlin.String;kotlin.String?;kotlin.String?;com.steamstreet.awskt.core.AwsErrorParser){}[0]
 
@@ -196,7 +209,7 @@ final val com.steamstreet.awskt.core/awsJson // com.steamstreet.awskt.core/awsJs
     final fun <get-awsJson>(): kotlinx.serialization.json/Json // com.steamstreet.awskt.core/awsJson.<get-awsJson>|<get-awsJson>(){}[0]
 
 final fun com.steamstreet.awskt.core/awsEnv(kotlin/String): kotlin/String? // com.steamstreet.awskt.core/awsEnv|awsEnv(kotlin.String){}[0]
-final fun com.steamstreet.awskt.core/awsHttpClient(kotlin/String? = ...): io.ktor.client/HttpClient // com.steamstreet.awskt.core/awsHttpClient|awsHttpClient(kotlin.String?){}[0]
+final fun com.steamstreet.awskt.core/awsHttpClient(kotlin/String? = ..., com.steamstreet.awskt.core/AwsHttpTimeouts = ...): io.ktor.client/HttpClient // com.steamstreet.awskt.core/awsHttpClient|awsHttpClient(kotlin.String?;com.steamstreet.awskt.core.AwsHttpTimeouts){}[0]
 final fun com.steamstreet.awskt.core/backoffMillis(com.steamstreet.awskt.core/RetryErrorType, kotlin/Int, com.steamstreet.awskt.core/RetryConfig, kotlin/Function0<kotlin/Double>): kotlin/Long // com.steamstreet.awskt.core/backoffMillis|backoffMillis(com.steamstreet.awskt.core.RetryErrorType;kotlin.Int;com.steamstreet.awskt.core.RetryConfig;kotlin.Function0<kotlin.Double>){}[0]
 final fun com.steamstreet.awskt.core/defaultCredentialsProvider(): com.steamstreet.awskt.core/AwsCredentialsProvider // com.steamstreet.awskt.core/defaultCredentialsProvider|defaultCredentialsProvider(){}[0]
 final fun com.steamstreet.awskt.core/resolveEndpoint(kotlin/String, kotlin/String, kotlin/String? = ..., kotlin/Function1<kotlin/String, kotlin/String?> = ...): com.steamstreet.awskt.core/AwsEndpoint // com.steamstreet.awskt.core/resolveEndpoint|resolveEndpoint(kotlin.String;kotlin.String;kotlin.String?;kotlin.Function1<kotlin.String,kotlin.String?>){}[0]
