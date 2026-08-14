@@ -583,11 +583,45 @@ internal fun transportFailureOrNull(failure: Throwable): Throwable? {
  * list above it: both fire after the request was already on the wire, so AWS may well have applied
  * it. Retried for an IDEMPOTENT operation, surfaced for a write. Matching either as NOT_SENT would
  * silently make every timed-out `PutEvents` replayable.
+ *
+ * ### Curl, which is the only engine native has
+ *
+ * The name and message patterns below are JVM-shaped, and Kotlin/Native never sees a single one of
+ * them: `ktor-client-curl` reports every failed transfer as a plain `IllegalStateException` whose
+ * message is `"Connection failed for request: $request. Reason: $errorMessage"`
+ * (`CurlMultiApiHandler.kt:353`, ktor 3.5.2), where `errorMessage` is
+ * `"${curl_easy_strerror(code)} (${code.name})"` (`CurlAdapters.kt:61-62`). No typed exception, no
+ * recognisable class name — so before [CURL_NOT_SENT_MARKERS] existed, a DNS lookup that failed
+ * before a packet left the machine came back AMBIGUOUS, and a `NOT_IDEMPOTENT` write refused to
+ * retry it.
+ *
+ * The markers match the `CURLE_…` **enum name** first, because ktor appends it verbatim and curl's
+ * `strerror` prose is not stable across curl releases: `CURLE_COULDNT_RESOLVE_HOST` reads
+ * "Couldn't resolve host name" under curl 7.88 and "Could not resolve hostname" under curl 8.11.
+ * Both spellings are listed too, for anything that surfaces the prose without the code.
+ *
+ * What must **not** be matched is the enclosing sentence. "Connection failed for request:" is the
+ * *fallback* branch for every unhandled `CURLcode`, `CURLE_SEND_ERROR` and `CURLE_RECV_ERROR`
+ * included — the two shapes that most certainly did reach AWS. Only the specific codes inside it
+ * are safe, for the same reason the request timeout above is not.
+ *
+ * One inherited subtlety: ktor maps `CURLE_OPERATION_TIMEDOUT` to `ConnectTimeoutException`
+ * (`CurlMultiApiHandler.kt:332-334`), which the name check above already answers NOT_SENT. That is
+ * sound *only* because the engine sets `CURLOPT_CONNECTTIMEOUT_MS` and never `CURLOPT_TIMEOUT_MS`
+ * (`CurlMultiApiHandler.kt:100-105`), so curl has no whole-operation deadline that could expire
+ * mid-flight. Should a ktor release start setting one, that mapping becomes a post-send timeout
+ * wearing a pre-send name, and this classifier would need to stop trusting it.
  */
 internal fun classifyTransportFailure(failure: Throwable): TransportFailure {
     var current: Throwable? = failure
     var depth = 0
     while (current != null && depth < 8) {
+        // Asked first, and it is the only check here that reasons about what a throwable *is*
+        // rather than what it is called. A JVM engine's `java.net.ConnectException` carries no
+        // message at all in the common case, so the string matching below cannot see it, and its
+        // class name is only stable until someone subclasses it.
+        platformTransportFailureHint(current)?.let { return it }
+
         val name = current::class.simpleName.orEmpty()
         val message = current.message?.lowercase().orEmpty()
         val notSent = name.contains("ConnectTimeout") ||
@@ -606,13 +640,78 @@ internal fun classifyTransportFailure(failure: Throwable): TransportFailure {
             "connect timeout has expired" in message ||
             "connect timed out" in message ||
             "unresolved address" in message ||
-            "nodename nor servname" in message
+            "nodename nor servname" in message ||
+            CURL_NOT_SENT_MARKERS.any { it in message }
         if (notSent) return TransportFailure.NOT_SENT
         current = current.cause
         depth++
     }
     return TransportFailure.AMBIGUOUS
 }
+
+/**
+ * Fragments that appear only in a curl failure raised **before the request bytes were written**:
+ * name resolution, TCP connect, and the TLS handshake. Matched against an already-lowercased
+ * message.
+ *
+ * Every entry is quoted from a source, because guessing here is how a non-idempotent write gets
+ * replayed. Verified against ktor 3.5.2 (the version pinned in `libs.versions.toml`) and curl's own
+ * `strerror` table:
+ *
+ * - `curle_…` — ktor renders `"${curl_easy_strerror(this)?.toKString()} ($name)"`, where `name` is
+ *   its own `when` over the `CURLcode` constants — `CurlAdapters.kt:61-62` and `:64-` for the
+ *   table. The enum name is therefore in the message verbatim, and unlike the prose it does not
+ *   drift between curl releases.
+ * - `tls verification failed for request` — `CurlMultiApiHandler.kt:338-344`, the dedicated branch
+ *   for `CURLE_PEER_FAILED_VERIFICATION`.
+ * - `proxy handshake error for request` — `CurlMultiApiHandler.kt:346-350`. Listed separately
+ *   because that branch interpolates `$proxyCode` (a `CURLproxycode`) instead of `$errorMessage`,
+ *   so no `curle_…` marker can catch it. A proxy handshake that fails has not forwarded anything.
+ * - the prose forms — curl `lib/strerror.c`: `curl-7_88_1` lines 76-83 / 211-218 and `curl-8_11_1`
+ *   lines 76-83 / 205-212, which is where the "Couldn't"/"Could not" split comes from.
+ * - `ssl certificate problem` — curl `lib/vtls/openssl.c:4215` (`curl-8_11_1`), a `failf` that
+ *   lands in `CURLOPT_ERRORBUFFER`. ktor 3.5.2 does not set that option, so this one is not
+ *   reachable through the current engine; it is here as cover for a ktor release that starts
+ *   wiring the buffer, and it is safe either way because certificate verification is strictly a
+ *   handshake-phase event.
+ *
+ * ### Deliberately absent
+ *
+ * The same rule as the request timeout in [classifyTransportFailure]: anything that *can* fire once
+ * bytes are on the wire stays AMBIGUOUS, however clearly it names a network fault.
+ * `CURLE_OPERATION_TIMEDOUT` ("timeout was reached"), `CURLE_SEND_ERROR` ("failed sending data to
+ * the peer"), `CURLE_RECV_ERROR` ("failure when receiving data from the peer"),
+ * `CURLE_PARTIAL_FILE` ("transfer closed with outstanding read data remaining") and
+ * `CURLE_GOT_NOTHING` are all reachable *after* AWS has seen and applied the request. Adding any of
+ * them would make a timed-out `UpdateItem` replayable, which is the exact bug this whole
+ * classification exists to prevent.
+ */
+private val CURL_NOT_SENT_MARKERS = listOf(
+    // DNS: the address was never resolved, so nothing was ever addressed.
+    "curle_couldnt_resolve_host",
+    "curle_couldnt_resolve_proxy",
+    "could not resolve host",
+    "couldn't resolve host",
+    "could not resolve proxy",
+    "couldn't resolve proxy",
+    // Connect: no TCP (or QUIC) session was ever established.
+    "curle_couldnt_connect",
+    "curle_quic_connect_error",
+    "could not connect to server",
+    "couldn't connect to server",
+    // TLS handshake: a session exists, but the request has not been written to it — the handshake
+    // completes before the first HTTP byte goes out.
+    "curle_ssl_connect_error",
+    "curle_peer_failed_verification",
+    "curle_ssl_certproblem",
+    "curle_ssl_cipher",
+    "ssl connect error",
+    "ssl peer certificate",
+    "problem with the local ssl certificate",
+    "ssl certificate problem",
+    "tls verification failed for request",
+    "proxy handshake error for request",
+)
 
 /** Parses an RFC 7231 IMF-fixdate (`Sun, 06 Nov 1994 08:49:37 GMT`) to epoch millis. */
 internal fun parseHttpDateOrNull(value: String): Long? = try {
