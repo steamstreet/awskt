@@ -64,6 +64,52 @@ public class AwsProtocol(
             endpointPrefix: String,
             signingName: String = endpointPrefix,
         ): AwsProtocol = AwsProtocol(endpointPrefix, signingName, null, null, RestXmlErrorParser)
+
+        /**
+         * REST-shaped JSON: a plain `application/json` body addressed by **method and path** rather
+         * than by `X-Amz-Target`.
+         *
+         * The null [targetPrefix] is the whole difference from [awsJson1_0] / [awsJson1_1] and it is
+         * load-bearing: `AwsServiceClient` only emits `X-Amz-Target` when a prefix is present, so a
+         * restJson1 service addressed through this protocol sends no target header at all. Pair it
+         * with [callRestJson] rather than [callJson], which hardcodes `POST /`.
+         *
+         * Errors are [AwsJsonErrorParser]'s, unchanged — restJson1 shares awsJson's error envelope,
+         * including the `x-amzn-errortype` header, which is where a restJson1 service usually puts
+         * the code. EventBridge Scheduler is the consumer in this repo.
+         *
+         * The plan's M2 note called restJson1 "a second codec into `aws-core`" and treated that as
+         * a reason to defer it. It was already stale by M3.5 — S3 forced the protocol seam and the
+         * `AwsErrorParser` strategy that make this factory four lines rather than a codec.
+         */
+        public fun restJson1(
+            endpointPrefix: String,
+            signingName: String = endpointPrefix,
+        ): AwsProtocol = AwsProtocol(endpointPrefix, signingName, "application/json", null, AwsJsonErrorParser)
+
+        /**
+         * The **AWS query protocol**: a form-encoded body naming an `Action`, answered with XML.
+         *
+         * The oldest wire format AWS still serves, and the one SNS speaks. Nothing here parses
+         * either direction — a query service's request is built by flattening a structure into
+         * `Name.member.1.Field` keys and its response is XML, neither of which is a codec
+         * `aws-core` can supply generically. This factory contributes the three things that *are*
+         * protocol-level: the content type, the absence of a target header, and the error parser.
+         * The service module hand-writes the rest, which is proportionate when the module has two
+         * operations and would not be if it had twenty.
+         *
+         * [RestXmlErrorParser] is correct here despite the name. A query-protocol error is
+         * `<ErrorResponse><Error><Code>…</Code><Message>…</Message></Error></ErrorResponse>` and
+         * that parser scans for the first `<Code>` and `<Message>` at any depth, which finds
+         * exactly those. It is named for the protocol it was written for, not for the only one it
+         * fits.
+         */
+        public fun awsQuery(
+            endpointPrefix: String,
+            signingName: String = endpointPrefix,
+        ): AwsProtocol = AwsProtocol(
+            endpointPrefix, signingName, "application/x-www-form-urlencoded", null, RestXmlErrorParser,
+        )
     }
 }
 

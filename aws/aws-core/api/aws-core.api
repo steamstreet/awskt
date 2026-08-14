@@ -92,6 +92,10 @@ public final class com/steamstreet/awskt/core/AwsProtocol$Companion {
 	public static synthetic fun awsJson1_0$default (Lcom/steamstreet/awskt/core/AwsProtocol$Companion;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/core/AwsProtocol;
 	public final fun awsJson1_1 (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/core/AwsProtocol;
 	public static synthetic fun awsJson1_1$default (Lcom/steamstreet/awskt/core/AwsProtocol$Companion;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/core/AwsProtocol;
+	public final fun awsQuery (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/core/AwsProtocol;
+	public static synthetic fun awsQuery$default (Lcom/steamstreet/awskt/core/AwsProtocol$Companion;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/core/AwsProtocol;
+	public final fun restJson1 (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/core/AwsProtocol;
+	public static synthetic fun restJson1$default (Lcom/steamstreet/awskt/core/AwsProtocol$Companion;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/core/AwsProtocol;
 	public final fun restXml (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/core/AwsProtocol;
 	public static synthetic fun restXml$default (Lcom/steamstreet/awskt/core/AwsProtocol$Companion;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/core/AwsProtocol;
 }
@@ -245,6 +249,10 @@ public final class com/steamstreet/awskt/core/StaticCredentialsProvider : com/st
 public final class com/steamstreet/awskt/core/TypedCallsKt {
 	public static final fun callJson (Lcom/steamstreet/awskt/core/AwsServiceClient;Ljava/lang/String;Ljava/lang/Object;Lkotlinx/serialization/SerializationStrategy;Lkotlinx/serialization/DeserializationStrategy;Lkotlinx/serialization/json/Json;Lcom/steamstreet/awskt/core/OperationSafety;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun callJson$default (Lcom/steamstreet/awskt/core/AwsServiceClient;Ljava/lang/String;Ljava/lang/Object;Lkotlinx/serialization/SerializationStrategy;Lkotlinx/serialization/DeserializationStrategy;Lkotlinx/serialization/json/Json;Lcom/steamstreet/awskt/core/OperationSafety;Ljava/util/List;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun callRestJson (Lcom/steamstreet/awskt/core/AwsServiceClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;Lkotlinx/serialization/SerializationStrategy;Lkotlinx/serialization/DeserializationStrategy;Ljava/util/List;Ljava/lang/String;Lkotlinx/serialization/json/Json;Lcom/steamstreet/awskt/core/OperationSafety;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun callRestJson$default (Lcom/steamstreet/awskt/core/AwsServiceClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;Lkotlinx/serialization/SerializationStrategy;Lkotlinx/serialization/DeserializationStrategy;Ljava/util/List;Ljava/lang/String;Lkotlinx/serialization/json/Json;Lcom/steamstreet/awskt/core/OperationSafety;Ljava/util/List;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun callRestJsonNoBody (Lcom/steamstreet/awskt/core/AwsServiceClient;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/DeserializationStrategy;Ljava/util/List;Ljava/lang/String;Lkotlinx/serialization/json/Json;Lcom/steamstreet/awskt/core/OperationSafety;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun callRestJsonNoBody$default (Lcom/steamstreet/awskt/core/AwsServiceClient;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/DeserializationStrategy;Ljava/util/List;Ljava/lang/String;Lkotlinx/serialization/json/Json;Lcom/steamstreet/awskt/core/OperationSafety;Ljava/util/List;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun getAwsJson ()Lkotlinx/serialization/json/Json;
 }
 

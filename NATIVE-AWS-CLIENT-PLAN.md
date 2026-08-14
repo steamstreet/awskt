@@ -42,7 +42,7 @@ Three things are settled by evidence, not opinion:
 
 ## 1. Module Overview
 
-**Module Name**: `aws/aws-signing`, `aws/aws-core`, `aws/aws-dynamodb`, `aws/aws-eventbridge`, `aws/aws-s3`, `aws/aws-secretsmanager`, `aws/aws-kms`
+**Module Name**: `aws/aws-signing`, `aws/aws-core`, `aws/aws-dynamodb`, `aws/aws-eventbridge`, `aws/aws-s3`, `aws/aws-secretsmanager`, `aws/aws-kms`, `aws/aws-sqs`, `aws/aws-sns`, `aws/aws-scheduler`
 
 **Dependencies**:
 - `aws-signing` → KotlinCrypto only. **No Ktor. No awskt modules.** That constraint is what lets AWS's own fixture corpus drive the signer directly. It carries **both** header and query-string (presign) signing — query signing is pure string/byte work with no S3 knowledge, no HTTP client and no I/O.
@@ -52,6 +52,16 @@ Three things are settled by evidence, not opinion:
 - `aws-s3` → `aws-core`. **NOT `:dynamo`, NOT `:standards`/`:env`/`:logging`** (Decision 6 applies unchanged). Declares `jvm, linuxX64, linuxArm64, macosArm64` from birth, so M7 has no target-addition task for it. `aws-s3/src/jvmTest` additionally carries `aws.sdk.kotlin:s3` as a **test-only** dependency for the presign differential — see §11 criterion 9.
 - `aws-secretsmanager` → `aws-core`. **NOT `:env`**, even though `env`'s `SecretsProvider` is the obvious consumer — the dependency has to run the other way (`env` may depend on this) or a caller who wants to read one secret acquires a logging framework and an AppConfig client. Decision 6 again.
 - `aws-kms` → `aws-core`. Same constraint, same reason.
+- `aws-sqs` → `aws-core`. Different artifact from `:lambda:lambda-sqs`, which handles SQS events
+  *arriving* at a Lambda and contains no client; the two are complementary and neither depends on
+  the other.
+- `aws-sns` → `aws-core`, and **notably not `kotlinx-serialization-json`** — SNS is the query
+  protocol, so there is no JSON in either direction and `Wire.kt` carries the codec instead. A
+  `@Serializable` appearing in that module means somebody has misread the protocol. Same
+  relationship to `:lambda:lambda-sns` as above.
+- `aws-scheduler` → `aws-core`. **Unrelated to `aws-eventbridge`** despite the shared brand:
+  EventBridge Scheduler is a separate service with its own endpoint (`scheduler`), its own protocol
+  (restJson1, where EventBridge is AWS-JSON 1.1) and no overlapping operations.
 
 **Goal**: Replace `aws.sdk.kotlin` in `dynamo`, `dynamokt`, `dynamokt-exposed` and `events` with a hand-written, Kotlin-Multiplatform-native client that runs on `linuxArm64` inside an AWS Lambda custom runtime, while keeping all 100 existing DynamoDB integration tests green and preserving pagination-token wire compatibility — **and** to provide a native S3 client (GetObject, PutObject, HeadObject, DeleteObject, presigned GET/PUT URLs) which has no `aws.sdk.kotlin` counterpart in this repo today and is therefore purely **additive** to the public API.
 
@@ -134,6 +144,14 @@ There is nothing for a serializer to serialize. The service trait is `aws.protoc
   **The cost was low precisely because the earlier milestones did their job.** Both services speak AWS-JSON 1.1 — the dialect M6 already proved with EventBridge — so M8 needed no new protocol, no new error parser and no transport change. The one addition to `aws-core` is `Base64BlobSerializer` (`Blobs.kt`), because AWS-JSON blobs are base64 strings and both services carry them.
 
   **Kinesis and AppConfigData remain out**, and now on the corrected test rather than the stale one: a native Lambda is *invoked with* Kinesis records rather than calling Kinesis, and AppConfigData is a polling configuration client whose one consumer (`env/src/jvmMain/AppConfig.kt`) is JVM-only by construction. Neither is something a native Lambda is blocked on. Revisit if that changes.
+
+  **Update (2026-08-14, M9): SQS, SNS and EventBridge Scheduler were added too.** Same corrected
+  test, applied to three services a native Lambda plainly needs to *call* rather than merely be
+  invoked by: queueing work, publishing notifications, and scheduling future work. Note the
+  AppConfigData rationale above is now doubly stale — M9 shipped `restJson1` support in `aws-core`,
+  so the "second codec" objection is not merely obsolete, it is measurably four lines. AppConfigData
+  stays out on the honest reason only: a polling configuration client is not something a native
+  Lambda is blocked on.
 - **`S3Local` / `S3Mock.kt`.** Recommend deletion, pending Q7. Zero usages repo-wide; a `mockk(relaxed = true)` over an S3 client returns empty objects, which is a worse test double than none. This is a **deletion from a published artifact**, not a no-op — see Q1 row (k).
 - Container (ECS/EKS/CodeBuild) credentials. Real but JVM-only demand.
 - Native targets for `dynamokt-exposed`. It is forced into scope for *compilation* but no Lambda handler uses it.
@@ -390,14 +408,16 @@ awskt/
 | M6 | EventBridge client + `events` module | 5 | M4, M5b | yes |
 | M7 | Native targets, Lambda runtime, packaging | 10.5 | M6 | yes |
 | **M8** | **`aws-secretsmanager` + `aws-kms` data planes** | **2** | M6 | **yes** |
+| **M9** | **`aws-sqs` + `aws-sns` + `aws-scheduler` data planes** | **3.5** | M6 | **yes** |
 | | **Planned (1 FTE)** | **78.5** | | |
 | | **With 20% contingency** | **~94** | | |
 | | *Critical path with a 2nd developer* | *63 (~76)* | | |
 
-**M8 is deliberately outside the totals.** It was added on 2026-08-14, after M7 landed, and folding
-2 days into a "78.5 planned" figure that was quoted in a staffing decision would rewrite history to
-make the estimate look better than it was. The v1 plan was 78.5 days for seven milestones; M8 is a
-scope addition on top of a delivered plan, and is counted separately for that reason.
+**M8 and M9 are deliberately outside the totals.** Both were added on 2026-08-14, after M7 landed,
+and folding 5.5 days into a "78.5 planned" figure that was quoted in a staffing decision would
+rewrite history to make the estimate look better than it was. The v1 plan was 78.5 days for seven
+milestones; M8 and M9 are scope additions on top of a delivered plan, and are counted separately
+for that reason.
 
 ### Parallelization, stated honestly
 
@@ -2118,6 +2138,181 @@ tests, 0 failures**.
 > `aws-secretsmanager` would let `env` drop its `compileOnly(libs.aws.secretsmanager)` and would
 > make the provider available on native — which is the natural follow-on, and a change to a
 > published module's dependency graph that deserves its own commit rather than riding along here.
+
+---
+
+### M9 — SQS, SNS and EventBridge Scheduler data planes (3.5 days)
+
+Added 2026-08-14, immediately after M8. Where M8 was two modules speaking a protocol the library
+already had, **M9's three services speak three different wire formats and only one of them was
+already supported.** That is the whole shape of this milestone, and it is why it costs more than
+M8 despite covering a comparable number of operations.
+
+| Service | Protocol | What it cost |
+|---|---|---|
+| **SQS** | `awsJson1_0`, target `AmazonSQS` | Nothing new. DynamoDB's dialect exactly. |
+| **Scheduler** | `restJson1` | Two typed-call helpers and a protocol factory in `aws-core`. |
+| **SNS** | `awsQuery` — form-encoded in, **XML** out | A hand-written codec in the service module. |
+
+**Protocols were verified against the AWS SDK's own artifacts, not from memory.** `sns-jvm`,
+`sqs-jvm` and `scheduler-jvm` were fetched from Maven Central and their generated serializers read.
+That was not ceremony — it corrected three things this plan would otherwise have got wrong:
+
+- SQS is **no longer** an `awsQuery` service. AWS added a JSON protocol in 2023, so what would have
+  been the second hand-written query codec is instead the cheapest module in the milestone.
+- SNS's error codes are **not** its Smithy shape names. The query protocol renames them, and the
+  renaming is not mechanical: shape `InvalidParameterValueException` arrives as wire code
+  `ParameterValueInvalid`, with the words reversed. All fifteen were read out of
+  `PublishOperationDeserializerKt`.
+- Scheduler spells one concept three ways. `GetSchedule` and `DeleteSchedule` take `groupName`;
+  `ListSchedules` takes **`ScheduleGroup`**. Memory said `GroupName` for the third.
+
+**Scope**
+
+- `aws-sqs`: `SendMessage`, `SendMessageBatch`, `ReceiveMessage`, `DeleteMessage`,
+  `DeleteMessageBatch`, `ChangeMessageVisibility`, `ChangeMessageVisibilityBatch`, `GetQueueUrl`.
+  Queue lifecycle is out.
+- `aws-sns`: `Publish`, `PublishBatch`. Topic and subscription lifecycle is out.
+- `aws-scheduler`: `CreateSchedule`, `GetSchedule`, `UpdateSchedule`, `DeleteSchedule`,
+  `ListSchedules`. Schedule *group* management and tagging are out.
+
+**"Data plane" had to be redefined for Scheduler, and the redefinition is the interesting part.**
+KMS has operations against keys somebody else provisioned; SQS has messages moving through queues
+somebody else created. Scheduler has no such split — **a schedule is the data.** Applications create
+schedules at runtime as a matter of course ("remind this user in three days" is a `CreateSchedule`
+in a request handler). So the line drawn is *per-schedule operations in, schedule-group management
+out*, on the grounds that a group is provisioned infrastructure the way a queue or a topic is. Said
+plainly here because "data plane" was the word in the request and it does not transfer to this
+service unexamined.
+
+**Tasks**
+
+- [x] `aws-core`: `AwsProtocol.restJson1()` and `AwsProtocol.awsQuery()` factories.
+- [x] `aws-core`: `callRestJson` and `callRestJsonNoBody` in `TypedCalls.kt`, with their own tests.
+- [x] `aws/aws-sqs`, `aws/aws-sns`, `aws/aws-scheduler`, each declaring `jvm, linuxX64, linuxArm64,
+      macosArm64` from birth.
+- [x] JVM ABI dumps for all three, and `aws-core.api` updated with its four new declarations.
+- [ ] **klib ABI dumps are NOT generated** — same blocked step as M8. `checkLegacyAbi` is red on all
+      four modules until they are.
+
+**What `aws-core` did and did not have to grow**
+
+`restJson1` needed real additions, and they were small because M2's protocol seam and M3.5's
+`AwsErrorParser` strategy had already done the structural work: a REST-shaped service needs a
+content type, no target header, and a call helper that takes a method and a path. **The plan's own
+M2 note called restJson1 "a second codec into `aws-core`" and used that as a reason to defer
+AppConfigData. That was stale by M3.5** and is now demonstrably so — it is four lines and two
+functions, not a codec.
+
+`awsQuery` needed **nothing** in `aws-core` beyond a three-line factory, and that is the seam
+working as designed: `AwsProtocol`'s constructor is public, and `RestXmlErrorParser` — named for the
+protocol it was written for, not the only one it fits — already parses a query-protocol
+`<ErrorResponse>` correctly. The AWS SDK reaches the same conclusion, calling
+`parseRestXmlErrorResponse` from its own awsQuery deserializers.
+
+**The query codec was deliberately NOT generalized into `aws-core`.** `aws-sns/Wire.kt` hand-writes
+the form encoder and a ~60-line XML scanner, because the module has *two operations*. A general
+query encoder — flattened lists and maps, the `flattened` trait, nested structures, namespaces — is
+a large amount of machinery for one consumer. If a third query-protocol service ever arrives, that
+is the moment to generalize; the file says so, so the decision is not re-litigated from scratch.
+
+**Decisions worth reviewing**
+
+1. **Retry safety is derived from the request in three more places.** `SendMessage`,
+   `ReceiveMessage` and `Publish` are all `NOT_IDEMPOTENT` *unless* the request carries a
+   de-duplication token (`MessageDeduplicationId`, `ReceiveRequestAttemptId`), in which case they
+   are `IDEMPOTENT`. This is `aws-dynamodb`'s `writeSafety` construction applied three more times,
+   and it is the correct reading each time: without a token a replayed publish fans out twice, and
+   there is nothing to delete afterwards.
+   - One case is knowingly treated as unsafe when it is not: a FIFO queue with **content-based
+     deduplication** needs no explicit id, but that is a *queue attribute* and invisible from the
+     client, so this does not guess. Documented at the call site.
+   - `ReceiveMessage`'s reasoning is the subtle one and is written out in its KDoc: a replay is not
+     dangerous, it simply does not return *the same answer*, and the messages from the lost response
+     are invisible for a whole visibility timeout.
+2. **`SqsConfig.httpTimeouts` deliberately defaults higher than the rest of the library** — 90
+   seconds against the usual 30. SQS is the one service here where the client is *supposed* to sit
+   idle on an open socket: `ReceiveMessage` long-polls for up to 20 seconds by design. Against the
+   30-second default a maximum-length poll leaves 10 seconds for connection setup, TLS and the
+   response, and a loaded client spends it. The failure looks like SQS being slow rather than a
+   misconfiguration — the poll dies at 30s, its messages stay queued, and throughput collapses with
+   no service error anywhere.
+3. **The batch partial-failure helper appears for the third and fourth time**, and both new ones are
+   *better* than `putEventsAll`: SQS and SNS both report `SenderFault` per entry, so the
+   retryable/terminal split comes from the service rather than from a hand-maintained list of codes
+   that can drift. `sendMessagesAll`, `deleteMessagesAll` and `publishAll` all chunk to 10, resubmit
+   non-sender-fault entries with backoff, stop the whole call on a sender fault, and raise a typed
+   partial-failure carrying both halves in request order.
+   - All three additionally reject **duplicate batch ids across the whole call** before sending
+     anything. SQS and SNS reject duplicates within one request, but these helpers chunk, so two
+     duplicates in different chunks are two individually-valid requests and a result that cannot be
+     paired back up. Only a whole-list check catches it.
+   - `deleteMessagesAll`'s failure is the one that is easy to under-rate: a delete that silently
+     half-succeeds is a message redelivered when its visibility timeout lapses and processed a
+     second time, hours later, with nothing connecting the two events.
+4. **Two exception names were changed to avoid collisions that would have been silent.** SQS's
+   `UnsupportedOperation` would naturally have become `UnsupportedOperationException`, which
+   **shadows `kotlin.UnsupportedOperationException` inside the package** — so a `catch` in that
+   package would quietly change meaning. It is `UnsupportedQueueOperationException`. Both services'
+   `KMS*` error families collapse onto one type each, named `QueueEncryptionKeyException` and
+   `TopicEncryptionKeyException` rather than `KmsException`, which would have clashed with
+   `aws-kms`'s type for anyone importing both. (Note SNS capitalizes `KMS` where SQS writes `Kms`;
+   the services genuinely disagree and each module matches its own.)
+5. **`UpdateSchedule` is a replace, not a patch**, and that is a data-loss footgun rather than an
+   API quirk: an update meaning to change only the cron expression, and sending only the cron
+   expression, clears the description, timezone, retry policy and dead-letter queue.
+   `GetScheduleResponse.toUpdateRequest()` exists solely so the read-modify-write is one line, and
+   it throws rather than building an update that would clear the target.
+6. **Two Scheduler target blocks are `JsonElement` passthroughs.** `EcsParameters` and
+   `SageMakerPipelineParameters` would mean modelling ECS's entire task-launch surface — VPC
+   config, placement constraints and strategies, capacity providers — some forty types describing a
+   *different service* that this module would then own and track. The other five parameter blocks
+   are typed normally. What is given up is compile-time checking on those two.
+7. **SQS's legacy query error codes are not requested.** SQS still serves them behind an
+   `x-amzn-query-mode: true` header, and every SQS doc and Stack Overflow answer uses that
+   vocabulary (`AWS.SimpleQueueService.NonExistentQueue`). This client sends modern shape names
+   instead (`QueueDoesNotExist`) because query mode exists for SDKs that already shipped the old
+   codes and would break their users — which this client has none of. Each typed exception names its
+   legacy equivalent in its KDoc so the search still lands.
+8. **`PublishRequest.toString()` redacts the phone number and never prints the message.** M8's
+   redaction rule extended: SNS payloads are routinely customer data and a `phoneNumber` is *always*
+   personal data, so a logged request object is a privacy incident rather than a debugging
+   convenience.
+
+**Verification**: `./gradlew :aws:aws-sqs:jvmTest :aws:aws-sns:jvmTest :aws:aws-scheduler:jvmTest
+:aws:aws-core:jvmTest` — **24 + 27 + 20 = 71 new tests, 0 failures**, plus `aws-core` at 146
+including 11 new ones covering the restJson1 and awsQuery seams.
+
+> **STATUS: M9's CODE IS COMPLETE (2026-08-14). THE SAME TWO VERIFICATION GAPS AS M8 APPLY, PLUS
+> ONE THAT IS SPECIFIC TO SNS AND MATTERS MORE HERE.**
+>
+> **1. No native compilation and no klib ABI dumps.** Identical cause to M8: `download.jetbrains.com`
+> is blocked by egress policy on the authoring host, so the Kotlin/Native distribution never
+> downloaded and `updateLegacyAbi` — whose klib half *is* a native compilation — cannot run. JVM
+> `.api` dumps are checked in for all three new modules and `aws-core.api` is updated;
+> `checkLegacyAbi` is red on those four until the klib dumps are generated. Run, on a networked host:
+>
+> ```
+> ./gradlew :aws:aws-core:updateLegacyAbi :aws:aws-sqs:updateLegacyAbi \
+>           :aws:aws-sns:updateLegacyAbi :aws:aws-scheduler:updateLegacyAbi
+> ./gradlew :aws:aws-sqs:build :aws:aws-sns:build :aws:aws-scheduler:build
+> ```
+>
+> **2. No live or LocalStack run.** MockEngine only, as for M8.
+>
+> **3. `aws-sns` is the module in this library that most needs a differential harness, and does not
+> have one.** For every other module the argument against one is that the protocol was already
+> proven by an earlier milestone. That argument does **not** apply here: this is the only
+> hand-written form encoder and the only hand-written XML reader in the repo, and both were built
+> from the wire format rather than inherited from a tested seam. The unit tests are correspondingly
+> specific — they assert `%20` rather than `+` for a space, 1-based `entry.N` and `member.N`
+> indices, `Successful`/`Failed` sibling scoping, self-closing empty lists, and ampersand-last
+> entity unescaping — but every one of them asserts against *what this code was written to
+> produce*, which is exactly the thing a differential would independently check.
+>
+> `aws.sdk.kotlin:sns` is not currently in the version catalog. Adding it as a `jvmTest`-only
+> dependency and comparing our form body against the SDK's, using M3's technique unchanged, is the
+> obvious next increment and the first thing to do if SNS misbehaves against the real service.
 
 ---
 
