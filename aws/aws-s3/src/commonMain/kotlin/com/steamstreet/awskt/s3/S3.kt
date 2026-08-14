@@ -1,5 +1,6 @@
 package com.steamstreet.awskt.s3
 
+import com.steamstreet.awskt.core.AwsCallObserver
 import com.steamstreet.awskt.core.AwsCredentialsProvider
 import com.steamstreet.awskt.core.AwsEndpoint
 import com.steamstreet.awskt.core.AwsHttpResponse
@@ -160,6 +161,21 @@ public class S3Config {
     /** The ceiling on an **uploaded** body. Default 64 MB. */
     public var maxBufferedUploadBytes: Long = 64L * 1024 * 1024
 
+    /**
+     * Notified of every attempt, retry decision and give-up, on **every** per-bucket client this
+     * config builds. Null means no instrumentation.
+     *
+     * `AwsCallEvent.operation` carries the S3 operation name (`"GetObject"`, `"PutObject"`) — S3 is
+     * REST-shaped and does not send an `X-Amz-Target`, but these calls name their operation anyway,
+     * which is also what puts `x-id=GetObject` in the query. The **bucket** is not on the event; wrap
+     * the observer per bucket if that dimension matters.
+     *
+     * Unlike [httpTimeouts] and [caInfo], this is **not** bypassed by supplying your own
+     * [httpClient]: it observes the retry loop, which is this library's, rather than the transport
+     * underneath it, which may be the caller's.
+     */
+    public var observer: AwsCallObserver? = null
+
     // Injected by tests so the retry loop is deterministic and does not really sleep. Internal:
     // these are not a supported way to configure a client.
     internal var clock: () -> Long = { kotlin.time.Clock.System.now().toEpochMilliseconds() }
@@ -190,6 +206,7 @@ public fun S3(configure: S3Config.() -> Unit = {}): S3 {
         maxBufferedUploadBytes = config.maxBufferedUploadBytes,
         httpClient = httpClient,
         ownsHttpClient = config.httpClient == null,
+        observer = config.observer,
         clock = config.clock,
         random = config.random,
         sleep = config.sleep,
@@ -208,6 +225,7 @@ internal class DefaultS3(
     private val maxBufferedUploadBytes: Long,
     private val httpClient: HttpClient,
     private val ownsHttpClient: Boolean,
+    private val observer: AwsCallObserver?,
     private val clock: () -> Long,
     private val random: () -> Double,
     private val sleep: suspend (Long) -> Unit,
@@ -276,6 +294,10 @@ internal class DefaultS3(
             region = region,
             protocol = S3_PROTOCOL,
             retryConfig = retryConfig,
+            // Every per-bucket client shares the one observer: a caller that configured
+            // instrumentation wants it for the whole S3 client, not for whichever bucket happened to
+            // be touched first.
+            observer = observer,
             clock = clock,
             random = random,
             sleep = sleep,

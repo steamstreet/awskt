@@ -1,5 +1,6 @@
 package com.steamstreet.awskt.eventbridge
 
+import com.steamstreet.awskt.core.AwsCallObserver
 import com.steamstreet.awskt.core.AwsCredentialsProvider
 import com.steamstreet.awskt.core.AwsHttpTimeouts
 import com.steamstreet.awskt.core.AwsProtocol
@@ -76,6 +77,19 @@ public class EventBridgeConfig {
      * *decisions*, not into duplicate deliveries.
      */
     public var httpTimeouts: AwsHttpTimeouts = AwsHttpTimeouts()
+
+    /**
+     * Notified of every attempt, retry decision and give-up. Null means no instrumentation.
+     *
+     * Worth wiring up in this module in particular: `PutEvents` is `NOT_IDEMPOTENT`, so an ambiguous
+     * transport failure is surfaced rather than replayed, and the observer is how you find out how
+     * often that is happening before someone notices the missing events.
+     *
+     * Unlike [httpTimeouts] and [caInfo], this is **not** bypassed by supplying your own
+     * [httpClient]: it observes the retry loop, which is this library's, rather than the transport
+     * underneath it, which may be the caller's.
+     */
+    public var observer: AwsCallObserver? = null
 }
 
 /** Builds an EventBridge client. */
@@ -93,6 +107,7 @@ public fun EventBridge(configure: EventBridgeConfig.() -> Unit = {}): EventBridg
             region = region,
             protocol = EVENTBRIDGE_PROTOCOL,
             retryConfig = config.retryConfig,
+            observer = config.observer,
         ),
         ownsHttpClient = config.httpClient == null,
         httpClient = httpClient,

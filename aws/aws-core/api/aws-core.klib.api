@@ -28,12 +28,52 @@ final enum class com.steamstreet.awskt.core/RetryErrorType : kotlin/Enum<com.ste
     final fun values(): kotlin/Array<com.steamstreet.awskt.core/RetryErrorType> // com.steamstreet.awskt.core/RetryErrorType.values|values#static(){}[0]
 }
 
+abstract fun interface com.steamstreet.awskt.core/AwsCallObserver { // com.steamstreet.awskt.core/AwsCallObserver|null[0]
+    abstract fun onAttempt(com.steamstreet.awskt.core/AwsCallEvent) // com.steamstreet.awskt.core/AwsCallObserver.onAttempt|onAttempt(com.steamstreet.awskt.core.AwsCallEvent){}[0]
+}
+
 abstract fun interface com.steamstreet.awskt.core/AwsCredentialsProvider { // com.steamstreet.awskt.core/AwsCredentialsProvider|null[0]
     abstract suspend fun resolve(): com.steamstreet.awskt.signing/AwsCredentials // com.steamstreet.awskt.core/AwsCredentialsProvider.resolve|resolve(){}[0]
 }
 
 abstract interface com.steamstreet.awskt.core/AwsErrorParser { // com.steamstreet.awskt.core/AwsErrorParser|null[0]
     abstract fun parse(kotlin/Int, kotlin.collections/Map<kotlin/String, kotlin/String>, kotlin/ByteArray?): com.steamstreet.awskt.core/ErrorDetails // com.steamstreet.awskt.core/AwsErrorParser.parse|parse(kotlin.Int;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.ByteArray?){}[0]
+}
+
+final class com.steamstreet.awskt.core/AwsCallEvent { // com.steamstreet.awskt.core/AwsCallEvent|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, com.steamstreet.awskt.core/AwsCallEvent.Outcome, kotlin/Int?, kotlin/String?, kotlin/Long?, kotlin/Long) // com.steamstreet.awskt.core/AwsCallEvent.<init>|<init>(kotlin.String?;kotlin.Int;com.steamstreet.awskt.core.AwsCallEvent.Outcome;kotlin.Int?;kotlin.String?;kotlin.Long?;kotlin.Long){}[0]
+
+    final val attempt // com.steamstreet.awskt.core/AwsCallEvent.attempt|{}attempt[0]
+        final fun <get-attempt>(): kotlin/Int // com.steamstreet.awskt.core/AwsCallEvent.attempt.<get-attempt>|<get-attempt>(){}[0]
+    final val durationMillis // com.steamstreet.awskt.core/AwsCallEvent.durationMillis|{}durationMillis[0]
+        final fun <get-durationMillis>(): kotlin/Long // com.steamstreet.awskt.core/AwsCallEvent.durationMillis.<get-durationMillis>|<get-durationMillis>(){}[0]
+    final val errorCode // com.steamstreet.awskt.core/AwsCallEvent.errorCode|{}errorCode[0]
+        final fun <get-errorCode>(): kotlin/String? // com.steamstreet.awskt.core/AwsCallEvent.errorCode.<get-errorCode>|<get-errorCode>(){}[0]
+    final val operation // com.steamstreet.awskt.core/AwsCallEvent.operation|{}operation[0]
+        final fun <get-operation>(): kotlin/String? // com.steamstreet.awskt.core/AwsCallEvent.operation.<get-operation>|<get-operation>(){}[0]
+    final val outcome // com.steamstreet.awskt.core/AwsCallEvent.outcome|{}outcome[0]
+        final fun <get-outcome>(): com.steamstreet.awskt.core/AwsCallEvent.Outcome // com.steamstreet.awskt.core/AwsCallEvent.outcome.<get-outcome>|<get-outcome>(){}[0]
+    final val statusCode // com.steamstreet.awskt.core/AwsCallEvent.statusCode|{}statusCode[0]
+        final fun <get-statusCode>(): kotlin/Int? // com.steamstreet.awskt.core/AwsCallEvent.statusCode.<get-statusCode>|<get-statusCode>(){}[0]
+    final val willRetryAfterMillis // com.steamstreet.awskt.core/AwsCallEvent.willRetryAfterMillis|{}willRetryAfterMillis[0]
+        final fun <get-willRetryAfterMillis>(): kotlin/Long? // com.steamstreet.awskt.core/AwsCallEvent.willRetryAfterMillis.<get-willRetryAfterMillis>|<get-willRetryAfterMillis>(){}[0]
+
+    final fun toString(): kotlin/String // com.steamstreet.awskt.core/AwsCallEvent.toString|toString(){}[0]
+
+    final enum class Outcome : kotlin/Enum<com.steamstreet.awskt.core/AwsCallEvent.Outcome> { // com.steamstreet.awskt.core/AwsCallEvent.Outcome|null[0]
+        enum entry CLOCK_SKEW_CORRECTED // com.steamstreet.awskt.core/AwsCallEvent.Outcome.CLOCK_SKEW_CORRECTED|null[0]
+        enum entry GAVE_UP // com.steamstreet.awskt.core/AwsCallEvent.Outcome.GAVE_UP|null[0]
+        enum entry RETRY_SCHEDULED // com.steamstreet.awskt.core/AwsCallEvent.Outcome.RETRY_SCHEDULED|null[0]
+        enum entry SERVICE_ERROR // com.steamstreet.awskt.core/AwsCallEvent.Outcome.SERVICE_ERROR|null[0]
+        enum entry SUCCESS // com.steamstreet.awskt.core/AwsCallEvent.Outcome.SUCCESS|null[0]
+        enum entry TRANSPORT_FAILURE // com.steamstreet.awskt.core/AwsCallEvent.Outcome.TRANSPORT_FAILURE|null[0]
+
+        final val entries // com.steamstreet.awskt.core/AwsCallEvent.Outcome.entries|#static{}entries[0]
+            final fun <get-entries>(): kotlin.enums/EnumEntries<com.steamstreet.awskt.core/AwsCallEvent.Outcome> // com.steamstreet.awskt.core/AwsCallEvent.Outcome.entries.<get-entries>|<get-entries>#static(){}[0]
+
+        final fun valueOf(kotlin/String): com.steamstreet.awskt.core/AwsCallEvent.Outcome // com.steamstreet.awskt.core/AwsCallEvent.Outcome.valueOf|valueOf#static(kotlin.String){}[0]
+        final fun values(): kotlin/Array<com.steamstreet.awskt.core/AwsCallEvent.Outcome> // com.steamstreet.awskt.core/AwsCallEvent.Outcome.values|values#static(){}[0]
+    }
 }
 
 final class com.steamstreet.awskt.core/AwsConfigurationException : kotlin/Exception { // com.steamstreet.awskt.core/AwsConfigurationException|null[0]
@@ -120,7 +160,7 @@ final class com.steamstreet.awskt.core/AwsRedirectException : com.steamstreet.aw
 }
 
 final class com.steamstreet.awskt.core/AwsServiceClient { // com.steamstreet.awskt.core/AwsServiceClient|null[0]
-    constructor <init>(io.ktor.client/HttpClient, com.steamstreet.awskt.core/AwsCredentialsProvider, com.steamstreet.awskt.core/AwsEndpoint, kotlin/String, com.steamstreet.awskt.core/AwsProtocol, com.steamstreet.awskt.core/RetryConfig = ..., kotlin/Function0<kotlin/Long> = ..., kotlin/Function0<kotlin/Double> = ..., kotlin.coroutines/SuspendFunction1<kotlin/Long, kotlin/Unit> = ...) // com.steamstreet.awskt.core/AwsServiceClient.<init>|<init>(io.ktor.client.HttpClient;com.steamstreet.awskt.core.AwsCredentialsProvider;com.steamstreet.awskt.core.AwsEndpoint;kotlin.String;com.steamstreet.awskt.core.AwsProtocol;com.steamstreet.awskt.core.RetryConfig;kotlin.Function0<kotlin.Long>;kotlin.Function0<kotlin.Double>;kotlin.coroutines.SuspendFunction1<kotlin.Long,kotlin.Unit>){}[0]
+    constructor <init>(io.ktor.client/HttpClient, com.steamstreet.awskt.core/AwsCredentialsProvider, com.steamstreet.awskt.core/AwsEndpoint, kotlin/String, com.steamstreet.awskt.core/AwsProtocol, com.steamstreet.awskt.core/RetryConfig = ..., kotlin/Function0<kotlin/Long> = ..., kotlin/Function0<kotlin/Double> = ..., kotlin.coroutines/SuspendFunction1<kotlin/Long, kotlin/Unit> = ..., com.steamstreet.awskt.core/AwsCallObserver? = ...) // com.steamstreet.awskt.core/AwsServiceClient.<init>|<init>(io.ktor.client.HttpClient;com.steamstreet.awskt.core.AwsCredentialsProvider;com.steamstreet.awskt.core.AwsEndpoint;kotlin.String;com.steamstreet.awskt.core.AwsProtocol;com.steamstreet.awskt.core.RetryConfig;kotlin.Function0<kotlin.Long>;kotlin.Function0<kotlin.Double>;kotlin.coroutines.SuspendFunction1<kotlin.Long,kotlin.Unit>;com.steamstreet.awskt.core.AwsCallObserver?){}[0]
 
     final suspend fun callRaw(kotlin/String, kotlin/String = ..., kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ..., kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ..., kotlin/ByteArray = ..., kotlin/String? = ..., com.steamstreet.awskt.core/OperationSafety = ..., com.steamstreet.awskt.signing/PayloadHash = ..., com.steamstreet.awskt.signing/SignedBodyHeader = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Function2<kotlin/Int, kotlin.collections/Map<kotlin/String, kotlin/String>, kotlin/Unit>? = ..., kotlin/Function1<com.steamstreet.awskt.core/AwsHttpResponse, kotlin/Unit>? = ...): com.steamstreet.awskt.core/AwsHttpResponse // com.steamstreet.awskt.core/AwsServiceClient.callRaw|callRaw(kotlin.String;kotlin.String;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>;kotlin.ByteArray;kotlin.String?;com.steamstreet.awskt.core.OperationSafety;com.steamstreet.awskt.signing.PayloadHash;com.steamstreet.awskt.signing.SignedBodyHeader;kotlin.Boolean;kotlin.Boolean;kotlin.Function2<kotlin.Int,kotlin.collections.Map<kotlin.String,kotlin.String>,kotlin.Unit>?;kotlin.Function1<com.steamstreet.awskt.core.AwsHttpResponse,kotlin.Unit>?){}[0]
 }

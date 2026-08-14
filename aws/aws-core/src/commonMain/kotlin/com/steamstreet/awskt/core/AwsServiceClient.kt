@@ -1,5 +1,6 @@
 package com.steamstreet.awskt.core
 
+import com.steamstreet.awskt.core.AwsCallEvent.Outcome
 import com.steamstreet.awskt.signing.PayloadHash
 import com.steamstreet.awskt.signing.SigV4
 import com.steamstreet.awskt.signing.SigV4Config
@@ -70,6 +71,34 @@ public class AwsProtocol(
 internal enum class TransportFailure { NOT_SENT, AMBIGUOUS }
 
 /**
+ * The version reported in the outgoing `User-Agent`.
+ *
+ * **Hardcoded, and release tooling must bump it.** There is no version to read at runtime: the build
+ * derives one from git tags via the `nebula.release` plugin, so `gradle.properties` carries none and
+ * a multiplatform `commonMain` source set has no equivalent of the JVM's `Package.implementation
+ * Version` to fall back on. `3.0` is the line this branch releases into.
+ *
+ * Getting it stale is a small, silent cost — CloudTrail and S3 access logs attribute the call to the
+ * wrong release — so it belongs in the release checklist next to the version bump itself, not in a
+ * comment nobody reads at release time.
+ */
+internal const val AWSKT_VERSION: String = "3.0.0"
+
+/**
+ * The `User-Agent` sent on every call that does not bring its own.
+ *
+ * Shaped `awskt/<version> <transport>` after the official SDKs' `aws-sdk-kotlin/1.2.3 …` convention:
+ * a token AWS Support and CloudTrail's `userAgent` field can key on, plus the transport, because
+ * "which HTTP engine" is the first question asked about a transport-level failure. Without it,
+ * requests arrive labelled `ktor-client` (CIO) or unlabelled (Curl), and every awskt caller in an
+ * account is indistinguishable from every other Ktor program.
+ *
+ * Never signed — `user-agent` is in the signer's skipped set, along with everything else a proxy or
+ * an engine may rewrite — so changing this string cannot break a signature.
+ */
+internal const val AWSKT_USER_AGENT: String = "awskt/$AWSKT_VERSION ktor"
+
+/**
  * Carries whatever a caller's `inspectBeforeBody` threw out through the send, so the retry loop can
  * tell a local policy refusal apart from a transport failure.
  *
@@ -77,8 +106,11 @@ internal enum class TransportFailure { NOT_SENT, AMBIGUOUS }
  * [classifyTransportFailure] answers [TransportFailure.AMBIGUOUS] for anything it does not
  * recognise — so without a marker the caller's deliberate refusal is read as "the network might
  * have eaten this" and replayed.
+ *
+ * @param status the status the refused response arrived with, carried purely so an [AwsCallObserver]
+ *   can report *which* response was refused. The retry loop itself does not look at it.
  */
-private class InspectionRefusal(val refusal: Throwable) : Throwable(refusal)
+private class InspectionRefusal(val refusal: Throwable, val status: Int) : Throwable(refusal)
 
 /**
  * The retry capacity one [AwsServiceClient.callRaw] invocation has taken from the shared bucket and
@@ -135,6 +167,14 @@ public class AwsServiceClient(
     private val clock: () -> Long = ::currentEpochMillis,
     private val random: () -> Double = ::defaultRandom,
     private val sleep: suspend (Long) -> Unit = { delay(it) },
+    /**
+     * Notified of every attempt, every retry decision and every give-up. Null means no
+     * instrumentation and costs nothing: [notify] returns before an [AwsCallEvent] is allocated.
+     *
+     * See [AwsCallObserver] for the shape of the stream and for the guarantee that a throwing
+     * observer cannot fail a call.
+     */
+    private val observer: AwsCallObserver? = null,
 ) {
     /**
      * Internal rather than private so a test can assert the retry budget's invariant after a run —
@@ -229,6 +269,13 @@ public class AwsServiceClient(
         var lastFailure: Throwable? = null
 
         while (true) {
+            // The 1-based number of the attempt about to be made, and the instant it starts. The
+            // clock is read *before* credentials are resolved so the reported duration covers the
+            // whole attempt — a stalled IMDS hop is part of what the caller waited for. See
+            // AwsCallEvent.durationMillis.
+            val attemptNumber = attempt + 1
+            val attemptStart = clock()
+
             // Resolved per attempt, not once: a call spanning four attempts and a 20-second cap can
             // outlive the credentials it started with.
             val credentials = credentialsProvider.resolve()
@@ -239,6 +286,12 @@ public class AwsServiceClient(
                     operation?.let { add("X-Amz-Target" to "$prefix.$it") }
                 }
                 addAll(headers)
+                // After the caller's headers, and only when they carried none: a request that
+                // arrived with two User-Agents is worse than one that arrived with the wrong one,
+                // and a caller identifying its own application is the case worth deferring to.
+                if (headers.none { it.first.equals("user-agent", ignoreCase = true) }) {
+                    add("user-agent" to AWSKT_USER_AGENT)
+                }
                 add("amz-sdk-invocation-id" to invocationId)
                 add("amz-sdk-request" to "attempt=${attempt + 1}; max=${retryConfig.maxAttempts}")
                 // Signing a compressed body we never see would break the payload hash.
@@ -276,6 +329,10 @@ public class AwsServiceClient(
                 // it comes back AMBIGUOUS — which on an IDEMPOTENT operation retries, so `aws-s3`
                 // answers "this object is too big to buffer" by fetching the same too-big object
                 // several more times, with backoff, before surfacing the identical exception.
+                //
+                // GAVE_UP and no terminal event: the call is over, but the attempt has no outcome
+                // that is honestly AWS's — see AwsCallEvent.
+                notify(Outcome.GAVE_UP, operation, attemptNumber, refusal.status, null, null, attemptStart)
                 throw refusal.refusal
             } catch (failure: Throwable) {
                 // Cancellation is not a transport failure, and must never reach the classifier:
@@ -285,6 +342,7 @@ public class AwsServiceClient(
                 // when the caller has said to stop. `transportFailureOrNull` answers null for one,
                 // and this rethrows it untouched.
                 val transportFailure = transportFailureOrNull(failure) ?: throw failure
+                notify(Outcome.TRANSPORT_FAILURE, operation, attemptNumber, null, null, null, attemptStart)
                 lastFailure = transportFailure
                 val kind = classifyTransportFailure(transportFailure)
                 val mayRetry = when (kind) {
@@ -295,10 +353,17 @@ public class AwsServiceClient(
                 // `transportFailure`, not `failure`: the two differ only for a timeout that arrived
                 // dressed as a cancellation, and there the caller wants the timeout. Surfacing the
                 // cancellation instead would report a live call as a cancelled scope.
-                if (!mayRetry) throw transportFailure
+                if (!mayRetry) {
+                    notify(Outcome.GAVE_UP, operation, attemptNumber, null, null, null, attemptStart)
+                    throw transportFailure
+                }
 
                 attempt++
-                if (!prepareRetry(RetryErrorType.TRANSIENT, attempt, deadline, null, budget)) {
+                if (!prepareRetry(
+                        RetryErrorType.TRANSIENT, attempt, deadline, null, budget, operation, attemptStart,
+                    )
+                ) {
+                    notify(Outcome.GAVE_UP, operation, attemptNumber, null, null, null, attemptStart)
                     throw transportFailure
                 }
                 continue
@@ -328,14 +393,30 @@ public class AwsServiceClient(
                     // evidence of health that earns it.
                     if (attempt == 0) tokenBucket.onCleanSuccess()
                     else tokenBucket.refundCost(budget.spent)
+                    notify(
+                        Outcome.SUCCESS, operation, attemptNumber, response.status, null, null, attemptStart,
+                    )
                     return response
                 }
 
+                // TRANSPORT_FAILURE with a status: the bytes arrived and were defective. `validateBody`
+                // is retried exactly like a dead socket, and reporting it as anything else would put a
+                // truncated download in the same bucket as a 500 from AWS.
+                notify(
+                    Outcome.TRANSPORT_FAILURE, operation, attemptNumber, response.status, null, null,
+                    attemptStart,
+                )
                 lastFailure?.let { rejection.addSuppressed(it) }
                 lastFailure = rejection
 
                 attempt++
-                if (!prepareRetry(RetryErrorType.TRANSIENT, attempt, deadline, null, budget)) {
+                if (!prepareRetry(
+                        RetryErrorType.TRANSIENT, attempt, deadline, null, budget, operation, attemptStart,
+                    )
+                ) {
+                    notify(
+                        Outcome.GAVE_UP, operation, attemptNumber, response.status, null, null, attemptStart,
+                    )
                     throw rejection
                 }
                 continue
@@ -343,9 +424,19 @@ public class AwsServiceClient(
 
             val details = protocol.errorParser.parse(response.status, response.headers, response.body)
             val exception = toException(details, response)
+            notify(
+                Outcome.SERVICE_ERROR, operation, attemptNumber, response.status, details.code, null,
+                attemptStart,
+            )
 
             // Redirects are surfaced, never followed — see awsHttpClient.
-            if (exception is AwsRedirectException) throw exception
+            if (exception is AwsRedirectException) {
+                notify(
+                    Outcome.GAVE_UP, operation, attemptNumber, response.status, details.code, null,
+                    attemptStart,
+                )
+                throw exception
+            }
 
             if (!skewCorrectionUsed && shouldCorrectClockSkew(details.code, response)) {
                 skewCorrectionUsed = true
@@ -353,20 +444,82 @@ public class AwsServiceClient(
                 // previous learning in place, exactly as the `?: clockSkewOffsetMillis` did — but
                 // without reading and writing the field as two separate steps.
                 serverTimeOffset(response)?.let { clockSkewOffsetMillis.store(it) }
+                // The one retry that takes no backoff at all, which is why this reports itself
+                // rather than arriving as a RETRY_SCHEDULED with a zero delay.
+                notify(
+                    Outcome.CLOCK_SKEW_CORRECTED, operation, attemptNumber, response.status, details.code,
+                    null, attemptStart,
+                )
                 attempt++
-                if (attempt >= retryConfig.maxAttempts) throw exception
+                if (attempt >= retryConfig.maxAttempts) {
+                    notify(
+                        Outcome.GAVE_UP, operation, attemptNumber, response.status, details.code, null,
+                        attemptStart,
+                    )
+                    throw exception
+                }
                 continue
             }
 
             val type = classifyRetry(details.code, response.status)
-            if (type == null) throw exception
+            if (type == null) {
+                notify(
+                    Outcome.GAVE_UP, operation, attemptNumber, response.status, details.code, null,
+                    attemptStart,
+                )
+                throw exception
+            }
 
             lastFailure?.let { exception.addSuppressed(it) }
             lastFailure = exception
 
             attempt++
             val retryAfter = response.headers.headerValue("x-amz-retry-after")
-            if (!prepareRetry(type, attempt, deadline, retryAfter, budget)) throw exception
+            if (!prepareRetry(type, attempt, deadline, retryAfter, budget, operation, attemptStart)) {
+                notify(
+                    Outcome.GAVE_UP, operation, attemptNumber, response.status, details.code, null,
+                    attemptStart,
+                )
+                throw exception
+            }
+        }
+    }
+
+    /**
+     * Hands one event to [observer], and absorbs whatever that does.
+     *
+     * The `?: return` is the reason this is cheap enough to call unconditionally from the request
+     * path: with no observer configured, no [AwsCallEvent] is ever allocated.
+     */
+    private fun notify(
+        outcome: Outcome,
+        operation: String?,
+        attempt: Int,
+        statusCode: Int?,
+        errorCode: String?,
+        willRetryAfterMillis: Long?,
+        attemptStartMillis: Long,
+    ) {
+        val target = observer ?: return
+        try {
+            target.onAttempt(
+                AwsCallEvent(
+                    operation = operation,
+                    attempt = attempt,
+                    outcome = outcome,
+                    statusCode = statusCode,
+                    errorCode = errorCode,
+                    willRetryAfterMillis = willRetryAfterMillis,
+                    durationMillis = clock() - attemptStartMillis,
+                ),
+            )
+        } catch (cancellation: CancellationException) {
+            // Never swallowed: this is structured concurrency tearing the call down, not a fault in
+            // the observer. Absorbing it would keep a cancelled coroutine issuing AWS requests.
+            throw cancellation
+        } catch (_: Throwable) {
+            // Swallowed by contract — see AwsCallObserver. Instrumentation does not get to fail the
+            // call it is measuring; a broken metrics tag must not look like a DynamoDB outage.
         }
     }
 
@@ -377,6 +530,15 @@ public class AwsServiceClient(
      * The charge is *not* returned here. It is returned by [callRaw] when the call it belongs to
      * finally succeeds, and by nothing else — see [tokenBucket]. The one exception is the deadline
      * abort below, where the retry this paid for is not going to happen at all.
+     *
+     * [AwsCallEvent.Outcome.RETRY_SCHEDULED] is emitted from here rather than from [callRaw] because
+     * this is the only place that knows the chosen delay, and it is emitted *before* the sleep so an
+     * observer learns of a five-second backoff when it starts rather than when it ends.
+     *
+     * @param attempt the 1-based number of the attempt that just failed — already incremented by the
+     *   caller — which is both the count of attempts made and the number [notify] reports.
+     * @param attemptStartMillis the failed attempt's start, so the emitted event's duration stays on
+     *   the same baseline as that attempt's terminal event.
      */
     private suspend fun prepareRetry(
         type: RetryErrorType,
@@ -384,6 +546,8 @@ public class AwsServiceClient(
         deadlineMillis: Long,
         retryAfterHeader: String?,
         budget: RetryBudget,
+        operation: String?,
+        attemptStartMillis: Long,
     ): Boolean {
         if (attempt >= retryConfig.maxAttempts) return false
         if (!tokenBucket.tryAcquire(type)) return false
@@ -401,6 +565,9 @@ public class AwsServiceClient(
             budget.spent -= cost
             return false
         }
+        notify(
+            Outcome.RETRY_SCHEDULED, operation, attempt, null, null, delayMillis, attemptStartMillis,
+        )
         sleep(delayMillis)
         return true
     }
@@ -466,7 +633,7 @@ public class AwsServiceClient(
             try {
                 inspectBeforeBody(response.status.value, responseHeaders)
             } catch (refusal: Throwable) {
-                throw InspectionRefusal(refusal)
+                throw InspectionRefusal(refusal, response.status.value)
             }
         }
 

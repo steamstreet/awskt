@@ -2,6 +2,8 @@ package com.steamstreet.awskt.dynamodb
 
 import com.steamstreet.dynamokt.AttributeValue
 import com.steamstreet.dynamokt.AttributeValueSerializer
+import com.steamstreet.awskt.core.AwsCallEvent
+import com.steamstreet.awskt.core.AwsCallObserver
 import com.steamstreet.awskt.core.AwsServiceClient
 import com.steamstreet.awskt.core.BatchRetry
 import com.steamstreet.awskt.core.OperationSafety
@@ -855,5 +857,51 @@ class DynamoDbExtensibilityTest {
 
         assertEquals(1, db.describeLimits().tableMaxWriteCapacityUnits)
         assertEquals(2, harness.requests.size, "the extension was retried like any built-in call")
+    }
+}
+
+/**
+ * `DynamoDbConfig.observer` reaches the transport that does the work.
+ *
+ * Driven through the real `DynamoDb { }` factory rather than the harness above, because the factory
+ * is the thing that can drop the wiring: the harness constructs `AwsServiceClient` itself and would
+ * pass whether or not `DynamoDb()` forwarded the field.
+ */
+class DynamoDbObserverWiringTest {
+
+    @Test
+    fun theConfiguredObserverSeesEveryAttemptAndTheRetryBetweenThem() = runTest {
+        val events = mutableListOf<AwsCallEvent>()
+        var call = 0
+        val engine = MockEngine {
+            if (call++ == 0) {
+                respond(
+                    """{"__type":"com.amazon.coral.service#ThrottlingException"}""",
+                    HttpStatusCode.BadRequest,
+                )
+            } else {
+                respond("""{"Item":{}}""", HttpStatusCode.OK)
+            }
+        }
+
+        val db = DynamoDb {
+            region = "us-west-2"
+            credentialsProvider = StaticCredentialsProvider(AwsCredentials("AKID", "SECRET"))
+            httpClient = HttpClient(engine) { followRedirects = false; expectSuccess = false }
+            observer = AwsCallObserver { events += it }
+        }
+
+        db.getItem(GetItemRequest("my-table", mapOf("pk" to AttributeValue.S("a"))))
+
+        assertEquals(
+            listOf(
+                AwsCallEvent.Outcome.SERVICE_ERROR,
+                AwsCallEvent.Outcome.RETRY_SCHEDULED,
+                AwsCallEvent.Outcome.SUCCESS,
+            ),
+            events.map { it.outcome },
+        )
+        // The operation name is what makes these events dimensionable per API call.
+        assertEquals(listOf("GetItem"), events.map { it.operation }.distinct())
     }
 }

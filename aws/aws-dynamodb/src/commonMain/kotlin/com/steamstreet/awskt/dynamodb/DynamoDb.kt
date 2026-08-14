@@ -1,6 +1,7 @@
 package com.steamstreet.awskt.dynamodb
 
 import com.steamstreet.dynamokt.AttributeValueSerializer
+import com.steamstreet.awskt.core.AwsCallObserver
 import com.steamstreet.awskt.core.AwsCredentialsProvider
 import com.steamstreet.awskt.core.AwsHttpTimeouts
 import com.steamstreet.awskt.core.AwsProtocol
@@ -107,6 +108,15 @@ public class DynamoDbConfig {
      * not finished in 30 seconds is not going to.
      */
     public var httpTimeouts: AwsHttpTimeouts = AwsHttpTimeouts()
+
+    /**
+     * Notified of every attempt, retry decision and give-up. Null means no instrumentation.
+     *
+     * Unlike [httpTimeouts] and [caInfo], this is **not** bypassed by supplying your own
+     * [httpClient]: it observes the retry loop, which is this library's, rather than the transport
+     * underneath it, which may be the caller's.
+     */
+    public var observer: AwsCallObserver? = null
 }
 
 /** Builds a DynamoDB client. */
@@ -127,6 +137,7 @@ public fun DynamoDb(configure: DynamoDbConfig.() -> Unit = {}): DynamoDb {
             region = region,
             protocol = DYNAMODB_PROTOCOL,
             retryConfig = config.retryConfig,
+            observer = config.observer,
         ),
         ownsHttpClient = config.httpClient == null,
         httpClient = httpClient,

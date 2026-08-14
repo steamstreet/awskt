@@ -1,5 +1,7 @@
 package com.steamstreet.awskt.s3
 
+import com.steamstreet.awskt.core.AwsCallEvent
+import com.steamstreet.awskt.core.AwsCallObserver
 import com.steamstreet.awskt.core.AwsCredentialsProvider
 import com.steamstreet.awskt.core.AwsRedirectException
 import com.steamstreet.awskt.core.RetryConfig
@@ -399,5 +401,44 @@ class S3OperationsTest {
                 .putObject(PutObjectRequest("my-bucket", "k", ByteArray(50)))
         }
         assertEquals(0, h.requests.size, "the request must never be sent")
+    }
+}
+
+/**
+ * `S3Config.observer` is snapshotted at construction and handed to **every** per-bucket client.
+ *
+ * The second bucket is the point. S3 builds one `AwsServiceClient` per bucket on demand, so a wiring
+ * that reached only the first would still pass a single-bucket test — and would then quietly stop
+ * reporting the moment a handler touched a second bucket.
+ */
+class S3ObserverWiringTest {
+
+    @Test
+    fun everyPerBucketClientReportsToTheConfiguredObserver() = runTest {
+        val events = mutableListOf<AwsCallEvent>()
+        val engine = MockEngine { request ->
+            respond(
+                content = request.url.host,
+                status = HttpStatusCode.OK,
+                headers = headersOf("Content-Length", listOf(request.url.host.length.toString())),
+            )
+        }
+
+        val s3 = S3 {
+            region = "us-west-2"
+            credentialsProvider = AwsCredentialsProvider { AwsCredentials("AKID", "SECRET") }
+            httpClient = HttpClient(engine) { followRedirects = false; expectSuccess = false }
+            observer = AwsCallObserver { events += it }
+        }
+
+        s3.getObject(GetObjectRequest("bucket-one", "k"))
+        s3.getObject(GetObjectRequest("bucket-two", "k"))
+
+        assertEquals(
+            listOf(AwsCallEvent.Outcome.SUCCESS, AwsCallEvent.Outcome.SUCCESS),
+            events.map { it.outcome },
+        )
+        // Named even though S3 sends no X-Amz-Target, so the events are dimensionable per operation.
+        assertEquals(listOf("GetObject"), events.map { it.operation }.distinct())
     }
 }

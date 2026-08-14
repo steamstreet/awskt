@@ -293,6 +293,7 @@ public final class com/steamstreet/awskt/s3/S3Config {
 	public final fun getHttpTimeouts ()Lcom/steamstreet/awskt/core/AwsHttpTimeouts;
 	public final fun getMaxBufferedDownloadBytes ()J
 	public final fun getMaxBufferedUploadBytes ()J
+	public final fun getObserver ()Lcom/steamstreet/awskt/core/AwsCallObserver;
 	public final fun getRegion ()Ljava/lang/String;
 	public final fun getRetryConfig ()Lcom/steamstreet/awskt/core/RetryConfig;
 	public final fun setAllowInsecureEndpoint (Z)V
@@ -304,6 +305,7 @@ public final class com/steamstreet/awskt/s3/S3Config {
 	public final fun setHttpTimeouts (Lcom/steamstreet/awskt/core/AwsHttpTimeouts;)V
 	public final fun setMaxBufferedDownloadBytes (J)V
 	public final fun setMaxBufferedUploadBytes (J)V
+	public final fun setObserver (Lcom/steamstreet/awskt/core/AwsCallObserver;)V
 	public final fun setRegion (Ljava/lang/String;)V
 	public final fun setRetryConfig (Lcom/steamstreet/awskt/core/RetryConfig;)V
 }
