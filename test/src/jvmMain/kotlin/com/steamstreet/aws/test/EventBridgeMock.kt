@@ -4,7 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context
 import com.steamstreet.aws.lambda.eventbridge.EventBridgeFunction
 import com.steamstreet.aws.lambda.lambdaJson
 import com.steamstreet.awskt.core.AwsServiceClient
-import com.steamstreet.awskt.eventbridge.EventBridgeApi
+import com.steamstreet.awskt.eventbridge.EventBridge
 import com.steamstreet.awskt.eventbridge.PutEventsEntry
 import com.steamstreet.awskt.eventbridge.PutEventsResponse
 import com.steamstreet.awskt.eventbridge.PutEventsResultEntry
@@ -27,7 +27,7 @@ private class LocalTarget(
  * A local mocked version of event bridge.
  *
  * **No longer `EventBridgeClient by mockk`.** It implements this library's own one-method
- * [EventBridgeApi] outright, plus the test-only [EventBridgeAdmin]. Delegating to a relaxed mockk
+ * [EventBridge] outright, plus the test-only [EventBridgeAdmin]. Delegating to a relaxed mockk
  * meant every operation nobody had overridden silently returned an empty response instead of
  * failing, so a test that called into an unimplemented corner of the client passed for the wrong
  * reason. With a one-method interface there is nothing left to relax.
@@ -35,7 +35,7 @@ private class LocalTarget(
 public class EventBridgeMock(
     private val accountId: String = "1234",
     private val region: String = "us-west-2",
-) : EventBridgeApi, EventBridgeAdmin, MockService {
+) : EventBridge, EventBridgeAdmin, MockService {
     private val buses = hashMapOf(
         "default" to Bus()
     )

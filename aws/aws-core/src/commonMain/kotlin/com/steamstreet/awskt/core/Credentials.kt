@@ -32,8 +32,16 @@ public class StaticCredentialsProvider(
 }
 
 /**
- * Reads the standard environment variables. This is the only provider a Lambda, an ECS task or a
- * CodeBuild job needs, which is why the chain's default is so short.
+ * Reads the standard environment variables. This is the only provider a Lambda or a CodeBuild job
+ * needs, which is why the chain's default is so short.
+ *
+ * **An ECS or Fargate task role is not one of those cases.** ECS publishes the task's credentials
+ * at the container metadata endpoint and exports only the *path* to it — in
+ * `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` or `AWS_CONTAINER_CREDENTIALS_FULL_URI` — so
+ * `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are simply absent and this provider has nothing
+ * to read. Fetching from that endpoint is a provider this library does not ship;
+ * [CredentialsProviderChain] says so by name when one of those variables is set and the chain still
+ * came up empty.
  *
  * `AWS_CREDENTIAL_EXPIRATION` is read when present, but **it is absent in Lambda** — see
  * [AwsCredentials.expiresAtEpochMillis]. Nothing may treat a null expiry as "never expires".
@@ -71,6 +79,13 @@ public class CredentialsProviderChain(
         require(providers.isNotEmpty()) { "a credentials chain needs at least one provider" }
     }
 
+    /**
+     * Injected by tests so the diagnosis below never depends on the ambient process environment.
+     * Internal — not a supported way to configure a chain, and internal declarations do not appear
+     * in the ABI dump. Same shape as `S3Presigner`'s and `EnvironmentCredentialsProvider`'s seams.
+     */
+    internal var getEnv: (String) -> String? = ::platformGetEnv
+
     override suspend fun resolve(): AwsCredentials {
         var firstFailure: Throwable? = null
         val tried = StringBuilder()
@@ -89,10 +104,40 @@ public class CredentialsProviderChain(
                 tried.append(provider.toString())
             }
         }
-        throw AwsCredentialsNotFoundException("No provider supplied credentials. Tried: $tried", firstFailure)
+        throw AwsCredentialsNotFoundException(
+            "No provider supplied credentials. Tried: $tried" + containerCredentialsHint(),
+            firstFailure,
+        )
+    }
+
+    /**
+     * The one failure worth naming, because the environment says exactly what happened.
+     *
+     * A task running under an ECS or Fargate task role has no `AWS_ACCESS_KEY_ID` at all: ECS
+     * exports the *path* to the container metadata endpoint instead and expects the SDK to fetch
+     * from it. The generic "no provider supplied credentials" is true but sends the reader looking
+     * for a missing variable that was never supposed to be there, so when one of those paths is set
+     * the message says which capability is missing rather than which variable is.
+     */
+    private fun containerCredentialsHint(): String {
+        val variable = CONTAINER_CREDENTIAL_VARIABLES.firstOrNull { getEnv(it) != null } ?: return ""
+        return ". $variable is set, so this is an ECS or Fargate task role: container credentials " +
+            "are published at the container metadata endpoint, which this chain does not support. " +
+            "Supply a provider that reads that endpoint, or set the standard credential variables."
     }
 
     override fun toString(): String = "CredentialsProviderChain(${providers.joinToString()})"
+
+    private companion object {
+        /**
+         * Both variables ECS exports. The relative form is the common one; the full form appears on
+         * the EC2 launch type and outside ECS proper.
+         */
+        val CONTAINER_CREDENTIAL_VARIABLES = listOf(
+            "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI",
+            "AWS_CONTAINER_CREDENTIALS_FULL_URI",
+        )
+    }
 }
 
 /**

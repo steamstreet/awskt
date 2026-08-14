@@ -238,8 +238,8 @@ public final class com/steamstreet/awskt/dynamodb/ConditionCheck$Companion {
 }
 
 public final class com/steamstreet/awskt/dynamodb/ConditionalCheckFailedException : com/steamstreet/awskt/dynamodb/DynamoDbException {
-	public fun <init> (Ljava/lang/String;ILjava/util/Map;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;ILjava/util/Map;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;ILjava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getItem ()Ljava/util/Map;
 }
 
@@ -591,8 +591,8 @@ public final class com/steamstreet/awskt/dynamodb/DynamoDbConfig {
 }
 
 public class com/steamstreet/awskt/dynamodb/DynamoDbException : com/steamstreet/awskt/core/AwsServiceException {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class com/steamstreet/awskt/dynamodb/DynamoDbKt {
@@ -778,8 +778,8 @@ public final class com/steamstreet/awskt/dynamodb/GlobalSecondaryIndexDescriptio
 }
 
 public final class com/steamstreet/awskt/dynamodb/IdempotentParameterMismatchException : com/steamstreet/awskt/dynamodb/DynamoDbException {
-	public fun <init> (Ljava/lang/String;ILjava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class com/steamstreet/awskt/dynamodb/ItemResponse {
@@ -998,8 +998,8 @@ public final class com/steamstreet/awskt/dynamodb/ProvisionedThroughput$Companio
 }
 
 public final class com/steamstreet/awskt/dynamodb/ProvisionedThroughputExceededException : com/steamstreet/awskt/dynamodb/DynamoDbException {
-	public fun <init> (Ljava/lang/String;ILjava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class com/steamstreet/awskt/dynamodb/PutItemRequest {
@@ -1184,8 +1184,8 @@ public final class com/steamstreet/awskt/dynamodb/QueryResponse$Companion {
 }
 
 public final class com/steamstreet/awskt/dynamodb/ResourceNotFoundException : com/steamstreet/awskt/dynamodb/DynamoDbException {
-	public fun <init> (Ljava/lang/String;ILjava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class com/steamstreet/awskt/dynamodb/ReturnValue : java/lang/Enum {
@@ -1713,8 +1713,8 @@ public final class com/steamstreet/awskt/dynamodb/TransactWriteItemsResponse$Com
 }
 
 public final class com/steamstreet/awskt/dynamodb/TransactionCanceledException : com/steamstreet/awskt/dynamodb/DynamoDbException {
-	public fun <init> (Ljava/lang/String;ILjava/util/List;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;ILjava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;ILjava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getCancellationReasons ()Ljava/util/List;
 }
 
@@ -1790,8 +1790,8 @@ public final class com/steamstreet/awskt/dynamodb/UpdateItemResponse$Companion {
 }
 
 public final class com/steamstreet/awskt/dynamodb/ValidationException : com/steamstreet/awskt/dynamodb/DynamoDbException {
-	public fun <init> (Ljava/lang/String;ILjava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class com/steamstreet/awskt/dynamodb/WriteRequest {

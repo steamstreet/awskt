@@ -19,7 +19,6 @@ import kotlinx.coroutines.delay
 import kotlin.concurrent.atomics.AtomicLong
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.random.Random
 
 /** A raw, already-classified AWS response. */
 public class AwsHttpResponse(
@@ -235,9 +234,16 @@ public class AwsServiceClient(
      * @param validateBody called with a **successful** response once its body is in memory, from
      *   inside the retry loop. Its retry semantics are the exact opposite of [inspectBeforeBody]'s,
      *   which is the whole reason it is a separate parameter rather than a second use of that one:
-     *   throwing from here reports that *this response is defective*, and is retried as
-     *   [RetryErrorType.TRANSIENT] until the attempt budget runs out, after which the exception is
-     *   surfaced to the caller unchanged.
+     *   throwing from here reports that *this response is defective*, and on an
+     *   [OperationSafety.IDEMPOTENT] operation is retried as [RetryErrorType.TRANSIENT] until the
+     *   attempt budget runs out, after which the exception is surfaced to the caller unchanged.
+     *
+     *   **On a [OperationSafety.NOT_IDEMPOTENT] operation the rejection is surfaced immediately,
+     *   unretried.** A rejection here is not an ambiguous failure: the 2xx arrived, so the request
+     *   provably reached AWS and was applied, and replaying it to obtain a better copy of the
+     *   answer applies the write a second time. A defective body is the cheaper of the two
+     *   failures. [RetryConfig.retryAmbiguousWrites] does not unlock this — it is an opt-in for the
+     *   case where we cannot tell whether the request landed, and here we can.
      *
      *   The two are a matched pair, and the pairing is the point. A check that a replay cannot fix
      *   (`aws-s3`'s download ceiling — the object really is that big, and will be on the next
@@ -294,7 +300,9 @@ public class AwsServiceClient(
                 }
                 add("amz-sdk-invocation-id" to invocationId)
                 add("amz-sdk-request" to "attempt=${attempt + 1}; max=${retryConfig.maxAttempts}")
-                // Signing a compressed body we never see would break the payload hash.
+                // Signing a compressed body we never see would break the payload hash. Added here
+                // for every call and nowhere else: a service module that adds its own copy sends
+                // (and signs) the header twice, which works only for as long as no engine dedupes.
                 add("accept-encoding" to "identity")
             }
 
@@ -408,6 +416,19 @@ public class AwsServiceClient(
                 )
                 lastFailure?.let { rejection.addSuppressed(it) }
                 lastFailure = rejection
+
+                // A rejection is *not* an ambiguous failure, which is why `safety` is consulted
+                // here at all: the 2xx arrived, so the request provably reached AWS and was
+                // applied. Replaying a write to fetch a better copy of its answer double-applies
+                // it, and a defective body is the cheaper failure. Deliberately not gated on
+                // `retryAmbiguousWrites` — that opts in to retrying when we cannot tell whether
+                // the request landed, and here we can.
+                if (safety == OperationSafety.NOT_IDEMPOTENT) {
+                    notify(
+                        Outcome.GAVE_UP, operation, attemptNumber, response.status, null, null, attemptStart,
+                    )
+                    throw rejection
+                }
 
                 attempt++
                 if (!prepareRetry(
@@ -557,6 +578,7 @@ public class AwsServiceClient(
         val delayMillis = applyRetryAfter(
             backoffMillis(type, attempt - 1, retryConfig, random),
             retryAfterHeader,
+            retryConfig.maxBackoffMillis,
         )
         if (clock() + delayMillis > deadlineMillis) {
             // Nothing was retried, so nothing is owed. Charging for a retry the deadline cancelled
@@ -680,14 +702,33 @@ public class AwsServiceClient(
         return offset > 4 * 60 * 1_000 || offset < -4 * 60 * 1_000
     }
 
+    /**
+     * How far AWS's clock is ahead of ours, from the response's `Date` header.
+     *
+     * **Measured after the body was downloaded, so it includes the transfer time**, and is therefore
+     * an estimate skewed late by however long the response took to arrive — the header records when
+     * AWS started writing, and [clock] is read here, after the last byte landed. That is deliberate
+     * and adequate for what it is used for: SigV4 tolerates five minutes of skew, and the triggers
+     * in [shouldCorrectClockSkew] only act on a disagreement of four minutes or more, so a few
+     * seconds of download does not decide anything. Documented so nobody reads a precision claim
+     * into it — and so nobody "fixes" it by timestamping mid-flight, which would buy accuracy this
+     * has no use for at the cost of threading a clock read through [send].
+     */
     private fun serverTimeOffset(response: AwsHttpResponse): Long? {
         val serverMillis = parseHttpDateOrNull(response.headers.headerValue("date") ?: return null)
             ?: return null
         return serverMillis - clock()
     }
 
-    private fun newInvocationId(): String =
-        Random.nextLong().toULong().toString(16).padStart(16, '0')
+    /**
+     * `amz-sdk-invocation-id`: one id shared by every attempt of one call, so AWS can tie a request
+     * and its retries together.
+     *
+     * UUID-shaped, which is what every AWS SDK puts in this header. It used to be 16 hex digits —
+     * unique enough among one process's calls, but a different shape from the value AWS-side
+     * tooling is reading, and a second home-grown generator next to `aws-dynamodb`'s.
+     */
+    private fun newInvocationId(): String = randomUuidString()
 
     private companion object {
         val EMPTY_BODY = ByteArray(0)

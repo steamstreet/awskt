@@ -183,6 +183,10 @@ public final class com/steamstreet/awskt/core/HttpClient_jvmKt {
 	public static synthetic fun awsHttpClient$default (Ljava/lang/String;Lcom/steamstreet/awskt/core/AwsHttpTimeouts;ILjava/lang/Object;)Lio/ktor/client/HttpClient;
 }
 
+public final class com/steamstreet/awskt/core/IdsKt {
+	public static final fun randomUuidString ()Ljava/lang/String;
+}
+
 public final class com/steamstreet/awskt/core/OperationSafety : java/lang/Enum {
 	public static final field IDEMPOTENT Lcom/steamstreet/awskt/core/OperationSafety;
 	public static final field NOT_IDEMPOTENT Lcom/steamstreet/awskt/core/OperationSafety;

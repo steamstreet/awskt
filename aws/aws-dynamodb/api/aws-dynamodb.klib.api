@@ -402,7 +402,7 @@ final class com.steamstreet.awskt.dynamodb/ConditionCheck { // com.steamstreet.a
 }
 
 final class com.steamstreet.awskt.dynamodb/ConditionalCheckFailedException : com.steamstreet.awskt.dynamodb/DynamoDbException { // com.steamstreet.awskt.dynamodb/ConditionalCheckFailedException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., kotlin/String? = ...) // com.steamstreet.awskt.dynamodb/ConditionalCheckFailedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.dynamodb/ConditionalCheckFailedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>?;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 
     final val item // com.steamstreet.awskt.dynamodb/ConditionalCheckFailedException.item|{}item[0]
         final fun <get-item>(): kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>? // com.steamstreet.awskt.dynamodb/ConditionalCheckFailedException.item.<get-item>|<get-item>(){}[0]
@@ -927,7 +927,7 @@ final class com.steamstreet.awskt.dynamodb/GlobalSecondaryIndexDescription { // 
 }
 
 final class com.steamstreet.awskt.dynamodb/IdempotentParameterMismatchException : com.steamstreet.awskt.dynamodb/DynamoDbException { // com.steamstreet.awskt.dynamodb/IdempotentParameterMismatchException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ...) // com.steamstreet.awskt.dynamodb/IdempotentParameterMismatchException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.dynamodb/IdempotentParameterMismatchException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final class com.steamstreet.awskt.dynamodb/ItemResponse { // com.steamstreet.awskt.dynamodb/ItemResponse|null[0]
@@ -1121,7 +1121,7 @@ final class com.steamstreet.awskt.dynamodb/ProvisionedThroughput { // com.steams
 }
 
 final class com.steamstreet.awskt.dynamodb/ProvisionedThroughputExceededException : com.steamstreet.awskt.dynamodb/DynamoDbException { // com.steamstreet.awskt.dynamodb/ProvisionedThroughputExceededException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ...) // com.steamstreet.awskt.dynamodb/ProvisionedThroughputExceededException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.dynamodb/ProvisionedThroughputExceededException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final class com.steamstreet.awskt.dynamodb/PutItemRequest { // com.steamstreet.awskt.dynamodb/PutItemRequest|null[0]
@@ -1325,7 +1325,7 @@ final class com.steamstreet.awskt.dynamodb/QueryResponse { // com.steamstreet.aw
 }
 
 final class com.steamstreet.awskt.dynamodb/ResourceNotFoundException : com.steamstreet.awskt.dynamodb/DynamoDbException { // com.steamstreet.awskt.dynamodb/ResourceNotFoundException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ...) // com.steamstreet.awskt.dynamodb/ResourceNotFoundException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.dynamodb/ResourceNotFoundException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final class com.steamstreet.awskt.dynamodb/ScanRequest { // com.steamstreet.awskt.dynamodb/ScanRequest|null[0]
@@ -1815,7 +1815,7 @@ final class com.steamstreet.awskt.dynamodb/TransactWriteItemsResponse { // com.s
 }
 
 final class com.steamstreet.awskt.dynamodb/TransactionCanceledException : com.steamstreet.awskt.dynamodb/DynamoDbException { // com.steamstreet.awskt.dynamodb/TransactionCanceledException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin.collections/List<com.steamstreet.awskt.dynamodb/CancellationReason> = ..., kotlin/String? = ...) // com.steamstreet.awskt.dynamodb/TransactionCanceledException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.collections.List<com.steamstreet.awskt.dynamodb.CancellationReason>;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin.collections/List<com.steamstreet.awskt.dynamodb/CancellationReason> = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.dynamodb/TransactionCanceledException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.collections.List<com.steamstreet.awskt.dynamodb.CancellationReason>;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 
     final val cancellationReasons // com.steamstreet.awskt.dynamodb/TransactionCanceledException.cancellationReasons|{}cancellationReasons[0]
         final fun <get-cancellationReasons>(): kotlin.collections/List<com.steamstreet.awskt.dynamodb/CancellationReason> // com.steamstreet.awskt.dynamodb/TransactionCanceledException.cancellationReasons.<get-cancellationReasons>|<get-cancellationReasons>(){}[0]
@@ -1899,7 +1899,7 @@ final class com.steamstreet.awskt.dynamodb/UpdateItemResponse { // com.steamstre
 }
 
 final class com.steamstreet.awskt.dynamodb/ValidationException : com.steamstreet.awskt.dynamodb/DynamoDbException { // com.steamstreet.awskt.dynamodb/ValidationException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ...) // com.steamstreet.awskt.dynamodb/ValidationException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.dynamodb/ValidationException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final class com.steamstreet.awskt.dynamodb/WriteRequest { // com.steamstreet.awskt.dynamodb/WriteRequest|null[0]
@@ -1932,7 +1932,7 @@ final class com.steamstreet.awskt.dynamodb/WriteRequest { // com.steamstreet.aws
 }
 
 open class com.steamstreet.awskt.dynamodb/DynamoDbException : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.dynamodb/DynamoDbException|null[0]
-    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.dynamodb/DynamoDbException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.dynamodb/DynamoDbException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final val com.steamstreet.awskt.dynamodb/DYNAMODB_PROTOCOL // com.steamstreet.awskt.dynamodb/DYNAMODB_PROTOCOL|{}DYNAMODB_PROTOCOL[0]

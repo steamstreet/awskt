@@ -132,7 +132,7 @@ public class RetryConfig(
  * that reports partial throttling *in a 200 response* — `BatchGetItem`'s `UnprocessedKeys` and
  * `BatchWriteItem`'s `UnprocessedItems` — never reaches the transport's retry path, so the service
  * module has to pace its own resubmissions. It should pace them with this formula rather than a
- * second, subtly different one; see `aws-dynamodb`'s `BatchRetry`.
+ * second, subtly different one; see [BatchRetry], which is what those helpers use.
  */
 public fun backoffMillis(
     type: RetryErrorType,
@@ -153,12 +153,28 @@ public fun backoffMillis(
  * Applies the server's `x-amz-retry-after` hint.
  *
  * The header is in **milliseconds**, and is *not* the RFC `Retry-After` seconds header. Reading it
- * as seconds turns a 3-second pause into a 50-minute one. Clamped so a hostile or buggy value
- * cannot extend the wait indefinitely.
+ * as seconds turns a 3-second pause into a 50-minute one.
+ *
+ * ### The bounds
+ *
+ * Never **shorter** than [computedMillis]: the hint is AWS asking for at least that long, and our
+ * own backoff already reflects how many times this call has failed, so honouring a shorter hint
+ * would retry sooner than our own policy allows.
+ *
+ * Never **longer** than [maxBackoffMillis], which is the same ceiling [backoffMillis] applies to a
+ * computed delay — one configured bound on how long a single sleep may be, wherever the number came
+ * from. The clamp used to be `computedMillis + 5s`, which is not a bound on anything the caller
+ * configured: on the first attempt of a transient failure it capped a legitimate 10-second hint at
+ * 5.025 seconds, so the client came back at half the interval the service asked for and the service
+ * had to shed the same request twice. A hostile or buggy value is still bounded — by
+ * [RetryConfig.maxBackoffMillis], and beyond that by [RetryConfig.maxTotalRetryDuration], which
+ * `prepareRetry` checks against the call's deadline *after* this returns.
  */
-internal fun applyRetryAfter(computedMillis: Long, retryAfterHeader: String?): Long {
+internal fun applyRetryAfter(computedMillis: Long, retryAfterHeader: String?, maxBackoffMillis: Long): Long {
     val hinted = retryAfterHeader?.trim()?.toLongOrNull() ?: return computedMillis
-    return hinted.coerceIn(computedMillis, computedMillis + 5_000)
+    // maxOf, because a computed delay above the cap would otherwise make the range empty and
+    // coerceIn throw. backoffMillis cannot produce one today; this does not rely on that.
+    return hinted.coerceIn(computedMillis, maxOf(computedMillis, maxBackoffMillis))
 }
 
 /**

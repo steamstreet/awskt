@@ -246,6 +246,63 @@ class AwsCallEventStreamTest {
     }
 
     /**
+     * ...and on a write it is **not** replayed, which is the one place `validateBody`'s retry
+     * semantics bend to [OperationSafety].
+     *
+     * The 2xx arrived, so unlike an ambiguous transport failure there is nothing to wonder about:
+     * the request reached AWS and was applied. A second attempt to obtain a better copy of the
+     * answer applies the write twice. The event stream still reports the attempt's own terminal
+     * outcome before the give-up, exactly as every other non-retried failure does.
+     */
+    @Test
+    fun aRejectedBodyOnAWriteIsSurfacedWithoutReplayingTheWrite() = runTest {
+        val harness = ObserverHarness()
+        var validations = 0
+        val client = observedClient(harness, RetryConfig(maxAttempts = 4)) {
+            respond("""{"ok":true}""", HttpStatusCode.OK)
+        }
+
+        assertFailsWith<IllegalStateException> {
+            client.callRaw(
+                "POST",
+                operation = "PutEvents",
+                safety = OperationSafety.NOT_IDEMPOTENT,
+                validateBody = {
+                    validations++
+                    error("truncated")
+                },
+            )
+        }
+
+        assertEquals(1, validations, "the write must not be replayed to re-validate it")
+        assertEquals(1, harness.requests.size)
+        assertEquals(emptyList(), harness.sleeps, "and must not pay retry backoff either")
+        assertEquals(listOf(Outcome.TRANSPORT_FAILURE, Outcome.GAVE_UP), harness.outcomes)
+        assertEquals(200, harness.single(Outcome.GAVE_UP).statusCode, "which response was rejected")
+    }
+
+    /** Opting in to replaying ambiguous writes does not opt in to replaying this one. */
+    @Test
+    fun retryAmbiguousWritesDoesNotUnlockAWriteWhoseResponseArrived() = runTest {
+        val harness = ObserverHarness()
+        val client = observedClient(
+            harness,
+            RetryConfig(maxAttempts = 4, retryAmbiguousWrites = true),
+        ) { respond("""{"ok":true}""", HttpStatusCode.OK) }
+
+        assertFailsWith<IllegalStateException> {
+            client.callRaw(
+                "POST",
+                operation = "PutEvents",
+                safety = OperationSafety.NOT_IDEMPOTENT,
+                validateBody = { error("truncated") },
+            )
+        }
+
+        assertEquals(1, harness.requests.size)
+    }
+
+    /**
      * The skew retry takes no backoff, so it reports itself rather than arriving as a
      * RETRY_SCHEDULED with a zero delay that an observer could not tell from a genuine one.
      */

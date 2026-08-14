@@ -476,7 +476,9 @@ internal class DefaultS3(
             request.contentDisposition?.let { add("Content-Disposition" to it) }
             request.ifNoneMatch?.let { add("If-None-Match" to it) }
             // AWS tells REST callers not to send x-amz-sdk-checksum-algorithm, and we do not.
-            add("accept-encoding" to "identity")
+            // `accept-encoding: identity` is not added here either: `callRaw` adds it to every
+            // request, and a second copy was signed and sent alongside the first as
+            // `identity,identity`.
             for ((name, value) in request.metadata) add("x-amz-meta-$name" to value)
         }
 
@@ -506,7 +508,9 @@ internal class DefaultS3(
             operation = "HeadObject", safety = OperationSafety.IDEMPOTENT,
         )
         return HeadObjectResponse(
-            contentLength = response.headers.header("content-length")?.toLongOrNull() ?: 0L,
+            // No `?: 0L`: a HEAD has no body to measure, so an absent header is unknown rather than
+            // empty, and saying "0" makes a real object indistinguishable from one.
+            contentLength = response.headers.header("content-length")?.toLongOrNull(),
             contentType = response.headers.header("content-type"),
             eTag = response.headers.header("etag")?.trim('"'),
             lastModified = response.headers.header("last-modified"),
@@ -561,11 +565,19 @@ internal fun checkDownloadComplete(
     }
 }
 
-/** Header lookup that does not care about case, because HTTP does not. */
-internal fun Map<String, String>.header(name: String): String? =
-    this[name] ?: entries.firstOrNull { it.key.equals(name, ignoreCase = true) }?.value
+/**
+ * Header lookup. HTTP does not care about case, and neither does this — because the keys are
+ * **already lowercased**: `aws-core`'s `AwsServiceClient.send` lowercases every response header name
+ * as it collects them, and that is the only thing that builds the maps read here (the operations'
+ * `response.headers`, and the map handed to `inspectBeforeBody`).
+ *
+ * So [name] must be lowercase, which every call site in this file is. What this replaced was a
+ * case-insensitive scan of the whole entry set per header — run a dozen times per `getObject` — to
+ * find a key that could only ever have matched directly.
+ */
+internal fun Map<String, String>.header(name: String): String? = this[name]
 
-/** `x-amz-meta-*` with the prefix stripped and the name lowercased. */
+/** `x-amz-meta-*` with the prefix stripped. Names are lowercase already — see [header]. */
 internal fun Map<String, String>.userMetadata(): Map<String, String> =
-    entries.filter { it.key.startsWith("x-amz-meta-", ignoreCase = true) }
-        .associate { it.key.substring("x-amz-meta-".length).lowercase() to it.value }
+    entries.filter { it.key.startsWith("x-amz-meta-") }
+        .associate { it.key.substring("x-amz-meta-".length) to it.value }

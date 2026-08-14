@@ -6,11 +6,11 @@
 // - Show declarations: true
 
 // Library unique name: <com.steamstreet:aws-eventbridge>
-abstract interface com.steamstreet.awskt.eventbridge/EventBridgeApi : kotlin/AutoCloseable { // com.steamstreet.awskt.eventbridge/EventBridgeApi|null[0]
-    abstract val client // com.steamstreet.awskt.eventbridge/EventBridgeApi.client|{}client[0]
-        abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.eventbridge/EventBridgeApi.client.<get-client>|<get-client>(){}[0]
+abstract interface com.steamstreet.awskt.eventbridge/EventBridge : kotlin/AutoCloseable { // com.steamstreet.awskt.eventbridge/EventBridge|null[0]
+    abstract val client // com.steamstreet.awskt.eventbridge/EventBridge.client|{}client[0]
+        abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.eventbridge/EventBridge.client.<get-client>|<get-client>(){}[0]
 
-    abstract suspend fun putEvents(kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsEntry>): com.steamstreet.awskt.eventbridge/PutEventsResponse // com.steamstreet.awskt.eventbridge/EventBridgeApi.putEvents|putEvents(kotlin.collections.List<com.steamstreet.awskt.eventbridge.PutEventsEntry>){}[0]
+    abstract suspend fun putEvents(kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsEntry>): com.steamstreet.awskt.eventbridge/PutEventsResponse // com.steamstreet.awskt.eventbridge/EventBridge.putEvents|putEvents(kotlin.collections.List<com.steamstreet.awskt.eventbridge.PutEventsEntry>){}[0]
 }
 
 final class com.steamstreet.awskt.eventbridge/EventBridgeConfig { // com.steamstreet.awskt.eventbridge/EventBridgeConfig|null[0]
@@ -151,23 +151,23 @@ final class com.steamstreet.awskt.eventbridge/PutEventsResultEntry { // com.stea
 }
 
 final class com.steamstreet.awskt.eventbridge/ResourceNotFoundException : com.steamstreet.awskt.eventbridge/EventBridgeException { // com.steamstreet.awskt.eventbridge/ResourceNotFoundException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ...) // com.steamstreet.awskt.eventbridge/ResourceNotFoundException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.eventbridge/ResourceNotFoundException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final class com.steamstreet.awskt.eventbridge/ThrottlingException : com.steamstreet.awskt.eventbridge/EventBridgeException { // com.steamstreet.awskt.eventbridge/ThrottlingException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ...) // com.steamstreet.awskt.eventbridge/ThrottlingException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.eventbridge/ThrottlingException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final class com.steamstreet.awskt.eventbridge/ValidationException : com.steamstreet.awskt.eventbridge/EventBridgeException { // com.steamstreet.awskt.eventbridge/ValidationException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ...) // com.steamstreet.awskt.eventbridge/ValidationException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.eventbridge/ValidationException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 open class com.steamstreet.awskt.eventbridge/EventBridgeException : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.eventbridge/EventBridgeException|null[0]
-    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.eventbridge/EventBridgeException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.eventbridge/EventBridgeException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final val com.steamstreet.awskt.eventbridge/EVENTBRIDGE_PROTOCOL // com.steamstreet.awskt.eventbridge/EVENTBRIDGE_PROTOCOL|{}EVENTBRIDGE_PROTOCOL[0]
     final fun <get-EVENTBRIDGE_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.eventbridge/EVENTBRIDGE_PROTOCOL.<get-EVENTBRIDGE_PROTOCOL>|<get-EVENTBRIDGE_PROTOCOL>(){}[0]
 
-final fun com.steamstreet.awskt.eventbridge/EventBridge(kotlin/Function1<com.steamstreet.awskt.eventbridge/EventBridgeConfig, kotlin/Unit> = ...): com.steamstreet.awskt.eventbridge/EventBridgeApi // com.steamstreet.awskt.eventbridge/EventBridge|EventBridge(kotlin.Function1<com.steamstreet.awskt.eventbridge.EventBridgeConfig,kotlin.Unit>){}[0]
-final suspend fun (com.steamstreet.awskt.eventbridge/EventBridgeApi).com.steamstreet.awskt.eventbridge/putEventsAll(kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsEntry>, kotlin/Int = ..., com.steamstreet.awskt.core/BatchRetry = ...): kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsResultEntry> // com.steamstreet.awskt.eventbridge/putEventsAll|putEventsAll@com.steamstreet.awskt.eventbridge.EventBridgeApi(kotlin.collections.List<com.steamstreet.awskt.eventbridge.PutEventsEntry>;kotlin.Int;com.steamstreet.awskt.core.BatchRetry){}[0]
+final fun com.steamstreet.awskt.eventbridge/EventBridge(kotlin/Function1<com.steamstreet.awskt.eventbridge/EventBridgeConfig, kotlin/Unit> = ...): com.steamstreet.awskt.eventbridge/EventBridge // com.steamstreet.awskt.eventbridge/EventBridge|EventBridge(kotlin.Function1<com.steamstreet.awskt.eventbridge.EventBridgeConfig,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.awskt.eventbridge/EventBridge).com.steamstreet.awskt.eventbridge/putEventsAll(kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsEntry>, kotlin/Int = ..., com.steamstreet.awskt.core/BatchRetry = ...): kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsResultEntry> // com.steamstreet.awskt.eventbridge/putEventsAll|putEventsAll@com.steamstreet.awskt.eventbridge.EventBridge(kotlin.collections.List<com.steamstreet.awskt.eventbridge.PutEventsEntry>;kotlin.Int;com.steamstreet.awskt.core.BatchRetry){}[0]

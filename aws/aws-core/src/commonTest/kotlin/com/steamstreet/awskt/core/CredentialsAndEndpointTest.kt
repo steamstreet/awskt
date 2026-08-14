@@ -117,10 +117,40 @@ class CredentialsTest {
         assertEquals("AKID", CredentialsProviderChain(failing, working).resolve().accessKeyId)
 
         val error = assertFailsWith<AwsCredentialsNotFoundException> {
-            CredentialsProviderChain(failing, failing).resolve()
+            // The environment is pinned empty: the message picks up an ECS hint from the ambient
+            // process environment otherwise, and this assertion is about the plain case.
+            CredentialsProviderChain(failing, failing).apply { getEnv = { null } }.resolve()
         }
         assertTrue(error.message!!.contains("Tried:"))
         assertFalse(SECRET in error.stackTraceToString())
+        assertFalse(
+            "metadata endpoint" in error.message!!,
+            "nothing in the environment suggested container credentials",
+        )
+    }
+
+    /**
+     * An ECS or Fargate task role publishes nothing in `AWS_ACCESS_KEY_ID`; it exports the path to
+     * the container metadata endpoint and expects the SDK to fetch from it. "No provider supplied
+     * credentials" is true and useless there, so the environment's own evidence is read back.
+     */
+    @Test
+    fun theChainNamesContainerCredentialsWhenEcsExportedThePath() = runTest {
+        val failing = AwsCredentialsProvider { throw AwsCredentialsNotFoundException("nope") }
+
+        for (variable in listOf(
+            "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI",
+            "AWS_CONTAINER_CREDENTIALS_FULL_URI",
+        )) {
+            val chain = CredentialsProviderChain(failing).apply {
+                getEnv = { name -> if (name == variable) "/v2/credentials/abc123" else null }
+            }
+            val error = assertFailsWith<AwsCredentialsNotFoundException> { chain.resolve() }
+            val message = error.message!!
+            assertTrue(variable in message, message)
+            assertTrue("container metadata endpoint" in message, message)
+            assertTrue("does not support" in message, message)
+        }
     }
 
     /**

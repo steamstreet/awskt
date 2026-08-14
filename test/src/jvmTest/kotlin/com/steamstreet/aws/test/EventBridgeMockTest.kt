@@ -17,7 +17,7 @@ import kotlin.test.assertTrue
  *
  * **The mock had no tests at all before M6** — it appeared nowhere outside its own file — which is
  * why M6's rewrite of it from `EventBridgeClient by mockk(relaxed = true)` onto our own
- * [com.steamstreet.awskt.eventbridge.EventBridgeApi] would otherwise have shipped compile-verified
+ * [com.steamstreet.awskt.eventbridge.EventBridge] would otherwise have shipped compile-verified
  * and nothing more. The plan's verification line refers to "the existing EventBridge rule-matching
  * tests"; there were none.
  */

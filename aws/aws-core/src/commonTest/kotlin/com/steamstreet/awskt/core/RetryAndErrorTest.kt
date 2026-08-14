@@ -79,12 +79,31 @@ class RetryClassificationTest {
     /** The header is milliseconds. Reading it as seconds turns a 3s pause into ~50 minutes. */
     @Test
     fun retryAfterIsMillisecondsAndClamped() {
-        assertEquals(3_000, applyRetryAfter(100, "3000"))
-        assertEquals(100, applyRetryAfter(100, null))
-        assertEquals(100, applyRetryAfter(100, "not-a-number"))
-        // Never shorter than our own computation, never more than 5s longer.
-        assertEquals(500, applyRetryAfter(500, "10"))
-        assertEquals(5_500, applyRetryAfter(500, "99999"))
+        val cap = RetryConfig().maxBackoffMillis
+        assertEquals(3_000, applyRetryAfter(100, "3000", cap))
+        assertEquals(100, applyRetryAfter(100, null, cap))
+        assertEquals(100, applyRetryAfter(100, "not-a-number", cap))
+        // Never shorter than our own computation, never longer than the configured backoff cap.
+        assertEquals(500, applyRetryAfter(500, "10", cap))
+        assertEquals(20_000, applyRetryAfter(500, "99999", cap))
+    }
+
+    /**
+     * The hint is honoured up to the configured cap, not to a fixed 5 s above our own computation.
+     *
+     * A service asking for 10 seconds on the first transient failure used to be answered in 5.025 —
+     * so the client came back at half the interval it was told to, and the service shed the same
+     * request a second time. The ceiling is the one the caller configured for every other sleep.
+     */
+    @Test
+    fun aLongerRetryAfterHintIsHonouredUpToTheConfiguredCap() {
+        val transientFirstAttempt = backoffMillis(RetryErrorType.TRANSIENT, 0, RetryConfig()) { 1.0 }
+        assertEquals(25, transientFirstAttempt)
+        assertEquals(10_000, applyRetryAfter(transientFirstAttempt, "10000", 20_000))
+
+        // A tighter cap binds it, and a tighter cap than our own computation cannot invert the range.
+        assertEquals(1_000, applyRetryAfter(25, "10000", 1_000))
+        assertEquals(5_000, applyRetryAfter(5_000, "10000", 1_000))
     }
 
     @Test

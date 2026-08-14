@@ -32,7 +32,7 @@ internal class EventBridgeHarness {
 internal fun harnessEventBridge(
     harness: EventBridgeHarness,
     responder: (Int) -> Pair<String, HttpStatusCode>,
-): EventBridgeApi {
+): EventBridge {
     var call = 0
     val engine = MockEngine { request ->
         harness.requests += request

@@ -444,6 +444,14 @@ class TransportRequestShapeTest {
 
         val invocationIds = harness.requests.map { it.headers["amz-sdk-invocation-id"] }.toSet()
         assertEquals(1, invocationIds.size, "the invocation id identifies the call, not the attempt")
+        // UUID-shaped, which is what every AWS SDK puts in this header and what AWS-side tooling
+        // reads. It was 16 bare hex digits until `randomUuidString` became the one generator.
+        val invocationId = invocationIds.single()
+        assertNotNull(invocationId)
+        assertTrue(
+            Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}").matches(invocationId),
+            invocationId,
+        )
         assertEquals(
             listOf("attempt=1; max=3", "attempt=2; max=3", "attempt=3; max=3"),
             harness.requests.map { it.headers["amz-sdk-request"] },

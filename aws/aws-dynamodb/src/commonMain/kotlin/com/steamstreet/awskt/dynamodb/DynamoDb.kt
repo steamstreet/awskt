@@ -14,6 +14,7 @@ import com.steamstreet.awskt.core.awsHttpClient
 import com.steamstreet.awskt.core.awsJson
 import com.steamstreet.awskt.core.callJson
 import com.steamstreet.awskt.core.defaultCredentialsProvider
+import com.steamstreet.awskt.core.randomUuidString
 import com.steamstreet.awskt.core.resolveEndpoint
 import com.steamstreet.awskt.core.resolveRegion
 import io.ktor.client.HttpClient
@@ -30,7 +31,6 @@ import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
-import kotlin.random.Random
 
 /** DynamoDB's AWS-JSON 1.0 dialect. Public so a downstream service module can reuse the shape. */
 public val DYNAMODB_PROTOCOL: AwsProtocol =
@@ -309,17 +309,11 @@ internal fun writeSafety(
 /**
  * DynamoDB's `ClientRequestToken`: exactly 36 characters, matching a UUID's shape.
  *
- * Not prefixed — DynamoDB's maximum is 36, so any prefix pushes it over.
+ * Not prefixed — DynamoDB's maximum is 36, so any prefix pushes it over. Delegates to `aws-core`'s
+ * [randomUuidString] rather than generating its own: this module and the transport both need a
+ * UUID-shaped identifier, and two generators are two things to keep in agreement.
  */
-internal fun newClientRequestToken(): String {
-    val hex = "0123456789abcdef"
-    val sb = StringBuilder(36)
-    for (i in 0 until 32) {
-        if (i == 8 || i == 12 || i == 16 || i == 20) sb.append('-')
-        sb.append(hex[Random.nextInt(16)])
-    }
-    return sb.toString()
-}
+internal fun newClientRequestToken(): String = randomUuidString()
 
 // -- Typed exceptions --------------------------------------------------------------------------
 
@@ -329,6 +323,10 @@ internal fun newClientRequestToken(): String {
  * Extends `aws-core`'s [AwsServiceException] so every DynamoDB failure carries `code`,
  * `statusCode`, `requestId` and `extendedRequestId` — done here rather than later because
  * re-parenting a public exception hierarchy after publication is an API revision.
+ *
+ * [cause] is the transport-level exception this was rebuilt from. It is what carries the stack
+ * trace through `aws-core`'s send and retry loop; without it the typed failure appears to originate
+ * at [mapErrors], and the frames that say *which call* failed are gone.
  */
 public open class DynamoDbException(
     code: String?,
@@ -336,7 +334,8 @@ public open class DynamoDbException(
     statusCode: Int,
     requestId: String? = null,
     extendedRequestId: String? = null,
-) : AwsServiceException(code, message, statusCode, requestId, extendedRequestId)
+    cause: Throwable? = null,
+) : AwsServiceException(code, message, statusCode, requestId, extendedRequestId, cause)
 
 /**
  * A condition expression evaluated false.
@@ -350,7 +349,11 @@ public class ConditionalCheckFailedException(
     statusCode: Int,
     public val item: Item? = null,
     requestId: String? = null,
-) : DynamoDbException("ConditionalCheckFailedException", message, statusCode, requestId)
+    extendedRequestId: String? = null,
+    cause: Throwable? = null,
+) : DynamoDbException(
+    "ConditionalCheckFailedException", message, statusCode, requestId, extendedRequestId, cause,
+)
 
 /**
  * An atomic transaction AWS refused.
@@ -368,20 +371,48 @@ public class TransactionCanceledException(
     statusCode: Int,
     public val cancellationReasons: List<CancellationReason> = emptyList(),
     requestId: String? = null,
-) : DynamoDbException("TransactionCanceledException", message, statusCode, requestId)
+    extendedRequestId: String? = null,
+    cause: Throwable? = null,
+) : DynamoDbException(
+    "TransactionCanceledException", message, statusCode, requestId, extendedRequestId, cause,
+)
 
-public class ProvisionedThroughputExceededException(message: String?, statusCode: Int, requestId: String? = null) :
-    DynamoDbException("ProvisionedThroughputExceededException", message, statusCode, requestId)
+public class ProvisionedThroughputExceededException(
+    message: String?,
+    statusCode: Int,
+    requestId: String? = null,
+    extendedRequestId: String? = null,
+    cause: Throwable? = null,
+) : DynamoDbException(
+    "ProvisionedThroughputExceededException", message, statusCode, requestId, extendedRequestId, cause,
+)
 
-public class ResourceNotFoundException(message: String?, statusCode: Int, requestId: String? = null) :
-    DynamoDbException("ResourceNotFoundException", message, statusCode, requestId)
+public class ResourceNotFoundException(
+    message: String?,
+    statusCode: Int,
+    requestId: String? = null,
+    extendedRequestId: String? = null,
+    cause: Throwable? = null,
+) : DynamoDbException("ResourceNotFoundException", message, statusCode, requestId, extendedRequestId, cause)
 
-public class ValidationException(message: String?, statusCode: Int, requestId: String? = null) :
-    DynamoDbException("ValidationException", message, statusCode, requestId)
+public class ValidationException(
+    message: String?,
+    statusCode: Int,
+    requestId: String? = null,
+    extendedRequestId: String? = null,
+    cause: Throwable? = null,
+) : DynamoDbException("ValidationException", message, statusCode, requestId, extendedRequestId, cause)
 
 /** Explicitly non-retryable — see `aws-core`'s never-retry deny-list. */
-public class IdempotentParameterMismatchException(message: String?, statusCode: Int, requestId: String? = null) :
-    DynamoDbException("IdempotentParameterMismatchException", message, statusCode, requestId)
+public class IdempotentParameterMismatchException(
+    message: String?,
+    statusCode: Int,
+    requestId: String? = null,
+    extendedRequestId: String? = null,
+    cause: Throwable? = null,
+) : DynamoDbException(
+    "IdempotentParameterMismatchException", message, statusCode, requestId, extendedRequestId, cause,
+)
 
 /**
  * [batchGetAll] ran out of rounds or backoff budget with keys still owed.
@@ -454,28 +485,44 @@ public class BatchWriteIncompleteException(
  *
  * Unknown codes fall through to [DynamoDbException] rather than being swallowed, so an operation
  * added downstream still gets a useful, typed failure without registering anything.
+ *
+ * Every branch threads `cause = e` and both request ids. The typed exception is a *rebuild* rather
+ * than a wrapper, so anything not carried across is destroyed here: without the cause the stack
+ * trace stops at this function and the frames identifying the failing call are lost, and without
+ * `extendedRequestId` an AWS support case is missing half of what Support asks for.
  */
 internal inline fun <T> mapErrors(block: () -> T): T = try {
     block()
 } catch (e: AwsServiceException) {
     throw when (e.code) {
         "ConditionalCheckFailedException" ->
-            ConditionalCheckFailedException(e.message, e.statusCode, errorItem(e.rawErrorBody), e.requestId)
+            ConditionalCheckFailedException(
+                e.message, e.statusCode, errorItem(e.rawErrorBody), e.requestId, e.extendedRequestId, e,
+            )
 
         "TransactionCanceledException" ->
             TransactionCanceledException(
                 e.message, e.statusCode, cancellationReasons(e.rawErrorBody), e.requestId,
+                e.extendedRequestId, e,
             )
 
         "ProvisionedThroughputExceededException" ->
-            ProvisionedThroughputExceededException(e.message, e.statusCode, e.requestId)
+            ProvisionedThroughputExceededException(
+                e.message, e.statusCode, e.requestId, e.extendedRequestId, e,
+            )
 
-        "ResourceNotFoundException" -> ResourceNotFoundException(e.message, e.statusCode, e.requestId)
-        "ValidationException" -> ValidationException(e.message, e.statusCode, e.requestId)
+        "ResourceNotFoundException" ->
+            ResourceNotFoundException(e.message, e.statusCode, e.requestId, e.extendedRequestId, e)
+
+        "ValidationException" ->
+            ValidationException(e.message, e.statusCode, e.requestId, e.extendedRequestId, e)
+
         "IdempotentParameterMismatchException" ->
-            IdempotentParameterMismatchException(e.message, e.statusCode, e.requestId)
+            IdempotentParameterMismatchException(
+                e.message, e.statusCode, e.requestId, e.extendedRequestId, e,
+            )
 
-        else -> DynamoDbException(e.code, e.message, e.statusCode, e.requestId, e.extendedRequestId)
+        else -> DynamoDbException(e.code, e.message, e.statusCode, e.requestId, e.extendedRequestId, e)
     }
 }
 

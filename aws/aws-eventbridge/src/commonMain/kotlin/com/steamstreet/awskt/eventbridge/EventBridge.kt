@@ -34,7 +34,7 @@ public val EVENTBRIDGE_PROTOCOL: AwsProtocol =
  * such as `PutRule` or `CreateEventBus`, can be added downstream as an extension function with
  * identical signing, retry and error handling.
  */
-public interface EventBridgeApi : AutoCloseable {
+public interface EventBridge : AutoCloseable {
     /** The signed transport. Public because it is the extension seam — see the interface KDoc. */
     public val client: AwsServiceClient
 
@@ -49,7 +49,7 @@ public interface EventBridgeApi : AutoCloseable {
     public suspend fun putEvents(entries: List<PutEventsEntry>): PutEventsResponse
 }
 
-/** Configuration for [EventBridgeApi]. */
+/** Configuration for [EventBridge]. */
 public class EventBridgeConfig {
     public var region: String? = null
     public var endpointUrl: String? = null
@@ -71,7 +71,7 @@ public class EventBridgeConfig {
     /**
      * Per-attempt time limits for the client this factory builds. Ignored when [httpClient] is set.
      *
-     * Worth reading together with [EventBridgeApi.putEvents]'s `NOT_IDEMPOTENT` safety: a request
+     * Worth reading together with [EventBridge.putEvents]'s `NOT_IDEMPOTENT` safety: a request
      * timeout may have landed, so a timed-out `PutEvents` is surfaced rather than replayed and the
      * caller decides whether to republish. Shortening this value therefore converts hangs into
      * *decisions*, not into duplicate deliveries.
@@ -93,7 +93,7 @@ public class EventBridgeConfig {
 }
 
 /** Builds an EventBridge client. */
-public fun EventBridge(configure: EventBridgeConfig.() -> Unit = {}): EventBridgeApi {
+public fun EventBridge(configure: EventBridgeConfig.() -> Unit = {}): EventBridge {
     val config = EventBridgeConfig().apply(configure)
     val region = resolveRegion(config.region)
     // One binding for the effective client, handed to both the transport and the close path — see
@@ -118,7 +118,7 @@ internal class DefaultEventBridge(
     override val client: AwsServiceClient,
     private val ownsHttpClient: Boolean = false,
     private val httpClient: HttpClient? = null,
-) : EventBridgeApi {
+) : EventBridge {
 
     /**
      * `NOT_IDEMPOTENT`, and this is the interesting call in the module.
@@ -178,7 +178,7 @@ private val RETRYABLE_ENTRY_ERROR_CODES: Set<String> = setOf(
  *
  * ### What this fixes
  *
- * [EventBridgeApi.putEvents] is one raw call, and `PutEvents` rejects the whole request above **10
+ * [EventBridge.putEvents] is one raw call, and `PutEvents` rejects the whole request above **10
  * entries**, so an eleven-entry batch is a `ValidationException` at runtime. The subtler half is
  * that EventBridge reports per-entry failures inside an **HTTP 200** — see
  * [PutEventsResponse.failedEntryCount] — with no error code on the response and no
@@ -217,7 +217,7 @@ private val RETRYABLE_ENTRY_ERROR_CODES: Set<String> = setOf(
  *
  * Every exception this throws is a [PutEventsPartialFailureException] carrying both halves of the
  * batch, because **the successful entries have already been published and cannot be rolled back**
- * ([EventBridgeApi.putEvents] is `NOT_IDEMPOTENT` for the same underlying reason: there is no
+ * ([EventBridge.putEvents] is `NOT_IDEMPOTENT` for the same underlying reason: there is no
  * request token). Republishing the original list therefore double-delivers everything in
  * [PutEventsPartialFailureException.succeeded]; republish
  * [PutEventsPartialFailureException.failed]`.map { it.first }` instead.
@@ -230,7 +230,7 @@ private val RETRYABLE_ENTRY_ERROR_CODES: Set<String> = setOf(
  * @throws ValidationException before anything is sent, if an entry exceeds the 256 KB limit.
  * @throws PutEventsPartialFailureException if any entry could not be published.
  */
-public suspend fun EventBridgeApi.putEventsAll(
+public suspend fun EventBridge.putEventsAll(
     entries: List<PutEventsEntry>,
     maxRounds: Int = 10,
     backoff: BatchRetry = BatchRetry.Default,

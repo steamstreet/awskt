@@ -382,6 +382,23 @@ internal fun nowEpochMillis(): Long = Clock.System.now().toEpochMilliseconds()
 @OptIn(ExperimentalForeignApi::class)
 internal fun nativeGetEnv(name: String): String? = platform.posix.getenv(name)?.toKString()
 
+/**
+ * Writes [name] into the process environment.
+ *
+ * **`setenv` is not thread-safe against a concurrent `getenv`, and neither is [nativeUnsetEnv].**
+ * POSIX gives no such guarantee: both may reallocate the `environ` array, and glibc frees the old
+ * one, so a reader in another thread can be walking memory that has just been freed — a crash or a
+ * torn value, not a stale one. Safe here *only* because [LambdaRuntime.run] is a serial
+ * poll-handle-respond loop: nothing else is running when the trace id is written between
+ * invocations.
+ *
+ * That is precisely the assumption the concurrent-runtime work (**Risk 34** in the plan, concurrent
+ * invocations delivered into one execution environment) removes. Whoever takes that on must revisit
+ * these two: with invocations in flight while a new one is dispatched, this writes the environment
+ * out from under every credential provider and endpoint resolver reading it through `getenv`. The
+ * per-invocation trace id has to move onto the coroutine context along with the Lambda context, not
+ * stay in a process-global that two invocations disagree about.
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun nativeSetEnv(name: String, value: String) {
     platform.posix.setenv(name, value, 1)
@@ -390,6 +407,9 @@ internal fun nativeSetEnv(name: String, value: String) {
 /**
  * Removes [name] from the environment entirely, rather than setting it to the empty string — a
  * reader that only checks for presence would treat an empty value as set.
+ *
+ * Carries [nativeSetEnv]'s thread-safety caveat unchanged: `unsetenv` mutates the same `environ`
+ * array and is equally unsafe against a concurrent `getenv`.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun nativeUnsetEnv(name: String) {

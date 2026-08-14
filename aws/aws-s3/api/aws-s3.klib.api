@@ -41,11 +41,11 @@ abstract interface com.steamstreet.awskt.s3/S3 : kotlin/AutoCloseable { // com.s
 }
 
 final class com.steamstreet.awskt.s3/AccessDeniedException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/AccessDeniedException|null[0]
-    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/AccessDeniedException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?, kotlin/Throwable? = ...) // com.steamstreet.awskt.s3/AccessDeniedException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final class com.steamstreet.awskt.s3/ConditionalRequestConflictException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/ConditionalRequestConflictException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/ConditionalRequestConflictException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?, kotlin/Throwable? = ...) // com.steamstreet.awskt.s3/ConditionalRequestConflictException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final class com.steamstreet.awskt.s3/DeleteObjectRequest { // com.steamstreet.awskt.s3/DeleteObjectRequest|null[0]
@@ -183,10 +183,10 @@ final class com.steamstreet.awskt.s3/HeadObjectRequest { // com.steamstreet.awsk
 }
 
 final class com.steamstreet.awskt.s3/HeadObjectResponse { // com.steamstreet.awskt.s3/HeadObjectResponse|null[0]
-    constructor <init>(kotlin/Long, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ...) // com.steamstreet.awskt.s3/HeadObjectResponse.<init>|<init>(kotlin.Long;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
+    constructor <init>(kotlin/Long?, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ...) // com.steamstreet.awskt.s3/HeadObjectResponse.<init>|<init>(kotlin.Long?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
 
     final val contentLength // com.steamstreet.awskt.s3/HeadObjectResponse.contentLength|{}contentLength[0]
-        final fun <get-contentLength>(): kotlin/Long // com.steamstreet.awskt.s3/HeadObjectResponse.contentLength.<get-contentLength>|<get-contentLength>(){}[0]
+        final fun <get-contentLength>(): kotlin/Long? // com.steamstreet.awskt.s3/HeadObjectResponse.contentLength.<get-contentLength>|<get-contentLength>(){}[0]
     final val contentType // com.steamstreet.awskt.s3/HeadObjectResponse.contentType|{}contentType[0]
         final fun <get-contentType>(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectResponse.contentType.<get-contentType>|<get-contentType>(){}[0]
     final val eTag // com.steamstreet.awskt.s3/HeadObjectResponse.eTag|{}eTag[0]
@@ -198,13 +198,13 @@ final class com.steamstreet.awskt.s3/HeadObjectResponse { // com.steamstreet.aws
     final val versionId // com.steamstreet.awskt.s3/HeadObjectResponse.versionId|{}versionId[0]
         final fun <get-versionId>(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectResponse.versionId.<get-versionId>|<get-versionId>(){}[0]
 
-    final fun component1(): kotlin/Long // com.steamstreet.awskt.s3/HeadObjectResponse.component1|component1(){}[0]
+    final fun component1(): kotlin/Long? // com.steamstreet.awskt.s3/HeadObjectResponse.component1|component1(){}[0]
     final fun component2(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectResponse.component2|component2(){}[0]
     final fun component3(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectResponse.component3|component3(){}[0]
     final fun component4(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectResponse.component4|component4(){}[0]
     final fun component5(): kotlin/String? // com.steamstreet.awskt.s3/HeadObjectResponse.component5|component5(){}[0]
     final fun component6(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.awskt.s3/HeadObjectResponse.component6|component6(){}[0]
-    final fun copy(kotlin/Long = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ...): com.steamstreet.awskt.s3/HeadObjectResponse // com.steamstreet.awskt.s3/HeadObjectResponse.copy|copy(kotlin.Long;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
+    final fun copy(kotlin/Long? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ...): com.steamstreet.awskt.s3/HeadObjectResponse // com.steamstreet.awskt.s3/HeadObjectResponse.copy|copy(kotlin.Long?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.s3/HeadObjectResponse.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.steamstreet.awskt.s3/HeadObjectResponse.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.steamstreet.awskt.s3/HeadObjectResponse.toString|toString(){}[0]
@@ -219,27 +219,27 @@ final class com.steamstreet.awskt.s3/InvalidBucketNameException : kotlin/Excepti
 }
 
 final class com.steamstreet.awskt.s3/InvalidObjectStateException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/InvalidObjectStateException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/InvalidObjectStateException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?, kotlin/Throwable? = ...) // com.steamstreet.awskt.s3/InvalidObjectStateException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final class com.steamstreet.awskt.s3/NoSuchBucketException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/NoSuchBucketException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/NoSuchBucketException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?, kotlin/Throwable? = ...) // com.steamstreet.awskt.s3/NoSuchBucketException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final class com.steamstreet.awskt.s3/NoSuchKeyException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/NoSuchKeyException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/NoSuchKeyException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?, kotlin/Throwable? = ...) // com.steamstreet.awskt.s3/NoSuchKeyException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final class com.steamstreet.awskt.s3/NotModifiedException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/NotModifiedException|null[0]
-    constructor <init>(kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/NotModifiedException.<init>|<init>(kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+    constructor <init>(kotlin/Int, kotlin/String?, kotlin/String?, kotlin/Throwable? = ...) // com.steamstreet.awskt.s3/NotModifiedException.<init>|<init>(kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final class com.steamstreet.awskt.s3/PermanentRedirectException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/PermanentRedirectException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/PermanentRedirectException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?, kotlin/Throwable? = ...) // com.steamstreet.awskt.s3/PermanentRedirectException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final class com.steamstreet.awskt.s3/PreconditionFailedException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/PreconditionFailedException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/PreconditionFailedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?, kotlin/Throwable? = ...) // com.steamstreet.awskt.s3/PreconditionFailedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 final class com.steamstreet.awskt.s3/PresignExpiryException : kotlin/Exception { // com.steamstreet.awskt.s3/PresignExpiryException|null[0]
@@ -448,11 +448,11 @@ final class com.steamstreet.awskt.s3/S3PresignerConfig { // com.steamstreet.awsk
 }
 
 final class com.steamstreet.awskt.s3/SlowDownException : com.steamstreet.awskt.s3/S3Exception { // com.steamstreet.awskt.s3/SlowDownException|null[0]
-    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.s3/SlowDownException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String?, kotlin/Throwable? = ...) // com.steamstreet.awskt.s3/SlowDownException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 open class com.steamstreet.awskt.s3/S3Exception : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.s3/S3Exception|null[0]
-    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.s3/S3Exception.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.s3/S3Exception.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 sealed class com.steamstreet.awskt.s3/PresignExpiry { // com.steamstreet.awskt.s3/PresignExpiry|null[0]

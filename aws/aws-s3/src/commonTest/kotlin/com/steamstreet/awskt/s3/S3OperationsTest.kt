@@ -18,6 +18,7 @@ import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -139,6 +140,32 @@ class S3OperationsTest {
         )
     }
 
+    /**
+     * `accept-encoding: identity` comes from `callRaw`, and from there only.
+     *
+     * `putObject` used to add a copy of its own, so the header went out — and was signed — as
+     * `identity,identity`. That works precisely because the two halves agree; it stops working the
+     * day an engine or a proxy collapses the duplicate, at which point the signature covers a
+     * header the request no longer carries and S3 answers `SignatureDoesNotMatch`.
+     */
+    @Test
+    fun putObjectSendsAndSignsExactlyOneAcceptEncoding() = runTest {
+        val h = Harness()
+        s3(h) { Triple("", HttpStatusCode.OK, listOf("ETag" to "\"abc\"")) }
+            .putObject(PutObjectRequest("my-bucket", "k", "hello".encodeToByteArray()))
+
+        val request = h.requests.single()
+        assertEquals(listOf("identity"), request.headers.getAll("accept-encoding"))
+
+        val signed = request.headers["Authorization"]!!
+            .substringAfter("SignedHeaders=").substringBefore(",").split(";")
+        assertEquals(
+            listOf("accept-encoding"),
+            signed.filter { it == "accept-encoding" },
+            "signed once: $signed",
+        )
+    }
+
     @Test
     fun getObjectHarvestsHeadersAndUserMetadata() = runTest {
         val h = Harness()
@@ -220,6 +247,27 @@ class S3OperationsTest {
                 .getObject(GetObjectRequest("my-bucket", "k"))
         }
         assertEquals(403, e.statusCode)
+    }
+
+    /**
+     * A HEAD has no body to fall back on and measure, so an absent `Content-Length` is *unknown*.
+     * Reporting it as `0L` made a real object indistinguishable from an empty one for any caller
+     * branching on the size.
+     */
+    @Test
+    fun headObjectDistinguishesAnAbsentContentLengthFromZero() = runTest {
+        val absent = Harness()
+        assertNull(
+            s3(absent) { Triple("", HttpStatusCode.OK, listOf("ETag" to "\"abc\"")) }
+                .headObject(HeadObjectRequest("my-bucket", "k")).contentLength,
+        )
+
+        val empty = Harness()
+        assertEquals(
+            0L,
+            s3(empty) { Triple("", HttpStatusCode.OK, listOf("Content-Length" to "0")) }
+                .headObject(HeadObjectRequest("my-bucket", "k")).contentLength,
+        )
     }
 
     /** HEAD has no response body by protocol, so its errors classify from status alone. */
