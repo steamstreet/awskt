@@ -106,7 +106,13 @@ public interface S3 : AutoCloseable {
     public suspend fun deleteObject(request: DeleteObjectRequest): DeleteObjectResponse
 }
 
-/** Configuration for [S3]. */
+/**
+ * Configuration for [S3].
+ *
+ * **Read once, at construction.** [S3] snapshots every value it needs into the client it returns,
+ * so mutating this object afterwards has no effect on that client — and cannot race with its
+ * in-flight requests, which is the reason the snapshot exists rather than a limitation of it.
+ */
 public class S3Config {
     public var region: String? = null
     public var endpointUrl: String? = null
@@ -164,22 +170,47 @@ public class S3Config {
 /** Builds an S3 client. */
 public fun S3(configure: S3Config.() -> Unit = {}): S3 {
     val config = S3Config().apply(configure)
-    val region = resolveRegion(config.region)
     val httpClient = config.httpClient ?: awsHttpClient(config.caInfo, config.httpTimeouts)
+    // Every value read out of `config` here and none afterwards. `S3Config` is a builder of `var`s
+    // handed to a caller-supplied lambda, and the caller keeps a reference to it; a client that
+    // re-read it per request would let a mutation on one thread change the size ceiling, the
+    // addressing style or the credentials of a request already in flight on another, with no
+    // synchronisation and — on the JVM — no visibility guarantee either. `region` was already
+    // snapshotted; the rest now follow it.
     return DefaultS3(
-        region = region,
-        config = config,
+        region = resolveRegion(config.region),
+        endpointUrl = config.endpointUrl,
+        forcePathStyle = config.forcePathStyle,
+        allowInsecureEndpoint = config.allowInsecureEndpoint,
+        // Resolved once, so all of this client's per-bucket transports share one credential cache
+        // instead of each building its own default provider and re-resolving independently.
+        credentialsProvider = config.credentialsProvider ?: defaultCredentialsProvider(),
+        retryConfig = config.retryConfig,
+        maxBufferedDownloadBytes = config.maxBufferedDownloadBytes,
+        maxBufferedUploadBytes = config.maxBufferedUploadBytes,
         httpClient = httpClient,
         ownsHttpClient = config.httpClient == null,
+        clock = config.clock,
+        random = config.random,
+        sleep = config.sleep,
     )
 }
 
 @OptIn(ExperimentalAtomicApi::class)
 internal class DefaultS3(
     private val region: String,
-    private val config: S3Config,
+    private val endpointUrl: String?,
+    private val forcePathStyle: Boolean,
+    private val allowInsecureEndpoint: Boolean,
+    private val credentialsProvider: AwsCredentialsProvider,
+    private val retryConfig: RetryConfig,
+    private val maxBufferedDownloadBytes: Long,
+    private val maxBufferedUploadBytes: Long,
     private val httpClient: HttpClient,
     private val ownsHttpClient: Boolean,
+    private val clock: () -> Long,
+    private val random: () -> Double,
+    private val sleep: suspend (Long) -> Unit,
 ) : S3 {
 
     /**
@@ -227,14 +258,14 @@ internal class DefaultS3(
         val endpoint = resolveS3Endpoint(
             bucket = bucket,
             region = region,
-            endpointOverride = config.endpointUrl,
-            forcePathStyle = config.forcePathStyle,
-            allowInsecureEndpoint = config.allowInsecureEndpoint,
+            endpointOverride = endpointUrl,
+            forcePathStyle = forcePathStyle,
+            allowInsecureEndpoint = allowInsecureEndpoint,
         )
         val (host, explicitPort) = splitAuthority(endpoint.authority)
         return AwsServiceClient(
             httpClient = httpClient,
-            credentialsProvider = config.credentialsProvider ?: defaultCredentialsProvider(),
+            credentialsProvider = credentialsProvider,
             endpoint = AwsEndpoint(
                 url = endpoint.origin,
                 authority = endpoint.authority,
@@ -244,10 +275,10 @@ internal class DefaultS3(
             ),
             region = region,
             protocol = S3_PROTOCOL,
-            retryConfig = config.retryConfig,
-            clock = config.clock,
-            random = config.random,
-            sleep = config.sleep,
+            retryConfig = retryConfig,
+            clock = clock,
+            random = random,
+            sleep = sleep,
         )
     }
 
@@ -255,9 +286,9 @@ internal class DefaultS3(
     private fun basePathFor(bucket: String): String = resolveS3Endpoint(
         bucket = bucket,
         region = region,
-        endpointOverride = config.endpointUrl,
-        forcePathStyle = config.forcePathStyle,
-        allowInsecureEndpoint = config.allowInsecureEndpoint,
+        endpointOverride = endpointUrl,
+        forcePathStyle = forcePathStyle,
+        allowInsecureEndpoint = allowInsecureEndpoint,
     ).basePath
 
     /**
@@ -333,10 +364,10 @@ internal class DefaultS3(
             inspectBeforeBody = { status, responseHeaders ->
                 if (status in 200..299) {
                     val declared = responseHeaders.header("content-length")?.toLongOrNull()
-                    if (declared != null && declared > config.maxBufferedDownloadBytes) {
+                    if (declared != null && declared > maxBufferedDownloadBytes) {
                         throw S3PayloadTooLargeException(
                             "s3://${request.bucket}/${request.key} is $declared bytes, over the " +
-                                "${config.maxBufferedDownloadBytes}-byte maxBufferedDownloadBytes " +
+                                "${maxBufferedDownloadBytes}-byte maxBufferedDownloadBytes " +
                                 "ceiling. Raise the limit, or fetch it in pieces with " +
                                 "GetObjectRequest.range.",
                         )
@@ -351,7 +382,7 @@ internal class DefaultS3(
             // refusal is a policy decision made below, and raising it as truncation here would put
             // it on the retryable side of the loop, which is the bug this arrangement fixes.
             validateBody = { validated ->
-                if (validated.body.size.toLong() <= config.maxBufferedDownloadBytes) {
+                if (validated.body.size.toLong() <= maxBufferedDownloadBytes) {
                     checkDownloadComplete(
                         declared = validated.headers.header("content-length")?.toLongOrNull(),
                         actual = validated.body.size.toLong(),
@@ -366,10 +397,10 @@ internal class DefaultS3(
 
         // Separately bound what actually arrived, so an absent or understated Content-Length
         // cannot walk past the ceiling.
-        if (response.body.size.toLong() > config.maxBufferedDownloadBytes) {
+        if (response.body.size.toLong() > maxBufferedDownloadBytes) {
             throw S3PayloadTooLargeException(
                 "s3://${request.bucket}/${request.key} returned ${response.body.size} bytes, over " +
-                    "the ${config.maxBufferedDownloadBytes}-byte maxBufferedDownloadBytes ceiling " +
+                    "the ${maxBufferedDownloadBytes}-byte maxBufferedDownloadBytes ceiling " +
                     "(the declared Content-Length was $declared). Use GetObjectRequest.range.",
             )
         }
@@ -390,10 +421,10 @@ internal class DefaultS3(
     }
 
     override suspend fun putObject(request: PutObjectRequest): PutObjectResponse {
-        if (request.body.size.toLong() > config.maxBufferedUploadBytes) {
+        if (request.body.size.toLong() > maxBufferedUploadBytes) {
             throw S3PayloadTooLargeException(
                 "Refusing to upload ${request.body.size} bytes to s3://${request.bucket}/${request.key}: " +
-                    "over the ${config.maxBufferedUploadBytes}-byte maxBufferedUploadBytes ceiling.",
+                    "over the ${maxBufferedUploadBytes}-byte maxBufferedUploadBytes ceiling.",
             )
         }
 

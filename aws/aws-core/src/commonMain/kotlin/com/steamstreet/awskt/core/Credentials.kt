@@ -3,6 +3,8 @@ package com.steamstreet.awskt.core
 import com.steamstreet.awskt.signing.AwsCredentials
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlin.concurrent.atomics.AtomicReference
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -103,28 +105,111 @@ public class CredentialsProviderChain(
  * [refreshBuffer] exists because credentials are resolved at the top of *each* retry attempt: with
  * four attempts and a 20-second backoff cap, one call can span a minute, and a credential that was
  * valid when the call started may not be when the last attempt signs.
+ *
+ * ### The hit path takes no lock
+ *
+ * Credentials are resolved at the top of every retry attempt of every call, so on a fan-out of
+ * `async {}` requests this is one of the hottest suspend functions in the library. The cached state
+ * is therefore one immutable [CacheEntry] behind an atomic reference: a hit is a single load and a
+ * comparison, with no `Mutex` acquisition and so no queueing of concurrent readers behind each
+ * other. The mutex still exists and still guards *refresh* — a hundred coroutines noticing a stale
+ * entry at once must produce one call to the delegate, not a hundred — and the holder re-checks
+ * freshness after acquiring, because someone else may have refreshed while it waited.
+ *
+ * ### A failed refresh serves the stale credential rather than failing every caller
+ *
+ * When [delegate] throws and the previously cached credential is **not itself expired** — its
+ * `expiresAtEpochMillis` is null or still in the future — that credential is returned instead of
+ * the failure. This is a deliberate behaviour choice and worth stating plainly:
+ *
+ *  - The cache ceiling being past is not the same as the credential being dead. `expireAfter` is
+ *    this library's re-resolution cadence, not AWS's opinion; a 15-minute-old Lambda credential is
+ *    ordinarily still perfectly valid.
+ *  - A refresh failure is usually transient — IMDS or STS being briefly unreachable — and
+ *    propagating it fails *every* in-flight call at once, which converts a blip in the credential
+ *    source into a total outage of the caller.
+ *
+ * The failure is propagated when nothing plausibly valid can be served: no entry has ever been
+ * cached, or the cached credential has passed its own stated expiry. A served stale entry is not
+ * re-stamped, so the next call tries the delegate again rather than pinning a stale credential for
+ * another window.
+ *
+ * [CancellationException] is never answered with a stale credential and never swallowed — see
+ * [resolveLocked].
  */
+@OptIn(ExperimentalAtomicApi::class)
 public class CachedCredentialsProvider(
     private val delegate: AwsCredentialsProvider,
     private val expireAfter: Duration = 15.minutes,
     private val refreshBuffer: Duration = 10.seconds,
     private val clock: () -> Long = ::currentEpochMillis,
 ) : AwsCredentialsProvider {
-    private val mutex = Mutex()
-    private var cached: AwsCredentials? = null
-    private var effectiveExpiryMillis: Long = Long.MIN_VALUE
 
-    override suspend fun resolve(): AwsCredentials = mutex.withLock {
+    /**
+     * The credential and the moment it stops being served, as one immutable unit.
+     *
+     * Two fields published together. Held as two independent `var`s they could be read torn — the
+     * new credential paired with the old expiry, or vice versa — which is a signing failure that
+     * only appears under concurrency.
+     */
+    private class CacheEntry(
+        val credentials: AwsCredentials,
+        val effectiveExpiryMillis: Long,
+    ) {
+        fun isFreshAt(nowMillis: Long, refreshBufferMillis: Long): Boolean =
+            nowMillis + refreshBufferMillis < effectiveExpiryMillis
+
+        /**
+         * Whether the *credential itself* is still plausibly usable, which is a strictly weaker
+         * question than [isFreshAt]. A null expiry means "unknown", and unknown is not "expired" —
+         * see [AwsCredentials.expiresAtEpochMillis].
+         */
+        fun credentialsNotDefinitelyExpiredAt(nowMillis: Long): Boolean =
+            credentials.expiresAtEpochMillis?.let { it > nowMillis } ?: true
+    }
+
+    private val mutex = Mutex()
+    private val cache = AtomicReference<CacheEntry?>(null)
+
+    override suspend fun resolve(): AwsCredentials {
+        // The hit path: one load, one comparison, no lock. This is the common case on every retry
+        // attempt of every call, and it must not queue behind an unrelated coroutine's refresh.
+        cache.load()?.let { entry ->
+            if (entry.isFreshAt(clock(), refreshBuffer.inWholeMilliseconds)) return entry.credentials
+        }
+        return mutex.withLock { resolveLocked() }
+    }
+
+    /** Single-flight refresh. Called only with [mutex] held. */
+    private suspend fun resolveLocked(): AwsCredentials {
         val now = clock()
-        cached?.let { current ->
-            if (now + refreshBuffer.inWholeMilliseconds < effectiveExpiryMillis) return current
+
+        // Double-check. Every coroutine that queued behind the winner arrives here with the work
+        // already done; without this they would each go on to call the delegate in turn, which is
+        // the stampede the mutex exists to prevent.
+        val previous = cache.load()
+        if (previous != null && previous.isFreshAt(now, refreshBuffer.inWholeMilliseconds)) {
+            return previous.credentials
         }
 
-        val fresh = delegate.resolve()
+        val fresh = try {
+            delegate.resolve()
+        } catch (cancellation: CancellationException) {
+            // A cancelled scope is not "the credential source is having a moment". Serving a stale
+            // credential here would answer a caller that has gone away, and swallowing it would
+            // report success for work that was cancelled — so it goes straight back out, ahead of
+            // the stale-serving logic below.
+            throw cancellation
+        } catch (failure: Throwable) {
+            val stale = previous?.takeIf { it.credentialsNotDefinitelyExpiredAt(now) }
+                ?: throw failure
+            return stale.credentials
+        }
+
         val ceiling = now + expireAfter.inWholeMilliseconds
-        cached = fresh
-        effectiveExpiryMillis = fresh.expiresAtEpochMillis?.let { minOf(it, ceiling) } ?: ceiling
-        fresh
+        val effectiveExpiry = fresh.expiresAtEpochMillis?.let { minOf(it, ceiling) } ?: ceiling
+        cache.store(CacheEntry(fresh, effectiveExpiry))
+        return fresh
     }
 
     override fun toString(): String = "CachedCredentialsProvider($delegate)"

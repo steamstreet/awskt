@@ -1,6 +1,10 @@
 package com.steamstreet.awskt.core
 
 import com.steamstreet.awskt.signing.AwsCredentials
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.Test
@@ -187,6 +191,192 @@ class CredentialsTest {
         // Past the credential's own 60s expiry, well inside the 15m ceiling.
         now += 25_000
         assertEquals("AKID2", provider.resolve().accessKeyId)
+    }
+
+    // -- Concurrency: single-flight refresh, lock-free hits ----------------------------------
+
+    /**
+     * A stampede of concurrent resolves onto a stale cache must produce **one** call to the
+     * delegate. That is the property the mutex exists for, and making the hit path lock-free must
+     * not cost it: without single-flight, a Lambda fanning out sixteen requests answers a cold
+     * cache with sixteen IMDS round trips, which is both slow and rate-limited.
+     *
+     * The assertion that matters is made while every racer is parked — one inside the delegate, the
+     * rest on the mutex — because after the gate opens the count is indistinguishable from a
+     * cache-hit-driven one.
+     */
+    @Test
+    fun concurrentResolvesOnAStaleCacheCallTheDelegateExactlyOnce() = runTest {
+        val gate = CompletableDeferred<Unit>()
+        var calls = 0
+        val provider = CachedCredentialsProvider(
+            delegate = {
+                calls++
+                gate.await()
+                AwsCredentials("AKID$calls", SECRET)
+            },
+            clock = { 0L },
+        )
+
+        val racers = List(16) { async { provider.resolve() } }
+        advanceUntilIdle()
+        assertEquals(1, calls, "only the coroutine holding the lock may consult the delegate")
+
+        gate.complete(Unit)
+        val resolved = racers.awaitAll()
+        assertEquals(1, calls, "the waiters must take the refreshed entry, not resolve again")
+        assertTrue(resolved.all { it.accessKeyId == "AKID1" }, "every racer must get the one result")
+    }
+
+    /**
+     * The hit path takes no lock.
+     *
+     * One coroutine is parked *inside* the delegate, so it holds the refresh mutex. A second
+     * resolve, for which the cached entry is fresh, must complete anyway. Under the previous
+     * implementation — `mutex.withLock` wrapped around the cache read as well as the refresh — that
+     * second call suspends until the first finishes, and this test hangs rather than fails.
+     *
+     * The injected clock is moved *backwards* deliberately. The lock is only ever taken on a miss,
+     * so "mutex held and cache fresh" cannot arise from time moving forwards alone; rewinding the
+     * test clock is the only way to hold both conditions at the same instant.
+     */
+    @Test
+    fun aCacheHitCompletesWhileAnotherCoroutineHoldsTheRefreshLock() = runTest {
+        var now = 0L
+        var calls = 0
+        val insideDelegate = CompletableDeferred<Unit>()
+        val release = CompletableDeferred<Unit>()
+        val provider = CachedCredentialsProvider(
+            delegate = {
+                calls++
+                if (calls > 1) {
+                    insideDelegate.complete(Unit)
+                    release.await()
+                }
+                AwsCredentials("AKID$calls", SECRET)
+            },
+            expireAfter = 15.minutes,
+            refreshBuffer = 10.seconds,
+            clock = { now },
+        )
+
+        assertEquals("AKID1", provider.resolve().accessKeyId, "warm the cache; entry is good to 15m")
+
+        now = 20.minutes.inWholeMilliseconds
+        val refreshing = async { provider.resolve() }
+        insideDelegate.await()
+
+        // Back inside the cached entry's window: the cache is fresh, and the mutex is held.
+        now = 5.minutes.inWholeMilliseconds
+        assertEquals("AKID1", provider.resolve().accessKeyId, "a fresh entry must be served unlocked")
+        assertTrue(refreshing.isActive, "the refresh must still be the one holding the lock")
+
+        release.complete(Unit)
+        assertEquals("AKID2", refreshing.await().accessKeyId)
+    }
+
+    // -- Stale-on-error ----------------------------------------------------------------------
+
+    /**
+     * A refresh failure serves the previous credential rather than failing every caller.
+     *
+     * The cache ceiling being past is this library's re-resolution cadence expiring, not AWS's
+     * verdict on the credential — so a briefly unreachable IMDS/STS must not convert into a total
+     * outage of everything the process is doing. The refreshed value replaces the stale one as soon
+     * as the delegate recovers, and the stale entry is *not* re-stamped in the meantime, so the
+     * next call tries again instead of pinning it for another window.
+     */
+    @Test
+    fun aFailedRefreshServesTheStaleCredentialAndTheNextSuccessReplacesIt() = runTest {
+        var now = 0L
+        var calls = 0
+        var failing = false
+        val provider = CachedCredentialsProvider(
+            delegate = {
+                calls++
+                if (failing) throw IllegalStateException("IMDS unreachable")
+                AwsCredentials("AKID$calls", SECRET)
+            },
+            expireAfter = 15.minutes,
+            refreshBuffer = 10.seconds,
+            clock = { now },
+        )
+
+        assertEquals("AKID1", provider.resolve().accessKeyId)
+
+        now += 20.minutes.inWholeMilliseconds
+        failing = true
+        assertEquals("AKID1", provider.resolve().accessKeyId, "a transient failure must not fail the call")
+        assertEquals("AKID1", provider.resolve().accessKeyId, "and must keep serving until it recovers")
+        assertEquals(3, calls, "a served stale entry is not re-stamped; the delegate is retried")
+
+        failing = false
+        assertEquals("AKID4", provider.resolve().accessKeyId, "recovery replaces the stale credential")
+        assertEquals("AKID4", provider.resolve().accessKeyId, "and the replacement is then cached")
+        assertEquals(4, calls)
+    }
+
+    /** Nothing has ever been cached, so there is nothing plausible to serve: the failure is the answer. */
+    @Test
+    fun aFailedRefreshWithNothingCachedPropagates() = runTest {
+        val provider = CachedCredentialsProvider(
+            delegate = { throw IllegalStateException("IMDS unreachable") },
+            clock = { 0L },
+        )
+        assertFailsWith<IllegalStateException> { provider.resolve() }
+    }
+
+    /**
+     * A cached credential that has passed **its own** stated expiry is dead, not merely stale.
+     * Serving it would sign with a credential AWS will reject, turning a clear failure into a
+     * `403 InvalidClientTokenId` a caller has to reverse-engineer.
+     */
+    @Test
+    fun aStaleEntryWhoseCredentialHasActuallyExpiredPropagatesInstead() = runTest {
+        var now = 0L
+        var failing = false
+        val provider = CachedCredentialsProvider(
+            delegate = {
+                if (failing) throw IllegalStateException("STS unreachable")
+                AwsCredentials("AKID", SECRET, expiresAtEpochMillis = 60_000)
+            },
+            expireAfter = 15.minutes,
+            refreshBuffer = 10.seconds,
+            clock = { now },
+        )
+
+        assertEquals("AKID", provider.resolve().accessKeyId)
+
+        // Past the credential's own 60-second expiry, not merely past the cache ceiling.
+        now = 120_000
+        failing = true
+        assertFailsWith<IllegalStateException> { provider.resolve() }
+    }
+
+    /**
+     * Cancellation is not a credential-source outage. Answering a cancelled caller with a stale
+     * credential — or worse, swallowing the cancellation — would let work continue after the scope
+     * that asked for it has gone away, which is the same reason [CredentialsProviderChain] carves
+     * `CancellationException` out of its own catch-all.
+     */
+    @Test
+    fun cancellationPropagatesRatherThanBeingAnsweredWithAStaleCredential() = runTest {
+        var now = 0L
+        var cancelling = false
+        val provider = CachedCredentialsProvider(
+            delegate = {
+                if (cancelling) throw CancellationException("scope cancelled")
+                AwsCredentials("AKID", SECRET)
+            },
+            expireAfter = 15.minutes,
+            refreshBuffer = 10.seconds,
+            clock = { now },
+        )
+
+        assertEquals("AKID", provider.resolve().accessKeyId)
+        now += 20.minutes.inWholeMilliseconds
+        cancelling = true
+        assertFailsWith<CancellationException> { provider.resolve() }
     }
 
     @Test

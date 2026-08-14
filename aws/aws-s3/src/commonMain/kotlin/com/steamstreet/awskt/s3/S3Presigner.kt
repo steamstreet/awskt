@@ -59,7 +59,15 @@ public class PresignRequest(
     override fun toString(): String = "PresignRequest($method s3://$bucket/$key, expiresIn=$expiresIn)"
 }
 
-/** Configuration for [S3Presigner]. */
+/**
+ * Configuration for [S3Presigner].
+ *
+ * **Read once, at construction.** [S3Presigner] snapshots every value it needs, so mutating this
+ * object afterwards has no effect on a presigner already built from it — and cannot race with a
+ * presign in flight. [clockSkewOffsetMillis] is the deliberate exception in spirit though not in
+ * mechanism: the *function reference* is snapshotted, so replacing the property has no effect while
+ * the function it held keeps reporting live skew, which is exactly its purpose.
+ */
 public class S3PresignerConfig {
     public var region: String? = null
     public var endpointUrl: String? = null
@@ -116,9 +124,40 @@ private val UNKNOWN_SESSION_CAP = 1.hours
  * come from the URL.
  */
 public class S3Presigner(configure: S3PresignerConfig.() -> Unit = {}) {
-    private val config = S3PresignerConfig().apply(configure)
-    private val region = resolveRegion(config.region)
-    private val credentialsProvider = config.credentialsProvider ?: defaultCredentialsProvider()
+    private val region: String
+    private val endpointUrl: String?
+    private val forcePathStyle: Boolean
+    private val allowInsecureEndpoint: Boolean
+    private val allowPresignBeyondUnknownSessionExpiry: Boolean
+
+    /**
+     * The **function**, not a value read from it. Snapshotting the reference is the correct move
+     * here and not an oversight: this hook exists to be wired to a live `AwsServiceClient` that
+     * keeps learning the server's clock skew from responses, so the presigner must keep calling it
+     * on every presign. What is frozen is *which* function is consulted, which is configuration;
+     * what stays live is the number it reports, which is the point.
+     */
+    private val clockSkewOffsetMillis: () -> Long
+    private val clock: () -> Long
+    private val getEnv: (String) -> String?
+    private val credentialsProvider: AwsCredentialsProvider
+
+    init {
+        // Every read of the builder happens here, and none after. `S3PresignerConfig` is a bag of
+        // `var`s the caller still holds a reference to; re-reading it per presign would let a
+        // mutation change the addressing style or the expiry policy of a URL being signed
+        // concurrently, unsynchronised.
+        val config = S3PresignerConfig().apply(configure)
+        region = resolveRegion(config.region)
+        endpointUrl = config.endpointUrl
+        forcePathStyle = config.forcePathStyle
+        allowInsecureEndpoint = config.allowInsecureEndpoint
+        allowPresignBeyondUnknownSessionExpiry = config.allowPresignBeyondUnknownSessionExpiry
+        clockSkewOffsetMillis = config.clockSkewOffsetMillis
+        clock = config.clock
+        getEnv = config.getEnv
+        credentialsProvider = config.credentialsProvider ?: defaultCredentialsProvider()
+    }
 
     /** Presigns a GET. */
     public suspend fun presignGetObject(
@@ -167,18 +206,18 @@ public class S3Presigner(configure: S3PresignerConfig.() -> Unit = {}) {
         }
 
         val credentials = credentialsProvider.resolve()
-        val now = config.clock() + config.clockSkewOffsetMillis()
+        val now = clock() + clockSkewOffsetMillis()
 
         // A bonus, not the fix: ECS and `credential_process` publish this, Lambda does not. Parsed
         // by aws-core's one parser for the variable, so a presign and a credential resolution can
         // never disagree about when the same string says the credential dies.
         val credentialExpiry = credentials.expiresAtEpochMillis
-            ?: config.getEnv("AWS_CREDENTIAL_EXPIRATION")?.let(::parseAwsCredentialExpirationOrNull)
+            ?: getEnv("AWS_CREDENTIAL_EXPIRATION")?.let(::parseAwsCredentialExpirationOrNull)
 
         val sessionExpiryUnknown = credentials.sessionToken != null && credentialExpiry == null
         if (sessionExpiryUnknown &&
             request.expiresIn > UNKNOWN_SESSION_CAP &&
-            !config.allowPresignBeyondUnknownSessionExpiry
+            !allowPresignBeyondUnknownSessionExpiry
         ) {
             throw PresignExpiryException(
                 "Refusing to presign for ${request.expiresIn} with session credentials whose " +
@@ -201,10 +240,10 @@ public class S3Presigner(configure: S3PresignerConfig.() -> Unit = {}) {
         val endpoint = resolveS3Endpoint(
             bucket = request.bucket,
             region = region,
-            endpointOverride = config.endpointUrl,
-            forcePathStyle = config.forcePathStyle,
-            allowInsecureEndpoint = config.allowInsecureEndpoint,
-            getEnv = config.getEnv,
+            endpointOverride = endpointUrl,
+            forcePathStyle = forcePathStyle,
+            allowInsecureEndpoint = allowInsecureEndpoint,
+            getEnv = getEnv,
         )
 
         // Encoded ONCE, with no normalization, and the *same string* builds both the URL and the
