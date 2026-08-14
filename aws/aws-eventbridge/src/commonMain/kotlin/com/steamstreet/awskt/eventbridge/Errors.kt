@@ -36,6 +36,38 @@ public class ThrottlingException(message: String?, statusCode: Int, requestId: S
     EventBridgeException("ThrottlingException", message, statusCode, requestId)
 
 /**
+ * A `PutEvents` batch that [putEventsAll] could not get published in full.
+ *
+ * The code is the synthetic `"PutEventsPartialFailure"` and the status is **200**, because that is
+ * literally what happened: EventBridge answered 200 and reported the failures per entry in the
+ * body. It mirrors how `aws-dynamodb`'s batch helpers raise a synthetic-code `DynamoDbException`
+ * for `UnprocessedKeys`/`UnprocessedItems` that outlived their resubmission budget.
+ *
+ * ### Read this before republishing
+ *
+ * **[succeeded] entries have been published, and there is no way to take them back.** `PutEvents`
+ * carries no request token and no rollback — see [EventBridgeApi.putEvents]'s `NOT_IDEMPOTENT`
+ * KDoc — so republishing the original batch delivers every entry in [succeeded] a *second* time,
+ * and every rule targeting them fires twice. That is why this exception carries the partition
+ * rather than a count: the safe retry is the [failed] entries alone, and it can only be assembled
+ * if the failures are named.
+ *
+ * @property succeeded every entry that was accepted, in request order, each with the `EventId`
+ *   EventBridge assigned it. Includes entries from earlier chunks and earlier rounds.
+ * @property failed every entry that was **not** published, paired with the last result entry seen
+ *   for it — the terminal error that stopped the batch, or the retryable error that was still
+ *   outstanding when the round or backoff budget ran out. Request entries are the caller's own
+ *   objects, so this list can be handed straight back to [putEventsAll].
+ */
+public class PutEventsPartialFailureException(
+    public val succeeded: List<PutEventsResultEntry>,
+    public val failed: List<Pair<PutEventsEntry, PutEventsResultEntry>>,
+    message: String?,
+    statusCode: Int,
+    requestId: String? = null,
+) : EventBridgeException("PutEventsPartialFailure", message, statusCode, requestId)
+
+/**
  * Maps `aws-core`'s protocol-level exception onto this module's hierarchy.
  *
  * Unknown codes fall through to [EventBridgeException] rather than being swallowed, so an

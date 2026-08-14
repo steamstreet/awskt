@@ -125,6 +125,20 @@ final class com.steamstreet.awskt.core/AwsServiceClient { // com.steamstreet.aws
     final suspend fun callRaw(kotlin/String, kotlin/String = ..., kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ..., kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ..., kotlin/ByteArray = ..., kotlin/String? = ..., com.steamstreet.awskt.core/OperationSafety = ..., com.steamstreet.awskt.signing/PayloadHash = ..., com.steamstreet.awskt.signing/SignedBodyHeader = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Function2<kotlin/Int, kotlin.collections/Map<kotlin/String, kotlin/String>, kotlin/Unit>? = ..., kotlin/Function1<com.steamstreet.awskt.core/AwsHttpResponse, kotlin/Unit>? = ...): com.steamstreet.awskt.core/AwsHttpResponse // com.steamstreet.awskt.core/AwsServiceClient.callRaw|callRaw(kotlin.String;kotlin.String;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>;kotlin.ByteArray;kotlin.String?;com.steamstreet.awskt.core.OperationSafety;com.steamstreet.awskt.signing.PayloadHash;com.steamstreet.awskt.signing.SignedBodyHeader;kotlin.Boolean;kotlin.Boolean;kotlin.Function2<kotlin.Int,kotlin.collections.Map<kotlin.String,kotlin.String>,kotlin.Unit>?;kotlin.Function1<com.steamstreet.awskt.core.AwsHttpResponse,kotlin.Unit>?){}[0]
 }
 
+final class com.steamstreet.awskt.core/BatchRetry { // com.steamstreet.awskt.core/BatchRetry|null[0]
+    constructor <init>(com.steamstreet.awskt.core/RetryConfig = ..., kotlin/Function0<kotlin/Double> = ..., kotlin.coroutines/SuspendFunction1<kotlin/Long, kotlin/Unit> = ...) // com.steamstreet.awskt.core/BatchRetry.<init>|<init>(com.steamstreet.awskt.core.RetryConfig;kotlin.Function0<kotlin.Double>;kotlin.coroutines.SuspendFunction1<kotlin.Long,kotlin.Unit>){}[0]
+
+    final suspend fun awaitResubmit(kotlin/Int, kotlin/Long): kotlin/Long? // com.steamstreet.awskt.core/BatchRetry.awaitResubmit|awaitResubmit(kotlin.Int;kotlin.Long){}[0]
+
+    final val config // com.steamstreet.awskt.core/BatchRetry.config|{}config[0]
+        final fun <get-config>(): com.steamstreet.awskt.core/RetryConfig // com.steamstreet.awskt.core/BatchRetry.config.<get-config>|<get-config>(){}[0]
+
+    final object Companion { // com.steamstreet.awskt.core/BatchRetry.Companion|null[0]
+        final val Default // com.steamstreet.awskt.core/BatchRetry.Companion.Default|{}Default[0]
+            final fun <get-Default>(): com.steamstreet.awskt.core/BatchRetry // com.steamstreet.awskt.core/BatchRetry.Companion.Default.<get-Default>|<get-Default>(){}[0]
+    }
+}
+
 final class com.steamstreet.awskt.core/CachedCredentialsProvider : com.steamstreet.awskt.core/AwsCredentialsProvider { // com.steamstreet.awskt.core/CachedCredentialsProvider|null[0]
     constructor <init>(com.steamstreet.awskt.core/AwsCredentialsProvider, kotlin.time/Duration = ..., kotlin.time/Duration = ..., kotlin/Function0<kotlin/Long> = ...) // com.steamstreet.awskt.core/CachedCredentialsProvider.<init>|<init>(com.steamstreet.awskt.core.AwsCredentialsProvider;kotlin.time.Duration;kotlin.time.Duration;kotlin.Function0<kotlin.Long>){}[0]
 

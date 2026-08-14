@@ -6,18 +6,16 @@ import com.steamstreet.awskt.core.AwsHttpTimeouts
 import com.steamstreet.awskt.core.AwsProtocol
 import com.steamstreet.awskt.core.AwsServiceClient
 import com.steamstreet.awskt.core.AwsServiceException
+import com.steamstreet.awskt.core.BatchRetry
 import com.steamstreet.awskt.core.OperationSafety
 import com.steamstreet.awskt.core.RetryConfig
-import com.steamstreet.awskt.core.RetryErrorType
 import com.steamstreet.awskt.core.awsHttpClient
 import com.steamstreet.awskt.core.awsJson
-import com.steamstreet.awskt.core.backoffMillis
 import com.steamstreet.awskt.core.callJson
 import com.steamstreet.awskt.core.defaultCredentialsProvider
 import com.steamstreet.awskt.core.resolveEndpoint
 import com.steamstreet.awskt.core.resolveRegion
 import io.ktor.client.HttpClient
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.builtins.ListSerializer
@@ -462,60 +460,6 @@ public fun Flow<QueryResponse>.items(): Flow<Item> = flow {
 
 public fun Flow<ScanResponse>.scanItems(): Flow<Item> = flow {
     collect { page -> page.items?.forEach { emit(it) } }
-}
-
-/**
- * Pacing for the unprocessed-items resubmission loops in [batchGetAll] and [batchWriteAll].
- *
- * ### Why these loops need their own backoff at all
- *
- * `UnprocessedKeys`/`UnprocessedItems` arrive inside an **HTTP 200**. There is no error code and no
- * `x-amz-retry-after`, so [AwsServiceClient]'s retry loop never sees them and never paces them —
- * yet a non-empty unprocessed set means exactly what a `ProvisionedThroughputExceededException`
- * means: the partition throttled. Resubmitting with no delay almost always meets the same throttle
- * and adds load to a table that is already shedding it, which is why AWS documents exponential
- * backoff as the required handling for these two fields.
- *
- * ### Shape
- *
- * [random] and [sleep] mirror the seam on [AwsServiceClient], for the same reason: the backoff has
- * to be assertable in a unit test without the test actually sleeping. There is deliberately no
- * clock here — the budget below is measured by summing what was *requested* of [sleep], so a test
- * that injects a no-op sleep still exercises the real arithmetic.
- *
- * @param config supplies the pacing. `THROTTLING` base (1s) is used rather than `TRANSIENT` (25ms)
- *   because an unprocessed item *is* a throttle, and [RetryConfig.maxTotalRetryDuration] bounds the
- *   total backoff **per chunk**, matching how the transport bounds it per call. That bound is not
- *   optional: without it, ten rounds of throttling backoff can block for roughly two and a half
- *   minutes, silently converting a fast partial failure into a Lambda timeout.
- */
-public class BatchRetry(
-    public val config: RetryConfig = RetryConfig(),
-    internal val random: () -> Double = { Random.nextDouble() },
-    internal val sleep: suspend (Long) -> Unit = { delay(it) },
-) {
-    public companion object {
-        /** Shared so the common case does not allocate a config per batch call. */
-        public val Default: BatchRetry = BatchRetry()
-    }
-}
-
-/**
- * Waits before resubmitting, and reports whether the budget allowed it.
- *
- * @param retry 0-based index of the resubmission about to be made, so the first one waits
- *   `random * base` rather than `random * 2 * base` — the same off-by-one the transport avoids by
- *   passing `attempt - 1`.
- * @param sleptMillis backoff already spent on this chunk.
- * @return the new cumulative backoff, or `null` if sleeping again would exceed
- *   [RetryConfig.maxTotalRetryDuration] and the caller should give up instead.
- */
-private suspend fun BatchRetry.awaitResubmit(retry: Int, sleptMillis: Long): Long? {
-    val wait = backoffMillis(RetryErrorType.THROTTLING, retry, config, random)
-    val total = sleptMillis + wait
-    if (total > config.maxTotalRetryDuration.inWholeMilliseconds) return null
-    sleep(wait)
-    return total
 }
 
 /**

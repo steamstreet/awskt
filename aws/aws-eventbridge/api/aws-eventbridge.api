@@ -30,6 +30,8 @@ public final class com/steamstreet/awskt/eventbridge/EventBridgeKt {
 	public static final fun EventBridge (Lkotlin/jvm/functions/Function1;)Lcom/steamstreet/awskt/eventbridge/EventBridgeApi;
 	public static synthetic fun EventBridge$default (Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/steamstreet/awskt/eventbridge/EventBridgeApi;
 	public static final fun getEVENTBRIDGE_PROTOCOL ()Lcom/steamstreet/awskt/core/AwsProtocol;
+	public static final fun putEventsAll (Lcom/steamstreet/awskt/eventbridge/EventBridgeApi;Ljava/util/List;ILcom/steamstreet/awskt/core/BatchRetry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun putEventsAll$default (Lcom/steamstreet/awskt/eventbridge/EventBridgeApi;Ljava/util/List;ILcom/steamstreet/awskt/core/BatchRetry;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public final class com/steamstreet/awskt/eventbridge/PutEventsEntry {
@@ -65,6 +67,13 @@ public final synthetic class com/steamstreet/awskt/eventbridge/PutEventsEntry$$s
 
 public final class com/steamstreet/awskt/eventbridge/PutEventsEntry$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/eventbridge/PutEventsPartialFailureException : com/steamstreet/awskt/eventbridge/EventBridgeException {
+	public fun <init> (Ljava/util/List;Ljava/util/List;Ljava/lang/String;ILjava/lang/String;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;Ljava/lang/String;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getFailed ()Ljava/util/List;
+	public final fun getSucceeded ()Ljava/util/List;
 }
 
 public final class com/steamstreet/awskt/eventbridge/PutEventsResponse {

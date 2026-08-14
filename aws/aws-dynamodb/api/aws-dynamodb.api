@@ -85,18 +85,6 @@ public final class com/steamstreet/awskt/dynamodb/BatchGetItemResponse$Companion
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public final class com/steamstreet/awskt/dynamodb/BatchRetry {
-	public static final field Companion Lcom/steamstreet/awskt/dynamodb/BatchRetry$Companion;
-	public fun <init> ()V
-	public fun <init> (Lcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;)V
-	public synthetic fun <init> (Lcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getConfig ()Lcom/steamstreet/awskt/core/RetryConfig;
-}
-
-public final class com/steamstreet/awskt/dynamodb/BatchRetry$Companion {
-	public final fun getDefault ()Lcom/steamstreet/awskt/dynamodb/BatchRetry;
-}
-
 public final class com/steamstreet/awskt/dynamodb/BatchWriteItemRequest {
 	public static final field Companion Lcom/steamstreet/awskt/dynamodb/BatchWriteItemRequest$Companion;
 	public fun <init> (Ljava/util/Map;)V
@@ -595,10 +583,10 @@ public class com/steamstreet/awskt/dynamodb/DynamoDbException : com/steamstreet/
 public final class com/steamstreet/awskt/dynamodb/DynamoDbKt {
 	public static final fun DynamoDb (Lkotlin/jvm/functions/Function1;)Lcom/steamstreet/awskt/dynamodb/DynamoDb;
 	public static synthetic fun DynamoDb$default (Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/DynamoDb;
-	public static final fun batchGetAll (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ZLjava/lang/String;Ljava/util/Map;ILcom/steamstreet/awskt/dynamodb/BatchRetry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun batchGetAll$default (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ZLjava/lang/String;Ljava/util/Map;ILcom/steamstreet/awskt/dynamodb/BatchRetry;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static final fun batchWriteAll (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ILcom/steamstreet/awskt/dynamodb/BatchRetry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun batchWriteAll$default (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ILcom/steamstreet/awskt/dynamodb/BatchRetry;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun batchGetAll (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ZLjava/lang/String;Ljava/util/Map;ILcom/steamstreet/awskt/core/BatchRetry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun batchGetAll$default (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ZLjava/lang/String;Ljava/util/Map;ILcom/steamstreet/awskt/core/BatchRetry;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun batchWriteAll (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ILcom/steamstreet/awskt/core/BatchRetry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun batchWriteAll$default (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ILcom/steamstreet/awskt/core/BatchRetry;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun getDYNAMODB_PROTOCOL ()Lcom/steamstreet/awskt/core/AwsProtocol;
 	public static final fun items (Lkotlinx/coroutines/flow/Flow;)Lkotlinx/coroutines/flow/Flow;
 	public static final fun queryPaged (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Lcom/steamstreet/awskt/dynamodb/QueryRequest;)Lkotlinx/coroutines/flow/Flow;

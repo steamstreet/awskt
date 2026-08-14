@@ -93,6 +93,19 @@ public class com/steamstreet/awskt/core/AwsServiceException : java/lang/Exceptio
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/steamstreet/awskt/core/BatchRetry {
+	public static final field Companion Lcom/steamstreet/awskt/core/BatchRetry$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun awaitResubmit (IJLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getConfig ()Lcom/steamstreet/awskt/core/RetryConfig;
+}
+
+public final class com/steamstreet/awskt/core/BatchRetry$Companion {
+	public final fun getDefault ()Lcom/steamstreet/awskt/core/BatchRetry;
+}
+
 public final class com/steamstreet/awskt/core/CachedCredentialsProvider : com/steamstreet/awskt/core/AwsCredentialsProvider {
 	public synthetic fun <init> (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;JJLkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;JJLkotlin/jvm/functions/Function0;Lkotlin/jvm/internal/DefaultConstructorMarker;)V

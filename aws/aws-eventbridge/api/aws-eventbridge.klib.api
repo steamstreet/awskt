@@ -74,6 +74,16 @@ final class com.steamstreet.awskt.eventbridge/PutEventsEntry { // com.steamstree
     }
 }
 
+final class com.steamstreet.awskt.eventbridge/PutEventsPartialFailureException : com.steamstreet.awskt.eventbridge/EventBridgeException { // com.steamstreet.awskt.eventbridge/PutEventsPartialFailureException|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsResultEntry>, kotlin.collections/List<kotlin/Pair<com.steamstreet.awskt.eventbridge/PutEventsEntry, com.steamstreet.awskt.eventbridge/PutEventsResultEntry>>, kotlin/String?, kotlin/Int, kotlin/String? = ...) // com.steamstreet.awskt.eventbridge/PutEventsPartialFailureException.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.eventbridge.PutEventsResultEntry>;kotlin.collections.List<kotlin.Pair<com.steamstreet.awskt.eventbridge.PutEventsEntry,com.steamstreet.awskt.eventbridge.PutEventsResultEntry>>;kotlin.String?;kotlin.Int;kotlin.String?){}[0]
+
+    final val failed // com.steamstreet.awskt.eventbridge/PutEventsPartialFailureException.failed|{}failed[0]
+        final fun <get-failed>(): kotlin.collections/List<kotlin/Pair<com.steamstreet.awskt.eventbridge/PutEventsEntry, com.steamstreet.awskt.eventbridge/PutEventsResultEntry>> // com.steamstreet.awskt.eventbridge/PutEventsPartialFailureException.failed.<get-failed>|<get-failed>(){}[0]
+
+    final val succeeded // com.steamstreet.awskt.eventbridge/PutEventsPartialFailureException.succeeded|{}succeeded[0]
+        final fun <get-succeeded>(): kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsResultEntry> // com.steamstreet.awskt.eventbridge/PutEventsPartialFailureException.succeeded.<get-succeeded>|<get-succeeded>(){}[0]
+}
+
 final class com.steamstreet.awskt.eventbridge/PutEventsResponse { // com.steamstreet.awskt.eventbridge/PutEventsResponse|null[0]
     constructor <init>(kotlin/Int = ..., kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsResultEntry>? = ...) // com.steamstreet.awskt.eventbridge/PutEventsResponse.<init>|<init>(kotlin.Int;kotlin.collections.List<com.steamstreet.awskt.eventbridge.PutEventsResultEntry>?){}[0]
 
@@ -157,3 +167,4 @@ final val com.steamstreet.awskt.eventbridge/EVENTBRIDGE_PROTOCOL // com.steamstr
     final fun <get-EVENTBRIDGE_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.eventbridge/EVENTBRIDGE_PROTOCOL.<get-EVENTBRIDGE_PROTOCOL>|<get-EVENTBRIDGE_PROTOCOL>(){}[0]
 
 final fun com.steamstreet.awskt.eventbridge/EventBridge(kotlin/Function1<com.steamstreet.awskt.eventbridge/EventBridgeConfig, kotlin/Unit> = ...): com.steamstreet.awskt.eventbridge/EventBridgeApi // com.steamstreet.awskt.eventbridge/EventBridge|EventBridge(kotlin.Function1<com.steamstreet.awskt.eventbridge.EventBridgeConfig,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.awskt.eventbridge/EventBridgeApi).com.steamstreet.awskt.eventbridge/putEventsAll(kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsEntry>, kotlin/Int = ..., com.steamstreet.awskt.core/BatchRetry = ...): kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsResultEntry> // com.steamstreet.awskt.eventbridge/putEventsAll|putEventsAll@com.steamstreet.awskt.eventbridge.EventBridgeApi(kotlin.collections.List<com.steamstreet.awskt.eventbridge.PutEventsEntry>;kotlin.Int;com.steamstreet.awskt.core.BatchRetry){}[0]

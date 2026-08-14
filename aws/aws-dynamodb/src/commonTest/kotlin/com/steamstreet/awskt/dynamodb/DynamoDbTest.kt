@@ -3,6 +3,7 @@ package com.steamstreet.awskt.dynamodb
 import com.steamstreet.dynamokt.AttributeValue
 import com.steamstreet.dynamokt.AttributeValueSerializer
 import com.steamstreet.awskt.core.AwsServiceClient
+import com.steamstreet.awskt.core.BatchRetry
 import com.steamstreet.awskt.core.OperationSafety
 import com.steamstreet.awskt.core.RetryConfig
 import com.steamstreet.awskt.core.StaticCredentialsProvider

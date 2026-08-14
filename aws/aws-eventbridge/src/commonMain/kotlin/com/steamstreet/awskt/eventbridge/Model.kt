@@ -36,6 +36,10 @@ internal data class PutEventsRequest(
  * **[failedEntryCount] can be non-zero on an HTTP 200.** EventBridge reports per-entry failures in
  * the body, not the status line, so a transport that only checks the status reports success on a
  * fully-failed batch. Callers must read this — `EventBridgeSubmitter` does.
+ *
+ * Reading it is the *minimum*; acting on it correctly means resubmitting the retryable entries with
+ * backoff and reporting the rest. [putEventsAll] does that, and returns only when every entry was
+ * published, so a caller that uses it never has to inspect this field at all.
  */
 @Serializable
 public data class PutEventsResponse(
