@@ -1,5 +1,7 @@
 package com.steamstreet.awskt.core
 
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -159,25 +161,52 @@ internal fun applyRetryAfter(computedMillis: Long, retryAfterHeader: String?): L
  * Capacity is consumed by retrying and returned by succeeding, so a dependency that is failing
  * broadly stops absorbing retry traffic instead of amplifying an outage. There is no time-based
  * refill: recovery is driven by successful calls, which is the only real evidence of recovery.
+ *
+ * ### Why this is atomic, and why it is not a `Mutex`
+ *
+ * One [AwsServiceClient] is shared by every coroutine in a handler, and `Dispatchers.Default` is
+ * multi-threaded on the JVM *and* on Kotlin/Native. A plain `var` here would make every operation a
+ * read-modify-write on shared state: two coroutines each read the same `tokens`, each conclude
+ * there is capacity, and each subtract — so the breaker admits retries it exists to refuse, and the
+ * count drifts below zero. Under Kotlin/Native's current memory model there is no freeze to make
+ * that fail loudly; it just races.
+ *
+ * A CAS loop rather than a [kotlinx.coroutines.sync.Mutex] because [tryAcquire] is consulted on
+ * every retry decision and must not suspend. Uncontended, each operation here is a single
+ * compare-and-set.
  */
+@OptIn(ExperimentalAtomicApi::class)
 internal class RetryTokenBucket(private val capacity: Int = 500) {
-    private var tokens: Int = capacity
+    private val tokens = AtomicInt(capacity)
 
-    val available: Int get() = tokens
+    val available: Int get() = tokens.load()
 
     fun tryAcquire(type: RetryErrorType): Boolean {
         val cost = costOf(type)
-        if (tokens < cost) return false
-        tokens -= cost
-        return true
+        while (true) {
+            val current = tokens.load()
+            // Re-checked inside the loop, not once before it: the check and the subtraction have to
+            // succeed against the *same* observed value or the capacity bound means nothing.
+            if (current < cost) return false
+            if (tokens.compareAndSet(current, current - cost)) return true
+        }
     }
 
     fun refund(type: RetryErrorType) {
-        tokens = minOf(capacity, tokens + costOf(type))
+        credit(costOf(type))
     }
 
     fun onCleanSuccess() {
-        tokens = minOf(capacity, tokens + 1)
+        credit(1)
+    }
+
+    /** Adds [amount], saturating at [capacity]. */
+    private fun credit(amount: Int) {
+        while (true) {
+            val current = tokens.load()
+            if (current >= capacity) return
+            if (tokens.compareAndSet(current, minOf(capacity, current + amount))) return
+        }
     }
 
     private fun costOf(type: RetryErrorType) = when (type) {

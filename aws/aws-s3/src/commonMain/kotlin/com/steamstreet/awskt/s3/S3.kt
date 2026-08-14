@@ -15,6 +15,8 @@ import com.steamstreet.awskt.signing.SignedBodyHeader
 import com.steamstreet.awskt.signing.sigV4UriEncode
 import io.ktor.client.HttpClient
 import io.ktor.http.URLProtocol
+import kotlin.concurrent.atomics.AtomicReference
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 /** S3's REST-XML dialect. */
 public val S3_PROTOCOL: AwsProtocol = AwsProtocol.restXml(endpointPrefix = "s3")
@@ -104,6 +106,7 @@ public fun S3(configure: S3Config.() -> Unit = {}): S3 {
     )
 }
 
+@OptIn(ExperimentalAtomicApi::class)
 internal class DefaultS3(
     private val region: String,
     private val config: S3Config,
@@ -114,15 +117,42 @@ internal class DefaultS3(
     /**
      * S3 addresses the bucket in the *authority*, so the endpoint — and therefore the signed host —
      * differs per bucket. One `AwsServiceClient` per bucket is built on demand and reused.
+     *
+     * An immutable map behind an atomic reference rather than a `mutableMapOf`. One `S3` instance is
+     * shared across concurrent coroutines by design, and `Dispatchers.Default` is multi-threaded on
+     * the JVM and on Kotlin/Native alike — so two handlers touching two buckets at once were
+     * mutating one plain `LinkedHashMap` from two threads, which corrupts the map itself rather
+     * than merely losing an entry. Reads are a single volatile load and take no lock.
      */
-    private val clientsByBucket = mutableMapOf<String, AwsServiceClient>()
+    private val clientsByBucket = AtomicReference<Map<String, AwsServiceClient>>(emptyMap())
 
     override val client: AwsServiceClient
-        get() = clientsByBucket.values.firstOrNull()
-            ?: clientFor("").also { clientsByBucket[""] = it }
+        get() = clientsByBucket.load().values.firstOrNull() ?: clientFor("")
 
-    private fun clientFor(bucket: String): AwsServiceClient {
-        clientsByBucket[bucket]?.let { return it }
+    /** The buckets currently cached. Internal so a concurrency test can assert on the cache. */
+    internal val cachedBuckets: Set<String> get() = clientsByBucket.load().keys
+
+    // Internal, not private, so a concurrency test can hammer it directly. Driving it through
+    // `getObject` instead would put an HTTP round trip between the cache read and the cache write,
+    // which serialises the callers and hides the very interleaving the test exists to catch.
+    internal fun clientFor(bucket: String): AwsServiceClient {
+        clientsByBucket.load()[bucket]?.let { return it }
+        val built = buildClientFor(bucket)
+
+        // Publish, unless someone else got there first — in which case theirs is the one everybody
+        // uses and `built` is dropped. Losing this race costs a discarded object and nothing else:
+        // an AwsServiceClient owns no connection (the HttpClient is shared and closed by `close`)
+        // and its credentials provider only caches. What must not happen is two callers *keeping*
+        // different clients for one bucket, because each carries its own retry token bucket and the
+        // circuit breaker would then be measuring half the traffic.
+        while (true) {
+            val current = clientsByBucket.load()
+            current[bucket]?.let { return it }
+            if (clientsByBucket.compareAndSet(current, current + (bucket to built))) return built
+        }
+    }
+
+    private fun buildClientFor(bucket: String): AwsServiceClient {
         val endpoint = resolveS3Endpoint(
             bucket = bucket.ifBlank { "placeholder-bucket" },
             region = region,
@@ -130,7 +160,7 @@ internal class DefaultS3(
             forcePathStyle = config.forcePathStyle,
             allowInsecureEndpoint = config.allowInsecureEndpoint,
         )
-        val built = AwsServiceClient(
+        return AwsServiceClient(
             httpClient = httpClient,
             credentialsProvider = config.credentialsProvider ?: defaultCredentialsProvider(),
             endpoint = AwsEndpoint(
@@ -148,8 +178,6 @@ internal class DefaultS3(
             random = config.random,
             sleep = config.sleep,
         )
-        clientsByBucket[bucket] = built
-        return built
     }
 
     /** The base path (`""` or `/bucket`) for a bucket under the resolved addressing style. */

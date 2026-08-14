@@ -62,6 +62,37 @@ public class NativeLambdaContext(
  * reference requires; any other non-2xx is written to stderr. Neither is optional — the status is
  * the only signal that a result was not accepted, and a runtime that ignores it reports success for
  * invocations whose results Lambda never received.
+ *
+ * ### Known limitation: this runtime is strictly serial, and does NOT support concurrent invocations
+ *
+ * [run] is a serial `while (true)` loop — it polls for one event, runs the handler to completion,
+ * posts the result, and only then polls again. [com.steamstreet.aws.lambda.lambdaContext] is a
+ * process-global `lateinit var` that this loop overwrites at the top of each invocation.
+ *
+ * That design is **correct, and only correct, while Lambda delivers one invocation at a time per
+ * execution environment**, which is the model the classic on-demand execution environment has always
+ * guaranteed and which every handler written against this runtime assumes.
+ *
+ * It is not universal any more. Lambda Managed Instances can dispatch **concurrent invocations into
+ * a single execution environment** (see the custom-runtime reference,
+ * https://docs.aws.amazon.com/lambda/latest/dg/runtimes-custom.html). **This runtime does not
+ * support that mode**, and the failure would not be loud:
+ *
+ *  - the loop processes one event at a time, so concurrent invocations would be serialized behind
+ *    each other and the added concurrency would buy nothing but latency; and
+ *  - worse, `lambdaContext` is global. A second invocation starting before the first finished would
+ *    overwrite it, and the first handler would then read *the second invocation's* request id and
+ *    deadline — the wrong `remainingTimeInMillis`, and log lines attributed to the wrong request.
+ *
+ * This is recorded rather than fixed. Supporting concurrent delivery is not a patch to this loop: it
+ * needs the context moved off a global and onto the coroutine context (so each invocation carries
+ * its own), the poll loop restructured to dispatch rather than to run inline, and a bound on
+ * in-flight work. That is a design change with its own API implications, and it is tracked in
+ * `NATIVE-AWS-CLIENT-PLAN.md` (Risk 34) rather than smuggled in here.
+ *
+ * Note that the *clients* below this runtime do not share the limitation: `AwsServiceClient` and
+ * `S3` are safe to use from concurrent coroutines within a single invocation, which is the
+ * `async { }` fan-out a handler actually does today.
  */
 public class LambdaRuntime internal constructor(
     private val handler: suspend (String) -> String,
@@ -87,6 +118,10 @@ public class LambdaRuntime internal constructor(
 
     /**
      * Runs the event loop. Does not return under normal operation.
+     *
+     * Serial by construction: one invocation is polled, handled and answered before the next is
+     * requested. See the class KDoc for why that is correct under one-invocation-at-a-time delivery
+     * and why this runtime does not support Lambda Managed Instances' concurrent invocations.
      */
     public suspend fun run() {
         val runtimeApi = nativeGetEnv(RUNTIME_API_ENV)

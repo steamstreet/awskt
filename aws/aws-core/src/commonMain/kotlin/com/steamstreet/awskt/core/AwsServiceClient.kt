@@ -15,6 +15,8 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.content.OutgoingContent
 import kotlinx.coroutines.delay
+import kotlin.concurrent.atomics.AtomicLong
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.random.Random
 
@@ -100,7 +102,16 @@ private class SignedBody(
  * cannot satisfy: classification needs the *parsed* error code (code beats status, and a
  * never-retry deny-list runs first), and **each attempt must be re-signed** with fresh credentials
  * and a fresh timestamp. A replayed signature is a stale signature.
+ *
+ * ### Thread safety
+ *
+ * One instance is safe to share across concurrent coroutines, and is meant to be — a handler that
+ * fans out with `async { }` runs those calls on `Dispatchers.Default`, which is multi-threaded on
+ * the JVM and on Kotlin/Native alike. The two pieces of mutable state that outlive a single call —
+ * the retry [RetryTokenBucket] and the learned [clockSkewOffsetMillis] — are therefore atomic
+ * rather than plain `var`s. Everything else in [callRaw] is call-local.
  */
+@OptIn(ExperimentalAtomicApi::class)
 public class AwsServiceClient(
     private val httpClient: HttpClient,
     private val credentialsProvider: AwsCredentialsProvider,
@@ -112,10 +123,23 @@ public class AwsServiceClient(
     private val random: () -> Double = ::defaultRandom,
     private val sleep: suspend (Long) -> Unit = { delay(it) },
 ) {
-    private val tokenBucket = RetryTokenBucket()
+    /**
+     * Internal rather than private so a test can assert the retry budget balances after a parallel
+     * run. Every acquire in [prepareRetry] is paired with a refund, so a client that has finished
+     * its work must be back at full capacity — an invariant with no observable proxy from outside.
+     * Internal declarations do not appear in the ABI dump, so this is not published surface.
+     */
+    internal val tokenBucket = RetryTokenBucket()
 
-    /** Learned offset applied to signing time when AWS says our clock is wrong. */
-    private var clockSkewOffsetMillis: Long = 0
+    /**
+     * Learned offset applied to signing time when AWS says our clock is wrong.
+     *
+     * Atomic because it is written from the response path of one call and read by the signing path
+     * of every other in-flight call. Last writer wins, which is the correct resolution: concurrent
+     * calls are all measuring the same single quantity — this process's disagreement with AWS —
+     * so the most recent measurement is the best one, and there is nothing to accumulate.
+     */
+    private val clockSkewOffsetMillis = AtomicLong(0)
 
     /**
      * Issues one signed request, retrying per [retryConfig].
@@ -215,7 +239,7 @@ public class AwsServiceClient(
                     doubleUriEncode = doubleUriEncode,
                     normalizeUriPath = normalizeUriPath,
                 ),
-                signingInstantMillis = clock() + clockSkewOffsetMillis,
+                signingInstantMillis = clock() + clockSkewOffsetMillis.load(),
             )
 
             val response: AwsHttpResponse
@@ -288,7 +312,10 @@ public class AwsServiceClient(
 
             if (!skewCorrectionUsed && shouldCorrectClockSkew(details.code, response)) {
                 skewCorrectionUsed = true
-                clockSkewOffsetMillis = serverTimeOffset(response) ?: clockSkewOffsetMillis
+                // Only stored when we actually measured one; an unmeasurable response leaves the
+                // previous learning in place, exactly as the `?: clockSkewOffsetMillis` did — but
+                // without reading and writing the field as two separate steps.
+                serverTimeOffset(response)?.let { clockSkewOffsetMillis.store(it) }
                 attempt++
                 if (attempt >= retryConfig.maxAttempts) throw exception
                 continue

@@ -33,6 +33,15 @@ public interface LambdaContext {
  *
  * `lateinit` because it is set by the runtime at the top of each invocation, before any handler code
  * runs.
+ *
+ * **A process-global, and therefore sound only while Lambda delivers one invocation at a time per
+ * execution environment.** That has always held for the classic on-demand execution environment, but
+ * Lambda Managed Instances can dispatch concurrent invocations into a single environment, where a
+ * second invocation would overwrite this before the first had finished reading it — handing the
+ * first handler the wrong request id and the wrong `remainingTimeInMillis`. Neither runtime supports
+ * that mode today; the limitation is written up on
+ * `com.steamstreet.aws.lambda.native.LambdaRuntime` and tracked as Risk 34 in
+ * `NATIVE-AWS-CLIENT-PLAN.md`. Moving this onto the coroutine context is the fix when it is needed.
  */
 public lateinit var lambdaContext: LambdaContext
 
