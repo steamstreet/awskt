@@ -18,7 +18,10 @@ import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.HttpRequestData
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -65,6 +68,45 @@ internal fun harnessDynamoDb(
         ),
     )
 }
+
+/**
+ * A harness whose response is chosen from the **request body** rather than from a call counter.
+ *
+ * Two things break once chunks may overlap: "the third call" stops identifying a chunk, and the
+ * `var call = 0` in [harnessDynamoDb] is itself a data race. Recording goes through a [Mutex] for
+ * the same reason.
+ */
+internal fun concurrentHarnessDynamoDb(
+    harness: DynamoHarness,
+    responder: suspend (body: String) -> Pair<String, HttpStatusCode>,
+): DynamoDb {
+    val recording = Mutex()
+    val engine = MockEngine { request ->
+        val body = (request.body as io.ktor.http.content.OutgoingContent.ByteArrayContent)
+            .bytes().decodeToString()
+        recording.withLock {
+            harness.requests += request
+            harness.bodies += body
+        }
+        val (content, status) = responder(body)
+        respond(content, status)
+    }
+    return DefaultDynamoDb(
+        AwsServiceClient(
+            httpClient = HttpClient(engine) { followRedirects = false; expectSuccess = false },
+            credentialsProvider = StaticCredentialsProvider(AwsCredentials("AKID", "SECRET", "TOKEN")),
+            endpoint = resolveEndpoint("dynamodb", "us-west-2", "https://dynamodb.us-west-2.amazonaws.com"),
+            region = "us-west-2",
+            protocol = DYNAMODB_PROTOCOL,
+            clock = { 1_700_000_000_000 },
+            random = { 1.0 },
+            sleep = {},
+        ),
+    )
+}
+
+/** 200 keys — two `BatchGetItem` chunks, and the two are distinguishable by content. */
+private val KEYS_200 = (1..200).map { mapOf("pk" to AttributeValue.S("k$it")) }
 
 private fun bodyJson(raw: String): JsonObject = Json.parseToJsonElement(raw) as JsonObject
 
@@ -770,7 +812,7 @@ class PaginationTest {
             sleep = { slept += it },
         )
 
-        val failure = assertFailsWith<DynamoDbException> {
+        val failure = assertFailsWith<BatchGetIncompleteException> {
             db.batchGetAll("t", listOf(mapOf("pk" to AttributeValue.S("a"))), backoff = backoff)
         }
 
@@ -778,6 +820,163 @@ class PaginationTest {
         assertEquals(listOf(100L, 200L, 400L), slept, "the budget must stop the loop before maxRounds")
         assertEquals(4, harness.requests.size, "three resubmissions, then give up")
         assertTrue("750ms" in (failure.message ?: ""), "the message should name the budget it hit")
+
+        // Giving up must not throw away four rounds of real data, and must say what is still owed.
+        assertEquals(4, failure.retrieved.size, "one item per round, none of them invalidated by the failure")
+        assertEquals(
+            listOf(mapOf("pk" to AttributeValue.S("b"))),
+            failure.unprocessedKeys.getValue("t").keys,
+            "the key DynamoDB still owed must be resubmittable as it stands",
+        )
+    }
+
+    /**
+     * The whole-call accounting, across chunks: nothing retrieved is lost, and nothing outstanding
+     * goes unnamed — including the keys of a chunk that never got to run.
+     */
+    @Test
+    fun batchGetAllFailureCarriesWhatItGotAndEveryKeyStillOwed() = runTest {
+        val harness = DynamoHarness()
+        val db = harnessDynamoDb(harness) { UNPROCESSED_READ to HttpStatusCode.OK }
+
+        // 150 keys => a chunk of 100 that fails and a chunk of 50 that is never sent.
+        val keys = (1..150).map { mapOf("pk" to AttributeValue.S("k$it")) }
+        val failure = assertFailsWith<BatchGetIncompleteException> {
+            db.batchGetAll("t", keys, maxRounds = 3, backoff = recordingBackoff(mutableListOf()))
+        }
+
+        assertEquals(3, harness.requests.size, "the second chunk must never be sent")
+        assertEquals(3, failure.retrieved.size, "one item per round of the chunk that did run")
+
+        val owed = failure.unprocessedKeys.getValue("t").keys
+        assertEquals(51, owed.size, "the pending key, plus all 50 keys of the chunk that never ran")
+        assertTrue(mapOf("pk" to AttributeValue.S("b")) in owed, "the key DynamoDB reported unprocessed")
+        assertTrue(mapOf("pk" to AttributeValue.S("k150")) in owed, "a key from the chunk that never ran")
+    }
+
+    /** The write-side twin: every write that did not land is named, and can be sent back as-is. */
+    @Test
+    fun batchWriteAllFailureNamesEveryWriteThatDidNotLand() = runTest {
+        val harness = DynamoHarness()
+        val db = harnessDynamoDb(harness) { UNPROCESSED_WRITE to HttpStatusCode.OK }
+
+        // 30 writes => a chunk of 25 that fails and a chunk of 5 that is never sent.
+        val writes = (1..30).map {
+            WriteRequest(deleteRequest = DeleteRequest(mapOf("pk" to AttributeValue.S("k$it"))))
+        }
+        val failure = assertFailsWith<BatchWriteIncompleteException> {
+            db.batchWriteAll("t", writes, maxRounds = 2, backoff = recordingBackoff(mutableListOf()))
+        }
+
+        assertEquals("UnprocessedItemsRemain", failure.code)
+        val owed = failure.unprocessedItems.getValue("t")
+        assertEquals(6, owed.size, "the one write still owed, plus the whole chunk that never ran")
+        assertTrue(
+            writes.last() in owed,
+            "a write from the chunk that never ran must be resubmittable, not silently dropped",
+        )
+    }
+
+    /**
+     * Opting in to concurrency really does overlap the chunks, and opting out really does not.
+     *
+     * The mock holds each request open for a moment, which is the only way the overlap is
+     * observable: answering immediately lets a fully concurrent fan-out finish one chunk before the
+     * next has started, and look identical to the sequential path.
+     */
+    @Test
+    fun chunksOverlapOnlyWhenConcurrencyAllowsIt() = runTest {
+        suspend fun run(concurrency: Int): Pair<Int, List<String>> {
+            val harness = DynamoHarness()
+            val gate = Mutex()
+            var inFlight = 0
+            var peak = 0
+            val db = concurrentHarnessDynamoDb(harness) {
+                gate.withLock {
+                    inFlight++
+                    if (inFlight > peak) peak = inFlight
+                }
+                delay(50)
+                gate.withLock { inFlight-- }
+                """{"Responses":{"t":[]}}""" to HttpStatusCode.OK
+            }
+            db.batchGetAll("t", KEYS_200, concurrency = concurrency)
+            return peak to harness.bodies
+        }
+
+        val (sequentialPeak, sequentialBodies) = run(1)
+        assertEquals(1, sequentialPeak, "the default must keep exactly one chunk in flight")
+        assertEquals(2, sequentialBodies.size, "200 keys must chunk to 100 + 100")
+        assertTrue("k200" !in sequentialBodies[0] && "k200" in sequentialBodies[1], "chunks must go out in order")
+
+        assertEquals(2, run(2).first, "concurrency = 2 must put both chunks in flight at once")
+    }
+
+    /**
+     * Results are grouped by input chunk, not by completion order. The first chunk here needs a
+     * second round, so the second chunk certainly finishes first — and must still come second.
+     */
+    @Test
+    fun concurrentResultsAreGroupedByInputChunk() = runTest {
+        val firstChunkRoundOne = """{"Responses":{"t":[{"pk":{"S":"first"}}]},""" +
+            """"UnprocessedKeys":{"t":{"Keys":[{"pk":{"S":"again"}}]}}}"""
+        val db = concurrentHarnessDynamoDb(DynamoHarness()) { body ->
+            when {
+                "k200" in body -> """{"Responses":{"t":[{"pk":{"S":"second"}}]}}""" to HttpStatusCode.OK
+                "k100" in body -> firstChunkRoundOne to HttpStatusCode.OK
+                else -> """{"Responses":{"t":[{"pk":{"S":"first-round-two"}}]}}""" to HttpStatusCode.OK
+            }
+        }
+
+        val items = db.batchGetAll(
+            "t", KEYS_200, backoff = recordingBackoff(mutableListOf()), concurrency = 2,
+        )
+
+        assertEquals(
+            listOf("first", "first-round-two", "second"),
+            items.map { it.getValue("pk").asS() },
+            "chunk order must not depend on which chunk finished first",
+        )
+    }
+
+    /**
+     * A chunk cancelled by a sibling's failure contributes no items, so its keys are owed in full —
+     * the contract [BatchGetIncompleteException] documents. Nothing may be lost between the two.
+     */
+    @Test
+    fun aConcurrentFailureStillAccountsForEveryKey() = runTest {
+        val db = concurrentHarnessDynamoDb(DynamoHarness()) { body ->
+            if ("k200" in body) {
+                // Still in flight when the other chunk gives up, so this one is cancelled.
+                delay(1_000)
+                """{"Responses":{"t":[{"pk":{"S":"second"}}]}}""" to HttpStatusCode.OK
+            } else {
+                UNPROCESSED_READ to HttpStatusCode.OK
+            }
+        }
+
+        val failure = assertFailsWith<BatchGetIncompleteException> {
+            db.batchGetAll("t", KEYS_200, maxRounds = 1, concurrency = 2)
+        }
+
+        assertEquals(listOf("a"), failure.retrieved.map { it.getValue("pk").asS() })
+        val owed = failure.unprocessedKeys.getValue("t").keys
+        assertEquals(101, owed.size, "the pending key, plus every key of the cancelled chunk")
+        assertTrue(
+            mapOf("pk" to AttributeValue.S("k200")) in owed,
+            "a cancelled chunk's keys must be owed in full",
+        )
+    }
+
+    @Test
+    fun aConcurrencyBelowOneIsRejectedRatherThanSilentlyTreatedAsOne() = runTest {
+        val db = harnessDynamoDb(DynamoHarness()) { """{"Responses":{"t":[]}}""" to HttpStatusCode.OK }
+        assertFailsWith<IllegalArgumentException> {
+            db.batchGetAll("t", listOf(mapOf("pk" to AttributeValue.S("a"))), concurrency = 0)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            db.batchWriteAll("t", listOf(WriteRequest(deleteRequest = DeleteRequest(mapOf()))), concurrency = 0)
+        }
     }
 
     /** The write half: chunk to 25 and loop `UnprocessedItems`. */

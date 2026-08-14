@@ -193,6 +193,15 @@ final class com.steamstreet.awskt.dynamodb/AttributeDefinition { // com.steamstr
     }
 }
 
+final class com.steamstreet.awskt.dynamodb/BatchGetIncompleteException : com.steamstreet.awskt.dynamodb/DynamoDbException { // com.steamstreet.awskt.dynamodb/BatchGetIncompleteException|null[0]
+    constructor <init>(kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>, kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/KeysAndAttributes>, kotlin/String?, kotlin/String? = ...) // com.steamstreet.awskt.dynamodb/BatchGetIncompleteException.<init>|<init>(kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>>;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.KeysAndAttributes>;kotlin.String?;kotlin.String?){}[0]
+
+    final val retrieved // com.steamstreet.awskt.dynamodb/BatchGetIncompleteException.retrieved|{}retrieved[0]
+        final fun <get-retrieved>(): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>> // com.steamstreet.awskt.dynamodb/BatchGetIncompleteException.retrieved.<get-retrieved>|<get-retrieved>(){}[0]
+    final val unprocessedKeys // com.steamstreet.awskt.dynamodb/BatchGetIncompleteException.unprocessedKeys|{}unprocessedKeys[0]
+        final fun <get-unprocessedKeys>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/KeysAndAttributes> // com.steamstreet.awskt.dynamodb/BatchGetIncompleteException.unprocessedKeys.<get-unprocessedKeys>|<get-unprocessedKeys>(){}[0]
+}
+
 final class com.steamstreet.awskt.dynamodb/BatchGetItemRequest { // com.steamstreet.awskt.dynamodb/BatchGetItemRequest|null[0]
     constructor <init>(kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.dynamodb/KeysAndAttributes>) // com.steamstreet.awskt.dynamodb/BatchGetItemRequest.<init>|<init>(kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.dynamodb.KeysAndAttributes>){}[0]
 
@@ -250,6 +259,13 @@ final class com.steamstreet.awskt.dynamodb/BatchGetItemResponse { // com.steamst
 
         final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.dynamodb/BatchGetItemResponse> // com.steamstreet.awskt.dynamodb/BatchGetItemResponse.Companion.serializer|serializer(){}[0]
     }
+}
+
+final class com.steamstreet.awskt.dynamodb/BatchWriteIncompleteException : com.steamstreet.awskt.dynamodb/DynamoDbException { // com.steamstreet.awskt.dynamodb/BatchWriteIncompleteException|null[0]
+    constructor <init>(kotlin.collections/Map<kotlin/String, kotlin.collections/List<com.steamstreet.awskt.dynamodb/WriteRequest>>, kotlin/String?, kotlin/String? = ...) // com.steamstreet.awskt.dynamodb/BatchWriteIncompleteException.<init>|<init>(kotlin.collections.Map<kotlin.String,kotlin.collections.List<com.steamstreet.awskt.dynamodb.WriteRequest>>;kotlin.String?;kotlin.String?){}[0]
+
+    final val unprocessedItems // com.steamstreet.awskt.dynamodb/BatchWriteIncompleteException.unprocessedItems|{}unprocessedItems[0]
+        final fun <get-unprocessedItems>(): kotlin.collections/Map<kotlin/String, kotlin.collections/List<com.steamstreet.awskt.dynamodb/WriteRequest>> // com.steamstreet.awskt.dynamodb/BatchWriteIncompleteException.unprocessedItems.<get-unprocessedItems>|<get-unprocessedItems>(){}[0]
 }
 
 final class com.steamstreet.awskt.dynamodb/BatchWriteItemRequest { // com.steamstreet.awskt.dynamodb/BatchWriteItemRequest|null[0]
@@ -1929,5 +1945,5 @@ final fun (kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.dynamodb/ScanRespo
 final fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map<#A, #B>?).com.steamstreet.awskt.dynamodb/orNullIfEmpty(): kotlin.collections/Map<#A, #B>? // com.steamstreet.awskt.dynamodb/orNullIfEmpty|orNullIfEmpty@kotlin.collections.Map<0:0,0:1>?(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> (kotlin.collections/List<#A>?).com.steamstreet.awskt.dynamodb/orNullIfEmpty(): kotlin.collections/List<#A>? // com.steamstreet.awskt.dynamodb/orNullIfEmpty|orNullIfEmpty@kotlin.collections.List<0:0>?(){0§<kotlin.Any?>}[0]
 final fun com.steamstreet.awskt.dynamodb/DynamoDb(kotlin/Function1<com.steamstreet.awskt.dynamodb/DynamoDbConfig, kotlin/Unit> = ...): com.steamstreet.awskt.dynamodb/DynamoDb // com.steamstreet.awskt.dynamodb/DynamoDb|DynamoDb(kotlin.Function1<com.steamstreet.awskt.dynamodb.DynamoDbConfig,kotlin.Unit>){}[0]
-final suspend fun (com.steamstreet.awskt.dynamodb/DynamoDb).com.steamstreet.awskt.dynamodb/batchGetAll(kotlin/String, kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>, kotlin/Boolean = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin/Int = ..., com.steamstreet.awskt.core/BatchRetry = ...): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>> // com.steamstreet.awskt.dynamodb/batchGetAll|batchGetAll@com.steamstreet.awskt.dynamodb.DynamoDb(kotlin.String;kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>>;kotlin.Boolean;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.Int;com.steamstreet.awskt.core.BatchRetry){}[0]
-final suspend fun (com.steamstreet.awskt.dynamodb/DynamoDb).com.steamstreet.awskt.dynamodb/batchWriteAll(kotlin/String, kotlin.collections/List<com.steamstreet.awskt.dynamodb/WriteRequest>, kotlin/Int = ..., com.steamstreet.awskt.core/BatchRetry = ...) // com.steamstreet.awskt.dynamodb/batchWriteAll|batchWriteAll@com.steamstreet.awskt.dynamodb.DynamoDb(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.dynamodb.WriteRequest>;kotlin.Int;com.steamstreet.awskt.core.BatchRetry){}[0]
+final suspend fun (com.steamstreet.awskt.dynamodb/DynamoDb).com.steamstreet.awskt.dynamodb/batchGetAll(kotlin/String, kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>>, kotlin/Boolean = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin/Int = ..., com.steamstreet.awskt.core/BatchRetry = ..., kotlin/Int = ...): kotlin.collections/List<kotlin.collections/Map<kotlin/String, com.steamstreet.dynamokt/AttributeValue>> // com.steamstreet.awskt.dynamodb/batchGetAll|batchGetAll@com.steamstreet.awskt.dynamodb.DynamoDb(kotlin.String;kotlin.collections.List<kotlin.collections.Map<kotlin.String,com.steamstreet.dynamokt.AttributeValue>>;kotlin.Boolean;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.Int;com.steamstreet.awskt.core.BatchRetry;kotlin.Int){}[0]
+final suspend fun (com.steamstreet.awskt.dynamodb/DynamoDb).com.steamstreet.awskt.dynamodb/batchWriteAll(kotlin/String, kotlin.collections/List<com.steamstreet.awskt.dynamodb/WriteRequest>, kotlin/Int = ..., com.steamstreet.awskt.core/BatchRetry = ..., kotlin/Int = ...) // com.steamstreet.awskt.dynamodb/batchWriteAll|batchWriteAll@com.steamstreet.awskt.dynamodb.DynamoDb(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.dynamodb.WriteRequest>;kotlin.Int;com.steamstreet.awskt.core.BatchRetry;kotlin.Int){}[0]

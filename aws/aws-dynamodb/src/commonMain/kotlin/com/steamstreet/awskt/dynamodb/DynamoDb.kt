@@ -17,8 +17,13 @@ import com.steamstreet.awskt.core.defaultCredentialsProvider
 import com.steamstreet.awskt.core.resolveEndpoint
 import com.steamstreet.awskt.core.resolveRegion
 import io.ktor.client.HttpClient
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -379,6 +384,68 @@ public class IdempotentParameterMismatchException(message: String?, statusCode: 
     DynamoDbException("IdempotentParameterMismatchException", message, statusCode, requestId)
 
 /**
+ * [batchGetAll] ran out of rounds or backoff budget with keys still owed.
+ *
+ * The code is the synthetic `"UnprocessedKeysRemain"` and the status is **200**, because that is
+ * literally what happened: DynamoDB answered 200 and reported the shortfall in `UnprocessedKeys`.
+ *
+ * ### The partial results are real data
+ *
+ * [retrieved] is not a diagnostic. Those items were returned by DynamoDB and are exactly as valid as
+ * the ones a successful call would have handed back — the helper used to throw them away, which
+ * turned "most of a large read succeeded" into "nothing happened", and made a retry re-fetch and
+ * re-pay for everything. [unprocessedKeys] is shaped for `BatchGetItemRequest.requestItems` and can
+ * be resubmitted as-is, or passed back to [batchGetAll] as keys.
+ *
+ * ### What the two collections cover
+ *
+ * Together they account for **every key the call was given**: an item is either in [retrieved] or
+ * its key is in [unprocessedKeys]. That holds under `concurrency > 1` as well. The chunk that failed
+ * contributes the items it had already collected and the keys DynamoDB still owed it; chunks that
+ * had finished contribute their items; and chunks that never started, or were cancelled when this
+ * one failed, contribute their **whole** key set — a cancelled chunk's own partial items are
+ * discarded with it, so re-requesting all of its keys is what keeps the accounting honest rather
+ * than a duplicate. Duplicates are impossible for the same reason: no key appears on both sides.
+ *
+ * @property retrieved every item actually collected, in input-chunk order. Ordering *within* the
+ *   failing chunk's rounds is DynamoDB's, exactly as on the success path.
+ * @property unprocessedKeys every key still owed, under the table name it was requested for.
+ */
+public class BatchGetIncompleteException(
+    public val retrieved: List<Item>,
+    public val unprocessedKeys: Map<String, KeysAndAttributes>,
+    message: String?,
+    requestId: String? = null,
+) : DynamoDbException("UnprocessedKeysRemain", message, 200, requestId)
+
+/**
+ * [batchWriteAll] ran out of rounds or backoff budget with writes still unapplied.
+ *
+ * The code is the synthetic `"UnprocessedItemsRemain"` and the status is **200**, for the same
+ * reason as [BatchGetIncompleteException]: DynamoDB answered 200 and reported the shortfall in
+ * `UnprocessedItems`.
+ *
+ * ### Resubmitting is safe, and is the point
+ *
+ * [unprocessedItems] is shaped for `BatchWriteItemRequest.requestItems` and can be sent back
+ * unchanged. Every write it contains is a plain `PutRequest` or `DeleteRequest` — `BatchWriteItem`
+ * supports neither condition expressions nor update arithmetic — so applying one twice is
+ * indistinguishable from applying it once. That is what makes it safe to include the writes of a
+ * chunk that was cancelled mid-flight, whose individual outcomes are genuinely unknown.
+ *
+ * Writes **not** listed here landed. There is no way to take them back; a `BatchWriteItem` batch is
+ * not a transaction.
+ *
+ * @property unprocessedItems every write still owed — the failing chunk's outstanding writes, plus
+ *   the whole of any chunk that never started or was cancelled — under its table name.
+ */
+public class BatchWriteIncompleteException(
+    public val unprocessedItems: Map<String, List<WriteRequest>>,
+    message: String?,
+    requestId: String? = null,
+) : DynamoDbException("UnprocessedItemsRemain", message, 200, requestId)
+
+/**
  * Maps `aws-core`'s generic error onto DynamoDB's typed hierarchy.
  *
  * Two of these carry structured payload that only exists in the error body, so they are lifted out
@@ -474,6 +541,56 @@ public fun Flow<ScanResponse>.scanItems(): Flow<Item> = flow {
 }
 
 /**
+ * One chunk's `UnprocessedKeys` loop, carrying its own round counter and backoff budget.
+ *
+ * Failure is reported as [ChunkGetFailure] rather than as the public exception because only the
+ * caller knows what the *other* chunks did, and the public exception promises to account for all of
+ * them.
+ */
+private suspend fun DynamoDb.batchGetChunk(
+    index: Int,
+    tableName: String,
+    request: Map<String, KeysAndAttributes>,
+    maxRounds: Int,
+    backoff: BatchRetry,
+): List<Item> {
+    val collected = mutableListOf<Item>()
+    var pending = request
+    var round = 0
+    // Per chunk, not per call: a 10,000-key get is 100 chunks, and one budget shared across all of
+    // them would leave the later chunks with no backoff left to spend.
+    var slept = 0L
+    while (pending.isNotEmpty()) {
+        val response = batchGetItem(BatchGetItemRequest(pending))
+        response.responses?.get(tableName)?.let(collected::addAll)
+        pending = response.unprocessedKeys.orNullIfEmpty() ?: break
+        if (++round >= maxRounds) {
+            throw ChunkGetFailure(
+                index, collected.toList(), pending,
+                "BatchGetItem still had unprocessed keys after $maxRounds rounds; " +
+                    "returning partial results would be silent data loss.",
+            )
+        }
+        slept = backoff.awaitResubmit(round - 1, slept) ?: throw ChunkGetFailure(
+            index, collected.toList(), pending,
+            "BatchGetItem still had unprocessed keys after $round rounds and " +
+                "${slept}ms of throttling backoff, which exhausted the " +
+                "${backoff.config.maxTotalRetryDuration} budget; returning partial results " +
+                "would be silent data loss.",
+        )
+    }
+    return collected
+}
+
+/** One chunk's shortfall, on its way to becoming a [BatchGetIncompleteException]. */
+private class ChunkGetFailure(
+    val index: Int,
+    val retrieved: List<Item>,
+    val pending: Map<String, KeysAndAttributes>,
+    val detail: String,
+) : Exception(detail)
+
+/**
  * BatchGetItem, looping `UnprocessedKeys` until everything asked for has been returned.
  *
  * `BatchGetItem` is not `@paginated` in the Smithy model, so there is no SDK paginator to inherit —
@@ -481,7 +598,20 @@ public fun Flow<ScanResponse>.scanItems(): Flow<Item> = flow {
  * 16 MB response cap. That is a live data-loss bug in the code this replaces.
  *
  * Resubmissions are paced by [backoff]; see [BatchRetry] for why an immediate retry is the wrong
- * thing to do here.
+ * thing to do here. Giving up raises [BatchGetIncompleteException], which **carries the items
+ * already retrieved and the keys still owed** rather than discarding a large partial read.
+ *
+ * @param concurrency how many 100-key chunks may be in flight at once. The default of 1 keeps the
+ *   chunks strictly sequential, which is what this helper has always done.
+ *
+ *   Raising it is a **throughput decision, not a free speed-up**: N concurrent chunks ask for read
+ *   capacity N times as fast, so a table that was merely slow can start returning `UnprocessedKeys`
+ *   instead. The per-chunk THROTTLING backoff absorbs that — each chunk paces itself independently —
+ *   but the absorbing is what the round and budget limits are spent on, so size this modestly
+ *   (2–4 for a Lambda-shaped workload) rather than to the chunk count.
+ *
+ *   Results are grouped by input chunk regardless, so the returned order does not depend on which
+ *   chunk finished first.
  */
 public suspend fun DynamoDb.batchGetAll(
     tableName: String,
@@ -491,8 +621,9 @@ public suspend fun DynamoDb.batchGetAll(
     expressionAttributeNames: Map<String, String>? = null,
     maxRounds: Int = 10,
     backoff: BatchRetry = BatchRetry.Default,
+    concurrency: Int = 1,
 ): List<Item> {
-    val collected = mutableListOf<Item>()
+    require(concurrency >= 1) { "concurrency must be at least 1, was $concurrency" }
 
     // The request shape is fixed; only the key set varies per chunk. Stating it once and varying
     // it with copy() means a future field on KeysAndAttributes is picked up by every chunk
@@ -505,36 +636,114 @@ public suspend fun DynamoDb.batchGetAll(
     )
 
     // 100 is DynamoDB's hard per-call limit for BatchGetItem.
-    for (chunk in keys.chunked(100)) {
-        var pending: Map<String, KeysAndAttributes> = mapOf(tableName to template.copy(keys = chunk))
-        var round = 0
-        // Per chunk, not per call: a 10,000-key get is 100 chunks, and one budget shared across all
-        // of them would leave the later chunks with no backoff left to spend.
-        var slept = 0L
-        while (pending.isNotEmpty()) {
-            val response = batchGetItem(BatchGetItemRequest(pending))
-            response.responses?.get(tableName)?.let(collected::addAll)
-            pending = response.unprocessedKeys.orNullIfEmpty() ?: break
-            if (++round >= maxRounds) {
-                throw DynamoDbException(
-                    "UnprocessedKeysRemain",
-                    "BatchGetItem still had unprocessed keys after $maxRounds rounds; " +
-                        "returning partial results would be silent data loss.",
-                    200,
+    val chunks = keys.chunked(100)
+
+    // Indexed by chunk, so the result order is the input order however the chunks were scheduled,
+    // and so a failure can tell which chunks completed from which never did. Written from the
+    // per-chunk coroutines below and read only after they have all joined, which is the
+    // happens-before the reads need.
+    val results = arrayOfNulls<List<Item>>(chunks.size)
+
+    try {
+        if (concurrency == 1) {
+            // Deliberately not the fan-out below with one permit: the sequential path is the
+            // default, and it stays a plain loop with no scope, no semaphore and no scheduling.
+            for ((index, chunk) in chunks.withIndex()) {
+                results[index] = batchGetChunk(
+                    index, tableName, mapOf(tableName to template.copy(keys = chunk)), maxRounds, backoff,
                 )
             }
-            slept = backoff.awaitResubmit(round - 1, slept) ?: throw DynamoDbException(
-                "UnprocessedKeysRemain",
-                "BatchGetItem still had unprocessed keys after $round rounds and " +
-                    "${slept}ms of throttling backoff, which exhausted the " +
-                    "${backoff.config.maxTotalRetryDuration} budget; returning partial results " +
-                    "would be silent data loss.",
-                200,
+        } else {
+            val permits = Semaphore(concurrency)
+            coroutineScope {
+                chunks.mapIndexed { index, chunk ->
+                    async {
+                        permits.withPermit {
+                            results[index] = batchGetChunk(
+                                index, tableName, mapOf(tableName to template.copy(keys = chunk)),
+                                maxRounds, backoff,
+                            )
+                        }
+                    }
+                }.awaitAll()
+            }
+        }
+    } catch (failure: ChunkGetFailure) {
+        // Read the abandoned chunks *before* the failing chunk's partial results are slotted in,
+        // so "completed" still means what it says.
+        val abandoned = abandonedChunks(chunks, results, failure.index).flatten()
+        results[failure.index] = failure.retrieved
+        throw BatchGetIncompleteException(
+            retrieved = results.filterNotNull().flatten(),
+            unprocessedKeys = failure.pending.mergeKeys(tableName, template, abandoned),
+            message = failure.detail,
+        )
+    }
+
+    return results.filterNotNull().flatten()
+}
+
+/**
+ * The chunks that produced nothing: never started, or cancelled when a sibling failed.
+ *
+ * A cancelled chunk's partial results are gone with it, so its keys are owed in full — see
+ * [BatchGetIncompleteException]'s contract.
+ */
+private fun <T> abandonedChunks(
+    chunks: List<List<T>>,
+    completed: Array<out Any?>,
+    failedIndex: Int,
+): List<List<T>> = chunks.filterIndexed { index, _ -> index != failedIndex && completed[index] == null }
+
+/** Folds the abandoned chunks' keys into the failing chunk's own unprocessed set. */
+private fun Map<String, KeysAndAttributes>.mergeKeys(
+    tableName: String,
+    template: KeysAndAttributes,
+    abandoned: List<Item>,
+): Map<String, KeysAndAttributes> {
+    // Nothing else was owed: hand back DynamoDB's own map, which is already resubmittable verbatim.
+    if (abandoned.isEmpty()) return this
+    val owed = this[tableName] ?: template
+    return this + (tableName to owed.copy(keys = owed.keys + abandoned))
+}
+
+/** One chunk's `UnprocessedItems` loop. The write-side twin of [batchGetChunk]. */
+private suspend fun DynamoDb.batchWriteChunk(
+    index: Int,
+    tableName: String,
+    request: Map<String, List<WriteRequest>>,
+    maxRounds: Int,
+    backoff: BatchRetry,
+) {
+    var pending = request
+    var round = 0
+    // Per chunk — see the matching note in batchGetChunk.
+    var slept = 0L
+    while (pending.isNotEmpty()) {
+        val response = batchWriteItem(BatchWriteItemRequest(pending))
+        pending = response.unprocessedItems.orNullIfEmpty()?.filterValues { it.isNotEmpty() }
+            ?.takeIf { it.isNotEmpty() } ?: break
+        if (++round >= maxRounds) {
+            throw ChunkWriteFailure(
+                index, pending,
+                "BatchWriteItem still had unprocessed items after $maxRounds rounds.",
             )
         }
+        slept = backoff.awaitResubmit(round - 1, slept) ?: throw ChunkWriteFailure(
+            index, pending,
+            "BatchWriteItem still had unprocessed items after $round rounds and ${slept}ms " +
+                "of throttling backoff, which exhausted the " +
+                "${backoff.config.maxTotalRetryDuration} budget.",
+        )
     }
-    return collected
 }
+
+/** One chunk's shortfall, on its way to becoming a [BatchWriteIncompleteException]. */
+private class ChunkWriteFailure(
+    val index: Int,
+    val pending: Map<String, List<WriteRequest>>,
+    val detail: String,
+) : Exception(detail)
 
 /**
  * BatchWriteItem, chunking to **25** and looping `UnprocessedItems`.
@@ -544,37 +753,53 @@ public suspend fun DynamoDb.batchGetAll(
  * batch is throttled.
  *
  * Resubmissions are paced by [backoff]; see [BatchRetry] for why an immediate retry is the wrong
- * thing to do here.
+ * thing to do here. Giving up raises [BatchWriteIncompleteException], which **names every write that
+ * did not land** so the remainder can be resubmitted without replaying the whole batch.
+ *
+ * @param concurrency how many 25-item chunks may be in flight at once. The default of 1 keeps the
+ *   chunks strictly sequential. Read the throughput caveat on [batchGetAll]'s `concurrency` before
+ *   raising it — it applies here to write capacity, which is the scarcer of the two.
  */
 public suspend fun DynamoDb.batchWriteAll(
     tableName: String,
     writes: List<WriteRequest>,
     maxRounds: Int = 10,
     backoff: BatchRetry = BatchRetry.Default,
+    concurrency: Int = 1,
 ) {
-    for (chunk in writes.chunked(25)) {
-        var pending: Map<String, List<WriteRequest>> = mapOf(tableName to chunk)
-        var round = 0
-        // Per chunk — see the matching note in batchGetAll.
-        var slept = 0L
-        while (pending.isNotEmpty()) {
-            val response = batchWriteItem(BatchWriteItemRequest(pending))
-            pending = response.unprocessedItems.orNullIfEmpty()?.filterValues { it.isNotEmpty() }
-                ?.takeIf { it.isNotEmpty() } ?: break
-            if (++round >= maxRounds) {
-                throw DynamoDbException(
-                    "UnprocessedItemsRemain",
-                    "BatchWriteItem still had unprocessed items after $maxRounds rounds.",
-                    200,
-                )
+    require(concurrency >= 1) { "concurrency must be at least 1, was $concurrency" }
+
+    val chunks = writes.chunked(25)
+    // `Unit` for a chunk that finished; null for one that never did. Same role as `results` in
+    // batchGetAll, and read under the same happens-before.
+    val completed = arrayOfNulls<Unit>(chunks.size)
+
+    try {
+        if (concurrency == 1) {
+            for ((index, chunk) in chunks.withIndex()) {
+                batchWriteChunk(index, tableName, mapOf(tableName to chunk), maxRounds, backoff)
+                completed[index] = Unit
             }
-            slept = backoff.awaitResubmit(round - 1, slept) ?: throw DynamoDbException(
-                "UnprocessedItemsRemain",
-                "BatchWriteItem still had unprocessed items after $round rounds and ${slept}ms " +
-                    "of throttling backoff, which exhausted the " +
-                    "${backoff.config.maxTotalRetryDuration} budget.",
-                200,
-            )
+        } else {
+            val permits = Semaphore(concurrency)
+            coroutineScope {
+                chunks.mapIndexed { index, chunk ->
+                    async {
+                        permits.withPermit {
+                            batchWriteChunk(index, tableName, mapOf(tableName to chunk), maxRounds, backoff)
+                            completed[index] = Unit
+                        }
+                    }
+                }.awaitAll()
+            }
         }
+    } catch (failure: ChunkWriteFailure) {
+        val abandoned = abandonedChunks(chunks, completed, failure.index).flatten()
+        val unprocessed = if (abandoned.isEmpty()) {
+            failure.pending
+        } else {
+            failure.pending + (tableName to (failure.pending[tableName].orEmpty() + abandoned))
+        }
+        throw BatchWriteIncompleteException(unprocessed, failure.detail)
     }
 }

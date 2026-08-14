@@ -213,6 +213,17 @@ public fun S3(configure: S3Config.() -> Unit = {}): S3 {
     )
 }
 
+/**
+ * One bucket's signed transport and the base path that goes with it.
+ *
+ * Both come out of a single `resolveS3Endpoint` call, and neither is meaningful without the other:
+ * the authority the client signs and the path the request carries are two halves of one addressing
+ * decision. Internal — [S3.clientFor] still hands back the `AwsServiceClient`, because that is the
+ * extension seam, and an extension re-resolves the endpoint itself (with the region and the
+ * configuration it was given) exactly as the interface KDoc shows.
+ */
+internal class BucketClient(val client: AwsServiceClient, val basePath: String)
+
 @OptIn(ExperimentalAtomicApi::class)
 internal class DefaultS3(
     private val region: String,
@@ -235,13 +246,19 @@ internal class DefaultS3(
      * S3 addresses the bucket in the *authority*, so the endpoint — and therefore the signed host —
      * differs per bucket. One `AwsServiceClient` per bucket is built on demand and reused.
      *
+     * The cached value is a [BucketClient] rather than the client alone, because the endpoint
+     * resolution that produced the client also produced the base path, and the two are the same
+     * decision. Caching only the client meant every operation re-ran `resolveS3Endpoint` — re-reading
+     * `AWS_ENDPOINT_URL_S3`/`AWS_ENDPOINT_URL` and re-validating the bucket name on every request —
+     * to recompute a string the cache already implied.
+     *
      * An immutable map behind an atomic reference rather than a `mutableMapOf`. One `S3` instance is
      * shared across concurrent coroutines by design, and `Dispatchers.Default` is multi-threaded on
      * the JVM and on Kotlin/Native alike — so two handlers touching two buckets at once were
      * mutating one plain `LinkedHashMap` from two threads, which corrupts the map itself rather
      * than merely losing an entry. Reads are a single volatile load and take no lock.
      */
-    private val clientsByBucket = AtomicReference<Map<String, AwsServiceClient>>(emptyMap())
+    private val clientsByBucket = AtomicReference<Map<String, BucketClient>>(emptyMap())
 
     /** The buckets currently cached. Internal so a concurrency test can assert on the cache. */
     internal val cachedBuckets: Set<String> get() = clientsByBucket.load().keys
@@ -250,7 +267,10 @@ internal class DefaultS3(
     // Driving it through `getObject` instead would put an HTTP round trip between the cache read
     // and the cache write, which serialises the callers and hides the very interleaving the test
     // exists to catch.
-    override fun clientFor(bucket: String): AwsServiceClient {
+    override fun clientFor(bucket: String): AwsServiceClient = bucketClientFor(bucket).client
+
+    /** [clientFor] with the resolved base path still attached — what the operations below need. */
+    private fun bucketClientFor(bucket: String): BucketClient {
         clientsByBucket.load()[bucket]?.let { return it }
         val built = buildClientFor(bucket)
 
@@ -267,7 +287,7 @@ internal class DefaultS3(
         }
     }
 
-    private fun buildClientFor(bucket: String): AwsServiceClient {
+    private fun buildClientFor(bucket: String): BucketClient {
         // No placeholder substitution for a blank bucket. There used to be one, to feed the
         // bucket-less `client` property this interface no longer has; with that gone, a blank
         // bucket is a caller mistake, and `resolveS3Endpoint` says so as an
@@ -281,7 +301,7 @@ internal class DefaultS3(
             allowInsecureEndpoint = allowInsecureEndpoint,
         )
         val (host, explicitPort) = splitAuthority(endpoint.authority)
-        return AwsServiceClient(
+        val client = AwsServiceClient(
             httpClient = httpClient,
             credentialsProvider = credentialsProvider,
             endpoint = AwsEndpoint(
@@ -302,23 +322,19 @@ internal class DefaultS3(
             random = random,
             sleep = sleep,
         )
+        // The base path is the other half of the addressing decision just made — `""` under
+        // virtual-hosted, `/{bucket}` under path-style — and it must agree with the authority this
+        // client signs. Keeping them together is what makes it impossible for one to be recomputed
+        // from configuration the other did not see.
+        return BucketClient(client, endpoint.basePath)
     }
-
-    /** The base path (`""` or `/bucket`) for a bucket under the resolved addressing style. */
-    private fun basePathFor(bucket: String): String = resolveS3Endpoint(
-        bucket = bucket,
-        region = region,
-        endpointOverride = endpointUrl,
-        forcePathStyle = forcePathStyle,
-        allowInsecureEndpoint = allowInsecureEndpoint,
-    ).basePath
 
     /**
      * Encoded **once**, with slashes preserved and no normalization. The same string is signed and
      * sent — `callRaw` documents that it never re-encodes the path.
      */
-    private fun pathFor(bucket: String, key: String): String =
-        basePathFor(bucket) + "/" + sigV4UriEncode(key, encodeSlash = false)
+    private fun pathFor(bucket: BucketClient, key: String): String =
+        bucket.basePath + "/" + sigV4UriEncode(key, encodeSlash = false)
 
     private suspend fun call(
         bucket: String,
@@ -332,11 +348,14 @@ internal class DefaultS3(
         inspectBeforeBody: ((status: Int, headers: Map<String, String>) -> Unit)? = null,
         validateBody: ((response: AwsHttpResponse) -> Unit)? = null,
     ): AwsHttpResponse = mapS3Errors {
-        clientFor(bucket).callRaw(
+        // One cache lookup for the transport *and* the path, so a request resolves its endpoint
+        // exactly zero times once the bucket has been seen.
+        val target = bucketClientFor(bucket)
+        target.client.callRaw(
             inspectBeforeBody = inspectBeforeBody,
             validateBody = validateBody,
             method = method,
-            path = pathFor(bucket, key),
+            path = pathFor(target, key),
             query = query,
             headers = headers,
             body = body,
