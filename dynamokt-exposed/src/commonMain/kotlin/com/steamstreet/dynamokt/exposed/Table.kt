@@ -1,5 +1,6 @@
 package com.steamstreet.dynamokt.exposed
 
+import kotlin.enums.enumEntries
 import kotlin.time.ExperimentalTime
 
 /**
@@ -73,14 +74,14 @@ public abstract class Table(public val tableName: String) {
      * This matches Exposed's enumeration() API.
      */
     public inline fun <reified T : Enum<T>> enumeration(name: String): EnumerationColumn<T> =
-        EnumerationColumn(this, name, T::class).also { _columns.add(it) }
+        EnumerationColumn(this, name, enumEntries<T>()).also { _columns.add(it) }
 
     /**
      * Define an enumeration column storing the enum's name as a string.
      * This matches Exposed's enumerationByName() API.
      */
     public inline fun <reified T : Enum<T>> enumerationByName(name: String): EnumerationByNameColumn<T> =
-        EnumerationByNameColumn(this, name, T::class).also { _columns.add(it) }
+        EnumerationByNameColumn(this, name, enumEntries<T>()).also { _columns.add(it) }
 
     /**
      * Define an enumeration column with custom serialization/deserialization.

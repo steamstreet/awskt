@@ -131,10 +131,10 @@ public final class com/steamstreet/dynamokt/exposed/DeleteStatement {
 }
 
 public final class com/steamstreet/dynamokt/exposed/EnumerationByNameColumn : com/steamstreet/dynamokt/exposed/Column {
-	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Table;Ljava/lang/String;Lkotlin/reflect/KClass;)V
+	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Table;Ljava/lang/String;Ljava/util/List;)V
 	public fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Enum;
 	public synthetic fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
-	public final fun getEnumClass ()Lkotlin/reflect/KClass;
+	public final fun getEntries ()Ljava/util/List;
 	public fun getName ()Ljava/lang/String;
 	public fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public fun nullable ()Lcom/steamstreet/dynamokt/exposed/Column;
@@ -143,10 +143,10 @@ public final class com/steamstreet/dynamokt/exposed/EnumerationByNameColumn : co
 }
 
 public final class com/steamstreet/dynamokt/exposed/EnumerationColumn : com/steamstreet/dynamokt/exposed/Column {
-	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Table;Ljava/lang/String;Lkotlin/reflect/KClass;)V
+	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Table;Ljava/lang/String;Ljava/util/List;)V
 	public fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Enum;
 	public synthetic fun fromAttributeValue (Lcom/steamstreet/dynamokt/AttributeValue;)Ljava/lang/Object;
-	public final fun getEnumClass ()Lkotlin/reflect/KClass;
+	public final fun getEntries ()Ljava/util/List;
 	public fun getName ()Ljava/lang/String;
 	public fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public fun nullable ()Lcom/steamstreet/dynamokt/exposed/Column;

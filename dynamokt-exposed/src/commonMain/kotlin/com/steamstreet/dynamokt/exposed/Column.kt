@@ -1,7 +1,6 @@
 package com.steamstreet.dynamokt.exposed
 
 import com.steamstreet.dynamokt.AttributeValue
-import kotlin.reflect.KClass
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -101,34 +100,40 @@ public class TimestampColumn(
 /**
  * Column storing Enum values as DynamoDB Number (N) type using the enum's ordinal.
  * This matches Exposed's enumeration() API.
+ *
+ * Takes the enum constants as a list rather than a `KClass`. `KClass.java.enumConstants` is a JVM
+ * reflection call with no multiplatform equivalent; the reified [Table.enumeration] factory supplies
+ * `enumEntries<T>()` instead, so call sites are unchanged while the class itself becomes portable.
  */
 public class EnumerationColumn<T : Enum<T>>(
     override val table: Table,
     override val name: String,
-    public val enumClass: KClass<T>
+    public val entries: List<T>
 ) : Column<T> {
     override fun toAttributeValue(value: T): AttributeValue = AttributeValue.N(value.ordinal.toString())
 
     override fun fromAttributeValue(value: AttributeValue): T {
         val ordinal = value.asN().toInt()
-        return enumClass.java.enumConstants[ordinal]
+        return entries[ordinal]
     }
 }
 
 /**
  * Column storing Enum values as DynamoDB String (S) type using the enum's name.
  * This matches Exposed's enumerationByName() API.
+ *
+ * See [EnumerationColumn] for why this takes the constants as a list rather than a `KClass`.
  */
 public class EnumerationByNameColumn<T : Enum<T>>(
     override val table: Table,
     override val name: String,
-    public val enumClass: KClass<T>
+    public val entries: List<T>
 ) : Column<T> {
     override fun toAttributeValue(value: T): AttributeValue = AttributeValue.S(value.name)
 
     override fun fromAttributeValue(value: AttributeValue): T {
         val enumName = value.asS()
-        return enumClass.java.enumConstants.first { it.name == enumName }
+        return entries.first { it.name == enumName }
     }
 }
 

@@ -6,22 +6,29 @@ plugins {
 description = "Exposed-style type-safe ORM for DynamoDB"
 
 /**
- * Multiplatform with `jvm()` only, and the sources live in **`jvmMain`, not `commonMain`** — plan
- * Decision 12, and it is deliberate rather than lazy.
+ * Multiplatform with `commonMain` sources and native targets — the deferral in plan Decision 12
+ * (keeping this JVM-only until "a native consumer actually appears") has now been acted on.
  *
- * `Column.kt` uses `enumClass.java.enumConstants` inside the public `EnumerationColumn<T>` and
- * `EnumerationByNameColumn<T>`. Placing those in `commonMain` would fail even with only the JVM
- * target enabled once a second target is added, and porting them buys nothing: no Lambda handler
- * uses `dynamokt-exposed`. Keeping them in `jvmMain` makes the problem disappear instead of trading
- * it for two unnecessary public API breaks. Convert if and when a native consumer actually appears.
+ * The one JVM coupling that blocked the move — `KClass.java.enumConstants` in the public
+ * `EnumerationColumn<T>` / `EnumerationByNameColumn<T>` — is gone: those classes now hold the enum
+ * constants as a `List<T>`, supplied by the already-reified `enumeration<T>()` /
+ * `enumerationByName<T>()` factories via `enumEntries<T>()`. This mirrors the same swap made in the
+ * sibling `dynamokt` module. Factory call sites are unchanged; the column constructors are the only
+ * public break.
+ *
+ * Targets match `dynamokt`. `js`/`wasm` stay out for the same reason: the transitive graph resolves
+ * only across the jvm+native `concurrent` source set.
  */
 kotlin {
     explicitApi()
 
     jvm()
+    linuxX64()
+    linuxArm64()
+    macosArm64()
 
     sourceSets {
-        jvmMain {
+        commonMain {
             dependencies {
                 api(project(":dynamo"))
                 // The hand-written client replaces the AWS SDK here too — `dynamokt-exposed` builds
