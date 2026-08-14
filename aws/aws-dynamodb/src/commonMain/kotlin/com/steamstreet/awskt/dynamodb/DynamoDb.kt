@@ -7,13 +7,16 @@ import com.steamstreet.awskt.core.AwsServiceClient
 import com.steamstreet.awskt.core.AwsServiceException
 import com.steamstreet.awskt.core.OperationSafety
 import com.steamstreet.awskt.core.RetryConfig
+import com.steamstreet.awskt.core.RetryErrorType
 import com.steamstreet.awskt.core.awsHttpClient
 import com.steamstreet.awskt.core.awsJson
+import com.steamstreet.awskt.core.backoffMillis
 import com.steamstreet.awskt.core.callJson
 import com.steamstreet.awskt.core.defaultCredentialsProvider
 import com.steamstreet.awskt.core.resolveEndpoint
 import com.steamstreet.awskt.core.resolveRegion
 import io.ktor.client.HttpClient
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.builtins.ListSerializer
@@ -444,11 +447,68 @@ public fun Flow<ScanResponse>.scanItems(): Flow<Item> = flow {
 }
 
 /**
+ * Pacing for the unprocessed-items resubmission loops in [batchGetAll] and [batchWriteAll].
+ *
+ * ### Why these loops need their own backoff at all
+ *
+ * `UnprocessedKeys`/`UnprocessedItems` arrive inside an **HTTP 200**. There is no error code and no
+ * `x-amz-retry-after`, so [AwsServiceClient]'s retry loop never sees them and never paces them —
+ * yet a non-empty unprocessed set means exactly what a `ProvisionedThroughputExceededException`
+ * means: the partition throttled. Resubmitting with no delay almost always meets the same throttle
+ * and adds load to a table that is already shedding it, which is why AWS documents exponential
+ * backoff as the required handling for these two fields.
+ *
+ * ### Shape
+ *
+ * [random] and [sleep] mirror the seam on [AwsServiceClient], for the same reason: the backoff has
+ * to be assertable in a unit test without the test actually sleeping. There is deliberately no
+ * clock here — the budget below is measured by summing what was *requested* of [sleep], so a test
+ * that injects a no-op sleep still exercises the real arithmetic.
+ *
+ * @param config supplies the pacing. `THROTTLING` base (1s) is used rather than `TRANSIENT` (25ms)
+ *   because an unprocessed item *is* a throttle, and [RetryConfig.maxTotalRetryDuration] bounds the
+ *   total backoff **per chunk**, matching how the transport bounds it per call. That bound is not
+ *   optional: without it, ten rounds of throttling backoff can block for roughly two and a half
+ *   minutes, silently converting a fast partial failure into a Lambda timeout.
+ */
+public class BatchRetry(
+    public val config: RetryConfig = RetryConfig(),
+    internal val random: () -> Double = { Random.nextDouble() },
+    internal val sleep: suspend (Long) -> Unit = { delay(it) },
+) {
+    public companion object {
+        /** Shared so the common case does not allocate a config per batch call. */
+        public val Default: BatchRetry = BatchRetry()
+    }
+}
+
+/**
+ * Waits before resubmitting, and reports whether the budget allowed it.
+ *
+ * @param retry 0-based index of the resubmission about to be made, so the first one waits
+ *   `random * base` rather than `random * 2 * base` — the same off-by-one the transport avoids by
+ *   passing `attempt - 1`.
+ * @param sleptMillis backoff already spent on this chunk.
+ * @return the new cumulative backoff, or `null` if sleeping again would exceed
+ *   [RetryConfig.maxTotalRetryDuration] and the caller should give up instead.
+ */
+private suspend fun BatchRetry.awaitResubmit(retry: Int, sleptMillis: Long): Long? {
+    val wait = backoffMillis(RetryErrorType.THROTTLING, retry, config, random)
+    val total = sleptMillis + wait
+    if (total > config.maxTotalRetryDuration.inWholeMilliseconds) return null
+    sleep(wait)
+    return total
+}
+
+/**
  * BatchGetItem, looping `UnprocessedKeys` until everything asked for has been returned.
  *
  * `BatchGetItem` is not `@paginated` in the Smithy model, so there is no SDK paginator to inherit —
  * and reading only `Responses` silently returns **incomplete results** under throttling or the
  * 16 MB response cap. That is a live data-loss bug in the code this replaces.
+ *
+ * Resubmissions are paced by [backoff]; see [BatchRetry] for why an immediate retry is the wrong
+ * thing to do here.
  */
 public suspend fun DynamoDb.batchGetAll(
     tableName: String,
@@ -457,6 +517,7 @@ public suspend fun DynamoDb.batchGetAll(
     projectionExpression: String? = null,
     expressionAttributeNames: Map<String, String>? = null,
     maxRounds: Int = 10,
+    backoff: BatchRetry = BatchRetry.Default,
 ): List<Item> {
     val collected = mutableListOf<Item>()
 
@@ -474,6 +535,9 @@ public suspend fun DynamoDb.batchGetAll(
     for (chunk in keys.chunked(100)) {
         var pending: Map<String, KeysAndAttributes> = mapOf(tableName to template.copy(keys = chunk))
         var round = 0
+        // Per chunk, not per call: a 10,000-key get is 100 chunks, and one budget shared across all
+        // of them would leave the later chunks with no backoff left to spend.
+        var slept = 0L
         while (pending.isNotEmpty()) {
             val response = batchGetItem(BatchGetItemRequest(pending))
             response.responses?.get(tableName)?.let(collected::addAll)
@@ -486,6 +550,14 @@ public suspend fun DynamoDb.batchGetAll(
                     200,
                 )
             }
+            slept = backoff.awaitResubmit(round - 1, slept) ?: throw DynamoDbException(
+                "UnprocessedKeysRemain",
+                "BatchGetItem still had unprocessed keys after $round rounds and " +
+                    "${slept}ms of throttling backoff, which exhausted the " +
+                    "${backoff.config.maxTotalRetryDuration} budget; returning partial results " +
+                    "would be silent data loss.",
+                200,
+            )
         }
     }
     return collected
@@ -497,15 +569,21 @@ public suspend fun DynamoDb.batchGetAll(
  * Mirror image of the read bug: the code this replaces sends an unchunked batch and discards the
  * response, so it throws `ValidationException` above 25 items and silently under-deletes whenever a
  * batch is throttled.
+ *
+ * Resubmissions are paced by [backoff]; see [BatchRetry] for why an immediate retry is the wrong
+ * thing to do here.
  */
 public suspend fun DynamoDb.batchWriteAll(
     tableName: String,
     writes: List<WriteRequest>,
     maxRounds: Int = 10,
+    backoff: BatchRetry = BatchRetry.Default,
 ) {
     for (chunk in writes.chunked(25)) {
         var pending: Map<String, List<WriteRequest>> = mapOf(tableName to chunk)
         var round = 0
+        // Per chunk — see the matching note in batchGetAll.
+        var slept = 0L
         while (pending.isNotEmpty()) {
             val response = batchWriteItem(BatchWriteItemRequest(pending))
             pending = response.unprocessedItems.orNullIfEmpty()?.filterValues { it.isNotEmpty() }
@@ -517,6 +595,13 @@ public suspend fun DynamoDb.batchWriteAll(
                     200,
                 )
             }
+            slept = backoff.awaitResubmit(round - 1, slept) ?: throw DynamoDbException(
+                "UnprocessedItemsRemain",
+                "BatchWriteItem still had unprocessed items after $round rounds and ${slept}ms " +
+                    "of throttling backoff, which exhausted the " +
+                    "${backoff.config.maxTotalRetryDuration} budget.",
+                200,
+            )
         }
     }
 }

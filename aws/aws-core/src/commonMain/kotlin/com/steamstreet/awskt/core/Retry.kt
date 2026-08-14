@@ -127,8 +127,14 @@ public class RetryConfig(
  *
  * Jitter is not decoration. Without it, every client throttled by the same event retries in the
  * same millisecond and re-creates the throttle.
+ *
+ * Public because [AwsServiceClient]'s retry loop is not the only one in the library. An operation
+ * that reports partial throttling *in a 200 response* — `BatchGetItem`'s `UnprocessedKeys` and
+ * `BatchWriteItem`'s `UnprocessedItems` — never reaches the transport's retry path, so the service
+ * module has to pace its own resubmissions. It should pace them with this formula rather than a
+ * second, subtly different one; see `aws-dynamodb`'s `BatchRetry`.
  */
-internal fun backoffMillis(
+public fun backoffMillis(
     type: RetryErrorType,
     attempt: Int,
     config: RetryConfig,

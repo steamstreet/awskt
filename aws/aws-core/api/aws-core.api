@@ -167,6 +167,10 @@ public final class com/steamstreet/awskt/core/RetryErrorType : java/lang/Enum {
 	public static fun values ()[Lcom/steamstreet/awskt/core/RetryErrorType;
 }
 
+public final class com/steamstreet/awskt/core/RetryKt {
+	public static final fun backoffMillis (Lcom/steamstreet/awskt/core/RetryErrorType;ILcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;)J
+}
+
 public final class com/steamstreet/awskt/core/StaticCredentialsProvider : com/steamstreet/awskt/core/AwsCredentialsProvider {
 	public fun <init> (Lcom/steamstreet/awskt/signing/AwsCredentials;)V
 	public fun resolve (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

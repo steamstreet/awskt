@@ -4,6 +4,7 @@ import com.steamstreet.dynamokt.AttributeValue
 import com.steamstreet.dynamokt.AttributeValueSerializer
 import com.steamstreet.awskt.core.AwsServiceClient
 import com.steamstreet.awskt.core.OperationSafety
+import com.steamstreet.awskt.core.RetryConfig
 import com.steamstreet.awskt.core.StaticCredentialsProvider
 import com.steamstreet.awskt.core.awsJson
 import com.steamstreet.awskt.core.callJson
@@ -25,6 +26,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.milliseconds
 
 // ---------------------------------------------------------------------------------------------
 // Harness
@@ -62,6 +64,27 @@ internal fun harnessDynamoDb(
 }
 
 private fun bodyJson(raw: String): JsonObject = Json.parseToJsonElement(raw) as JsonObject
+
+/** A `BatchGetItem` 200 that returns one item and reports the rest as throttled. */
+private const val UNPROCESSED_READ =
+    """{"Responses":{"t":[{"pk":{"S":"a"}}]},"UnprocessedKeys":{"t":{"Keys":[{"pk":{"S":"b"}}]}}}"""
+
+/** A `BatchWriteItem` 200 reporting the whole batch as throttled. */
+private const val UNPROCESSED_WRITE =
+    """{"UnprocessedItems":{"t":[{"DeleteRequest":{"Key":{"pk":{"S":"a"}}}}]}}"""
+
+/**
+ * A [BatchRetry] that records what it was asked to wait instead of waiting.
+ *
+ * `random = { 0.5 }` rather than 1.0 so the assertions distinguish full jitter from a bare
+ * exponential; the 100ms base keeps the whole sequence inside the default 25-second budget, which
+ * the real 1-second base would exhaust after four rounds.
+ */
+private fun recordingBackoff(into: MutableList<Long>): BatchRetry = BatchRetry(
+    config = RetryConfig(throttlingBaseDelayMillis = 100),
+    random = { 0.5 },
+    sleep = { into += it },
+)
 
 // ---------------------------------------------------------------------------------------------
 
@@ -665,6 +688,93 @@ class PaginationTest {
             assertTrue("ConsistentRead" in body, "every chunk must be consistent-read")
             assertTrue("#a" in body && "alpha" in body, "every chunk must carry the projection")
         }
+    }
+
+    /**
+     * Resubmitting an unprocessed set is a *throttling* retry, and must be paced like one.
+     *
+     * The delays asserted here are exactly full jitter — `random * min(cap, base * 2^retry)` —
+     * with `random` pinned to 0.5, so this also pins down that the jitter is applied rather than
+     * the raw exponential being used: 50/100/200/400/800 is half of 100/200/400/800/1600.
+     *
+     * `currentTime` is the load-bearing assertion for "injected sleep, not wall-clock". `runTest`
+     * runs on a virtual clock, so a real `delay(1000)` would not slow the test down at all — it
+     * would just advance `currentTime` to 1000. Asserting it stayed at zero is what proves the
+     * backoff went through [BatchRetry.sleep] and not through `delay`.
+     */
+    @Test
+    fun batchWriteAllBacksOffExponentiallyBetweenRounds() = runTest {
+        val harness = DynamoHarness()
+        // Six throttled responses, then a clean one.
+        val db = harnessDynamoDb(harness) { call ->
+            if (call < 6) UNPROCESSED_WRITE to HttpStatusCode.OK else "{}" to HttpStatusCode.OK
+        }
+
+        val slept = mutableListOf<Long>()
+        db.batchWriteAll(
+            tableName = "t",
+            writes = listOf(WriteRequest(deleteRequest = DeleteRequest(mapOf("pk" to AttributeValue.S("a"))))),
+            backoff = recordingBackoff(slept),
+        )
+
+        assertEquals(7, harness.requests.size, "six throttled rounds, then the successful one")
+        assertEquals(
+            listOf(50L, 100L, 200L, 400L, 800L, 1600L),
+            slept,
+            "each resubmission must wait twice as long as the last",
+        )
+        assertEquals(0L, testScheduler.currentTime, "backoff must go through the injected sleep, not delay()")
+    }
+
+    /** The read path pays the same backoff — the bug and the fix are symmetric. */
+    @Test
+    fun batchGetAllBacksOffExponentiallyBetweenRounds() = runTest {
+        val harness = DynamoHarness()
+        val db = harnessDynamoDb(harness) { call ->
+            if (call < 3) UNPROCESSED_READ to HttpStatusCode.OK
+            else """{"Responses":{"t":[{"pk":{"S":"b"}}]}}""" to HttpStatusCode.OK
+        }
+
+        val slept = mutableListOf<Long>()
+        val items = db.batchGetAll(
+            tableName = "t",
+            keys = listOf(mapOf("pk" to AttributeValue.S("a"))),
+            backoff = recordingBackoff(slept),
+        )
+
+        assertEquals(4, items.size, "one item per round, and none of them may be dropped")
+        assertEquals(listOf(50L, 100L, 200L), slept)
+        assertEquals(0L, testScheduler.currentTime, "backoff must go through the injected sleep, not delay()")
+    }
+
+    /**
+     * The backoff is bounded, and the bound is what makes it safe to add at all.
+     *
+     * Ten rounds at the default 1-second throttling base would block for roughly two and a half
+     * minutes — long enough to turn a partial batch failure into an unexplained Lambda timeout. The
+     * budget stops the loop first, and the loop still throws rather than returning a short result.
+     */
+    @Test
+    fun batchGetAllStopsWhenTheBackoffBudgetIsExhausted() = runTest {
+        val harness = DynamoHarness()
+        val db = harnessDynamoDb(harness) { UNPROCESSED_READ to HttpStatusCode.OK }
+
+        val slept = mutableListOf<Long>()
+        val backoff = BatchRetry(
+            // 100 + 200 + 400 fits in 750ms; the fourth wait of 800ms does not.
+            config = RetryConfig(throttlingBaseDelayMillis = 100, maxTotalRetryDuration = 750.milliseconds),
+            random = { 1.0 },
+            sleep = { slept += it },
+        )
+
+        val failure = assertFailsWith<DynamoDbException> {
+            db.batchGetAll("t", listOf(mapOf("pk" to AttributeValue.S("a"))), backoff = backoff)
+        }
+
+        assertEquals("UnprocessedKeysRemain", failure.code)
+        assertEquals(listOf(100L, 200L, 400L), slept, "the budget must stop the loop before maxRounds")
+        assertEquals(4, harness.requests.size, "three resubmissions, then give up")
+        assertTrue("750ms" in (failure.message ?: ""), "the message should name the budget it hit")
     }
 
     /** The write half: chunk to 25 and loop `UnprocessedItems`. */
