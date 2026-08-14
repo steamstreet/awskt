@@ -1,6 +1,10 @@
 package com.steamstreet.awskt.core
 
 import com.steamstreet.awskt.signing.AwsCredentials
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.Test
@@ -47,7 +51,46 @@ class CredentialsTest {
             ),
         ).resolve()
 
-        assertEquals(parseIso8601UtcOrNull("2026-08-10T06:30:00Z"), credentials.expiresAtEpochMillis)
+        assertEquals(
+            parseAwsCredentialExpirationOrNull("2026-08-10T06:30:00Z"),
+            credentials.expiresAtEpochMillis,
+        )
+    }
+
+    /**
+     * `credential_process` implementations are free to publish an offset form, and the digits of
+     * `12:34:56-07:00` are not the digits of a UTC time. Reading them as UTC used to hand the
+     * provider — and therefore [CachedCredentialsProvider]'s effective expiry — a value seven hours
+     * early with no error anywhere. Asserted end to end, and against a literal instant, because the
+     * failure mode is a wrong number rather than a thrown one.
+     */
+    @Test
+    fun environmentProviderHonoursAnOffsetInTheExpiry() = runTest {
+        val credentials = EnvironmentCredentialsProvider(
+            env(
+                "AWS_ACCESS_KEY_ID" to "AKID",
+                "AWS_SECRET_ACCESS_KEY" to SECRET,
+                "AWS_CREDENTIAL_EXPIRATION" to "2026-08-14T12:34:56-07:00",
+            ),
+        ).resolve()
+
+        // 2026-08-14T19:34:56Z — the same instant, seven hours after the digits shown.
+        assertEquals(1_786_736_096_000L, credentials.expiresAtEpochMillis)
+    }
+
+    /** A malformed expiry is "unknown", not a failed resolution. */
+    @Test
+    fun environmentProviderKeepsCredentialsWhenTheExpiryIsMalformed() = runTest {
+        val credentials = EnvironmentCredentialsProvider(
+            env(
+                "AWS_ACCESS_KEY_ID" to "AKID",
+                "AWS_SECRET_ACCESS_KEY" to SECRET,
+                "AWS_CREDENTIAL_EXPIRATION" to "yesterday",
+            ),
+        ).resolve()
+
+        assertEquals("AKID", credentials.accessKeyId)
+        assertNull(credentials.expiresAtEpochMillis)
     }
 
     @Test
@@ -74,10 +117,40 @@ class CredentialsTest {
         assertEquals("AKID", CredentialsProviderChain(failing, working).resolve().accessKeyId)
 
         val error = assertFailsWith<AwsCredentialsNotFoundException> {
-            CredentialsProviderChain(failing, failing).resolve()
+            // The environment is pinned empty: the message picks up an ECS hint from the ambient
+            // process environment otherwise, and this assertion is about the plain case.
+            CredentialsProviderChain(failing, failing).apply { getEnv = { null } }.resolve()
         }
         assertTrue(error.message!!.contains("Tried:"))
         assertFalse(SECRET in error.stackTraceToString())
+        assertFalse(
+            "metadata endpoint" in error.message!!,
+            "nothing in the environment suggested container credentials",
+        )
+    }
+
+    /**
+     * An ECS or Fargate task role publishes nothing in `AWS_ACCESS_KEY_ID`; it exports the path to
+     * the container metadata endpoint and expects the SDK to fetch from it. "No provider supplied
+     * credentials" is true and useless there, so the environment's own evidence is read back.
+     */
+    @Test
+    fun theChainNamesContainerCredentialsWhenEcsExportedThePath() = runTest {
+        val failing = AwsCredentialsProvider { throw AwsCredentialsNotFoundException("nope") }
+
+        for (variable in listOf(
+            "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI",
+            "AWS_CONTAINER_CREDENTIALS_FULL_URI",
+        )) {
+            val chain = CredentialsProviderChain(failing).apply {
+                getEnv = { name -> if (name == variable) "/v2/credentials/abc123" else null }
+            }
+            val error = assertFailsWith<AwsCredentialsNotFoundException> { chain.resolve() }
+            val message = error.message!!
+            assertTrue(variable in message, message)
+            assertTrue("container metadata endpoint" in message, message)
+            assertTrue("does not support" in message, message)
+        }
     }
 
     /**
@@ -150,6 +223,192 @@ class CredentialsTest {
         assertEquals("AKID2", provider.resolve().accessKeyId)
     }
 
+    // -- Concurrency: single-flight refresh, lock-free hits ----------------------------------
+
+    /**
+     * A stampede of concurrent resolves onto a stale cache must produce **one** call to the
+     * delegate. That is the property the mutex exists for, and making the hit path lock-free must
+     * not cost it: without single-flight, a Lambda fanning out sixteen requests answers a cold
+     * cache with sixteen IMDS round trips, which is both slow and rate-limited.
+     *
+     * The assertion that matters is made while every racer is parked — one inside the delegate, the
+     * rest on the mutex — because after the gate opens the count is indistinguishable from a
+     * cache-hit-driven one.
+     */
+    @Test
+    fun concurrentResolvesOnAStaleCacheCallTheDelegateExactlyOnce() = runTest {
+        val gate = CompletableDeferred<Unit>()
+        var calls = 0
+        val provider = CachedCredentialsProvider(
+            delegate = {
+                calls++
+                gate.await()
+                AwsCredentials("AKID$calls", SECRET)
+            },
+            clock = { 0L },
+        )
+
+        val racers = List(16) { async { provider.resolve() } }
+        advanceUntilIdle()
+        assertEquals(1, calls, "only the coroutine holding the lock may consult the delegate")
+
+        gate.complete(Unit)
+        val resolved = racers.awaitAll()
+        assertEquals(1, calls, "the waiters must take the refreshed entry, not resolve again")
+        assertTrue(resolved.all { it.accessKeyId == "AKID1" }, "every racer must get the one result")
+    }
+
+    /**
+     * The hit path takes no lock.
+     *
+     * One coroutine is parked *inside* the delegate, so it holds the refresh mutex. A second
+     * resolve, for which the cached entry is fresh, must complete anyway. Under the previous
+     * implementation — `mutex.withLock` wrapped around the cache read as well as the refresh — that
+     * second call suspends until the first finishes, and this test hangs rather than fails.
+     *
+     * The injected clock is moved *backwards* deliberately. The lock is only ever taken on a miss,
+     * so "mutex held and cache fresh" cannot arise from time moving forwards alone; rewinding the
+     * test clock is the only way to hold both conditions at the same instant.
+     */
+    @Test
+    fun aCacheHitCompletesWhileAnotherCoroutineHoldsTheRefreshLock() = runTest {
+        var now = 0L
+        var calls = 0
+        val insideDelegate = CompletableDeferred<Unit>()
+        val release = CompletableDeferred<Unit>()
+        val provider = CachedCredentialsProvider(
+            delegate = {
+                calls++
+                if (calls > 1) {
+                    insideDelegate.complete(Unit)
+                    release.await()
+                }
+                AwsCredentials("AKID$calls", SECRET)
+            },
+            expireAfter = 15.minutes,
+            refreshBuffer = 10.seconds,
+            clock = { now },
+        )
+
+        assertEquals("AKID1", provider.resolve().accessKeyId, "warm the cache; entry is good to 15m")
+
+        now = 20.minutes.inWholeMilliseconds
+        val refreshing = async { provider.resolve() }
+        insideDelegate.await()
+
+        // Back inside the cached entry's window: the cache is fresh, and the mutex is held.
+        now = 5.minutes.inWholeMilliseconds
+        assertEquals("AKID1", provider.resolve().accessKeyId, "a fresh entry must be served unlocked")
+        assertTrue(refreshing.isActive, "the refresh must still be the one holding the lock")
+
+        release.complete(Unit)
+        assertEquals("AKID2", refreshing.await().accessKeyId)
+    }
+
+    // -- Stale-on-error ----------------------------------------------------------------------
+
+    /**
+     * A refresh failure serves the previous credential rather than failing every caller.
+     *
+     * The cache ceiling being past is this library's re-resolution cadence expiring, not AWS's
+     * verdict on the credential — so a briefly unreachable IMDS/STS must not convert into a total
+     * outage of everything the process is doing. The refreshed value replaces the stale one as soon
+     * as the delegate recovers, and the stale entry is *not* re-stamped in the meantime, so the
+     * next call tries again instead of pinning it for another window.
+     */
+    @Test
+    fun aFailedRefreshServesTheStaleCredentialAndTheNextSuccessReplacesIt() = runTest {
+        var now = 0L
+        var calls = 0
+        var failing = false
+        val provider = CachedCredentialsProvider(
+            delegate = {
+                calls++
+                if (failing) throw IllegalStateException("IMDS unreachable")
+                AwsCredentials("AKID$calls", SECRET)
+            },
+            expireAfter = 15.minutes,
+            refreshBuffer = 10.seconds,
+            clock = { now },
+        )
+
+        assertEquals("AKID1", provider.resolve().accessKeyId)
+
+        now += 20.minutes.inWholeMilliseconds
+        failing = true
+        assertEquals("AKID1", provider.resolve().accessKeyId, "a transient failure must not fail the call")
+        assertEquals("AKID1", provider.resolve().accessKeyId, "and must keep serving until it recovers")
+        assertEquals(3, calls, "a served stale entry is not re-stamped; the delegate is retried")
+
+        failing = false
+        assertEquals("AKID4", provider.resolve().accessKeyId, "recovery replaces the stale credential")
+        assertEquals("AKID4", provider.resolve().accessKeyId, "and the replacement is then cached")
+        assertEquals(4, calls)
+    }
+
+    /** Nothing has ever been cached, so there is nothing plausible to serve: the failure is the answer. */
+    @Test
+    fun aFailedRefreshWithNothingCachedPropagates() = runTest {
+        val provider = CachedCredentialsProvider(
+            delegate = { throw IllegalStateException("IMDS unreachable") },
+            clock = { 0L },
+        )
+        assertFailsWith<IllegalStateException> { provider.resolve() }
+    }
+
+    /**
+     * A cached credential that has passed **its own** stated expiry is dead, not merely stale.
+     * Serving it would sign with a credential AWS will reject, turning a clear failure into a
+     * `403 InvalidClientTokenId` a caller has to reverse-engineer.
+     */
+    @Test
+    fun aStaleEntryWhoseCredentialHasActuallyExpiredPropagatesInstead() = runTest {
+        var now = 0L
+        var failing = false
+        val provider = CachedCredentialsProvider(
+            delegate = {
+                if (failing) throw IllegalStateException("STS unreachable")
+                AwsCredentials("AKID", SECRET, expiresAtEpochMillis = 60_000)
+            },
+            expireAfter = 15.minutes,
+            refreshBuffer = 10.seconds,
+            clock = { now },
+        )
+
+        assertEquals("AKID", provider.resolve().accessKeyId)
+
+        // Past the credential's own 60-second expiry, not merely past the cache ceiling.
+        now = 120_000
+        failing = true
+        assertFailsWith<IllegalStateException> { provider.resolve() }
+    }
+
+    /**
+     * Cancellation is not a credential-source outage. Answering a cancelled caller with a stale
+     * credential — or worse, swallowing the cancellation — would let work continue after the scope
+     * that asked for it has gone away, which is the same reason [CredentialsProviderChain] carves
+     * `CancellationException` out of its own catch-all.
+     */
+    @Test
+    fun cancellationPropagatesRatherThanBeingAnsweredWithAStaleCredential() = runTest {
+        var now = 0L
+        var cancelling = false
+        val provider = CachedCredentialsProvider(
+            delegate = {
+                if (cancelling) throw CancellationException("scope cancelled")
+                AwsCredentials("AKID", SECRET)
+            },
+            expireAfter = 15.minutes,
+            refreshBuffer = 10.seconds,
+            clock = { now },
+        )
+
+        assertEquals("AKID", provider.resolve().accessKeyId)
+        now += 20.minutes.inWholeMilliseconds
+        cancelling = true
+        assertFailsWith<CancellationException> { provider.resolve() }
+    }
+
     @Test
     fun providersNeverRenderCredentialMaterial() = runTest {
         val static = StaticCredentialsProvider(AwsCredentials("AKID", SECRET, TOKEN))
@@ -165,9 +424,37 @@ class CredentialsTest {
 
     @Test
     fun malformedExpiryDegradesToUnknownRatherThanThrowing() {
-        assertNull(parseIso8601UtcOrNull("not a date"))
-        assertNull(parseIso8601UtcOrNull(""))
-        assertEquals(0L, parseIso8601UtcOrNull("1970-01-01T00:00:00Z"))
+        assertNull(parseAwsCredentialExpirationOrNull("not a date"))
+        assertNull(parseAwsCredentialExpirationOrNull(""))
+        // Well-formed shape, impossible date: still null rather than a silently rolled-over instant.
+        assertNull(parseAwsCredentialExpirationOrNull("2026-13-45T99:99:99Z"))
+        assertEquals(0L, parseAwsCredentialExpirationOrNull("1970-01-01T00:00:00Z"))
+    }
+
+    /**
+     * The three forms `AWS_CREDENTIAL_EXPIRATION` is published in. The offset case is the
+     * regression: the previous parser read fixed substring positions and discarded everything after
+     * the seconds, so this input came back as the UTC reading of its digits — wrong by the offset,
+     * with nothing to indicate it.
+     */
+    @Test
+    fun expiryAcceptsZOffsetAndFractionalForms() {
+        assertEquals(1_786_710_896_000L, parseAwsCredentialExpirationOrNull("2026-08-14T12:34:56Z"))
+        assertEquals(
+            1_786_736_096_000L,
+            parseAwsCredentialExpirationOrNull("2026-08-14T12:34:56-07:00"),
+            "an offset must move the instant, not be ignored",
+        )
+        assertEquals(
+            1_786_710_896_000L,
+            parseAwsCredentialExpirationOrNull("2026-08-14T12:34:56+00:00"),
+            "+00:00 is the same instant as Z",
+        )
+        assertEquals(
+            1_786_710_896_123L,
+            parseAwsCredentialExpirationOrNull("2026-08-14T12:34:56.123Z"),
+            "fractional seconds are kept to millisecond precision",
+        )
     }
 }
 

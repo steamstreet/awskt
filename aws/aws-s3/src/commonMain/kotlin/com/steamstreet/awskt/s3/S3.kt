@@ -1,8 +1,10 @@
 package com.steamstreet.awskt.s3
 
+import com.steamstreet.awskt.core.AwsCallObserver
 import com.steamstreet.awskt.core.AwsCredentialsProvider
 import com.steamstreet.awskt.core.AwsEndpoint
 import com.steamstreet.awskt.core.AwsHttpResponse
+import com.steamstreet.awskt.core.AwsHttpTimeouts
 import com.steamstreet.awskt.core.AwsProtocol
 import com.steamstreet.awskt.core.AwsServiceClient
 import com.steamstreet.awskt.core.OperationSafety
@@ -45,12 +47,59 @@ public val S3_PROTOCOL: AwsProtocol = AwsProtocol.restXml(endpointPrefix = "s3")
  *
  * ### Extending it
  *
- * As with `DynamoDb` (Decision 18), [client] is public and the four operations have no privileged
- * access to it.
+ * As with `DynamoDb` (Decision 18), the signed transport is public and the four operations have no
+ * privileged access to it — each is a `callRaw` on exactly the object [clientFor] hands back. An
+ * operation this library does not ship (`ListObjectsV2`, `CopyObject`, the multipart calls) is
+ * therefore an extension function downstream, with identical signing, retry and error handling:
+ *
+ * ```kotlin
+ * suspend fun S3.listObjectsV2(bucket: String, region: String, prefix: String): AwsHttpResponse =
+ *     clientFor(bucket).callRaw(
+ *         method = "GET",
+ *         // "" under virtual-hosted addressing, "/{bucket}" under path-style. The client from
+ *         // clientFor is already pointed at the matching authority, and the path must agree with
+ *         // the same decision — resolveS3Endpoint is what made it.
+ *         path = resolveS3Endpoint(bucket, region).basePath.ifEmpty { "/" },
+ *         query = listOf("list-type" to "2", "prefix" to prefix),
+ *         operation = "ListObjectsV2",
+ *         payloadHash = PayloadHash.EmptyBody,
+ *         signedBodyHeader = SignedBodyHeader.X_AMZ_CONTENT_SHA256,
+ *         doubleUriEncode = false,
+ *         normalizeUriPath = false,
+ *     )
+ * ```
+ *
+ * Those last four arguments are S3's dialect rather than `callRaw`'s defaults: S3 carries the
+ * payload hash in `x-amz-content-sha256`, and it neither double-encodes nor normalizes the path.
+ * `S3ExtensionSeamTest` drives that exact shape from outside this file, so the seam is proven
+ * rather than merely documented.
+ *
+ * The example takes the region — and would have to take [S3Config.endpointUrl] and
+ * [S3Config.forcePathStyle] as well — because addressing is resolved from configuration this
+ * interface does not expose, while the *path* has to agree with the addressing decision the client
+ * was built from. Handing the resolved endpoint back per bucket is a plausible additive follow-up;
+ * it is not needed for the operations shipped here.
+ *
+ * ### Why the seam takes a bucket
+ *
+ * Not a convenience. S3 addresses the bucket in the *authority*, so under virtual-hosted addressing
+ * the signed `Host` differs per bucket — a transport that is not bound to a bucket is bound to the
+ * **wrong** one. This interface therefore has no bucket-less `client` property, and the omission is
+ * deliberate: the one it used to carry returned whichever bucket's client happened to be built
+ * first, or — on an instance that had issued no call yet — one built for a literal placeholder
+ * bucket name. Either signs an authority the request is not sent to, which S3 answers with
+ * `SignatureDoesNotMatch`, and whether it appeared at all depended on call order.
  */
 public interface S3 : AutoCloseable {
-    /** The signed transport. Public because it is the extension seam. */
-    public val client: AwsServiceClient
+    /**
+     * The signed transport for [bucket] — **the** extension seam, and the same object the four
+     * operations below send on.
+     *
+     * One client per bucket, built on demand and cached, so this is a map lookup on the hot path
+     * and safe to call per request. [bucket] must be expressible in a URI; a blank one raises
+     * [InvalidBucketNameException] here rather than quietly signing for somewhere else.
+     */
+    public fun clientFor(bucket: String): AwsServiceClient
 
     public suspend fun getObject(request: GetObjectRequest): GetObjectResponse
     public suspend fun putObject(request: PutObjectRequest): PutObjectResponse
@@ -58,14 +107,40 @@ public interface S3 : AutoCloseable {
     public suspend fun deleteObject(request: DeleteObjectRequest): DeleteObjectResponse
 }
 
-/** Configuration for [S3]. */
+/**
+ * Configuration for [S3].
+ *
+ * **Read once, at construction.** [S3] snapshots every value it needs into the client it returns,
+ * so mutating this object afterwards has no effect on that client — and cannot race with its
+ * in-flight requests, which is the reason the snapshot exists rather than a limitation of it.
+ */
 public class S3Config {
     public var region: String? = null
     public var endpointUrl: String? = null
     public var credentialsProvider: AwsCredentialsProvider? = null
+
+    /**
+     * A client to send on, instead of one built here.
+     *
+     * Supplying one **bypasses [caInfo] and [httpTimeouts]**: those are arguments to the client this
+     * factory would have built, and a client the caller already owns is configured by the caller. A
+     * caller-supplied client with no `HttpTimeout` plugin has no attempt bound at all, which for S3
+     * is the difference between a slow download and a hung Lambda.
+     */
     public var httpClient: HttpClient? = null
     public var retryConfig: RetryConfig = RetryConfig(maxAttempts = 3)
     public var caInfo: String? = null
+
+    /**
+     * Per-attempt time limits for the client this factory builds. Ignored when [httpClient] is set.
+     *
+     * **This is the module where the default request timeout can bite.** It is a whole-attempt
+     * budget covering the body transfer, and [maxBufferedDownloadBytes] permits 64 MB by default —
+     * which inside the default 30 s needs a sustained ~2.2 MB/s. In-Region that is comfortable;
+     * over the public internet, or with the ceiling raised, it is not. Raise the two together, or a
+     * download that would have completed is turned into a timeout that is then retried from zero.
+     */
+    public var httpTimeouts: AwsHttpTimeouts = AwsHttpTimeouts()
 
     /** Every local S3 implementation is path-style. Set with [endpointUrl]. */
     public var forcePathStyle: Boolean = false
@@ -86,6 +161,21 @@ public class S3Config {
     /** The ceiling on an **uploaded** body. Default 64 MB. */
     public var maxBufferedUploadBytes: Long = 64L * 1024 * 1024
 
+    /**
+     * Notified of every attempt, retry decision and give-up, on **every** per-bucket client this
+     * config builds. Null means no instrumentation.
+     *
+     * `AwsCallEvent.operation` carries the S3 operation name (`"GetObject"`, `"PutObject"`) — S3 is
+     * REST-shaped and does not send an `X-Amz-Target`, but these calls name their operation anyway,
+     * which is also what puts `x-id=GetObject` in the query. The **bucket** is not on the event; wrap
+     * the observer per bucket if that dimension matters.
+     *
+     * Unlike [httpTimeouts] and [caInfo], this is **not** bypassed by supplying your own
+     * [httpClient]: it observes the retry loop, which is this library's, rather than the transport
+     * underneath it, which may be the caller's.
+     */
+    public var observer: AwsCallObserver? = null
+
     // Injected by tests so the retry loop is deterministic and does not really sleep. Internal:
     // these are not a supported way to configure a client.
     internal var clock: () -> Long = { kotlin.time.Clock.System.now().toEpochMilliseconds() }
@@ -96,27 +186,71 @@ public class S3Config {
 /** Builds an S3 client. */
 public fun S3(configure: S3Config.() -> Unit = {}): S3 {
     val config = S3Config().apply(configure)
-    val region = resolveRegion(config.region)
-    val httpClient = config.httpClient ?: awsHttpClient(config.caInfo)
+    val httpClient = config.httpClient ?: awsHttpClient(config.caInfo, config.httpTimeouts)
+    // Every value read out of `config` here and none afterwards. `S3Config` is a builder of `var`s
+    // handed to a caller-supplied lambda, and the caller keeps a reference to it; a client that
+    // re-read it per request would let a mutation on one thread change the size ceiling, the
+    // addressing style or the credentials of a request already in flight on another, with no
+    // synchronisation and — on the JVM — no visibility guarantee either. `region` was already
+    // snapshotted; the rest now follow it.
     return DefaultS3(
-        region = region,
-        config = config,
+        region = resolveRegion(config.region),
+        endpointUrl = config.endpointUrl,
+        forcePathStyle = config.forcePathStyle,
+        allowInsecureEndpoint = config.allowInsecureEndpoint,
+        // Resolved once, so all of this client's per-bucket transports share one credential cache
+        // instead of each building its own default provider and re-resolving independently.
+        credentialsProvider = config.credentialsProvider ?: defaultCredentialsProvider(),
+        retryConfig = config.retryConfig,
+        maxBufferedDownloadBytes = config.maxBufferedDownloadBytes,
+        maxBufferedUploadBytes = config.maxBufferedUploadBytes,
         httpClient = httpClient,
         ownsHttpClient = config.httpClient == null,
+        observer = config.observer,
+        clock = config.clock,
+        random = config.random,
+        sleep = config.sleep,
     )
 }
+
+/**
+ * One bucket's signed transport and the base path that goes with it.
+ *
+ * Both come out of a single `resolveS3Endpoint` call, and neither is meaningful without the other:
+ * the authority the client signs and the path the request carries are two halves of one addressing
+ * decision. Internal — [S3.clientFor] still hands back the `AwsServiceClient`, because that is the
+ * extension seam, and an extension re-resolves the endpoint itself (with the region and the
+ * configuration it was given) exactly as the interface KDoc shows.
+ */
+internal class BucketClient(val client: AwsServiceClient, val basePath: String)
 
 @OptIn(ExperimentalAtomicApi::class)
 internal class DefaultS3(
     private val region: String,
-    private val config: S3Config,
+    private val endpointUrl: String?,
+    private val forcePathStyle: Boolean,
+    private val allowInsecureEndpoint: Boolean,
+    private val credentialsProvider: AwsCredentialsProvider,
+    private val retryConfig: RetryConfig,
+    private val maxBufferedDownloadBytes: Long,
+    private val maxBufferedUploadBytes: Long,
     private val httpClient: HttpClient,
     private val ownsHttpClient: Boolean,
+    private val observer: AwsCallObserver?,
+    private val clock: () -> Long,
+    private val random: () -> Double,
+    private val sleep: suspend (Long) -> Unit,
 ) : S3 {
 
     /**
      * S3 addresses the bucket in the *authority*, so the endpoint — and therefore the signed host —
      * differs per bucket. One `AwsServiceClient` per bucket is built on demand and reused.
+     *
+     * The cached value is a [BucketClient] rather than the client alone, because the endpoint
+     * resolution that produced the client also produced the base path, and the two are the same
+     * decision. Caching only the client meant every operation re-ran `resolveS3Endpoint` — re-reading
+     * `AWS_ENDPOINT_URL_S3`/`AWS_ENDPOINT_URL` and re-validating the bucket name on every request —
+     * to recompute a string the cache already implied.
      *
      * An immutable map behind an atomic reference rather than a `mutableMapOf`. One `S3` instance is
      * shared across concurrent coroutines by design, and `Dispatchers.Default` is multi-threaded on
@@ -124,18 +258,19 @@ internal class DefaultS3(
      * mutating one plain `LinkedHashMap` from two threads, which corrupts the map itself rather
      * than merely losing an entry. Reads are a single volatile load and take no lock.
      */
-    private val clientsByBucket = AtomicReference<Map<String, AwsServiceClient>>(emptyMap())
-
-    override val client: AwsServiceClient
-        get() = clientsByBucket.load().values.firstOrNull() ?: clientFor("")
+    private val clientsByBucket = AtomicReference<Map<String, BucketClient>>(emptyMap())
 
     /** The buckets currently cached. Internal so a concurrency test can assert on the cache. */
     internal val cachedBuckets: Set<String> get() = clientsByBucket.load().keys
 
-    // Internal, not private, so a concurrency test can hammer it directly. Driving it through
-    // `getObject` instead would put an HTTP round trip between the cache read and the cache write,
-    // which serialises the callers and hides the very interleaving the test exists to catch.
-    internal fun clientFor(bucket: String): AwsServiceClient {
+    // Public through the interface, which is also what lets a concurrency test hammer it directly.
+    // Driving it through `getObject` instead would put an HTTP round trip between the cache read
+    // and the cache write, which serialises the callers and hides the very interleaving the test
+    // exists to catch.
+    override fun clientFor(bucket: String): AwsServiceClient = bucketClientFor(bucket).client
+
+    /** [clientFor] with the resolved base path still attached — what the operations below need. */
+    private fun bucketClientFor(bucket: String): BucketClient {
         clientsByBucket.load()[bucket]?.let { return it }
         val built = buildClientFor(bucket)
 
@@ -152,49 +287,54 @@ internal class DefaultS3(
         }
     }
 
-    private fun buildClientFor(bucket: String): AwsServiceClient {
+    private fun buildClientFor(bucket: String): BucketClient {
+        // No placeholder substitution for a blank bucket. There used to be one, to feed the
+        // bucket-less `client` property this interface no longer has; with that gone, a blank
+        // bucket is a caller mistake, and `resolveS3Endpoint` says so as an
+        // `InvalidBucketNameException` instead of building a client aimed at a bucket that does
+        // not exist.
         val endpoint = resolveS3Endpoint(
-            bucket = bucket.ifBlank { "placeholder-bucket" },
+            bucket = bucket,
             region = region,
-            endpointOverride = config.endpointUrl,
-            forcePathStyle = config.forcePathStyle,
-            allowInsecureEndpoint = config.allowInsecureEndpoint,
+            endpointOverride = endpointUrl,
+            forcePathStyle = forcePathStyle,
+            allowInsecureEndpoint = allowInsecureEndpoint,
         )
-        return AwsServiceClient(
+        val (host, explicitPort) = splitAuthority(endpoint.authority)
+        val client = AwsServiceClient(
             httpClient = httpClient,
-            credentialsProvider = config.credentialsProvider ?: defaultCredentialsProvider(),
+            credentialsProvider = credentialsProvider,
             endpoint = AwsEndpoint(
                 url = endpoint.origin,
                 authority = endpoint.authority,
                 protocol = if (endpoint.scheme == "https") URLProtocol.HTTPS else URLProtocol.HTTP,
-                host = endpoint.authority.substringBefore(':'),
-                port = endpoint.authority.substringAfter(':', "").toIntOrNull()
-                    ?: if (endpoint.scheme == "https") 443 else 80,
+                host = host,
+                port = explicitPort ?: if (endpoint.scheme == "https") 443 else 80,
             ),
             region = region,
             protocol = S3_PROTOCOL,
-            retryConfig = config.retryConfig,
-            clock = config.clock,
-            random = config.random,
-            sleep = config.sleep,
+            retryConfig = retryConfig,
+            // Every per-bucket client shares the one observer: a caller that configured
+            // instrumentation wants it for the whole S3 client, not for whichever bucket happened to
+            // be touched first.
+            observer = observer,
+            clock = clock,
+            random = random,
+            sleep = sleep,
         )
+        // The base path is the other half of the addressing decision just made — `""` under
+        // virtual-hosted, `/{bucket}` under path-style — and it must agree with the authority this
+        // client signs. Keeping them together is what makes it impossible for one to be recomputed
+        // from configuration the other did not see.
+        return BucketClient(client, endpoint.basePath)
     }
-
-    /** The base path (`""` or `/bucket`) for a bucket under the resolved addressing style. */
-    private fun basePathFor(bucket: String): String = resolveS3Endpoint(
-        bucket = bucket,
-        region = region,
-        endpointOverride = config.endpointUrl,
-        forcePathStyle = config.forcePathStyle,
-        allowInsecureEndpoint = config.allowInsecureEndpoint,
-    ).basePath
 
     /**
      * Encoded **once**, with slashes preserved and no normalization. The same string is signed and
      * sent — `callRaw` documents that it never re-encodes the path.
      */
-    private fun pathFor(bucket: String, key: String): String =
-        basePathFor(bucket) + "/" + sigV4UriEncode(key, encodeSlash = false)
+    private fun pathFor(bucket: BucketClient, key: String): String =
+        bucket.basePath + "/" + sigV4UriEncode(key, encodeSlash = false)
 
     private suspend fun call(
         bucket: String,
@@ -208,11 +348,14 @@ internal class DefaultS3(
         inspectBeforeBody: ((status: Int, headers: Map<String, String>) -> Unit)? = null,
         validateBody: ((response: AwsHttpResponse) -> Unit)? = null,
     ): AwsHttpResponse = mapS3Errors {
-        clientFor(bucket).callRaw(
+        // One cache lookup for the transport *and* the path, so a request resolves its endpoint
+        // exactly zero times once the bucket has been seen.
+        val target = bucketClientFor(bucket)
+        target.client.callRaw(
             inspectBeforeBody = inspectBeforeBody,
             validateBody = validateBody,
             method = method,
-            path = pathFor(bucket, key),
+            path = pathFor(target, key),
             query = query,
             headers = headers,
             body = body,
@@ -262,10 +405,10 @@ internal class DefaultS3(
             inspectBeforeBody = { status, responseHeaders ->
                 if (status in 200..299) {
                     val declared = responseHeaders.header("content-length")?.toLongOrNull()
-                    if (declared != null && declared > config.maxBufferedDownloadBytes) {
+                    if (declared != null && declared > maxBufferedDownloadBytes) {
                         throw S3PayloadTooLargeException(
                             "s3://${request.bucket}/${request.key} is $declared bytes, over the " +
-                                "${config.maxBufferedDownloadBytes}-byte maxBufferedDownloadBytes " +
+                                "${maxBufferedDownloadBytes}-byte maxBufferedDownloadBytes " +
                                 "ceiling. Raise the limit, or fetch it in pieces with " +
                                 "GetObjectRequest.range.",
                         )
@@ -280,7 +423,7 @@ internal class DefaultS3(
             // refusal is a policy decision made below, and raising it as truncation here would put
             // it on the retryable side of the loop, which is the bug this arrangement fixes.
             validateBody = { validated ->
-                if (validated.body.size.toLong() <= config.maxBufferedDownloadBytes) {
+                if (validated.body.size.toLong() <= maxBufferedDownloadBytes) {
                     checkDownloadComplete(
                         declared = validated.headers.header("content-length")?.toLongOrNull(),
                         actual = validated.body.size.toLong(),
@@ -295,10 +438,10 @@ internal class DefaultS3(
 
         // Separately bound what actually arrived, so an absent or understated Content-Length
         // cannot walk past the ceiling.
-        if (response.body.size.toLong() > config.maxBufferedDownloadBytes) {
+        if (response.body.size.toLong() > maxBufferedDownloadBytes) {
             throw S3PayloadTooLargeException(
                 "s3://${request.bucket}/${request.key} returned ${response.body.size} bytes, over " +
-                    "the ${config.maxBufferedDownloadBytes}-byte maxBufferedDownloadBytes ceiling " +
+                    "the ${maxBufferedDownloadBytes}-byte maxBufferedDownloadBytes ceiling " +
                     "(the declared Content-Length was $declared). Use GetObjectRequest.range.",
             )
         }
@@ -319,10 +462,10 @@ internal class DefaultS3(
     }
 
     override suspend fun putObject(request: PutObjectRequest): PutObjectResponse {
-        if (request.body.size.toLong() > config.maxBufferedUploadBytes) {
+        if (request.body.size.toLong() > maxBufferedUploadBytes) {
             throw S3PayloadTooLargeException(
                 "Refusing to upload ${request.body.size} bytes to s3://${request.bucket}/${request.key}: " +
-                    "over the ${config.maxBufferedUploadBytes}-byte maxBufferedUploadBytes ceiling.",
+                    "over the ${maxBufferedUploadBytes}-byte maxBufferedUploadBytes ceiling.",
             )
         }
 
@@ -333,7 +476,9 @@ internal class DefaultS3(
             request.contentDisposition?.let { add("Content-Disposition" to it) }
             request.ifNoneMatch?.let { add("If-None-Match" to it) }
             // AWS tells REST callers not to send x-amz-sdk-checksum-algorithm, and we do not.
-            add("accept-encoding" to "identity")
+            // `accept-encoding: identity` is not added here either: `callRaw` adds it to every
+            // request, and a second copy was signed and sent alongside the first as
+            // `identity,identity`.
             for ((name, value) in request.metadata) add("x-amz-meta-$name" to value)
         }
 
@@ -363,7 +508,9 @@ internal class DefaultS3(
             operation = "HeadObject", safety = OperationSafety.IDEMPOTENT,
         )
         return HeadObjectResponse(
-            contentLength = response.headers.header("content-length")?.toLongOrNull() ?: 0L,
+            // No `?: 0L`: a HEAD has no body to measure, so an absent header is unknown rather than
+            // empty, and saying "0" makes a real object indistinguishable from one.
+            contentLength = response.headers.header("content-length")?.toLongOrNull(),
             contentType = response.headers.header("content-type"),
             eTag = response.headers.header("etag")?.trim('"'),
             lastModified = response.headers.header("last-modified"),
@@ -418,11 +565,19 @@ internal fun checkDownloadComplete(
     }
 }
 
-/** Header lookup that does not care about case, because HTTP does not. */
-internal fun Map<String, String>.header(name: String): String? =
-    this[name] ?: entries.firstOrNull { it.key.equals(name, ignoreCase = true) }?.value
+/**
+ * Header lookup. HTTP does not care about case, and neither does this — because the keys are
+ * **already lowercased**: `aws-core`'s `AwsServiceClient.send` lowercases every response header name
+ * as it collects them, and that is the only thing that builds the maps read here (the operations'
+ * `response.headers`, and the map handed to `inspectBeforeBody`).
+ *
+ * So [name] must be lowercase, which every call site in this file is. What this replaced was a
+ * case-insensitive scan of the whole entry set per header — run a dozen times per `getObject` — to
+ * find a key that could only ever have matched directly.
+ */
+internal fun Map<String, String>.header(name: String): String? = this[name]
 
-/** `x-amz-meta-*` with the prefix stripped and the name lowercased. */
+/** `x-amz-meta-*` with the prefix stripped. Names are lowercase already — see [header]. */
 internal fun Map<String, String>.userMetadata(): Map<String, String> =
-    entries.filter { it.key.startsWith("x-amz-meta-", ignoreCase = true) }
-        .associate { it.key.substring("x-amz-meta-".length).lowercase() to it.value }
+    entries.filter { it.key.startsWith("x-amz-meta-") }
+        .associate { it.key.substring("x-amz-meta-".length) to it.value }

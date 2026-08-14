@@ -3,6 +3,8 @@ package com.steamstreet.awskt.core
 import com.steamstreet.awskt.signing.AwsCredentials
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlin.concurrent.atomics.AtomicReference
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -30,8 +32,16 @@ public class StaticCredentialsProvider(
 }
 
 /**
- * Reads the standard environment variables. This is the only provider a Lambda, an ECS task or a
- * CodeBuild job needs, which is why the chain's default is so short.
+ * Reads the standard environment variables. This is the only provider a Lambda or a CodeBuild job
+ * needs, which is why the chain's default is so short.
+ *
+ * **An ECS or Fargate task role is not one of those cases.** ECS publishes the task's credentials
+ * at the container metadata endpoint and exports only the *path* to it — in
+ * `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` or `AWS_CONTAINER_CREDENTIALS_FULL_URI` — so
+ * `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are simply absent and this provider has nothing
+ * to read. Fetching from that endpoint is a provider this library does not ship;
+ * [CredentialsProviderChain] says so by name when one of those variables is set and the chain still
+ * came up empty.
  *
  * `AWS_CREDENTIAL_EXPIRATION` is read when present, but **it is absent in Lambda** — see
  * [AwsCredentials.expiresAtEpochMillis]. Nothing may treat a null expiry as "never expires".
@@ -51,7 +61,8 @@ public class EnvironmentCredentialsProvider(
             accessKeyId = accessKeyId,
             secretAccessKey = secretAccessKey,
             sessionToken = getEnv("AWS_SESSION_TOKEN")?.takeIf { it.isNotEmpty() },
-            expiresAtEpochMillis = getEnv("AWS_CREDENTIAL_EXPIRATION")?.let(::parseIso8601UtcOrNull),
+            expiresAtEpochMillis =
+                getEnv("AWS_CREDENTIAL_EXPIRATION")?.let(::parseAwsCredentialExpirationOrNull),
         )
     }
 
@@ -67,6 +78,13 @@ public class CredentialsProviderChain(
     init {
         require(providers.isNotEmpty()) { "a credentials chain needs at least one provider" }
     }
+
+    /**
+     * Injected by tests so the diagnosis below never depends on the ambient process environment.
+     * Internal — not a supported way to configure a chain, and internal declarations do not appear
+     * in the ABI dump. Same shape as `S3Presigner`'s and `EnvironmentCredentialsProvider`'s seams.
+     */
+    internal var getEnv: (String) -> String? = ::platformGetEnv
 
     override suspend fun resolve(): AwsCredentials {
         var firstFailure: Throwable? = null
@@ -86,10 +104,40 @@ public class CredentialsProviderChain(
                 tried.append(provider.toString())
             }
         }
-        throw AwsCredentialsNotFoundException("No provider supplied credentials. Tried: $tried", firstFailure)
+        throw AwsCredentialsNotFoundException(
+            "No provider supplied credentials. Tried: $tried" + containerCredentialsHint(),
+            firstFailure,
+        )
+    }
+
+    /**
+     * The one failure worth naming, because the environment says exactly what happened.
+     *
+     * A task running under an ECS or Fargate task role has no `AWS_ACCESS_KEY_ID` at all: ECS
+     * exports the *path* to the container metadata endpoint instead and expects the SDK to fetch
+     * from it. The generic "no provider supplied credentials" is true but sends the reader looking
+     * for a missing variable that was never supposed to be there, so when one of those paths is set
+     * the message says which capability is missing rather than which variable is.
+     */
+    private fun containerCredentialsHint(): String {
+        val variable = CONTAINER_CREDENTIAL_VARIABLES.firstOrNull { getEnv(it) != null } ?: return ""
+        return ". $variable is set, so this is an ECS or Fargate task role: container credentials " +
+            "are published at the container metadata endpoint, which this chain does not support. " +
+            "Supply a provider that reads that endpoint, or set the standard credential variables."
     }
 
     override fun toString(): String = "CredentialsProviderChain(${providers.joinToString()})"
+
+    private companion object {
+        /**
+         * Both variables ECS exports. The relative form is the common one; the full form appears on
+         * the EC2 launch type and outside ECS proper.
+         */
+        val CONTAINER_CREDENTIAL_VARIABLES = listOf(
+            "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI",
+            "AWS_CONTAINER_CREDENTIALS_FULL_URI",
+        )
+    }
 }
 
 /**
@@ -102,28 +150,111 @@ public class CredentialsProviderChain(
  * [refreshBuffer] exists because credentials are resolved at the top of *each* retry attempt: with
  * four attempts and a 20-second backoff cap, one call can span a minute, and a credential that was
  * valid when the call started may not be when the last attempt signs.
+ *
+ * ### The hit path takes no lock
+ *
+ * Credentials are resolved at the top of every retry attempt of every call, so on a fan-out of
+ * `async {}` requests this is one of the hottest suspend functions in the library. The cached state
+ * is therefore one immutable [CacheEntry] behind an atomic reference: a hit is a single load and a
+ * comparison, with no `Mutex` acquisition and so no queueing of concurrent readers behind each
+ * other. The mutex still exists and still guards *refresh* — a hundred coroutines noticing a stale
+ * entry at once must produce one call to the delegate, not a hundred — and the holder re-checks
+ * freshness after acquiring, because someone else may have refreshed while it waited.
+ *
+ * ### A failed refresh serves the stale credential rather than failing every caller
+ *
+ * When [delegate] throws and the previously cached credential is **not itself expired** — its
+ * `expiresAtEpochMillis` is null or still in the future — that credential is returned instead of
+ * the failure. This is a deliberate behaviour choice and worth stating plainly:
+ *
+ *  - The cache ceiling being past is not the same as the credential being dead. `expireAfter` is
+ *    this library's re-resolution cadence, not AWS's opinion; a 15-minute-old Lambda credential is
+ *    ordinarily still perfectly valid.
+ *  - A refresh failure is usually transient — IMDS or STS being briefly unreachable — and
+ *    propagating it fails *every* in-flight call at once, which converts a blip in the credential
+ *    source into a total outage of the caller.
+ *
+ * The failure is propagated when nothing plausibly valid can be served: no entry has ever been
+ * cached, or the cached credential has passed its own stated expiry. A served stale entry is not
+ * re-stamped, so the next call tries the delegate again rather than pinning a stale credential for
+ * another window.
+ *
+ * [CancellationException] is never answered with a stale credential and never swallowed — see
+ * [resolveLocked].
  */
+@OptIn(ExperimentalAtomicApi::class)
 public class CachedCredentialsProvider(
     private val delegate: AwsCredentialsProvider,
     private val expireAfter: Duration = 15.minutes,
     private val refreshBuffer: Duration = 10.seconds,
     private val clock: () -> Long = ::currentEpochMillis,
 ) : AwsCredentialsProvider {
-    private val mutex = Mutex()
-    private var cached: AwsCredentials? = null
-    private var effectiveExpiryMillis: Long = Long.MIN_VALUE
 
-    override suspend fun resolve(): AwsCredentials = mutex.withLock {
+    /**
+     * The credential and the moment it stops being served, as one immutable unit.
+     *
+     * Two fields published together. Held as two independent `var`s they could be read torn — the
+     * new credential paired with the old expiry, or vice versa — which is a signing failure that
+     * only appears under concurrency.
+     */
+    private class CacheEntry(
+        val credentials: AwsCredentials,
+        val effectiveExpiryMillis: Long,
+    ) {
+        fun isFreshAt(nowMillis: Long, refreshBufferMillis: Long): Boolean =
+            nowMillis + refreshBufferMillis < effectiveExpiryMillis
+
+        /**
+         * Whether the *credential itself* is still plausibly usable, which is a strictly weaker
+         * question than [isFreshAt]. A null expiry means "unknown", and unknown is not "expired" —
+         * see [AwsCredentials.expiresAtEpochMillis].
+         */
+        fun credentialsNotDefinitelyExpiredAt(nowMillis: Long): Boolean =
+            credentials.expiresAtEpochMillis?.let { it > nowMillis } ?: true
+    }
+
+    private val mutex = Mutex()
+    private val cache = AtomicReference<CacheEntry?>(null)
+
+    override suspend fun resolve(): AwsCredentials {
+        // The hit path: one load, one comparison, no lock. This is the common case on every retry
+        // attempt of every call, and it must not queue behind an unrelated coroutine's refresh.
+        cache.load()?.let { entry ->
+            if (entry.isFreshAt(clock(), refreshBuffer.inWholeMilliseconds)) return entry.credentials
+        }
+        return mutex.withLock { resolveLocked() }
+    }
+
+    /** Single-flight refresh. Called only with [mutex] held. */
+    private suspend fun resolveLocked(): AwsCredentials {
         val now = clock()
-        cached?.let { current ->
-            if (now + refreshBuffer.inWholeMilliseconds < effectiveExpiryMillis) return current
+
+        // Double-check. Every coroutine that queued behind the winner arrives here with the work
+        // already done; without this they would each go on to call the delegate in turn, which is
+        // the stampede the mutex exists to prevent.
+        val previous = cache.load()
+        if (previous != null && previous.isFreshAt(now, refreshBuffer.inWholeMilliseconds)) {
+            return previous.credentials
         }
 
-        val fresh = delegate.resolve()
+        val fresh = try {
+            delegate.resolve()
+        } catch (cancellation: CancellationException) {
+            // A cancelled scope is not "the credential source is having a moment". Serving a stale
+            // credential here would answer a caller that has gone away, and swallowing it would
+            // report success for work that was cancelled — so it goes straight back out, ahead of
+            // the stale-serving logic below.
+            throw cancellation
+        } catch (failure: Throwable) {
+            val stale = previous?.takeIf { it.credentialsNotDefinitelyExpiredAt(now) }
+                ?: throw failure
+            return stale.credentials
+        }
+
         val ceiling = now + expireAfter.inWholeMilliseconds
-        cached = fresh
-        effectiveExpiryMillis = fresh.expiresAtEpochMillis?.let { minOf(it, ceiling) } ?: ceiling
-        fresh
+        val effectiveExpiry = fresh.expiresAtEpochMillis?.let { minOf(it, ceiling) } ?: ceiling
+        cache.store(CacheEntry(fresh, effectiveExpiry))
+        return fresh
     }
 
     override fun toString(): String = "CachedCredentialsProvider($delegate)"
@@ -134,26 +265,20 @@ public fun defaultCredentialsProvider(): AwsCredentialsProvider =
     CachedCredentialsProvider(CredentialsProviderChain(EnvironmentCredentialsProvider()))
 
 /**
- * Parses `yyyy-MM-ddTHH:mm:ss[.SSS]Z` to epoch millis, returning null on anything unexpected —
- * a malformed expiry must degrade to "unknown", never throw out of credential resolution.
+ * Parses the `AWS_CREDENTIAL_EXPIRATION` convention to epoch millis — the one parser for that
+ * variable, shared by every service module rather than re-implemented per module.
+ *
+ * Accepts what the convention actually emits: `2026-08-14T12:34:56Z`, a numeric offset such as
+ * `2026-08-14T12:34:56-07:00`, and fractional seconds (`...T12:34:56.123Z`).
+ *
+ * **The offset is honoured, not ignored.** Some `credential_process` implementations publish an
+ * offset form, and reading its digits as if they were UTC yields a value wrong by the offset — up
+ * to fourteen hours, silently. Too late and a dead credential is cached and signed with; too early
+ * and every call re-resolves. Neither surfaces as a parse error, so it must be right here.
+ *
+ * Returns null on anything unexpected: a malformed expiry degrades to "unknown", which callers
+ * already handle, and must never throw out of credential resolution.
  */
-internal fun parseIso8601UtcOrNull(value: String): Long? = try {
-    val year = value.substring(0, 4).toLong()
-    val month = value.substring(5, 7).toLong()
-    val day = value.substring(8, 10).toLong()
-    val hour = value.substring(11, 13).toLong()
-    val minute = value.substring(14, 16).toLong()
-    val second = value.substring(17, 19).toLong()
-
-    val y = if (month <= 2L) year - 1L else year
-    val era = (if (y >= 0L) y else y - 399L) / 400L
-    val yearOfEra = y - era * 400L
-    val monthPrime = if (month > 2L) month - 3L else month + 9L
-    val dayOfYear = (153L * monthPrime + 2L) / 5L + day - 1L
-    val dayOfEra = yearOfEra * 365L + yearOfEra / 4L - yearOfEra / 100L + dayOfYear
-    val days = era * 146_097L + dayOfEra - 719_468L
-
-    ((days * 86_400L) + hour * 3_600L + minute * 60L + second) * 1_000L
-} catch (e: Exception) {
-    null
-}
+public fun parseAwsCredentialExpirationOrNull(value: String): Long? = runCatching {
+    kotlin.time.Instant.parse(value).toEpochMilliseconds()
+}.getOrNull()

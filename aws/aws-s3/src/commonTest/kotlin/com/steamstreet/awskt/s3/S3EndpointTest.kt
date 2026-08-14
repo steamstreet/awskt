@@ -146,6 +146,27 @@ class S3EndpointTest {
         assertEquals("http://localhost:4566", e.origin)
     }
 
+    /**
+     * The IPv6 loopback, which the host extraction used to shear at the first colon.
+     *
+     * `authority.substringBefore(':')` answers `[` for `[::1]:4566`, so the loopback allow-list
+     * could never match the `[::1]` it explicitly lists, and a LocalStack reached over IPv6 was
+     * refused as if it were a public plaintext endpoint.
+     */
+    @Test
+    fun bracketedIpv6LoopbackIsAllowedWhenOptedIn() {
+        val e = resolveS3Endpoint(
+            "b",
+            "us-west-2",
+            endpointOverride = "http://[::1]:4566",
+            allowInsecureEndpoint = true,
+            getEnv = noEnv,
+        )
+        assertEquals("http://[::1]:4566", e.origin)
+        assertEquals("[::1]:4566", e.authority)
+        assertEquals("/b", e.basePath)
+    }
+
     /** The opt-in is for LocalStack, not for plaintext in general. */
     @Test
     fun plaintextNonLoopbackIsRejectedEvenWhenOptedIn() {

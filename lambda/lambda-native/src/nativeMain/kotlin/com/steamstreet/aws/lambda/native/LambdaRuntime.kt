@@ -63,6 +63,20 @@ public class NativeLambdaContext(
  * the only signal that a result was not accepted, and a runtime that ignores it reports success for
  * invocations whose results Lambda never received.
  *
+ * ### Attribution: only the handler's own failures are reported as function errors
+ *
+ * `POST /runtime/invocation/{id}/error` is a statement about the *function*: it is what puts an
+ * error type in the console, counts against the function's error metric, and — for asynchronous and
+ * poll-based sources such as SQS — causes Lambda to redeliver the event. So only a throwable that
+ * came out of [handler] is reported there.
+ *
+ * A failure to *deliver* a result the handler already produced is a runtime failure, not a function
+ * failure, and is handled the same way a 5xx is: written to stderr and followed by a non-zero exit,
+ * so Lambda replaces the container. Reporting it to `/error` instead — which is what a single `try`
+ * around both the handler call and the result POST does — mislabels a healthy invocation as a
+ * function error whose type names an HTTP transport exception, and can make Lambda re-run a handler
+ * that already completed its work.
+ *
  * ### Known limitation: this runtime is strictly serial, and does NOT support concurrent invocations
  *
  * [run] is a serial `while (true)` loop — it polls for one event, runs the handler to completion,
@@ -178,8 +192,16 @@ public class LambdaRuntime internal constructor(
         // X-Ray reads the trace id from the environment, not from a parameter, so the header has to
         // be re-exported on every invocation. Skipping this does not fail anything loudly — traces
         // simply never appear, and the function looks untraced rather than broken.
-        nextResponse.headers[HEADER_TRACE_ID]?.let { traceId ->
+        //
+        // The absent case has to clear it rather than leave the previous value in place. The
+        // environment outlives the invocation, so an untraced invocation that inherits the last
+        // traced one's id does not go untraced — it emits segments attributed to a trace it was
+        // never part of, which is worse than no trace at all because the wrong trace looks complete.
+        val traceId = nextResponse.headers[HEADER_TRACE_ID]
+        if (traceId != null) {
             nativeSetEnv(TRACE_ID_ENV, traceId)
+        } else {
+            nativeUnsetEnv(TRACE_ID_ENV)
         }
 
         lambdaContext = NativeLambdaContext(
@@ -189,13 +211,12 @@ public class LambdaRuntime internal constructor(
         )
 
         val responseUrl = "$baseUrl/runtime/invocation/$requestId/response"
-        val response = try {
-            val result = handler(eventBody)
 
-            client.post(responseUrl) {
-                contentType(ContentType.Application.Json)
-                setBody(result)
-            }
+        // This try wraps the handler call and nothing else. Everything caught here is, by
+        // construction, the function's own failure, which is the only thing `/error` may be told
+        // about — see the attribution note in the class KDoc.
+        val result = try {
+            handler(eventBody)
         } catch (cancellation: CancellationException) {
             // A narrow carve-out from the Throwable catch below, and *only* that: cancellation means
             // the scope running this loop is being torn down, so there is no invocation left to
@@ -213,11 +234,52 @@ public class LambdaRuntime internal constructor(
             return
         }
 
+        // Past this point the handler has succeeded, so nothing that goes wrong is a function error:
+        // handler failures go to /invocation/{id}/error, delivery failures are logged and exit.
+        val response = try {
+            postResult(responseUrl, result)
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (firstFailure: Throwable) {
+            // One immediate retry, because the failure this catches is a transport failure — a
+            // dropped connection to the Runtime API, a curl error — and those are frequently over by
+            // the time the next request goes out. The alternative to retrying is exiting with a
+            // result that was computed and then thrown away. It is bounded at one attempt rather
+            // than a loop: if the second attempt fails too, the container is not merely unlucky, and
+            // the deadline for this invocation is running down while we retry.
+            //
+            // Re-POSTing is safe even in the case where the first attempt did reach the Runtime API
+            // and only the reply was lost: the duplicate is answered with a 4xx, which is logged
+            // below and not treated as fatal. The handler is not run again either way.
+            try {
+                postResult(responseUrl, result)
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (retryFailure: Throwable) {
+                // Same posture as a 5xx in checkRuntimeApiStatus, and for the same reason: a runtime
+                // that cannot hand results back has nothing useful left to do, and looping on the
+                // poll from here produces a container that accepts invocations and silently loses
+                // every one of them.
+                logError(
+                    "Failed to deliver the handler's result to $responseUrl " +
+                        "($firstFailure; retry failed with $retryFailure). " +
+                        "The container cannot return results; exiting."
+                )
+                exitProcess(RUNTIME_API_FAILURE_EXIT_CODE)
+            }
+        }
+
         // Deliberately outside the try: the status check can decide to exit, and a catch for
-        // Throwable this broad would otherwise swallow that decision and report it to the Runtime
-        // API as a handler failure.
+        // Throwable this broad would otherwise swallow that decision and retry a POST the Runtime
+        // API has already answered.
         checkRuntimeApiStatus(response, "POST $responseUrl")
     }
+
+    private suspend fun postResult(url: String, result: String): HttpResponse =
+        client.post(url) {
+            contentType(ContentType.Application.Json)
+            setBody(result)
+        }
 
     private suspend fun postError(url: String, t: Throwable) {
         val errorType = t::class.simpleName ?: "Throwable"
@@ -320,9 +382,38 @@ internal fun nowEpochMillis(): Long = Clock.System.now().toEpochMilliseconds()
 @OptIn(ExperimentalForeignApi::class)
 internal fun nativeGetEnv(name: String): String? = platform.posix.getenv(name)?.toKString()
 
+/**
+ * Writes [name] into the process environment.
+ *
+ * **`setenv` is not thread-safe against a concurrent `getenv`, and neither is [nativeUnsetEnv].**
+ * POSIX gives no such guarantee: both may reallocate the `environ` array, and glibc frees the old
+ * one, so a reader in another thread can be walking memory that has just been freed — a crash or a
+ * torn value, not a stale one. Safe here *only* because [LambdaRuntime.run] is a serial
+ * poll-handle-respond loop: nothing else is running when the trace id is written between
+ * invocations.
+ *
+ * That is precisely the assumption the concurrent-runtime work (**Risk 34** in the plan, concurrent
+ * invocations delivered into one execution environment) removes. Whoever takes that on must revisit
+ * these two: with invocations in flight while a new one is dispatched, this writes the environment
+ * out from under every credential provider and endpoint resolver reading it through `getenv`. The
+ * per-invocation trace id has to move onto the coroutine context along with the Lambda context, not
+ * stay in a process-global that two invocations disagree about.
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun nativeSetEnv(name: String, value: String) {
     platform.posix.setenv(name, value, 1)
+}
+
+/**
+ * Removes [name] from the environment entirely, rather than setting it to the empty string — a
+ * reader that only checks for presence would treat an empty value as set.
+ *
+ * Carries [nativeSetEnv]'s thread-safety caveat unchanged: `unsetenv` mutates the same `environ`
+ * array and is equally unsafe against a concurrent `getenv`.
+ */
+@OptIn(ExperimentalForeignApi::class)
+internal fun nativeUnsetEnv(name: String) {
+    platform.posix.unsetenv(name)
 }
 
 @OptIn(ExperimentalForeignApi::class)

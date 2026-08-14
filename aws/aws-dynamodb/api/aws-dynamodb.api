@@ -27,6 +27,13 @@ public final class com/steamstreet/awskt/dynamodb/AttributeDefinition$Companion 
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
+public final class com/steamstreet/awskt/dynamodb/BatchGetIncompleteException : com/steamstreet/awskt/dynamodb/DynamoDbException {
+	public fun <init> (Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getRetrieved ()Ljava/util/List;
+	public final fun getUnprocessedKeys ()Ljava/util/Map;
+}
+
 public final class com/steamstreet/awskt/dynamodb/BatchGetItemRequest {
 	public static final field Companion Lcom/steamstreet/awskt/dynamodb/BatchGetItemRequest$Companion;
 	public fun <init> (Ljava/util/Map;)V
@@ -85,16 +92,10 @@ public final class com/steamstreet/awskt/dynamodb/BatchGetItemResponse$Companion
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public final class com/steamstreet/awskt/dynamodb/BatchRetry {
-	public static final field Companion Lcom/steamstreet/awskt/dynamodb/BatchRetry$Companion;
-	public fun <init> ()V
-	public fun <init> (Lcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;)V
-	public synthetic fun <init> (Lcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getConfig ()Lcom/steamstreet/awskt/core/RetryConfig;
-}
-
-public final class com/steamstreet/awskt/dynamodb/BatchRetry$Companion {
-	public final fun getDefault ()Lcom/steamstreet/awskt/dynamodb/BatchRetry;
+public final class com/steamstreet/awskt/dynamodb/BatchWriteIncompleteException : com/steamstreet/awskt/dynamodb/DynamoDbException {
+	public fun <init> (Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getUnprocessedItems ()Ljava/util/Map;
 }
 
 public final class com/steamstreet/awskt/dynamodb/BatchWriteItemRequest {
@@ -237,8 +238,8 @@ public final class com/steamstreet/awskt/dynamodb/ConditionCheck$Companion {
 }
 
 public final class com/steamstreet/awskt/dynamodb/ConditionalCheckFailedException : com/steamstreet/awskt/dynamodb/DynamoDbException {
-	public fun <init> (Ljava/lang/String;ILjava/util/Map;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;ILjava/util/Map;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;ILjava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getItem ()Ljava/util/Map;
 }
 
@@ -575,28 +576,32 @@ public final class com/steamstreet/awskt/dynamodb/DynamoDbConfig {
 	public final fun getCredentialsProvider ()Lcom/steamstreet/awskt/core/AwsCredentialsProvider;
 	public final fun getEndpointUrl ()Ljava/lang/String;
 	public final fun getHttpClient ()Lio/ktor/client/HttpClient;
+	public final fun getHttpTimeouts ()Lcom/steamstreet/awskt/core/AwsHttpTimeouts;
+	public final fun getObserver ()Lcom/steamstreet/awskt/core/AwsCallObserver;
 	public final fun getRegion ()Ljava/lang/String;
 	public final fun getRetryConfig ()Lcom/steamstreet/awskt/core/RetryConfig;
 	public final fun setCaInfo (Ljava/lang/String;)V
 	public final fun setCredentialsProvider (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;)V
 	public final fun setEndpointUrl (Ljava/lang/String;)V
 	public final fun setHttpClient (Lio/ktor/client/HttpClient;)V
+	public final fun setHttpTimeouts (Lcom/steamstreet/awskt/core/AwsHttpTimeouts;)V
+	public final fun setObserver (Lcom/steamstreet/awskt/core/AwsCallObserver;)V
 	public final fun setRegion (Ljava/lang/String;)V
 	public final fun setRetryConfig (Lcom/steamstreet/awskt/core/RetryConfig;)V
 }
 
 public class com/steamstreet/awskt/dynamodb/DynamoDbException : com/steamstreet/awskt/core/AwsServiceException {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class com/steamstreet/awskt/dynamodb/DynamoDbKt {
 	public static final fun DynamoDb (Lkotlin/jvm/functions/Function1;)Lcom/steamstreet/awskt/dynamodb/DynamoDb;
 	public static synthetic fun DynamoDb$default (Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/steamstreet/awskt/dynamodb/DynamoDb;
-	public static final fun batchGetAll (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ZLjava/lang/String;Ljava/util/Map;ILcom/steamstreet/awskt/dynamodb/BatchRetry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun batchGetAll$default (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ZLjava/lang/String;Ljava/util/Map;ILcom/steamstreet/awskt/dynamodb/BatchRetry;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static final fun batchWriteAll (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ILcom/steamstreet/awskt/dynamodb/BatchRetry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun batchWriteAll$default (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ILcom/steamstreet/awskt/dynamodb/BatchRetry;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun batchGetAll (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ZLjava/lang/String;Ljava/util/Map;ILcom/steamstreet/awskt/core/BatchRetry;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun batchGetAll$default (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ZLjava/lang/String;Ljava/util/Map;ILcom/steamstreet/awskt/core/BatchRetry;ILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun batchWriteAll (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ILcom/steamstreet/awskt/core/BatchRetry;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun batchWriteAll$default (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Ljava/lang/String;Ljava/util/List;ILcom/steamstreet/awskt/core/BatchRetry;ILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun getDYNAMODB_PROTOCOL ()Lcom/steamstreet/awskt/core/AwsProtocol;
 	public static final fun items (Lkotlinx/coroutines/flow/Flow;)Lkotlinx/coroutines/flow/Flow;
 	public static final fun queryPaged (Lcom/steamstreet/awskt/dynamodb/DynamoDb;Lcom/steamstreet/awskt/dynamodb/QueryRequest;)Lkotlinx/coroutines/flow/Flow;
@@ -773,8 +778,8 @@ public final class com/steamstreet/awskt/dynamodb/GlobalSecondaryIndexDescriptio
 }
 
 public final class com/steamstreet/awskt/dynamodb/IdempotentParameterMismatchException : com/steamstreet/awskt/dynamodb/DynamoDbException {
-	public fun <init> (Ljava/lang/String;ILjava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class com/steamstreet/awskt/dynamodb/ItemResponse {
@@ -993,8 +998,8 @@ public final class com/steamstreet/awskt/dynamodb/ProvisionedThroughput$Companio
 }
 
 public final class com/steamstreet/awskt/dynamodb/ProvisionedThroughputExceededException : com/steamstreet/awskt/dynamodb/DynamoDbException {
-	public fun <init> (Ljava/lang/String;ILjava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class com/steamstreet/awskt/dynamodb/PutItemRequest {
@@ -1179,8 +1184,8 @@ public final class com/steamstreet/awskt/dynamodb/QueryResponse$Companion {
 }
 
 public final class com/steamstreet/awskt/dynamodb/ResourceNotFoundException : com/steamstreet/awskt/dynamodb/DynamoDbException {
-	public fun <init> (Ljava/lang/String;ILjava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class com/steamstreet/awskt/dynamodb/ReturnValue : java/lang/Enum {
@@ -1708,8 +1713,8 @@ public final class com/steamstreet/awskt/dynamodb/TransactWriteItemsResponse$Com
 }
 
 public final class com/steamstreet/awskt/dynamodb/TransactionCanceledException : com/steamstreet/awskt/dynamodb/DynamoDbException {
-	public fun <init> (Ljava/lang/String;ILjava/util/List;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;ILjava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;ILjava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getCancellationReasons ()Ljava/util/List;
 }
 
@@ -1785,8 +1790,8 @@ public final class com/steamstreet/awskt/dynamodb/UpdateItemResponse$Companion {
 }
 
 public final class com/steamstreet/awskt/dynamodb/ValidationException : com/steamstreet/awskt/dynamodb/DynamoDbException {
-	public fun <init> (Ljava/lang/String;ILjava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class com/steamstreet/awskt/dynamodb/WriteRequest {

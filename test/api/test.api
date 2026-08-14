@@ -19,7 +19,7 @@ public final class com/steamstreet/aws/test/DirectInvocationHandler : com/steams
 }
 
 public final class com/steamstreet/aws/test/DynamoEventBridgePipeKt {
-	public static final fun dynamoPipe (Lcom/steamstreet/awskt/eventbridge/EventBridgeApi;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lkotlin/jvm/functions/Function2;
+	public static final fun dynamoPipe (Lcom/steamstreet/awskt/eventbridge/EventBridge;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lkotlin/jvm/functions/Function2;
 }
 
 public final class com/steamstreet/aws/test/DynamoLocalBuilder {
@@ -71,7 +71,7 @@ public final class com/steamstreet/aws/test/EventBridgeAdmin$DefaultImpls {
 	public static synthetic fun putRule$default (Lcom/steamstreet/aws/test/EventBridgeAdmin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
-public final class com/steamstreet/aws/test/EventBridgeMock : com/steamstreet/aws/test/EventBridgeAdmin, com/steamstreet/aws/test/MockService, com/steamstreet/awskt/eventbridge/EventBridgeApi {
+public final class com/steamstreet/aws/test/EventBridgeMock : com/steamstreet/aws/test/EventBridgeAdmin, com/steamstreet/aws/test/MockService, com/steamstreet/awskt/eventbridge/EventBridge {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V

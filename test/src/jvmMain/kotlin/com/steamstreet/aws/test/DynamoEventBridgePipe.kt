@@ -1,6 +1,6 @@
 package com.steamstreet.aws.test
 
-import com.steamstreet.awskt.eventbridge.EventBridgeApi
+import com.steamstreet.awskt.eventbridge.EventBridge
 import com.steamstreet.awskt.eventbridge.PutEventsEntry
 import com.steamstreet.dynamokt.DynamoStreamEvent
 import kotlinx.serialization.json.Json
@@ -13,7 +13,7 @@ import kotlinx.serialization.json.Json
  * the provided EventBridge client (which will typically be EventBridgeMock).
  */
 public fun dynamoPipe(
-    eventBridge: EventBridgeApi,
+    eventBridge: EventBridge,
     eventBusArn: String,
     detailType: String,
     source: String

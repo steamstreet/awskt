@@ -156,12 +156,19 @@ internal fun sanitizeErrorCode(raw: String): String =
 private fun JsonObject.stringAtDepth1(key: String): String? =
     (this[key] as? JsonPrimitive)?.takeIf { it.isString }?.contentOrNull?.takeIf { it.isNotBlank() }
 
-internal fun Map<String, String>.headerValue(name: String): String? {
-    this[name]?.let { return it }
-    val lower = name.lowercase()
-    for ((k, v) in this) if (k.lowercase() == lower) return v
-    return null
-}
+/**
+ * Reads a response header.
+ *
+ * **The invariant this relies on:** response-header maps in this library are built with lowercased
+ * keys — `AwsServiceClient.send` lowercases every name as it collects them, which is the only place
+ * an [AwsHttpResponse] is constructed on the request path — so one direct lookup answers what a
+ * case-insensitive scan of every entry used to. [name] is lowercased here rather than required
+ * lowercase because [AwsErrorParser] is public and its `headers` map comes from whoever calls it.
+ *
+ * A map that does *not* hold that invariant is a bug in whatever built it, not something to absorb
+ * here: absorbing it hides a header map that is also being read directly elsewhere.
+ */
+internal fun Map<String, String>.headerValue(name: String): String? = this[name.lowercase()]
 
 /**
  * The cancellation reasons of a `TransactionCanceledException`, for diagnostics only.

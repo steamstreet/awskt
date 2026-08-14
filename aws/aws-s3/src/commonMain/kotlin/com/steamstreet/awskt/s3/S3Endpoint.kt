@@ -126,7 +126,7 @@ public fun resolveS3Endpoint(
  */
 private fun requireSecure(scheme: String, authority: String, allowInsecure: Boolean) {
     if (scheme == "https") return
-    val host = authority.substringBefore(':')
+    val host = splitAuthority(authority).first
     val loopback = host == "localhost" || host == "127.0.0.1" || host == "::1" || host == "[::1]" ||
         host.endsWith(".localhost")
     if (!allowInsecure) {
@@ -141,6 +141,33 @@ private fun requireSecure(scheme: String, authority: String, allowInsecure: Bool
             "allowInsecureEndpoint permits plaintext for loopback only, but the host was '$host'.",
         )
     }
+}
+
+/**
+ * Splits an authority into its host and its explicit port, if it carries one.
+ *
+ * `substringBefore(':')` is correct for `s3.us-west-2.amazonaws.com:4566` and catastrophically
+ * wrong for `[::1]:4566`, where it answers `[` — so an IPv6 LocalStack was sent to the host `[`,
+ * and the `[::1]` entry in the loopback allow-list below could never match.
+ *
+ * The brackets stay **on** the host. That is not cosmetic: `aws-core` assigns this value to Ktor's
+ * `URLBuilder.host`, which re-emits it verbatim, so a bare `::1` builds the nonsense
+ * `http://::1:4566`. `aws-core`'s own `parseEndpoint` reports `[::1]` for the identical reason, and
+ * these two must agree — the authority they produce is the string that gets signed as `host`.
+ *
+ * @return the host, and the port when the authority states one (null means "use the scheme default").
+ */
+internal fun splitAuthority(authority: String): Pair<String, Int?> {
+    if (authority.startsWith('[')) {
+        val close = authority.indexOf(']')
+        // An unclosed bracket is not an authority we can take apart; hand it back whole and let the
+        // resulting request fail naming the thing the caller actually configured.
+        if (close < 0) return authority to null
+        val host = authority.substring(0, close + 1)
+        val port = authority.substring(close + 1).removePrefix(":").toIntOrNull()
+        return host to port
+    }
+    return authority.substringBefore(':') to authority.substringAfter(':', "").toIntOrNull()
 }
 
 /** Splits `scheme://authority[/...]`, keeping any explicit port in the authority. */

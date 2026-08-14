@@ -152,7 +152,24 @@ class PresignTest {
             sessionToken = "T",
             env = { if (it == "AWS_CREDENTIAL_EXPIRATION") "2023-11-14T22:20:00Z" else null },
         ).presignGetObject("b", "k", 1.hours)
-        assertIs<PresignExpiry.Known>(presigned.expiry)
+        val expiry = assertIs<PresignExpiry.Known>(presigned.expiry)
+        // The variable says the credential dies 400s from `now`, well inside the requested hour.
+        assertEquals(1_700_000_400_000L, expiry.epochMillis)
+    }
+
+    /**
+     * The same instant written with an offset, which `credential_process` is free to publish, must
+     * clamp the URL to the same millisecond. Parsing is delegated to aws-core; before that was true
+     * the offset was dropped and this URL advertised a lifetime seven hours off.
+     */
+    @Test
+    fun awsCredentialExpirationIsHonouredInOffsetForm() = runTest {
+        val presigned = presigner(
+            sessionToken = "T",
+            env = { if (it == "AWS_CREDENTIAL_EXPIRATION") "2023-11-14T15:20:00-07:00" else null },
+        ).presignGetObject("b", "k", 1.hours)
+        val expiry = assertIs<PresignExpiry.Known>(presigned.expiry)
+        assertEquals(1_700_000_400_000L, expiry.epochMillis)
     }
 
     /** A malformed value must never fail a presign that would otherwise succeed. */

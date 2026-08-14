@@ -1,5 +1,7 @@
 package com.steamstreet.awskt.eventbridge
 
+import com.steamstreet.awskt.core.AwsCallEvent
+import com.steamstreet.awskt.core.AwsCallObserver
 import com.steamstreet.awskt.core.AwsServiceClient
 import com.steamstreet.awskt.core.StaticCredentialsProvider
 import com.steamstreet.awskt.core.resolveEndpoint
@@ -30,7 +32,7 @@ internal class EventBridgeHarness {
 internal fun harnessEventBridge(
     harness: EventBridgeHarness,
     responder: (Int) -> Pair<String, HttpStatusCode>,
-): EventBridgeApi {
+): EventBridge {
     var call = 0
     val engine = MockEngine { request ->
         harness.requests += request
@@ -243,5 +245,35 @@ class EventBridgeErrorTest {
                 .putEvents(listOf(PutEventsEntry(source = "s")))
         }
         assertEquals(1, h.requests.size, "a replayed PutEvents double-publishes the batch")
+    }
+}
+
+/**
+ * `EventBridgeConfig.observer` reaches the transport that does the work.
+ *
+ * Through the real `EventBridge { }` factory, not the harness above: the harness builds its own
+ * `AwsServiceClient` and would pass whether or not the factory forwarded the field.
+ */
+class EventBridgeObserverWiringTest {
+
+    @Test
+    fun theConfiguredObserverSeesTheAttempt() = runTest {
+        val events = mutableListOf<AwsCallEvent>()
+        val engine = MockEngine { respond(OK_ONE, HttpStatusCode.OK) }
+
+        val bus = EventBridge {
+            region = "us-west-2"
+            credentialsProvider = StaticCredentialsProvider(AwsCredentials("AKID", "SECRET"))
+            httpClient = HttpClient(engine) { followRedirects = false; expectSuccess = false }
+            observer = AwsCallObserver { events += it }
+        }
+
+        bus.putEvents(listOf(PutEventsEntry(source = "src", detailType = "T", detail = "{}")))
+
+        val event = events.single()
+        assertEquals(AwsCallEvent.Outcome.SUCCESS, event.outcome)
+        assertEquals("PutEvents", event.operation)
+        assertEquals(1, event.attempt)
+        assertEquals(200, event.statusCode)
     }
 }

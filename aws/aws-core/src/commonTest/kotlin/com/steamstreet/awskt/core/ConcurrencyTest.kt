@@ -16,6 +16,7 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.incrementAndFetch
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
@@ -171,16 +172,22 @@ class AwsServiceClientConcurrencyTest {
     /**
      * Many coroutines, one client, one shared retry token bucket.
      *
-     * Every call is throttled once and then succeeds, so each takes a token, sleeps, and hands it
-     * straight back. The run is therefore *balanced*, and the client must finish at exactly full
-     * capacity — which is the assertion that bites: interleaved acquires and refunds on a plain
-     * `var` lose updates in both directions and the budget drifts off 500. The drift is the bug that
-     * matters in production, because it is cumulative: a long-lived client in a warm Lambda leaks a
-     * little capacity per call until the breaker refuses retries it should be allowing.
+     * Every call is throttled once and then succeeds, so each takes a token and — because it
+     * *succeeds* — hands that token back. The run is therefore balanced, and the client must finish
+     * at exactly full capacity. That is the assertion that bites: interleaved acquires and refunds
+     * on a plain `var` lose updates in both directions and the budget drifts off 500. The drift is
+     * the bug that matters in production, because it is cumulative: a long-lived client in a warm
+     * Lambda leaks a little capacity per call until the breaker refuses retries it should allow.
+     *
+     * The call count is sized so that the run fits inside the budget even if all of it is in flight
+     * at once. Under the current semantics a token is held from the moment the retry is granted
+     * until the call succeeds — a whole HTTP attempt, not the width of a `sleep` — so 200 calls
+     * against a 500-token bucket would legitimately run out and the failure would say nothing about
+     * a race. Eighty calls at five tokens each cannot.
      */
     @Test
     fun oneClientServesManyParallelCallsWithoutLeakingRetryCapacity() = runTest {
-        val calls = 200
+        val calls = 80
         val attempts = AtomicInt(0)
 
         val engine = MockEngine { request ->
@@ -231,23 +238,33 @@ class AwsServiceClientConcurrencyTest {
         assertEquals(
             DEFAULT_BUCKET_CAPACITY,
             client.tokenBucket.available,
-            "$calls balanced acquire/refund pairs must leave the retry budget exactly where it " +
-                "started; any other number is capacity lost or invented by a race",
+            "$calls calls that each retried once and then succeeded must leave the retry budget " +
+                "exactly where it started; any other number is capacity lost or invented by a race",
         )
     }
 
     /**
-     * The same invariant with far more churn per call.
+     * The other half of the contract: a parallel run in which nothing ever succeeds must **open the
+     * breaker** rather than balance.
      *
-     * Every attempt is throttled, so each call runs the full `maxAttempts` and takes and returns a
-     * token three times over instead of once — three times the acquire/refund traffic through the
-     * one shared bucket, and a correspondingly wider window for two coroutines to read the same
-     * count. The budget must still come back to exactly full.
+     * This test used to assert the opposite — that the bucket came back to exactly 500 — because
+     * `prepareRetry` refunded every acquire the moment it finished sleeping. That made the bucket a
+     * limiter on concurrently *sleeping* retries and nothing else, so the circuit breaker its KDoc
+     * described could not open at all: a warm container calling a dead dependency retried at full
+     * `maxAttempts` on every call, forever, which is the outage amplification the thing exists to
+     * prevent.
+     *
+     * The arithmetic is exact rather than approximate, and deliberately so. Every acquire here costs
+     * [THROTTLE_COST], nothing succeeds, and the deadline is never reached (the clock is frozen and
+     * jitter is pinned to zero), so no capacity is ever returned: the bucket admits exactly
+     * `500 / 5 = 100` retries across the whole run and then refuses. A run that admitted more would
+     * mean capacity was invented; one that admitted fewer, that it leaked.
      */
     @Test
-    fun aParallelRunThatExhaustsEveryRetryStillBalancesTheBudget() = runTest {
+    fun aParallelRunWithNoSuccessesOpensTheBreakerAndStaysOpen() = runTest {
         val calls = 100
         val maxAttempts = 4
+        val permittedRetries = DEFAULT_BUCKET_CAPACITY / THROTTLE_COST
         val attempts = AtomicInt(0)
 
         val engine = MockEngine {
@@ -288,14 +305,24 @@ class AwsServiceClientConcurrencyTest {
 
         assertTrue(outcomes.all { it != null }, "every call is throttled on every attempt")
         assertEquals(
-            calls * maxAttempts,
+            calls + permittedRetries,
             attempts.load(),
-            "no call may be denied a retry: the budget is far larger than this run consumes at once",
+            "each of the $calls calls gets its first attempt unconditionally, and the bucket funds " +
+                "exactly $permittedRetries retries between all of them before it is empty",
+        )
+        assertTrue(
+            attempts.load() < calls * maxAttempts,
+            "the breaker must cut the run short of the ${calls * maxAttempts} attempts an " +
+                "unbounded client would have made",
         )
         assertEquals(
-            DEFAULT_BUCKET_CAPACITY,
+            0,
             client.tokenBucket.available,
-            "every one of the ${calls * (maxAttempts - 1)} acquire/refund pairs must net to zero",
+            "nothing succeeded, so nothing was returned: the budget must be spent to the token",
+        )
+        assertFalse(
+            client.tokenBucket.tryAcquire(RetryErrorType.THROTTLING),
+            "and the next retry to ask must be refused",
         )
     }
 

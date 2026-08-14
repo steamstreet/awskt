@@ -1,7 +1,6 @@
 package com.steamstreet.events
 
 import com.steamstreet.awskt.eventbridge.EventBridge
-import com.steamstreet.awskt.eventbridge.EventBridgeApi
 import com.steamstreet.awskt.eventbridge.PutEventsEntry
 import com.steamstreet.awskt.eventbridge.PutEventsResponse
 import com.steamstreet.awskt.logging.`is`
@@ -17,7 +16,7 @@ import com.steamstreet.awskt.logging.log
  */
 public class EventBridgeSubmitter(
     private val busName: String, private val source: String,
-    private val eventBridge: EventBridgeApi = EventBridge()
+    private val eventBridge: EventBridge = EventBridge()
 ) : ApplicationEventPoster {
     override suspend fun post(eventType: String, eventDetail: String, source: String?): String? {
         return checkResponse(

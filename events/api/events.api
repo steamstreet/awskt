@@ -20,8 +20,8 @@ public abstract interface class com/steamstreet/events/Event {
 }
 
 public final class com/steamstreet/events/EventBridgeSubmitter : com/steamstreet/events/ApplicationEventPoster {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/eventbridge/EventBridgeApi;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/eventbridge/EventBridgeApi;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/eventbridge/EventBridge;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/eventbridge/EventBridge;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun post (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun post (Ljava/util/Collection;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }

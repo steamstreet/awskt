@@ -67,6 +67,10 @@ class LambdaRuntimeTest {
      * [nextStatus] and [postStatus] exist because the Runtime API signals refusal by status code
      * and nothing else: it answers, so no exception is thrown, and the runtime only learns the
      * result was rejected by looking.
+     *
+     * [postFailures] is the other kind of failure, and the one a status code cannot express: the
+     * first [postFailures] POST attempts throw instead of answering, which is what a dropped
+     * connection to the Runtime API looks like from inside the runtime.
      */
     private fun clientFor(
         recorder: Recorder,
@@ -76,8 +80,10 @@ class LambdaRuntimeTest {
         traceId: String? = null,
         nextStatus: HttpStatusCode = HttpStatusCode.OK,
         postStatus: HttpStatusCode = HttpStatusCode.Accepted,
-        postBody: String = ""
+        postBody: String = "",
+        postFailures: Int = 0
     ): HttpClient {
+        var postAttempts = 0
         val engine = MockEngine { request ->
             if (request.method == HttpMethod.Get && request.url.encodedPath.endsWith("/invocation/next")) {
                 val headers = buildList {
@@ -94,6 +100,10 @@ class LambdaRuntimeTest {
                 )
             } else {
                 recorder.posts += request
+                postAttempts++
+                if (postAttempts <= postFailures) {
+                    throw RuntimeException("Runtime API connection failed (attempt $postAttempts)")
+                }
                 respond(content = postBody, status = postStatus)
             }
         }
@@ -212,6 +222,49 @@ class LambdaRuntimeTest {
     }
 
     /**
+     * The environment outlives the invocation, so an invocation that arrives with no trace header
+     * has to *clear* `_X_AMZN_TRACE_ID` rather than leave the last one in place. Leaving it does not
+     * merely lose a trace: the untraced invocation emits segments attributed to the previous
+     * invocation's trace, which reads as a complete trace of work that was never part of it.
+     */
+    @Test
+    fun clearsTheTraceIdWhenTheNextInvocationArrivesWithoutOne() = runBlocking {
+        val recorder = Recorder()
+        val traceId = "Root=1-5759e988-bd862e3fe1be46a994272793;Sampled=1"
+        var polls = 0
+        val engine = MockEngine { request ->
+            if (request.method == HttpMethod.Get) {
+                polls++
+                val headers = buildList {
+                    add("Lambda-Runtime-Aws-Request-Id" to "req-$polls")
+                    add("Lambda-Runtime-Deadline-Ms" to (nowEpochMillis() + 30_000).toString())
+                    // Only the first invocation is traced.
+                    if (polls == 1) add("Lambda-Runtime-Trace-Id" to traceId)
+                }
+                respond(
+                    content = "{}",
+                    headers = headersOf(
+                        *headers.map { (name, value) -> name to listOf(value) }.toTypedArray()
+                    )
+                )
+            } else {
+                recorder.posts += request
+                respond(content = "", status = HttpStatusCode.Accepted)
+            }
+        }
+        val runtime = runtimeFor(recorder, HttpClient(engine))
+
+        runtime.processNextInvocation(BASE_URL)
+        assertEquals(traceId, nativeGetEnv("_X_AMZN_TRACE_ID"))
+
+        runtime.processNextInvocation(BASE_URL)
+        assertNull(
+            nativeGetEnv("_X_AMZN_TRACE_ID"),
+            "an untraced invocation must not inherit the previous invocation's trace id"
+        )
+    }
+
+    /**
      * Fix 1: an initialization failure must reach `POST /runtime/init/error`, otherwise a bad
      * configuration kills the process with nothing recorded against the function.
      */
@@ -296,6 +349,84 @@ class LambdaRuntimeTest {
         assertContains(recorder.loggedText(), "413")
         assertContains(recorder.loggedText(), "response too large")
         assertContains(recorder.loggedText(), "/runtime/invocation/req-1/response")
+    }
+
+    /**
+     * A result POST that *throws* is a delivery failure, not a function failure. Reporting it to
+     * `/invocation/{id}/error` — which is what a single `try` around both the handler call and the
+     * POST did — labels an invocation whose handler completed as a function error, with an errorType
+     * naming an HTTP transport exception, and for asynchronous and poll-based sources makes Lambda
+     * redeliver the event so the handler re-runs work it already did.
+     */
+    @Test
+    fun doesNotReportAResultDeliveryFailureAsAFunctionError() = runBlocking {
+        val recorder = Recorder()
+        var handlerRuns = 0
+        val runtime = runtimeFor(
+            recorder,
+            clientFor(recorder, postFailures = Int.MAX_VALUE),
+            handler = { handlerRuns++; "{}" }
+        )
+
+        assertFailsWith<ExitSignal> { runtime.processNextInvocation(BASE_URL) }
+
+        assertEquals(1, handlerRuns, "the handler ran once and succeeded")
+        assertTrue(
+            recorder.posts.none { it.url.toString().endsWith("/error") },
+            "a successful handler must never be reported to /error, but was: ${recorder.posts.map { it.url }}"
+        )
+        assertEquals(
+            1,
+            recorder.exitCode,
+            "a runtime that cannot deliver results must exit so Lambda replaces the container"
+        )
+        assertContains(recorder.loggedText(), "/runtime/invocation/req-1/response")
+    }
+
+    /**
+     * The retry is bounded at one attempt and exists because the failure above is a transport
+     * failure, which is often over by the time the next request goes out. Without it a single
+     * dropped connection discards a result the handler already computed.
+     */
+    @Test
+    fun retriesTheResultPostOnceBeforeGivingUp() = runBlocking {
+        val recorder = Recorder()
+        val runtime = runtimeFor(recorder, clientFor(recorder, postFailures = 1))
+
+        runtime.processNextInvocation(BASE_URL)
+
+        assertEquals(2, recorder.posts.size, "the failed POST should have been retried exactly once")
+        assertTrue(
+            recorder.posts.all { it.url.toString() == "$BASE_URL/runtime/invocation/req-1/response" },
+            "both attempts deliver the result: ${recorder.posts.map { it.url }}"
+        )
+        assertNull(recorder.exitCode, "a retry that succeeded must not take the container down")
+    }
+
+    /**
+     * The counterpart to [doesNotReportAResultDeliveryFailureAsAFunctionError], and the regression
+     * that narrowing the `try` could plausibly have caused: a throwable from the handler itself is
+     * still reported to `/error`, and is still not fatal to the container.
+     */
+    @Test
+    fun stillReportsHandlerFailuresToTheErrorEndpoint() = runBlocking {
+        val recorder = Recorder()
+        val runtime = runtimeFor(
+            recorder,
+            clientFor(recorder),
+            handler = { throw IllegalStateException("handler blew up") }
+        )
+
+        runtime.processNextInvocation(BASE_URL)
+
+        val post = recorder.posts.single()
+        assertEquals("$BASE_URL/runtime/invocation/req-1/error", post.url.toString())
+        assertEquals("IllegalStateException", post.headers["Lambda-Runtime-Function-Error-Type"])
+        assertEquals(
+            "handler blew up",
+            Json.parseToJsonElement(recorder.bodyOf(post)).jsonObject["errorMessage"]?.jsonPrimitive?.content
+        )
+        assertNull(recorder.exitCode, "a handler failure is the function's problem, not the container's")
     }
 
     /**

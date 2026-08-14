@@ -47,7 +47,7 @@ final inline fun <#A: reified kotlin/Any?> com.steamstreet.events/eventSchema(ko
 
 // Targets: [native]
 final class com.steamstreet.events/EventBridgeSubmitter : com.steamstreet.events/ApplicationEventPoster { // com.steamstreet.events/EventBridgeSubmitter|null[0]
-    constructor <init>(kotlin/String, kotlin/String, com.steamstreet.awskt.eventbridge/EventBridgeApi = ...) // com.steamstreet.events/EventBridgeSubmitter.<init>|<init>(kotlin.String;kotlin.String;com.steamstreet.awskt.eventbridge.EventBridgeApi){}[0]
+    constructor <init>(kotlin/String, kotlin/String, com.steamstreet.awskt.eventbridge/EventBridge = ...) // com.steamstreet.events/EventBridgeSubmitter.<init>|<init>(kotlin.String;kotlin.String;com.steamstreet.awskt.eventbridge.EventBridge){}[0]
 
     final suspend fun post(kotlin.collections/Collection<com.steamstreet.events/Event>): kotlin.collections/List<kotlin/String?> // com.steamstreet.events/EventBridgeSubmitter.post|post(kotlin.collections.Collection<com.steamstreet.events.Event>){}[0]
     final suspend fun post(kotlin/String, kotlin/String, kotlin/String?): kotlin/String? // com.steamstreet.events/EventBridgeSubmitter.post|post(kotlin.String;kotlin.String;kotlin.String?){}[0]

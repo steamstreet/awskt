@@ -79,12 +79,31 @@ class RetryClassificationTest {
     /** The header is milliseconds. Reading it as seconds turns a 3s pause into ~50 minutes. */
     @Test
     fun retryAfterIsMillisecondsAndClamped() {
-        assertEquals(3_000, applyRetryAfter(100, "3000"))
-        assertEquals(100, applyRetryAfter(100, null))
-        assertEquals(100, applyRetryAfter(100, "not-a-number"))
-        // Never shorter than our own computation, never more than 5s longer.
-        assertEquals(500, applyRetryAfter(500, "10"))
-        assertEquals(5_500, applyRetryAfter(500, "99999"))
+        val cap = RetryConfig().maxBackoffMillis
+        assertEquals(3_000, applyRetryAfter(100, "3000", cap))
+        assertEquals(100, applyRetryAfter(100, null, cap))
+        assertEquals(100, applyRetryAfter(100, "not-a-number", cap))
+        // Never shorter than our own computation, never longer than the configured backoff cap.
+        assertEquals(500, applyRetryAfter(500, "10", cap))
+        assertEquals(20_000, applyRetryAfter(500, "99999", cap))
+    }
+
+    /**
+     * The hint is honoured up to the configured cap, not to a fixed 5 s above our own computation.
+     *
+     * A service asking for 10 seconds on the first transient failure used to be answered in 5.025 —
+     * so the client came back at half the interval it was told to, and the service shed the same
+     * request a second time. The ceiling is the one the caller configured for every other sleep.
+     */
+    @Test
+    fun aLongerRetryAfterHintIsHonouredUpToTheConfiguredCap() {
+        val transientFirstAttempt = backoffMillis(RetryErrorType.TRANSIENT, 0, RetryConfig()) { 1.0 }
+        assertEquals(25, transientFirstAttempt)
+        assertEquals(10_000, applyRetryAfter(transientFirstAttempt, "10000", 20_000))
+
+        // A tighter cap binds it, and a tighter cap than our own computation cannot invert the range.
+        assertEquals(1_000, applyRetryAfter(25, "10000", 1_000))
+        assertEquals(5_000, applyRetryAfter(5_000, "10000", 1_000))
     }
 
     @Test
@@ -104,6 +123,28 @@ class RetryClassificationTest {
         assertEquals(20, bucket.available)
         bucket.onCleanSuccess()
         assertEquals(20, bucket.available, "must never exceed capacity")
+    }
+
+    /**
+     * One call can spend on more than one kind of failure — a throttle, then a 503 — so what a
+     * successful call hands back is a summed amount rather than a type. The two must agree on the
+     * price of a retry, which is what [RetryTokenBucket.costOf] is for.
+     */
+    @Test
+    fun refundCostReturnsExactlyTheSummedCostOfAMixedCall() {
+        val bucket = RetryTokenBucket(capacity = 100)
+        assertEquals(5, bucket.costOf(RetryErrorType.THROTTLING))
+        assertEquals(14, bucket.costOf(RetryErrorType.TRANSIENT))
+
+        assertTrue(bucket.tryAcquire(RetryErrorType.THROTTLING)) // 100 -> 95
+        assertTrue(bucket.tryAcquire(RetryErrorType.TRANSIENT))  // 95 -> 81
+        assertEquals(81, bucket.available)
+
+        bucket.refundCost(5 + 14)
+        assertEquals(100, bucket.available, "a call that succeeds returns everything it acquired")
+        // A no-op rather than a spin or a stray credit, which is what a call that never retried does.
+        bucket.refundCost(0)
+        assertEquals(100, bucket.available)
     }
 }
 
@@ -141,6 +182,152 @@ class TransportFailureClassificationTest {
         val b = Exception("b", a)
         // Self-referential chains must not spin.
         assertEquals(TransportFailure.AMBIGUOUS, classifyTransportFailure(b))
+    }
+
+    /**
+     * Verbatim shape of what `ktor-client-curl` 3.5.2 throws: a bare `IllegalStateException`
+     * carrying `"Connection failed for request: $request. Reason: ${strerror} ($CURLE_NAME)"`
+     * (`CurlMultiApiHandler.kt:353`, `CurlAdapters.kt:61`). Built here as a `RuntimeException`
+     * because the classifier is looking at the message, not the class.
+     */
+    private fun curlFailure(reason: String): Throwable = RuntimeException(
+        "Connection failed for request: CurlRequestData(url='https://dynamodb.us-west-2." +
+            "amazonaws.com/', method='POST', content: 61 bytes). Reason: $reason",
+    )
+
+    /**
+     * Curl is the only engine Kotlin/Native has, and none of its wording matched anything before
+     * these markers existed — so a DNS failure that provably never reached AWS was classified
+     * AMBIGUOUS, and a `NOT_IDEMPOTENT` write refused to retry it.
+     */
+    @Test
+    fun curlPreSendFailuresAreNotSent() {
+        // DNS. Both prose spellings, because curl 7.x and 8.x disagree, plus the enum name that
+        // ktor appends and which does not drift between curl releases.
+        assertEquals(
+            TransportFailure.NOT_SENT,
+            classifyTransportFailure(curlFailure("Couldn't resolve host name (CURLE_COULDNT_RESOLVE_HOST)")),
+        )
+        assertEquals(
+            TransportFailure.NOT_SENT,
+            classifyTransportFailure(curlFailure("Could not resolve hostname (CURLE_COULDNT_RESOLVE_HOST)")),
+        )
+        assertEquals(
+            TransportFailure.NOT_SENT,
+            classifyTransportFailure(curlFailure("Could not resolve proxy name (CURLE_COULDNT_RESOLVE_PROXY)")),
+        )
+        // Connect.
+        assertEquals(
+            TransportFailure.NOT_SENT,
+            classifyTransportFailure(curlFailure("Could not connect to server (CURLE_COULDNT_CONNECT)")),
+        )
+        assertEquals(
+            TransportFailure.NOT_SENT,
+            classifyTransportFailure(curlFailure("QUIC connection error (CURLE_QUIC_CONNECT_ERROR)")),
+        )
+        // TLS handshake — completed before the first HTTP byte is written.
+        assertEquals(
+            TransportFailure.NOT_SENT,
+            classifyTransportFailure(curlFailure("SSL connect error (CURLE_SSL_CONNECT_ERROR)")),
+        )
+        assertEquals(
+            TransportFailure.NOT_SENT,
+            classifyTransportFailure(
+                curlFailure("SSL peer certificate or SSH remote key was not OK (CURLE_PEER_FAILED_VERIFICATION)"),
+            ),
+        )
+        assertEquals(
+            TransportFailure.NOT_SENT,
+            classifyTransportFailure(curlFailure("Problem with the local SSL certificate (CURLE_SSL_CERTPROBLEM)")),
+        )
+        assertEquals(
+            TransportFailure.NOT_SENT,
+            classifyTransportFailure(curlFailure("Could not use specified SSL cipher (CURLE_SSL_CIPHER)")),
+        )
+        // Curl's CURLOPT_ERRORBUFFER wording, which ktor 3.5.2 does not wire but a later one might.
+        assertEquals(
+            TransportFailure.NOT_SENT,
+            classifyTransportFailure(
+                RuntimeException("SSL certificate problem: unable to get local issuer certificate"),
+            ),
+        )
+    }
+
+    /** ktor's two dedicated branches, which do not go through the generic "Connection failed" text. */
+    @Test
+    fun curlHandshakeBranchesAreNotSent() {
+        // CurlMultiApiHandler.kt:338-344.
+        assertEquals(
+            TransportFailure.NOT_SENT,
+            classifyTransportFailure(
+                RuntimeException(
+                    "TLS verification failed for request: CurlRequestData(url='https://s3.amazonaws.com/', " +
+                        "method='PUT', content: 4 bytes). Reason: SSL peer certificate or SSH remote key was " +
+                        "not OK (CURLE_PEER_FAILED_VERIFICATION)",
+                ),
+            ),
+        )
+        // CurlMultiApiHandler.kt:346-350 — interpolates a CURLproxycode, so no `curle_` marker
+        // can catch this one and it has to be listed on its own.
+        assertEquals(
+            TransportFailure.NOT_SENT,
+            classifyTransportFailure(
+                RuntimeException(
+                    "Proxy handshake error for request: CurlRequestData(url='https://s3.amazonaws.com/', " +
+                        "method='PUT', content: 4 bytes). Reason: CURLPX_BAD_ADDRESS_TYPE",
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun aCurlDnsFailureIsFoundThroughNestedCauses() {
+        val nested = Exception(
+            "call failed",
+            IllegalStateException(
+                "wrapped",
+                RuntimeException("Could not resolve host: dynamodb.us-west-2.amazonaws.com"),
+            ),
+        )
+        assertEquals(TransportFailure.NOT_SENT, classifyTransportFailure(nested))
+    }
+
+    /**
+     * The load-bearing half. "Connection failed for request:" is curl's *fallback* branch for every
+     * unhandled `CURLcode`, send and receive errors included — so the sentence must never match on
+     * its own, only the specific codes inside it. Every case here reached the wire, and answering
+     * NOT_SENT for any of them would let a `PutEvents` or an `UpdateItem` be applied twice.
+     */
+    @Test
+    fun curlPostSendFailuresStayAmbiguous() {
+        assertEquals(
+            TransportFailure.AMBIGUOUS,
+            classifyTransportFailure(curlFailure("Failed sending data to the peer (CURLE_SEND_ERROR)")),
+        )
+        assertEquals(
+            TransportFailure.AMBIGUOUS,
+            classifyTransportFailure(curlFailure("Failure when receiving data from the peer (CURLE_RECV_ERROR)")),
+        )
+        assertEquals(
+            TransportFailure.AMBIGUOUS,
+            classifyTransportFailure(curlFailure("Timeout was reached (CURLE_OPERATION_TIMEDOUT)")),
+        )
+        assertEquals(
+            TransportFailure.AMBIGUOUS,
+            classifyTransportFailure(
+                curlFailure("Server returned nothing (no headers, no data) (CURLE_GOT_NOTHING)"),
+            ),
+        )
+        assertEquals(
+            TransportFailure.AMBIGUOUS,
+            classifyTransportFailure(
+                RuntimeException("transfer closed with outstanding read data remaining"),
+            ),
+        )
+        assertEquals(
+            TransportFailure.AMBIGUOUS,
+            classifyTransportFailure(RuntimeException("connection reset by peer")),
+        )
     }
 }
 

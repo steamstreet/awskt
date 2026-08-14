@@ -1,5 +1,7 @@
 package com.steamstreet.awskt.s3
 
+import com.steamstreet.awskt.core.AwsCallEvent
+import com.steamstreet.awskt.core.AwsCallObserver
 import com.steamstreet.awskt.core.AwsCredentialsProvider
 import com.steamstreet.awskt.core.AwsRedirectException
 import com.steamstreet.awskt.core.RetryConfig
@@ -16,6 +18,7 @@ import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -137,6 +140,32 @@ class S3OperationsTest {
         )
     }
 
+    /**
+     * `accept-encoding: identity` comes from `callRaw`, and from there only.
+     *
+     * `putObject` used to add a copy of its own, so the header went out — and was signed — as
+     * `identity,identity`. That works precisely because the two halves agree; it stops working the
+     * day an engine or a proxy collapses the duplicate, at which point the signature covers a
+     * header the request no longer carries and S3 answers `SignatureDoesNotMatch`.
+     */
+    @Test
+    fun putObjectSendsAndSignsExactlyOneAcceptEncoding() = runTest {
+        val h = Harness()
+        s3(h) { Triple("", HttpStatusCode.OK, listOf("ETag" to "\"abc\"")) }
+            .putObject(PutObjectRequest("my-bucket", "k", "hello".encodeToByteArray()))
+
+        val request = h.requests.single()
+        assertEquals(listOf("identity"), request.headers.getAll("accept-encoding"))
+
+        val signed = request.headers["Authorization"]!!
+            .substringAfter("SignedHeaders=").substringBefore(",").split(";")
+        assertEquals(
+            listOf("accept-encoding"),
+            signed.filter { it == "accept-encoding" },
+            "signed once: $signed",
+        )
+    }
+
     @Test
     fun getObjectHarvestsHeadersAndUserMetadata() = runTest {
         val h = Harness()
@@ -218,6 +247,27 @@ class S3OperationsTest {
                 .getObject(GetObjectRequest("my-bucket", "k"))
         }
         assertEquals(403, e.statusCode)
+    }
+
+    /**
+     * A HEAD has no body to fall back on and measure, so an absent `Content-Length` is *unknown*.
+     * Reporting it as `0L` made a real object indistinguishable from an empty one for any caller
+     * branching on the size.
+     */
+    @Test
+    fun headObjectDistinguishesAnAbsentContentLengthFromZero() = runTest {
+        val absent = Harness()
+        assertNull(
+            s3(absent) { Triple("", HttpStatusCode.OK, listOf("ETag" to "\"abc\"")) }
+                .headObject(HeadObjectRequest("my-bucket", "k")).contentLength,
+        )
+
+        val empty = Harness()
+        assertEquals(
+            0L,
+            s3(empty) { Triple("", HttpStatusCode.OK, listOf("Content-Length" to "0")) }
+                .headObject(HeadObjectRequest("my-bucket", "k")).contentLength,
+        )
     }
 
     /** HEAD has no response body by protocol, so its errors classify from status alone. */
@@ -399,5 +449,44 @@ class S3OperationsTest {
                 .putObject(PutObjectRequest("my-bucket", "k", ByteArray(50)))
         }
         assertEquals(0, h.requests.size, "the request must never be sent")
+    }
+}
+
+/**
+ * `S3Config.observer` is snapshotted at construction and handed to **every** per-bucket client.
+ *
+ * The second bucket is the point. S3 builds one `AwsServiceClient` per bucket on demand, so a wiring
+ * that reached only the first would still pass a single-bucket test — and would then quietly stop
+ * reporting the moment a handler touched a second bucket.
+ */
+class S3ObserverWiringTest {
+
+    @Test
+    fun everyPerBucketClientReportsToTheConfiguredObserver() = runTest {
+        val events = mutableListOf<AwsCallEvent>()
+        val engine = MockEngine { request ->
+            respond(
+                content = request.url.host,
+                status = HttpStatusCode.OK,
+                headers = headersOf("Content-Length", listOf(request.url.host.length.toString())),
+            )
+        }
+
+        val s3 = S3 {
+            region = "us-west-2"
+            credentialsProvider = AwsCredentialsProvider { AwsCredentials("AKID", "SECRET") }
+            httpClient = HttpClient(engine) { followRedirects = false; expectSuccess = false }
+            observer = AwsCallObserver { events += it }
+        }
+
+        s3.getObject(GetObjectRequest("bucket-one", "k"))
+        s3.getObject(GetObjectRequest("bucket-two", "k"))
+
+        assertEquals(
+            listOf(AwsCallEvent.Outcome.SUCCESS, AwsCallEvent.Outcome.SUCCESS),
+            events.map { it.outcome },
+        )
+        // Named even though S3 sends no X-Amz-Target, so the events are dimensionable per operation.
+        assertEquals(listOf("GetObject"), events.map { it.operation }.distinct())
     }
 }

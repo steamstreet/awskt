@@ -413,6 +413,84 @@ class SignerBehaviourTest {
         )
     }
 
+    /**
+     * The workload a single-slot cache could not serve at all.
+     *
+     * A Lambda that alternates DynamoDB and S3 calls evicted the other service's key on every sign,
+     * so the cache had a 0% hit rate on exactly the container it exists to speed up and re-derived
+     * four HMACs per request. The derivation count is the assertion that matters — signatures alone
+     * stay correct however badly the cache behaves, which is what let the thrashing go unnoticed.
+     */
+    @Test
+    fun alternatingServicesReuseBothCachedKeys() {
+        resetSigningKeyCacheForTest()
+        val request = SigningRequest("POST", "/", host = "example.amazonaws.com")
+        val dynamo = SigV4Config(region = "us-east-1", service = "dynamodb")
+        val s3 = SigV4Config(region = "us-east-1", service = "s3")
+
+        val expectedDynamo = SigV4.sign(request, CREDENTIALS, dynamo, AT).signature
+        val expectedS3 = SigV4.sign(request, CREDENTIALS, s3, AT).signature
+        assertFalse(expectedDynamo == expectedS3, "the two services must not sign identically")
+        assertEquals(2, signingKeyDerivations, "one derivation per service to prime the cache")
+
+        repeat(10) {
+            assertEquals(expectedDynamo, SigV4.sign(request, CREDENTIALS, dynamo, AT).signature)
+            assertEquals(expectedS3, SigV4.sign(request, CREDENTIALS, s3, AT).signature)
+        }
+
+        assertEquals(2, signingKeyDerivations, "alternating services must not evict each other")
+    }
+
+    /**
+     * More live scopes than slots: entries are evicted, and every signature stays correct.
+     *
+     * The behavioural floor for the cache as a whole — a wrong eviction shows up here as a wrong
+     * signature rather than as a missed optimisation.
+     */
+    @Test
+    fun moreServicesThanSlotsStillSignCorrectly() {
+        resetSigningKeyCacheForTest()
+        val request = SigningRequest("POST", "/", host = "example.amazonaws.com")
+        val configs = listOf("dynamodb", "s3", "sqs", "sns", "kinesis")
+            .associateWith { SigV4Config(region = "us-east-1", service = it) }
+
+        val expected = configs.mapValues { (_, config) ->
+            SigV4.sign(request, CREDENTIALS, config, AT).signature
+        }
+        assertEquals(configs.size, expected.values.toSet().size, "each service must sign differently")
+
+        repeat(3) {
+            for ((service, config) in configs) {
+                assertEquals(
+                    expected[service],
+                    SigV4.sign(request, CREDENTIALS, config, AT).signature,
+                    "$service signed differently after an eviction",
+                )
+            }
+        }
+    }
+
+    /**
+     * A credentials provider that hands back a *new* object carrying the same values — a refresh
+     * that changed nothing — must not re-derive.
+     *
+     * The reference comparison on the fast path cannot answer this, so the digest-keyed identity
+     * does. The cost is one SHA-256 on that call and no HMACs; see [signingKey]'s KDoc.
+     */
+    @Test
+    fun aFreshCredentialsObjectCarryingTheSameValuesDoesNotReDerive() {
+        resetSigningKeyCacheForTest()
+        val request = SigningRequest("GET", "/", host = "example.amazonaws.com")
+        val config = SigV4Config(region = "us-east-1", service = "service")
+
+        val first = SigV4.sign(request, AwsCredentials("AKIDEXAMPLE", SECRET), config, AT)
+        assertEquals(1, signingKeyDerivations)
+
+        val second = SigV4.sign(request, AwsCredentials("AKIDEXAMPLE", SECRET), config, AT)
+        assertEquals(first.signature, second.signature)
+        assertEquals(1, signingKeyDerivations, "identical credentials must not re-derive")
+    }
+
     /** Presigning *does* bind the access key id, because `X-Amz-Credential` is canonicalized. */
     @Test
     fun presignSignatureDependsOnTheAccessKeyId() {

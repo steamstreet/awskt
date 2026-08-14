@@ -1,3 +1,31 @@
+public final class com/steamstreet/awskt/core/AwsCallEvent {
+	public fun <init> (Ljava/lang/String;ILcom/steamstreet/awskt/core/AwsCallEvent$Outcome;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/Long;J)V
+	public final fun getAttempt ()I
+	public final fun getDurationMillis ()J
+	public final fun getErrorCode ()Ljava/lang/String;
+	public final fun getOperation ()Ljava/lang/String;
+	public final fun getOutcome ()Lcom/steamstreet/awskt/core/AwsCallEvent$Outcome;
+	public final fun getStatusCode ()Ljava/lang/Integer;
+	public final fun getWillRetryAfterMillis ()Ljava/lang/Long;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/core/AwsCallEvent$Outcome : java/lang/Enum {
+	public static final field CLOCK_SKEW_CORRECTED Lcom/steamstreet/awskt/core/AwsCallEvent$Outcome;
+	public static final field GAVE_UP Lcom/steamstreet/awskt/core/AwsCallEvent$Outcome;
+	public static final field RETRY_SCHEDULED Lcom/steamstreet/awskt/core/AwsCallEvent$Outcome;
+	public static final field SERVICE_ERROR Lcom/steamstreet/awskt/core/AwsCallEvent$Outcome;
+	public static final field SUCCESS Lcom/steamstreet/awskt/core/AwsCallEvent$Outcome;
+	public static final field TRANSPORT_FAILURE Lcom/steamstreet/awskt/core/AwsCallEvent$Outcome;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/core/AwsCallEvent$Outcome;
+	public static fun values ()[Lcom/steamstreet/awskt/core/AwsCallEvent$Outcome;
+}
+
+public abstract interface class com/steamstreet/awskt/core/AwsCallObserver {
+	public abstract fun onAttempt (Lcom/steamstreet/awskt/core/AwsCallEvent;)V
+}
+
 public final class com/steamstreet/awskt/core/AwsConfigurationException : java/lang/Exception {
 	public fun <init> (Ljava/lang/String;)V
 }
@@ -34,6 +62,16 @@ public final class com/steamstreet/awskt/core/AwsHttpResponse {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/steamstreet/awskt/core/AwsHttpTimeouts {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Long;)V
+	public synthetic fun <init> (Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Long;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getConnectTimeoutMillis ()Ljava/lang/Long;
+	public final fun getRequestTimeoutMillis ()Ljava/lang/Long;
+	public final fun getSocketTimeoutMillis ()Ljava/lang/Long;
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/steamstreet/awskt/core/AwsJsonErrorParser : com/steamstreet/awskt/core/AwsErrorParser {
 	public static final field INSTANCE Lcom/steamstreet/awskt/core/AwsJsonErrorParser;
 	public fun parse (ILjava/util/Map;[B)Lcom/steamstreet/awskt/core/ErrorDetails;
@@ -66,8 +104,8 @@ public final class com/steamstreet/awskt/core/AwsRedirectException : com/steamst
 }
 
 public final class com/steamstreet/awskt/core/AwsServiceClient {
-	public fun <init> (Lio/ktor/client/HttpClient;Lcom/steamstreet/awskt/core/AwsCredentialsProvider;Lcom/steamstreet/awskt/core/AwsEndpoint;Ljava/lang/String;Lcom/steamstreet/awskt/core/AwsProtocol;Lcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;)V
-	public synthetic fun <init> (Lio/ktor/client/HttpClient;Lcom/steamstreet/awskt/core/AwsCredentialsProvider;Lcom/steamstreet/awskt/core/AwsEndpoint;Ljava/lang/String;Lcom/steamstreet/awskt/core/AwsProtocol;Lcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/ktor/client/HttpClient;Lcom/steamstreet/awskt/core/AwsCredentialsProvider;Lcom/steamstreet/awskt/core/AwsEndpoint;Ljava/lang/String;Lcom/steamstreet/awskt/core/AwsProtocol;Lcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lcom/steamstreet/awskt/core/AwsCallObserver;)V
+	public synthetic fun <init> (Lio/ktor/client/HttpClient;Lcom/steamstreet/awskt/core/AwsCredentialsProvider;Lcom/steamstreet/awskt/core/AwsEndpoint;Ljava/lang/String;Lcom/steamstreet/awskt/core/AwsProtocol;Lcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lcom/steamstreet/awskt/core/AwsCallObserver;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun callRaw (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;[BLjava/lang/String;Lcom/steamstreet/awskt/core/OperationSafety;Lcom/steamstreet/awskt/signing/PayloadHash;Lcom/steamstreet/awskt/signing/SignedBodyHeader;ZZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun callRaw$default (Lcom/steamstreet/awskt/core/AwsServiceClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;[BLjava/lang/String;Lcom/steamstreet/awskt/core/OperationSafety;Lcom/steamstreet/awskt/signing/PayloadHash;Lcom/steamstreet/awskt/signing/SignedBodyHeader;ZZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
@@ -83,6 +121,19 @@ public class com/steamstreet/awskt/core/AwsServiceException : java/lang/Exceptio
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/steamstreet/awskt/core/BatchRetry {
+	public static final field Companion Lcom/steamstreet/awskt/core/BatchRetry$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun awaitResubmit (IJLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getConfig ()Lcom/steamstreet/awskt/core/RetryConfig;
+}
+
+public final class com/steamstreet/awskt/core/BatchRetry$Companion {
+	public final fun getDefault ()Lcom/steamstreet/awskt/core/BatchRetry;
+}
+
 public final class com/steamstreet/awskt/core/CachedCredentialsProvider : com/steamstreet/awskt/core/AwsCredentialsProvider {
 	public synthetic fun <init> (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;JJLkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;JJLkotlin/jvm/functions/Function0;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -92,6 +143,7 @@ public final class com/steamstreet/awskt/core/CachedCredentialsProvider : com/st
 
 public final class com/steamstreet/awskt/core/CredentialsKt {
 	public static final fun defaultCredentialsProvider ()Lcom/steamstreet/awskt/core/AwsCredentialsProvider;
+	public static final fun parseAwsCredentialExpirationOrNull (Ljava/lang/String;)Ljava/lang/Long;
 }
 
 public final class com/steamstreet/awskt/core/CredentialsProviderChain : com/steamstreet/awskt/core/AwsCredentialsProvider {
@@ -127,8 +179,12 @@ public final class com/steamstreet/awskt/core/ErrorsKt {
 }
 
 public final class com/steamstreet/awskt/core/HttpClient_jvmKt {
-	public static final fun awsHttpClient (Ljava/lang/String;)Lio/ktor/client/HttpClient;
-	public static synthetic fun awsHttpClient$default (Ljava/lang/String;ILjava/lang/Object;)Lio/ktor/client/HttpClient;
+	public static final fun awsHttpClient (Ljava/lang/String;Lcom/steamstreet/awskt/core/AwsHttpTimeouts;)Lio/ktor/client/HttpClient;
+	public static synthetic fun awsHttpClient$default (Ljava/lang/String;Lcom/steamstreet/awskt/core/AwsHttpTimeouts;ILjava/lang/Object;)Lio/ktor/client/HttpClient;
+}
+
+public final class com/steamstreet/awskt/core/IdsKt {
+	public static final fun randomUuidString ()Ljava/lang/String;
 }
 
 public final class com/steamstreet/awskt/core/OperationSafety : java/lang/Enum {

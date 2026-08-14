@@ -170,7 +170,7 @@ class EventBridgeDifferentialTest {
             }.use { client -> runBlocking { call(client) } }
         }
 
-    private fun <T> throughOurs(body: String, call: suspend (EventBridgeApi) -> T): T =
+    private fun <T> throughOurs(body: String, call: suspend (EventBridge) -> T): T =
         runBlocking {
             harnessEventBridge(EventBridgeHarness()) { body to HttpStatusCode.OK }.use { call(it) }
         }

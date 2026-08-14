@@ -1,5 +1,6 @@
 package com.steamstreet.awskt.core
 
+import com.steamstreet.awskt.core.AwsCallEvent.Outcome
 import com.steamstreet.awskt.signing.PayloadHash
 import com.steamstreet.awskt.signing.SigV4
 import com.steamstreet.awskt.signing.SigV4Config
@@ -18,7 +19,6 @@ import kotlinx.coroutines.delay
 import kotlin.concurrent.atomics.AtomicLong
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.random.Random
 
 /** A raw, already-classified AWS response. */
 public class AwsHttpResponse(
@@ -70,6 +70,34 @@ public class AwsProtocol(
 internal enum class TransportFailure { NOT_SENT, AMBIGUOUS }
 
 /**
+ * The version reported in the outgoing `User-Agent`.
+ *
+ * **Hardcoded, and release tooling must bump it.** There is no version to read at runtime: the build
+ * derives one from git tags via the `nebula.release` plugin, so `gradle.properties` carries none and
+ * a multiplatform `commonMain` source set has no equivalent of the JVM's `Package.implementation
+ * Version` to fall back on. `3.0` is the line this branch releases into.
+ *
+ * Getting it stale is a small, silent cost — CloudTrail and S3 access logs attribute the call to the
+ * wrong release — so it belongs in the release checklist next to the version bump itself, not in a
+ * comment nobody reads at release time.
+ */
+internal const val AWSKT_VERSION: String = "3.0.0"
+
+/**
+ * The `User-Agent` sent on every call that does not bring its own.
+ *
+ * Shaped `awskt/<version> <transport>` after the official SDKs' `aws-sdk-kotlin/1.2.3 …` convention:
+ * a token AWS Support and CloudTrail's `userAgent` field can key on, plus the transport, because
+ * "which HTTP engine" is the first question asked about a transport-level failure. Without it,
+ * requests arrive labelled `ktor-client` (CIO) or unlabelled (Curl), and every awskt caller in an
+ * account is indistinguishable from every other Ktor program.
+ *
+ * Never signed — `user-agent` is in the signer's skipped set, along with everything else a proxy or
+ * an engine may rewrite — so changing this string cannot break a signature.
+ */
+internal const val AWSKT_USER_AGENT: String = "awskt/$AWSKT_VERSION ktor"
+
+/**
  * Carries whatever a caller's `inspectBeforeBody` threw out through the send, so the retry loop can
  * tell a local policy refusal apart from a transport failure.
  *
@@ -77,8 +105,24 @@ internal enum class TransportFailure { NOT_SENT, AMBIGUOUS }
  * [classifyTransportFailure] answers [TransportFailure.AMBIGUOUS] for anything it does not
  * recognise — so without a marker the caller's deliberate refusal is read as "the network might
  * have eaten this" and replayed.
+ *
+ * @param status the status the refused response arrived with, carried purely so an [AwsCallObserver]
+ *   can report *which* response was refused. The retry loop itself does not look at it.
  */
-private class InspectionRefusal(val refusal: Throwable) : Throwable(refusal)
+private class InspectionRefusal(val refusal: Throwable, val status: Int) : Throwable(refusal)
+
+/**
+ * The retry capacity one [AwsServiceClient.callRaw] invocation has taken from the shared bucket and
+ * not yet handed back.
+ *
+ * A plain `var` rather than an atomic, and that is not an oversight: this object is created inside
+ * one call and touched only by the coroutine running it, so there is nothing to race against. The
+ * shared state is the bucket it draws from, which is atomic. Making this atomic too would suggest a
+ * sharing that does not exist.
+ */
+private class RetryBudget {
+    var spent: Int = 0
+}
 
 /**
  * A pre-materialized body with an explicit content type.
@@ -122,12 +166,30 @@ public class AwsServiceClient(
     private val clock: () -> Long = ::currentEpochMillis,
     private val random: () -> Double = ::defaultRandom,
     private val sleep: suspend (Long) -> Unit = { delay(it) },
+    /**
+     * Notified of every attempt, every retry decision and every give-up. Null means no
+     * instrumentation and costs nothing: [notify] returns before an [AwsCallEvent] is allocated.
+     *
+     * See [AwsCallObserver] for the shape of the stream and for the guarantee that a throwing
+     * observer cannot fail a call.
+     */
+    private val observer: AwsCallObserver? = null,
 ) {
     /**
-     * Internal rather than private so a test can assert the retry budget balances after a parallel
-     * run. Every acquire in [prepareRetry] is paired with a refund, so a client that has finished
-     * its work must be back at full capacity — an invariant with no observable proxy from outside.
-     * Internal declarations do not appear in the ABI dump, so this is not published surface.
+     * Internal rather than private so a test can assert the retry budget's invariant after a run —
+     * a property with no observable proxy from outside. Internal declarations do not appear in the
+     * ABI dump, so this is not published surface.
+     *
+     * The invariant is **not** "back at full capacity once the work is done". That held only while
+     * [prepareRetry] refunded unconditionally, and it was precisely why the breaker could never
+     * open: the bucket then bounded only *concurrently sleeping* retries, so a warm container
+     * calling a hard-down dependency retried at full `maxAttempts` forever.
+     *
+     * What holds now: the capacity missing from the bucket is the summed retry cost of every call
+     * that never succeeded, plus the cost already acquired by calls still in flight, less the +1
+     * credited by each clean first-attempt success since (saturating at capacity). A call that
+     * succeeds refunds exactly what it acquired, so a run of calls that all eventually work still
+     * ends at full capacity; a run that all fail does not, and that is the point.
      */
     internal val tokenBucket = RetryTokenBucket()
 
@@ -172,9 +234,16 @@ public class AwsServiceClient(
      * @param validateBody called with a **successful** response once its body is in memory, from
      *   inside the retry loop. Its retry semantics are the exact opposite of [inspectBeforeBody]'s,
      *   which is the whole reason it is a separate parameter rather than a second use of that one:
-     *   throwing from here reports that *this response is defective*, and is retried as
-     *   [RetryErrorType.TRANSIENT] until the attempt budget runs out, after which the exception is
-     *   surfaced to the caller unchanged.
+     *   throwing from here reports that *this response is defective*, and on an
+     *   [OperationSafety.IDEMPOTENT] operation is retried as [RetryErrorType.TRANSIENT] until the
+     *   attempt budget runs out, after which the exception is surfaced to the caller unchanged.
+     *
+     *   **On a [OperationSafety.NOT_IDEMPOTENT] operation the rejection is surfaced immediately,
+     *   unretried.** A rejection here is not an ambiguous failure: the 2xx arrived, so the request
+     *   provably reached AWS and was applied, and replaying it to obtain a better copy of the
+     *   answer applies the write a second time. A defective body is the cheaper of the two
+     *   failures. [RetryConfig.retryAmbiguousWrites] does not unlock this — it is an opt-in for the
+     *   case where we cannot tell whether the request landed, and here we can.
      *
      *   The two are a matched pair, and the pairing is the point. A check that a replay cannot fix
      *   (`aws-s3`'s download ceiling — the object really is that big, and will be on the next
@@ -200,11 +269,19 @@ public class AwsServiceClient(
     ): AwsHttpResponse {
         val invocationId = newInvocationId()
         val deadline = clock() + retryConfig.maxTotalRetryDuration.inWholeMilliseconds
+        val budget = RetryBudget()
         var attempt = 0
         var skewCorrectionUsed = false
         var lastFailure: Throwable? = null
 
         while (true) {
+            // The 1-based number of the attempt about to be made, and the instant it starts. The
+            // clock is read *before* credentials are resolved so the reported duration covers the
+            // whole attempt — a stalled IMDS hop is part of what the caller waited for. See
+            // AwsCallEvent.durationMillis.
+            val attemptNumber = attempt + 1
+            val attemptStart = clock()
+
             // Resolved per attempt, not once: a call spanning four attempts and a 20-second cap can
             // outlive the credentials it started with.
             val credentials = credentialsProvider.resolve()
@@ -215,9 +292,17 @@ public class AwsServiceClient(
                     operation?.let { add("X-Amz-Target" to "$prefix.$it") }
                 }
                 addAll(headers)
+                // After the caller's headers, and only when they carried none: a request that
+                // arrived with two User-Agents is worse than one that arrived with the wrong one,
+                // and a caller identifying its own application is the case worth deferring to.
+                if (headers.none { it.first.equals("user-agent", ignoreCase = true) }) {
+                    add("user-agent" to AWSKT_USER_AGENT)
+                }
                 add("amz-sdk-invocation-id" to invocationId)
                 add("amz-sdk-request" to "attempt=${attempt + 1}; max=${retryConfig.maxAttempts}")
-                // Signing a compressed body we never see would break the payload hash.
+                // Signing a compressed body we never see would break the payload hash. Added here
+                // for every call and nowhere else: a service module that adds its own copy sends
+                // (and signs) the header twice, which works only for as long as no engine dedupes.
                 add("accept-encoding" to "identity")
             }
 
@@ -252,26 +337,43 @@ public class AwsServiceClient(
                 // it comes back AMBIGUOUS — which on an IDEMPOTENT operation retries, so `aws-s3`
                 // answers "this object is too big to buffer" by fetching the same too-big object
                 // several more times, with backoff, before surfacing the identical exception.
+                //
+                // GAVE_UP and no terminal event: the call is over, but the attempt has no outcome
+                // that is honestly AWS's — see AwsCallEvent.
+                notify(Outcome.GAVE_UP, operation, attemptNumber, refusal.status, null, null, attemptStart)
                 throw refusal.refusal
-            } catch (cancellation: CancellationException) {
+            } catch (failure: Throwable) {
                 // Cancellation is not a transport failure, and must never reach the classifier:
                 // `classifyTransportFailure` answers AMBIGUOUS for anything it does not recognise,
                 // and AMBIGUOUS on an IDEMPOTENT operation retries. So a cancelled scope would be
                 // answered by sending the request again — the client keeps issuing calls precisely
-                // when the caller has said to stop.
-                throw cancellation
-            } catch (failure: Throwable) {
-                lastFailure = failure
-                val kind = classifyTransportFailure(failure)
+                // when the caller has said to stop. `transportFailureOrNull` answers null for one,
+                // and this rethrows it untouched.
+                val transportFailure = transportFailureOrNull(failure) ?: throw failure
+                notify(Outcome.TRANSPORT_FAILURE, operation, attemptNumber, null, null, null, attemptStart)
+                lastFailure = transportFailure
+                val kind = classifyTransportFailure(transportFailure)
                 val mayRetry = when (kind) {
                     TransportFailure.NOT_SENT -> true
                     TransportFailure.AMBIGUOUS ->
                         safety == OperationSafety.IDEMPOTENT || retryConfig.retryAmbiguousWrites
                 }
-                if (!mayRetry) throw failure
+                // `transportFailure`, not `failure`: the two differ only for a timeout that arrived
+                // dressed as a cancellation, and there the caller wants the timeout. Surfacing the
+                // cancellation instead would report a live call as a cancelled scope.
+                if (!mayRetry) {
+                    notify(Outcome.GAVE_UP, operation, attemptNumber, null, null, null, attemptStart)
+                    throw transportFailure
+                }
 
                 attempt++
-                if (!prepareRetry(RetryErrorType.TRANSIENT, attempt, deadline, null)) throw failure
+                if (!prepareRetry(
+                        RetryErrorType.TRANSIENT, attempt, deadline, null, budget, operation, attemptStart,
+                    )
+                ) {
+                    notify(Outcome.GAVE_UP, operation, attemptNumber, null, null, null, attemptStart)
+                    throw transportFailure
+                }
                 continue
             }
 
@@ -292,23 +394,70 @@ public class AwsServiceClient(
                 }
 
                 if (rejection == null) {
+                    // "Returned by succeeding": whatever retries this call paid for bought a working
+                    // response, so their cost goes back. The +1 credit is a different thing and is
+                    // reserved for a call that needed no retry at all — it is the only way the
+                    // bucket refills past what it lent out, and a call that had to retry is not the
+                    // evidence of health that earns it.
                     if (attempt == 0) tokenBucket.onCleanSuccess()
+                    else tokenBucket.refundCost(budget.spent)
+                    notify(
+                        Outcome.SUCCESS, operation, attemptNumber, response.status, null, null, attemptStart,
+                    )
                     return response
                 }
 
+                // TRANSPORT_FAILURE with a status: the bytes arrived and were defective. `validateBody`
+                // is retried exactly like a dead socket, and reporting it as anything else would put a
+                // truncated download in the same bucket as a 500 from AWS.
+                notify(
+                    Outcome.TRANSPORT_FAILURE, operation, attemptNumber, response.status, null, null,
+                    attemptStart,
+                )
                 lastFailure?.let { rejection.addSuppressed(it) }
                 lastFailure = rejection
 
+                // A rejection is *not* an ambiguous failure, which is why `safety` is consulted
+                // here at all: the 2xx arrived, so the request provably reached AWS and was
+                // applied. Replaying a write to fetch a better copy of its answer double-applies
+                // it, and a defective body is the cheaper failure. Deliberately not gated on
+                // `retryAmbiguousWrites` — that opts in to retrying when we cannot tell whether
+                // the request landed, and here we can.
+                if (safety == OperationSafety.NOT_IDEMPOTENT) {
+                    notify(
+                        Outcome.GAVE_UP, operation, attemptNumber, response.status, null, null, attemptStart,
+                    )
+                    throw rejection
+                }
+
                 attempt++
-                if (!prepareRetry(RetryErrorType.TRANSIENT, attempt, deadline, null)) throw rejection
+                if (!prepareRetry(
+                        RetryErrorType.TRANSIENT, attempt, deadline, null, budget, operation, attemptStart,
+                    )
+                ) {
+                    notify(
+                        Outcome.GAVE_UP, operation, attemptNumber, response.status, null, null, attemptStart,
+                    )
+                    throw rejection
+                }
                 continue
             }
 
             val details = protocol.errorParser.parse(response.status, response.headers, response.body)
             val exception = toException(details, response)
+            notify(
+                Outcome.SERVICE_ERROR, operation, attemptNumber, response.status, details.code, null,
+                attemptStart,
+            )
 
             // Redirects are surfaced, never followed — see awsHttpClient.
-            if (exception is AwsRedirectException) throw exception
+            if (exception is AwsRedirectException) {
+                notify(
+                    Outcome.GAVE_UP, operation, attemptNumber, response.status, details.code, null,
+                    attemptStart,
+                )
+                throw exception
+            }
 
             if (!skewCorrectionUsed && shouldCorrectClockSkew(details.code, response)) {
                 skewCorrectionUsed = true
@@ -316,43 +465,132 @@ public class AwsServiceClient(
                 // previous learning in place, exactly as the `?: clockSkewOffsetMillis` did — but
                 // without reading and writing the field as two separate steps.
                 serverTimeOffset(response)?.let { clockSkewOffsetMillis.store(it) }
+                // The one retry that takes no backoff at all, which is why this reports itself
+                // rather than arriving as a RETRY_SCHEDULED with a zero delay.
+                notify(
+                    Outcome.CLOCK_SKEW_CORRECTED, operation, attemptNumber, response.status, details.code,
+                    null, attemptStart,
+                )
                 attempt++
-                if (attempt >= retryConfig.maxAttempts) throw exception
+                if (attempt >= retryConfig.maxAttempts) {
+                    notify(
+                        Outcome.GAVE_UP, operation, attemptNumber, response.status, details.code, null,
+                        attemptStart,
+                    )
+                    throw exception
+                }
                 continue
             }
 
             val type = classifyRetry(details.code, response.status)
-            if (type == null) throw exception
+            if (type == null) {
+                notify(
+                    Outcome.GAVE_UP, operation, attemptNumber, response.status, details.code, null,
+                    attemptStart,
+                )
+                throw exception
+            }
 
             lastFailure?.let { exception.addSuppressed(it) }
             lastFailure = exception
 
             attempt++
             val retryAfter = response.headers.headerValue("x-amz-retry-after")
-            if (!prepareRetry(type, attempt, deadline, retryAfter)) throw exception
+            if (!prepareRetry(type, attempt, deadline, retryAfter, budget, operation, attemptStart)) {
+                notify(
+                    Outcome.GAVE_UP, operation, attemptNumber, response.status, details.code, null,
+                    attemptStart,
+                )
+                throw exception
+            }
         }
     }
 
-    /** Returns false when the caller should give up rather than sleep. */
+    /**
+     * Hands one event to [observer], and absorbs whatever that does.
+     *
+     * The `?: return` is the reason this is cheap enough to call unconditionally from the request
+     * path: with no observer configured, no [AwsCallEvent] is ever allocated.
+     */
+    private fun notify(
+        outcome: Outcome,
+        operation: String?,
+        attempt: Int,
+        statusCode: Int?,
+        errorCode: String?,
+        willRetryAfterMillis: Long?,
+        attemptStartMillis: Long,
+    ) {
+        val target = observer ?: return
+        try {
+            target.onAttempt(
+                AwsCallEvent(
+                    operation = operation,
+                    attempt = attempt,
+                    outcome = outcome,
+                    statusCode = statusCode,
+                    errorCode = errorCode,
+                    willRetryAfterMillis = willRetryAfterMillis,
+                    durationMillis = clock() - attemptStartMillis,
+                ),
+            )
+        } catch (cancellation: CancellationException) {
+            // Never swallowed: this is structured concurrency tearing the call down, not a fault in
+            // the observer. Absorbing it would keep a cancelled coroutine issuing AWS requests.
+            throw cancellation
+        } catch (_: Throwable) {
+            // Swallowed by contract — see AwsCallObserver. Instrumentation does not get to fail the
+            // call it is measuring; a broken metrics tag must not look like a DynamoDB outage.
+        }
+    }
+
+    /**
+     * Returns false when the caller should give up rather than sleep, and charges [budget] for the
+     * capacity a retry it green-lights has taken.
+     *
+     * The charge is *not* returned here. It is returned by [callRaw] when the call it belongs to
+     * finally succeeds, and by nothing else — see [tokenBucket]. The one exception is the deadline
+     * abort below, where the retry this paid for is not going to happen at all.
+     *
+     * [AwsCallEvent.Outcome.RETRY_SCHEDULED] is emitted from here rather than from [callRaw] because
+     * this is the only place that knows the chosen delay, and it is emitted *before* the sleep so an
+     * observer learns of a five-second backoff when it starts rather than when it ends.
+     *
+     * @param attempt the 1-based number of the attempt that just failed — already incremented by the
+     *   caller — which is both the count of attempts made and the number [notify] reports.
+     * @param attemptStartMillis the failed attempt's start, so the emitted event's duration stays on
+     *   the same baseline as that attempt's terminal event.
+     */
     private suspend fun prepareRetry(
         type: RetryErrorType,
         attempt: Int,
         deadlineMillis: Long,
         retryAfterHeader: String?,
+        budget: RetryBudget,
+        operation: String?,
+        attemptStartMillis: Long,
     ): Boolean {
         if (attempt >= retryConfig.maxAttempts) return false
         if (!tokenBucket.tryAcquire(type)) return false
+        val cost = tokenBucket.costOf(type)
+        budget.spent += cost
 
         val delayMillis = applyRetryAfter(
             backoffMillis(type, attempt - 1, retryConfig, random),
             retryAfterHeader,
+            retryConfig.maxBackoffMillis,
         )
         if (clock() + delayMillis > deadlineMillis) {
+            // Nothing was retried, so nothing is owed. Charging for a retry the deadline cancelled
+            // would open the breaker on evidence that was never gathered.
             tokenBucket.refund(type)
+            budget.spent -= cost
             return false
         }
+        notify(
+            Outcome.RETRY_SCHEDULED, operation, attempt, null, null, delayMillis, attemptStartMillis,
+        )
         sleep(delayMillis)
-        tokenBucket.refund(type)
         return true
     }
 
@@ -417,7 +655,7 @@ public class AwsServiceClient(
             try {
                 inspectBeforeBody(response.status.value, responseHeaders)
             } catch (refusal: Throwable) {
-                throw InspectionRefusal(refusal)
+                throw InspectionRefusal(refusal, response.status.value)
             }
         }
 
@@ -464,14 +702,33 @@ public class AwsServiceClient(
         return offset > 4 * 60 * 1_000 || offset < -4 * 60 * 1_000
     }
 
+    /**
+     * How far AWS's clock is ahead of ours, from the response's `Date` header.
+     *
+     * **Measured after the body was downloaded, so it includes the transfer time**, and is therefore
+     * an estimate skewed late by however long the response took to arrive — the header records when
+     * AWS started writing, and [clock] is read here, after the last byte landed. That is deliberate
+     * and adequate for what it is used for: SigV4 tolerates five minutes of skew, and the triggers
+     * in [shouldCorrectClockSkew] only act on a disagreement of four minutes or more, so a few
+     * seconds of download does not decide anything. Documented so nobody reads a precision claim
+     * into it — and so nobody "fixes" it by timestamping mid-flight, which would buy accuracy this
+     * has no use for at the cost of threading a clock read through [send].
+     */
     private fun serverTimeOffset(response: AwsHttpResponse): Long? {
         val serverMillis = parseHttpDateOrNull(response.headers.headerValue("date") ?: return null)
             ?: return null
         return serverMillis - clock()
     }
 
-    private fun newInvocationId(): String =
-        Random.nextLong().toULong().toString(16).padStart(16, '0')
+    /**
+     * `amz-sdk-invocation-id`: one id shared by every attempt of one call, so AWS can tie a request
+     * and its retries together.
+     *
+     * UUID-shaped, which is what every AWS SDK puts in this header. It used to be 16 hex digits —
+     * unique enough among one process's calls, but a different shape from the value AWS-side
+     * tooling is reading, and a second home-grown generator next to `aws-dynamodb`'s.
+     */
+    private fun newInvocationId(): String = randomUuidString()
 
     private companion object {
         val EMPTY_BODY = ByteArray(0)
@@ -488,15 +745,91 @@ public class AwsServiceClient(
 }
 
 /**
+ * The failure to hand to [classifyTransportFailure], or null when this is the caller's cancellation
+ * and must simply propagate.
+ *
+ * Everything that is not a [CancellationException] is itself. The interesting case is the one that
+ * is: Ktor's `HttpTimeout` plugin enforces `requestTimeoutMillis` by **cancelling the call's job**
+ * with an `HttpRequestTimeoutException` as the cancellation cause. Ktor unwraps that back to the
+ * typed exception on the paths that go through `unwrapRequestTimeoutException`, but a streaming read
+ * outside those paths surfaces the cancellation as-is — and read as a cancelled scope, the timeout
+ * this library just added would be neither retried nor reported as a timeout.
+ *
+ * A cause that is itself a [CancellationException] is skipped rather than unwrapped, and that
+ * exclusion is the whole safety of this function: a caller's `withTimeout` cancels with a
+ * `TimeoutCancellationException`, whose name matches the same pattern. Unwrapping it would answer a
+ * caller's "stop now" by sending the request again.
+ */
+internal fun transportFailureOrNull(failure: Throwable): Throwable? {
+    if (failure !is CancellationException) return failure
+    var current: Throwable? = failure.cause
+    var depth = 0
+    while (current != null && depth < 8) {
+        if (current !is CancellationException && current::class.simpleName.orEmpty().contains("Timeout")) {
+            return current
+        }
+        current = current.cause
+        depth++
+    }
+    return null
+}
+
+/**
  * Classifies a transport failure.
  *
  * The default is [TransportFailure.AMBIGUOUS] on purpose: an unrecognised failure might have
  * reached AWS, and treating it as provably-not-sent would let a non-idempotent write replay.
+ *
+ * ### The three timeouts land on two different answers
+ *
+ * A connect timeout (`ConnectTimeoutException`, matched by name below and again by its message) is
+ * [TransportFailure.NOT_SENT]: the socket never carried a byte, so replaying it cannot double-apply
+ * anything, and it is retried even for a write.
+ *
+ * A request or socket timeout (`HttpRequestTimeoutException`, `SocketTimeoutException`) is
+ * **deliberately left to the AMBIGUOUS default**, and neither name nor message may be added to the
+ * list above it: both fire after the request was already on the wire, so AWS may well have applied
+ * it. Retried for an IDEMPOTENT operation, surfaced for a write. Matching either as NOT_SENT would
+ * silently make every timed-out `PutEvents` replayable.
+ *
+ * ### Curl, which is the only engine native has
+ *
+ * The name and message patterns below are JVM-shaped, and Kotlin/Native never sees a single one of
+ * them: `ktor-client-curl` reports every failed transfer as a plain `IllegalStateException` whose
+ * message is `"Connection failed for request: $request. Reason: $errorMessage"`
+ * (`CurlMultiApiHandler.kt:353`, ktor 3.5.2), where `errorMessage` is
+ * `"${curl_easy_strerror(code)} (${code.name})"` (`CurlAdapters.kt:61-62`). No typed exception, no
+ * recognisable class name — so before [CURL_NOT_SENT_MARKERS] existed, a DNS lookup that failed
+ * before a packet left the machine came back AMBIGUOUS, and a `NOT_IDEMPOTENT` write refused to
+ * retry it.
+ *
+ * The markers match the `CURLE_…` **enum name** first, because ktor appends it verbatim and curl's
+ * `strerror` prose is not stable across curl releases: `CURLE_COULDNT_RESOLVE_HOST` reads
+ * "Couldn't resolve host name" under curl 7.88 and "Could not resolve hostname" under curl 8.11.
+ * Both spellings are listed too, for anything that surfaces the prose without the code.
+ *
+ * What must **not** be matched is the enclosing sentence. "Connection failed for request:" is the
+ * *fallback* branch for every unhandled `CURLcode`, `CURLE_SEND_ERROR` and `CURLE_RECV_ERROR`
+ * included — the two shapes that most certainly did reach AWS. Only the specific codes inside it
+ * are safe, for the same reason the request timeout above is not.
+ *
+ * One inherited subtlety: ktor maps `CURLE_OPERATION_TIMEDOUT` to `ConnectTimeoutException`
+ * (`CurlMultiApiHandler.kt:332-334`), which the name check above already answers NOT_SENT. That is
+ * sound *only* because the engine sets `CURLOPT_CONNECTTIMEOUT_MS` and never `CURLOPT_TIMEOUT_MS`
+ * (`CurlMultiApiHandler.kt:100-105`), so curl has no whole-operation deadline that could expire
+ * mid-flight. Should a ktor release start setting one, that mapping becomes a post-send timeout
+ * wearing a pre-send name, and this classifier would need to stop trusting it.
  */
 internal fun classifyTransportFailure(failure: Throwable): TransportFailure {
     var current: Throwable? = failure
     var depth = 0
     while (current != null && depth < 8) {
+        // Asked first, and it is the only check here that reasons about what a throwable *is*
+        // rather than what it is called. A JVM engine's `java.net.ConnectException` carries no
+        // message at all in the common case, so the string matching below cannot see it, and its
+        // class name is only stable until someone subclasses it.
+        platformTransportFailureHint(current)?.let { return it }
+
         val name = current::class.simpleName.orEmpty()
         val message = current.message?.lowercase().orEmpty()
         val notSent = name.contains("ConnectTimeout") ||
@@ -507,14 +840,86 @@ internal fun classifyTransportFailure(failure: Throwable): TransportFailure {
             name.contains("TlsHandshake") ||
             "connection refused" in message ||
             "failed to connect" in message ||
+            // Belt to the name check's braces. `ConnectTimeoutException` (Ktor's wording) covers
+            // CIO and Curl; "connect timed out" is the JDK's, which some engines raise as a plain
+            // `java.net.SocketTimeoutException` — a name that must otherwise stay AMBIGUOUS,
+            // because the same class also carries "Read timed out". Both are narrow enough not to
+            // collide with "Request timeout has expired".
+            "connect timeout has expired" in message ||
+            "connect timed out" in message ||
             "unresolved address" in message ||
-            "nodename nor servname" in message
+            "nodename nor servname" in message ||
+            CURL_NOT_SENT_MARKERS.any { it in message }
         if (notSent) return TransportFailure.NOT_SENT
         current = current.cause
         depth++
     }
     return TransportFailure.AMBIGUOUS
 }
+
+/**
+ * Fragments that appear only in a curl failure raised **before the request bytes were written**:
+ * name resolution, TCP connect, and the TLS handshake. Matched against an already-lowercased
+ * message.
+ *
+ * Every entry is quoted from a source, because guessing here is how a non-idempotent write gets
+ * replayed. Verified against ktor 3.5.2 (the version pinned in `libs.versions.toml`) and curl's own
+ * `strerror` table:
+ *
+ * - `curle_…` — ktor renders `"${curl_easy_strerror(this)?.toKString()} ($name)"`, where `name` is
+ *   its own `when` over the `CURLcode` constants — `CurlAdapters.kt:61-62` and `:64-` for the
+ *   table. The enum name is therefore in the message verbatim, and unlike the prose it does not
+ *   drift between curl releases.
+ * - `tls verification failed for request` — `CurlMultiApiHandler.kt:338-344`, the dedicated branch
+ *   for `CURLE_PEER_FAILED_VERIFICATION`.
+ * - `proxy handshake error for request` — `CurlMultiApiHandler.kt:346-350`. Listed separately
+ *   because that branch interpolates `$proxyCode` (a `CURLproxycode`) instead of `$errorMessage`,
+ *   so no `curle_…` marker can catch it. A proxy handshake that fails has not forwarded anything.
+ * - the prose forms — curl `lib/strerror.c`: `curl-7_88_1` lines 76-83 / 211-218 and `curl-8_11_1`
+ *   lines 76-83 / 205-212, which is where the "Couldn't"/"Could not" split comes from.
+ * - `ssl certificate problem` — curl `lib/vtls/openssl.c:4215` (`curl-8_11_1`), a `failf` that
+ *   lands in `CURLOPT_ERRORBUFFER`. ktor 3.5.2 does not set that option, so this one is not
+ *   reachable through the current engine; it is here as cover for a ktor release that starts
+ *   wiring the buffer, and it is safe either way because certificate verification is strictly a
+ *   handshake-phase event.
+ *
+ * ### Deliberately absent
+ *
+ * The same rule as the request timeout in [classifyTransportFailure]: anything that *can* fire once
+ * bytes are on the wire stays AMBIGUOUS, however clearly it names a network fault.
+ * `CURLE_OPERATION_TIMEDOUT` ("timeout was reached"), `CURLE_SEND_ERROR` ("failed sending data to
+ * the peer"), `CURLE_RECV_ERROR` ("failure when receiving data from the peer"),
+ * `CURLE_PARTIAL_FILE` ("transfer closed with outstanding read data remaining") and
+ * `CURLE_GOT_NOTHING` are all reachable *after* AWS has seen and applied the request. Adding any of
+ * them would make a timed-out `UpdateItem` replayable, which is the exact bug this whole
+ * classification exists to prevent.
+ */
+private val CURL_NOT_SENT_MARKERS = listOf(
+    // DNS: the address was never resolved, so nothing was ever addressed.
+    "curle_couldnt_resolve_host",
+    "curle_couldnt_resolve_proxy",
+    "could not resolve host",
+    "couldn't resolve host",
+    "could not resolve proxy",
+    "couldn't resolve proxy",
+    // Connect: no TCP (or QUIC) session was ever established.
+    "curle_couldnt_connect",
+    "curle_quic_connect_error",
+    "could not connect to server",
+    "couldn't connect to server",
+    // TLS handshake: a session exists, but the request has not been written to it — the handshake
+    // completes before the first HTTP byte goes out.
+    "curle_ssl_connect_error",
+    "curle_peer_failed_verification",
+    "curle_ssl_certproblem",
+    "curle_ssl_cipher",
+    "ssl connect error",
+    "ssl peer certificate",
+    "problem with the local ssl certificate",
+    "ssl certificate problem",
+    "tls verification failed for request",
+    "proxy handshake error for request",
+)
 
 /** Parses an RFC 7231 IMF-fixdate (`Sun, 06 Nov 1994 08:49:37 GMT`) to epoch millis. */
 internal fun parseHttpDateOrNull(value: String): Long? = try {

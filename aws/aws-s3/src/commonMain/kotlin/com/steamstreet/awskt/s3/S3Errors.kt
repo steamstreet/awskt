@@ -9,6 +9,10 @@ import com.steamstreet.awskt.core.AwsServiceException
  * `requestId` and `extendedRequestId`. **Both request ids matter for S3 specifically**: AWS support
  * asks for `x-amz-id-2` as well as `x-amz-request-id`, and an exception that dropped it makes a
  * support case unanswerable.
+ *
+ * [cause] is the transport-level exception this was rebuilt from, and is what carries the stack
+ * trace through `aws-core`'s send and retry loop. Without it the failure appears to originate at
+ * [mapS3Errors].
  */
 public open class S3Exception(
     code: String?,
@@ -16,15 +20,26 @@ public open class S3Exception(
     statusCode: Int,
     requestId: String? = null,
     extendedRequestId: String? = null,
-) : AwsServiceException(code, message, statusCode, requestId, extendedRequestId)
+    cause: Throwable? = null,
+) : AwsServiceException(code, message, statusCode, requestId, extendedRequestId, cause)
 
 /** The key does not exist. */
-public class NoSuchKeyException(message: String?, statusCode: Int, requestId: String?, extendedRequestId: String?) :
-    S3Exception("NoSuchKey", message, statusCode, requestId, extendedRequestId)
+public class NoSuchKeyException(
+    message: String?,
+    statusCode: Int,
+    requestId: String?,
+    extendedRequestId: String?,
+    cause: Throwable? = null,
+) : S3Exception("NoSuchKey", message, statusCode, requestId, extendedRequestId, cause)
 
 /** The bucket does not exist. */
-public class NoSuchBucketException(message: String?, statusCode: Int, requestId: String?, extendedRequestId: String?) :
-    S3Exception("NoSuchBucket", message, statusCode, requestId, extendedRequestId)
+public class NoSuchBucketException(
+    message: String?,
+    statusCode: Int,
+    requestId: String?,
+    extendedRequestId: String?,
+    cause: Throwable? = null,
+) : S3Exception("NoSuchBucket", message, statusCode, requestId, extendedRequestId, cause)
 
 /**
  * Refused. Also the code S3 returns for `HeadersNotSigned` — an `x-amz-*` header sent with a
@@ -36,7 +51,8 @@ public class AccessDeniedException(
     statusCode: Int,
     requestId: String?,
     extendedRequestId: String?,
-) : S3Exception(code, message, statusCode, requestId, extendedRequestId)
+    cause: Throwable? = null,
+) : S3Exception(code, message, statusCode, requestId, extendedRequestId, cause)
 
 /** The object is in GLACIER or DEEP_ARCHIVE and must be restored before it can be read. */
 public class InvalidObjectStateException(
@@ -44,7 +60,8 @@ public class InvalidObjectStateException(
     statusCode: Int,
     requestId: String?,
     extendedRequestId: String?,
-) : S3Exception("InvalidObjectState", message, statusCode, requestId, extendedRequestId)
+    cause: Throwable? = null,
+) : S3Exception("InvalidObjectState", message, statusCode, requestId, extendedRequestId, cause)
 
 /** An `If-Match` / `If-Unmodified-Since` precondition evaluated false. */
 public class PreconditionFailedException(
@@ -52,18 +69,28 @@ public class PreconditionFailedException(
     statusCode: Int,
     requestId: String?,
     extendedRequestId: String?,
-) : S3Exception("PreconditionFailed", message, statusCode, requestId, extendedRequestId)
+    cause: Throwable? = null,
+) : S3Exception("PreconditionFailed", message, statusCode, requestId, extendedRequestId, cause)
 
 /** A 304 from `If-None-Match` / `If-Modified-Since`. Carries **no body** by protocol. */
-public class NotModifiedException(statusCode: Int, requestId: String?, extendedRequestId: String?) :
-    S3Exception("NotModified", "Not modified", statusCode, requestId, extendedRequestId)
+public class NotModifiedException(
+    statusCode: Int,
+    requestId: String?,
+    extendedRequestId: String?,
+    cause: Throwable? = null,
+) : S3Exception("NotModified", "Not modified", statusCode, requestId, extendedRequestId, cause)
 
 /**
  * S3's throttle. Classified **Throttling**, not Transient — it backs off on the 1000 ms base rather
  * than the 25 ms one, which is the difference between shedding load and adding to it.
  */
-public class SlowDownException(message: String?, statusCode: Int, requestId: String?, extendedRequestId: String?) :
-    S3Exception("SlowDown", message, statusCode, requestId, extendedRequestId)
+public class SlowDownException(
+    message: String?,
+    statusCode: Int,
+    requestId: String?,
+    extendedRequestId: String?,
+    cause: Throwable? = null,
+) : S3Exception("SlowDown", message, statusCode, requestId, extendedRequestId, cause)
 
 /**
  * The bucket lives in another region. **Never retried** — a replay goes to the same wrong endpoint
@@ -74,7 +101,8 @@ public class PermanentRedirectException(
     statusCode: Int,
     requestId: String?,
     extendedRequestId: String?,
-) : S3Exception("PermanentRedirect", message, statusCode, requestId, extendedRequestId)
+    cause: Throwable? = null,
+) : S3Exception("PermanentRedirect", message, statusCode, requestId, extendedRequestId, cause)
 
 /** A concurrent operation conflicted with a conditional write. Documented by AWS as retryable. */
 public class ConditionalRequestConflictException(
@@ -82,7 +110,8 @@ public class ConditionalRequestConflictException(
     statusCode: Int,
     requestId: String?,
     extendedRequestId: String?,
-) : S3Exception("ConditionalRequestConflict", message, statusCode, requestId, extendedRequestId)
+    cause: Throwable? = null,
+) : S3Exception("ConditionalRequestConflict", message, statusCode, requestId, extendedRequestId, cause)
 
 /**
  * The response body did not match the length S3 declared.
@@ -116,6 +145,10 @@ public class S3PayloadTooLargeException(message: String) : Exception(message)
  * Maps `aws-core`'s protocol-level exception onto this module's hierarchy.
  *
  * Unknown codes fall through to [S3Exception] rather than being swallowed.
+ *
+ * Every branch threads `cause = e`. These are *rebuilds*, not wrappers, so the transport exception's
+ * stack trace — the frames that name the failing call — exists only for as long as something points
+ * at it.
  */
 internal inline fun <T> mapS3Errors(block: () -> T): T = try {
     block()
@@ -130,25 +163,25 @@ internal inline fun <T> mapS3Errors(block: () -> T): T = try {
     val id = e.requestId
     val id2 = e.extendedRequestId
     throw when {
-        e.code == "NoSuchKey" -> NoSuchKeyException(e.message, e.statusCode, id, id2)
-        e.code == "NoSuchBucket" -> NoSuchBucketException(e.message, e.statusCode, id, id2)
+        e.code == "NoSuchKey" -> NoSuchKeyException(e.message, e.statusCode, id, id2, e)
+        e.code == "NoSuchBucket" -> NoSuchBucketException(e.message, e.statusCode, id, id2, e)
         e.code == "AccessDenied" || e.code == "HeadersNotSigned" ->
-            AccessDeniedException(e.code, e.message, e.statusCode, id, id2)
+            AccessDeniedException(e.code, e.message, e.statusCode, id, id2, e)
 
-        e.code == "InvalidObjectState" -> InvalidObjectStateException(e.message, e.statusCode, id, id2)
-        e.code == "PreconditionFailed" -> PreconditionFailedException(e.message, e.statusCode, id, id2)
-        e.code == "SlowDown" -> SlowDownException(e.message, e.statusCode, id, id2)
-        e.code == "PermanentRedirect" -> PermanentRedirectException(e.message, e.statusCode, id, id2)
+        e.code == "InvalidObjectState" -> InvalidObjectStateException(e.message, e.statusCode, id, id2, e)
+        e.code == "PreconditionFailed" -> PreconditionFailedException(e.message, e.statusCode, id, id2, e)
+        e.code == "SlowDown" -> SlowDownException(e.message, e.statusCode, id, id2, e)
+        e.code == "PermanentRedirect" -> PermanentRedirectException(e.message, e.statusCode, id, id2, e)
         e.code == "ConditionalRequestConflict" ->
-            ConditionalRequestConflictException(e.message, e.statusCode, id, id2)
+            ConditionalRequestConflictException(e.message, e.statusCode, id, id2, e)
 
         // HeadObject has no response body by protocol, so its errors classify from status alone —
         // AWS documents that the specific exception is not retrievable for HEAD.
-        e.code == null && e.statusCode == 404 -> NoSuchKeyException(e.message, 404, id, id2)
-        e.code == null && e.statusCode == 403 -> AccessDeniedException(null, e.message, 403, id, id2)
-        e.code == null && e.statusCode == 412 -> PreconditionFailedException(e.message, 412, id, id2)
-        e.statusCode == 304 -> NotModifiedException(304, id, id2)
+        e.code == null && e.statusCode == 404 -> NoSuchKeyException(e.message, 404, id, id2, e)
+        e.code == null && e.statusCode == 403 -> AccessDeniedException(null, e.message, 403, id, id2, e)
+        e.code == null && e.statusCode == 412 -> PreconditionFailedException(e.message, 412, id, id2, e)
+        e.statusCode == 304 -> NotModifiedException(304, id, id2, e)
 
-        else -> S3Exception(e.code, e.message, e.statusCode, id, id2)
+        else -> S3Exception(e.code, e.message, e.statusCode, id, id2, e)
     }
 }

@@ -32,6 +32,25 @@ public data class GetObjectRequest(
     /** e.g. `bytes=0-9`. A ranged GET answers 206 and bypasses most of the memory ceiling. */
     val range: String? = null,
     val ifMatch: String? = null,
+    /**
+     * A conditional GET: S3 answers **304 with no body** when the object still has this ETag, which
+     * this client raises as [NotModifiedException] rather than returning as a response — a 304 is
+     * not a `GetObjectResponse` with an empty body, and typing it as one would hand callers an empty
+     * `ByteArray` that looks like content.
+     *
+     * ```kotlin
+     * val cached: GetObjectResponse? = try {
+     *     s3.getObject(GetObjectRequest(bucket, key, ifNoneMatch = lastETag))
+     * } catch (unchanged: NotModifiedException) {
+     *     // Still the copy we already hold; nothing was transferred and nothing was billed for it.
+     *     null
+     * }
+     * ```
+     *
+     * Pass the [GetObjectResponse.eTag] of the copy you hold — this client strips S3's surrounding
+     * quotes on the way out, and S3 accepts the bare form on the way back in. `*` matches any
+     * existing object, which for a GET means "304 if it exists at all".
+     */
     val ifNoneMatch: String? = null,
     val ifModifiedSince: String? = null,
     val ifUnmodifiedSince: String? = null,
@@ -142,8 +161,17 @@ public data class HeadObjectRequest(
     val versionId: String? = null,
 )
 
+/**
+ * A HEAD's result.
+ *
+ * @param contentLength null when S3 sent no `Content-Length`, which is **not** the same as zero and
+ *   is why this is nullable. HEAD has no body to fall back on and measure — unlike
+ *   [GetObjectResponse.contentLength], which can always report what actually arrived — so a missing
+ *   header used to be reported as an empty object, and a caller branching on `contentLength == 0L`
+ *   was told that a real object was empty. Absent means absent.
+ */
 public data class HeadObjectResponse(
-    val contentLength: Long,
+    val contentLength: Long?,
     val contentType: String? = null,
     val eTag: String? = null,
     val lastModified: String? = null,
