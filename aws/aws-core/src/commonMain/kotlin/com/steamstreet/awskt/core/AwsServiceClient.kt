@@ -68,6 +68,17 @@ public class AwsProtocol(
 internal enum class TransportFailure { NOT_SENT, AMBIGUOUS }
 
 /**
+ * Carries whatever a caller's `inspectBeforeBody` threw out through the send, so the retry loop can
+ * tell a local policy refusal apart from a transport failure.
+ *
+ * The wrapper is what makes that distinction possible at all. Both arrive at the same `catch`, and
+ * [classifyTransportFailure] answers [TransportFailure.AMBIGUOUS] for anything it does not
+ * recognise — so without a marker the caller's deliberate refusal is read as "the network might
+ * have eaten this" and replayed.
+ */
+private class InspectionRefusal(val refusal: Throwable) : Throwable(refusal)
+
+/**
  * A pre-materialized body with an explicit content type.
  *
  * Pre-materialized on purpose: the payload hash covers these exact bytes, so the engine must not be
@@ -127,10 +138,26 @@ public class AwsServiceClient(
      *   which produces no stack trace, no typed exception and no CloudWatch error entry, only a
      *   truncated invocation.
      *
+     *   Whatever it throws is a **local policy decision about a response that arrived intact**, so
+     *   it propagates unclassified and unretried — see [InspectionRefusal].
+     *
      *   This parameter was added in M3.5b, *after* this signature was frozen in the ABI dump at M2.
      *   Source-compatible, binary-incompatible. Ratified 2026-08-12 on the grounds that `aws-core`
      *   had no released version and no external consumer at the time. Do not read the precedent
      *   more broadly than that.
+     * @param validateBody called with a **successful** response once its body is in memory, from
+     *   inside the retry loop. Its retry semantics are the exact opposite of [inspectBeforeBody]'s,
+     *   which is the whole reason it is a separate parameter rather than a second use of that one:
+     *   throwing from here reports that *this response is defective*, and is retried as
+     *   [RetryErrorType.TRANSIENT] until the attempt budget runs out, after which the exception is
+     *   surfaced to the caller unchanged.
+     *
+     *   The two are a matched pair, and the pairing is the point. A check that a replay cannot fix
+     *   (`aws-s3`'s download ceiling — the object really is that big, and will be on the next
+     *   attempt too) belongs in [inspectBeforeBody]. A check that a replay *can* fix (`aws-s3`'s
+     *   `checkDownloadComplete`, where a connection died mid-body) belongs here. Putting either in
+     *   the other's slot is silently wrong rather than broken: the ceiling refusal turns into
+     *   several pointless refetches of an oversized object, and the truncation becomes permanent.
      */
     public suspend fun callRaw(
         method: String,
@@ -145,6 +172,7 @@ public class AwsServiceClient(
         doubleUriEncode: Boolean = true,
         normalizeUriPath: Boolean = true,
         inspectBeforeBody: ((status: Int, headers: Map<String, String>) -> Unit)? = null,
+        validateBody: ((response: AwsHttpResponse) -> Unit)? = null,
     ): AwsHttpResponse {
         val invocationId = newInvocationId()
         val deadline = clock() + retryConfig.maxTotalRetryDuration.inWholeMilliseconds
@@ -193,6 +221,14 @@ public class AwsServiceClient(
             val response: AwsHttpResponse
             try {
                 response = send(method, path, query, signed.headers, body, inspectBeforeBody)
+            } catch (refusal: InspectionRefusal) {
+                // Caught *before* the classifier, deliberately. `inspectBeforeBody` fired on a
+                // response that arrived intact; the caller is refusing it on policy grounds, and no
+                // number of replays changes a policy. Let this reach `classifyTransportFailure` and
+                // it comes back AMBIGUOUS — which on an IDEMPOTENT operation retries, so `aws-s3`
+                // answers "this object is too big to buffer" by fetching the same too-big object
+                // several more times, with backoff, before surfacing the identical exception.
+                throw refusal.refusal
             } catch (cancellation: CancellationException) {
                 // Cancellation is not a transport failure, and must never reach the classifier:
                 // `classifyTransportFailure` answers AMBIGUOUS for anything it does not recognise,
@@ -216,8 +252,32 @@ public class AwsServiceClient(
             }
 
             if (response.isSuccess) {
-                if (attempt == 0) tokenBucket.onCleanSuccess()
-                return response
+                // 2xx is the transport's opinion, not the last word: a body can be short, or
+                // otherwise defective, on a response the status called fine. Asked here rather than
+                // by the caller on the returned value, because everything past this loop is past
+                // the last point at which a replay is still possible.
+                val rejection = validateBody?.let { validate ->
+                    try {
+                        validate(response)
+                        null
+                    } catch (cancellation: CancellationException) {
+                        throw cancellation
+                    } catch (failure: Throwable) {
+                        failure
+                    }
+                }
+
+                if (rejection == null) {
+                    if (attempt == 0) tokenBucket.onCleanSuccess()
+                    return response
+                }
+
+                lastFailure?.let { rejection.addSuppressed(it) }
+                lastFailure = rejection
+
+                attempt++
+                if (!prepareRetry(RetryErrorType.TRANSIENT, attempt, deadline, null)) throw rejection
+                continue
             }
 
             val details = protocol.errorParser.parse(response.status, response.headers, response.body)
@@ -322,7 +382,17 @@ public class AwsServiceClient(
         // after this line has the whole body in memory, so a size check performed by the caller on
         // the returned `AwsHttpResponse` is a check that runs *after* the allocation it exists to
         // prevent — which is no protection at all against an OOM kill.
-        inspectBeforeBody?.invoke(response.status.value, responseHeaders)
+        //
+        // Wrapped on the way out so the retry loop can tell this apart from a socket dying at the
+        // same instant: both surface as a throw from this method, and the classifier's default
+        // answer for an unrecognised throw is "retry it".
+        if (inspectBeforeBody != null) {
+            try {
+                inspectBeforeBody(response.status.value, responseHeaders)
+            } catch (refusal: Throwable) {
+                throw InspectionRefusal(refusal)
+            }
+        }
 
         return AwsHttpResponse(response.status.value, responseHeaders, response.readRawBytes())
     }

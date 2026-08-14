@@ -119,6 +119,13 @@ public class S3PayloadTooLargeException(message: String) : Exception(message)
  */
 internal inline fun <T> mapS3Errors(block: () -> T): T = try {
     block()
+} catch (e: S3Exception) {
+    // Already one of ours, so there is nothing to map — and mapping it anyway would *lose*
+    // information. [S3IncompleteDownloadException] is raised by this module from inside `callRaw`'s
+    // retry loop and comes back out through here; its code, `IncompleteBody`, matches no branch
+    // below, so the catch-all would rebuild it as a bare [S3Exception] and drop `expectedBytes`,
+    // `actualBytes` and the type the caller catches on.
+    throw e
 } catch (e: AwsServiceException) {
     val id = e.requestId
     val id2 = e.extendedRequestId

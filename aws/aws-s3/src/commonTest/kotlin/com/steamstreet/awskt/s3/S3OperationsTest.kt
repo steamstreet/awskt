@@ -266,9 +266,6 @@ class S3OperationsTest {
      */
     @Test
     fun shortBodyWithAnHonestContentLengthIsDetected() {
-        // Asserted against the check directly rather than through the transport: Ktor's MockEngine
-        // validates Content-Length itself and raises before a client-level check could see the
-        // body, so the truncation cannot be staged through the mock. See `checkDownloadComplete`.
         val e = assertFailsWith<S3IncompleteDownloadException> {
             checkDownloadComplete(declared = 100L, actual = 5L, requestId = "REQ", extendedRequestId = "EXT")
         }
@@ -276,6 +273,55 @@ class S3OperationsTest {
         assertEquals(5L, e.actualBytes)
         assertEquals("REQ", e.requestId)
         assertEquals("EXT", e.extendedRequestId)
+    }
+
+    /**
+     * The retryable half of the pair: a truncated body must be **replayed**, not reported.
+     *
+     * `S3IncompleteDownloadException` documents itself as retryable, and for most of this class's
+     * life it was not — it was raised on the response `callRaw` had already returned, which is past
+     * the last point a retry could happen. It now runs in `getObject`'s `validateBody`, inside the
+     * loop.
+     *
+     * ### Why the declared length is `-1`
+     *
+     * Ktor's client core compares `Content-Length` against a `ByteArray` body itself and raises
+     * `IllegalStateException` first, on every target this library builds — so an honest mismatch
+     * (`Content-Length: 100`, five bytes) never reaches our check and would instead assert Ktor's
+     * behaviour. `checkContentLength` returns early for a negative length, which is the one gap
+     * that hands a short body to the code under test. Contrived on the wire, and exactly the
+     * situation `checkDownloadComplete` exists for: an engine that did not notice.
+     */
+    @Test
+    fun truncatedBodyIsRetried() = runTest {
+        val h = Harness()
+        val e = assertFailsWith<S3IncompleteDownloadException> {
+            s3(h) { Triple("hello", HttpStatusCode.OK, listOf("Content-Length" to "-1")) }
+                .getObject(GetObjectRequest("my-bucket", "k"))
+        }
+
+        assertEquals(3, h.requests.size, "a truncated download is retryable and must be replayed")
+        // TRANSIENT pacing, not throttling: 25 ms base, doubling, with random() pinned to 1.0.
+        assertEquals(listOf(25L, 50L), h.sleeps)
+        assertEquals(5L, e.actualBytes)
+    }
+
+    /**
+     * `S3IncompleteDownloadException` extends `AwsServiceException`, and now escapes from *inside*
+     * `callRaw` — so it passes back through `mapS3Errors`. Its code, `IncompleteBody`, matches no
+     * mapping branch, so an unguarded catch-all would rebuild it as a bare `S3Exception` and drop
+     * both byte counts along with the type callers catch on.
+     */
+    @Test
+    fun truncationSurvivesErrorMappingWithItsTypeIntact() = runTest {
+        val h = Harness()
+        val e = assertFailsWith<S3IncompleteDownloadException> {
+            s3(h) {
+                Triple("hello", HttpStatusCode.OK, listOf("Content-Length" to "-1", "x-amz-request-id" to "REQ123"))
+            }.getObject(GetObjectRequest("my-bucket", "k"))
+        }
+        assertEquals(-1L, e.expectedBytes)
+        assertEquals("REQ123", e.requestId)
     }
 
     @Test
@@ -312,6 +358,28 @@ class S3OperationsTest {
         assertContains(e.message!!, "range")
     }
 
+    /**
+     * The request **count**, not the exception, is what this asserts — and it is the only thing
+     * that can catch the failure.
+     *
+     * `S3PayloadTooLargeException` is thrown from `inspectBeforeBody`, which `aws-core` invokes
+     * inside its `try`. Left unmarked it reaches `classifyTransportFailure`, whose default answer is
+     * AMBIGUOUS, and GetObject is IDEMPOTENT — so the refusal was replayed to the attempt limit,
+     * refetching the same oversized object with backoff, and then surfaced the identical exception.
+     * An assertion on the exception alone passes in both worlds.
+     */
+    @Test
+    fun oversizedDownloadIsRefusedOnceAndNeverRetried() = runTest {
+        val h = Harness()
+        assertFailsWith<S3PayloadTooLargeException> {
+            s3(h, maxDownload = 10) {
+                Triple("x".repeat(50), HttpStatusCode.OK, listOf("Content-Length" to "50"))
+            }.getObject(GetObjectRequest("my-bucket", "k"))
+        }
+        assertEquals(1, h.requests.size, "a local policy refusal must never be replayed")
+        assertEquals(emptyList<Long>(), h.sleeps, "and must not pay retry backoff either")
+    }
+
     /** An absent or understated Content-Length must not be a way past the ceiling. */
     @Test
     fun oversizedActualBodyIsRefusedEvenWithoutContentLength() = runTest {
@@ -320,6 +388,7 @@ class S3OperationsTest {
             s3(h, maxDownload = 10) { Triple("x".repeat(50), HttpStatusCode.OK, emptyList()) }
                 .getObject(GetObjectRequest("my-bucket", "k"))
         }
+        assertEquals(1, h.requests.size, "still a policy refusal, still not retryable")
     }
 
     @Test

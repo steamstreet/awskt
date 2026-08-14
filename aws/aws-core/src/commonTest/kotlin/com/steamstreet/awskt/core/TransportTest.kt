@@ -20,6 +20,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 private const val SECRET = "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY"
@@ -280,6 +281,136 @@ class TransportCancellationTest {
         }
         assertEquals(1, sends, "an idempotent operation must still not retry a cancellation")
         assertTrue(harness.sleeps.isEmpty())
+    }
+}
+
+/**
+ * The two response-inspection hooks, which exist to have **opposite** retry semantics.
+ *
+ * `inspectBeforeBody` is a caller's policy gate on a response that arrived intact; `validateBody`
+ * reports that the response itself is defective. Both surface as a throw from inside the retry
+ * loop, and `classifyTransportFailure` answers AMBIGUOUS for anything it does not recognise — so
+ * getting either onto the wrong side of that catch is silent, not loud. These tests assert the
+ * **request count**, because the exception is identical either way.
+ */
+class TransportResponseInspectionTest {
+
+    /** A caller's own refusal, of a type `aws-core` has no knowledge of — as S3's really is. */
+    private class PolicyRefusal(message: String) : Exception(message)
+
+    @Test
+    fun aRefusalFromInspectBeforeBodyIsNeverRetried() = runTest {
+        val harness = Harness()
+        val client = harnessClient(harness) { respond("body", HttpStatusCode.OK) }
+
+        assertFailsWith<PolicyRefusal> {
+            client.callRaw(
+                "GET",
+                path = "/key",
+                safety = OperationSafety.IDEMPOTENT,
+                inspectBeforeBody = { _, _ -> throw PolicyRefusal("too big") },
+            )
+        }
+
+        assertEquals(1, harness.requests.size, "a policy refusal is not a transport failure")
+        assertTrue(harness.sleeps.isEmpty(), "and must not pay retry backoff")
+    }
+
+    /**
+     * The refusal must arrive as the caller threw it. It travels out of `send` inside a marker
+     * wrapper so the retry loop can recognise it, and a wrapper that leaked would break every
+     * `catch (e: S3PayloadTooLargeException)` written against this library.
+     */
+    @Test
+    fun theRefusalReachesTheCallerUnwrapped() = runTest {
+        val harness = Harness()
+        val client = harnessClient(harness) { respond("body", HttpStatusCode.OK) }
+        val thrown = PolicyRefusal("too big")
+
+        val caught = assertFailsWith<PolicyRefusal> {
+            client.callRaw("GET", path = "/key", inspectBeforeBody = { _, _ -> throw thrown })
+        }
+        assertSame(thrown, caught, "the marker wrapper must not reach the caller")
+    }
+
+    /** The other half of the pair: a defective body is exactly what a replay can fix. */
+    @Test
+    fun aRejectionFromValidateBodyIsRetried() = runTest {
+        val harness = Harness()
+        val client = harnessClient(harness, RetryConfig(maxAttempts = 3)) {
+            respond("short", HttpStatusCode.OK)
+        }
+
+        assertFailsWith<PolicyRefusal> {
+            client.callRaw("GET", path = "/key", validateBody = { throw PolicyRefusal("truncated") })
+        }
+
+        assertEquals(3, harness.requests.size, "a defective response must be replayed")
+        // TRANSIENT pacing — the 25 ms base, doubling, with random() pinned to 1.0.
+        assertEquals(listOf(25L, 50L), harness.sleeps)
+    }
+
+    @Test
+    fun aBodyThatValidatesOnARetryReturnsNormally() = runTest {
+        val harness = Harness()
+        var attempts = 0
+        val client = harnessClient(harness) { respond("body", HttpStatusCode.OK) }
+
+        val response = client.callRaw(
+            "GET",
+            path = "/key",
+            validateBody = { if (attempts++ < 2) throw PolicyRefusal("truncated") },
+        )
+
+        assertEquals(3, harness.requests.size)
+        assertEquals("body", response.body.decodeToString(), "the accepted attempt's body is returned")
+    }
+
+    @Test
+    fun aValidBodyCostsNoExtraAttempt() = runTest {
+        val harness = Harness()
+        val client = harnessClient(harness) { respond("body", HttpStatusCode.OK) }
+
+        client.callRaw("GET", path = "/key", validateBody = { })
+
+        assertEquals(1, harness.requests.size)
+        assertTrue(harness.sleeps.isEmpty())
+    }
+
+    /**
+     * `validateBody` runs user code inside the retry loop, so it inherits the carve-out the send
+     * catch already has: a cancelled scope must stop the client, not make it issue the call again.
+     */
+    @Test
+    fun aCancellationOutOfValidateBodyIsNotRetried() = runTest {
+        val harness = Harness()
+        val client = harnessClient(harness) { respond("body", HttpStatusCode.OK) }
+
+        assertFailsWith<CancellationException> {
+            client.callRaw(
+                "GET",
+                path = "/key",
+                validateBody = { throw CancellationException("scope cancelled") },
+            )
+        }
+
+        assertEquals(1, harness.requests.size)
+        assertTrue(harness.sleeps.isEmpty())
+    }
+
+    /** A non-2xx response is the error path's business; `validateBody` never sees it. */
+    @Test
+    fun validateBodyIsNotConsultedForAnErrorResponse() = runTest {
+        val harness = Harness()
+        var consulted = 0
+        val client = harnessClient(harness, RetryConfig(maxAttempts = 2)) {
+            respond(jsonError("ValidationException"), HttpStatusCode.BadRequest)
+        }
+
+        assertFailsWith<AwsServiceException> {
+            client.callRaw("POST", operation = "GetItem", validateBody = { consulted++ })
+        }
+        assertEquals(0, consulted)
     }
 }
 

@@ -448,6 +448,12 @@ No client code is written in this milestone.
 > broken once with a recorded reason" is the accurate history and a silently-edited criterion would
 > hide it.
 >
+> **AMENDED 2026-08-13 — broken a second time, by the fix to the first break's fallout.** A trailing
+> `validateBody` parameter joined it. The ratification above turns on `aws-core` having no published
+> version and no external consumer, and that is still true, so the same reasoning covers this one —
+> but "broken once" is no longer the accurate history, and the count is the point. See M3.5b's
+> STATUS.
+>
 > **The guard was mutation-tested rather than assumed.** Adding one public function to `aws-core`
 > makes `checkLegacyAbi` fail with a readable diff naming it, in *both* the `.api` and the
 > `.klib.api`. A frozen-API artifact that never fires would be worse than none, since it reads as
@@ -1191,6 +1197,59 @@ The ordering rationale is Decision 3's, applied to a new problem. If S3-mode sig
 > > freeze was worth having for `aws-signing`, which is pitched as independently publishable; for
 > > `aws-core` at M2, with only DynamoDB written against it, it was premature.
 >
+> > **AMENDED 2026-08-13 — the ratification answered the API question and only the API question.**
+> > Whether the parameter could exist was settled above. What nobody asked was **where in the retry
+> > loop it fires**, and on that the answer was wrong in both directions at once. Found and fixed on
+> > 2026-08-13; the ratification itself stands.
+> >
+> > `inspectBeforeBody` is invoked from inside `AwsServiceClient.send`, which sits inside `callRaw`'s
+> > `try { } catch (failure: Throwable)`. So `S3PayloadTooLargeException` — a *local policy decision
+> > about a response that arrived perfectly intact* — went to `classifyTransportFailure`, whose
+> > documented default is `AMBIGUOUS`, and GetObject is `IDEMPOTENT`. **The refusal was retried.** A
+> > client that had just decided an object was too big to buffer answered by asking S3 for the same
+> > object twice more, with backoff, before surfacing the identical exception. Every existing
+> > assertion passed throughout, because the exception the caller sees is the same either way: the
+> > only observable is the request count, and nothing counted requests.
+> >
+> > The mirror-image defect sat eleven lines further down. `checkDownloadComplete` ran on the
+> > response `callRaw` had already **returned** — past the retry loop, past the last point at which a
+> > replay was possible. `S3IncompleteDownloadException`'s own KDoc says "Classified retryable: a
+> > truncated download is exactly the kind of failure a replay fixes," and Decision 16 above says
+> > "throws a typed `S3IncompleteDownloadException` classified **Transient/retryable**". It was never
+> > retried once. Two guards, both on the wrong side of the same loop, each doing precisely what the
+> > other should have.
+> >
+> > **The fix keeps the two apart by construction rather than by care.** Anything thrown from
+> > `inspectBeforeBody` is wrapped in a private marker on the way out of `send` and unwrapped by a
+> > `catch` placed *before* the classifier, so a policy refusal can no longer be read as a transport
+> > failure. Completeness moved into a new `validateBody` hook that `callRaw` invokes on a successful
+> > response from **inside** the loop, where a throw is retried as `TRANSIENT` and surfaced unchanged
+> > once the attempt budget is spent. The two hooks are now a matched pair with opposite semantics,
+> > and `callRaw`'s KDoc states which check belongs in which and why.
+> >
+> > One consequence worth flagging, because it is invisible from the S3 side: `S3IncompleteDownloadException`
+> > extends `AwsServiceException`, so raising it *inside* `callRaw` newly routes it back through
+> > `mapS3Errors`. Its code, `IncompleteBody`, matches no branch there, and the catch-all would have
+> > rebuilt it as a bare `S3Exception` — silently dropping `expectedBytes`, `actualBytes` and the type
+> > callers catch on. `mapS3Errors` now passes an already-mapped `S3Exception` through untouched.
+> >
+> > **Read this as a lesson about the shape of the review, not about the parameter.** The ratification
+> > round asked "may this parameter exist" and stopped there. A hook's *position relative to the retry
+> > loop* is part of its contract every bit as much as its type is, and neither the KDoc nor the
+> > ratification said a word about it. Both failure modes were silent: the retried refusal wasted three
+> > round trips and looked correct, and the unretryable truncation looked correct because the
+> > exception was right. **Any future callback added to `callRaw` states its retry semantics in the
+> > KDoc, and its tests assert the request count, not the exception.**
+> >
+> > Each of the three fixes was mutation-tested rather than assumed: reverting the marker `catch`
+> > fails `oversizedDownloadIsRefusedOnceAndNeverRetried` (3 requests, not 1) and
+> > `aRefusalFromInspectBeforeBodyIsNeverRetried`; moving the completeness check back outside the
+> > loop fails `truncatedBodyIsRetried` (1 request, not 3); dropping the `mapS3Errors` passthrough
+> > fails `truncationSurvivesErrorMappingWithItsTypeIntact`. Note that the **pre-existing**
+> > `oversizedDeclaredLengthIsRefusedBeforeTheBodyIsRead` passes in every one of those states — which
+> > is how the defect survived a milestone with a green suite. After the fix: `aws-core` **74 jvm /
+> > 74 macosArm64**, `aws-s3` **86 jvm / 62 macosArm64**, 0 failures; Linux targets link.
+>
 > **`aws-core` also gained `awsEnv(name)`** in M3.5a — purely additive.
 >
 > **A finding on the completeness check.** Ktor's own `MockEngine` validates `Content-Length` and
@@ -1203,6 +1262,27 @@ The ordering rationale is Decision 3's, applied to a new problem. If S3-mode sig
 > stream that died mid-body remains engine-dependent, which is the whole reason Decision 16 exists —
 > and Curl on `linuxArm64` is both the least-tested engine here and the one that cannot run tests
 > locally.
+>
+> > **CORRECTED 2026-08-13 — two things here are wrong, and the second one hid a bug.**
+> >
+> > First, the validation is not `MockEngine`'s. It is `checkContentLength` in **ktor-client-core**
+> > (`DefaultTransform`'s `ByteArray` branch, `jvmAndPosixMain`), so it fires on every target this
+> > library builds — JVM *and* native, real engines included, not just the mock. The finding
+> > generalises much further than it was written to: `checkDownloadComplete` is defence in depth
+> > everywhere, not only on the JVM.
+> >
+> > Second — and this is the part that cost something — "the *integration* of the check is
+> > unexercised" was recorded as an acceptable gap. It was not. The unexercised integration was
+> > exactly where the check was **on the wrong side of the retry loop**, so a failure this plan twice
+> > calls retryable was in fact permanent. Asserting the extracted function proved the logic and
+> > proved nothing about the wiring, which is where the defect lived.
+> >
+> > The case *is* stageable after all: `checkContentLength` returns early for a **negative**
+> > `Content-Length`, which is the one gap that hands a short body to our own check. Contrived on the
+> > wire, and precisely the situation `checkDownloadComplete` exists for — an engine that did not
+> > notice. `S3OperationsTest.truncatedBodyIsRetried` now drives the whole path through the transport
+> > and asserts three requests with `[25, 50]` ms transient backoff. Revert the fix and it fails at
+> > one request.
 >
 > **Other design points:**
 > - `x-amz-content-sha256` is **always** the real computed hash. There is no size-triggered switch to

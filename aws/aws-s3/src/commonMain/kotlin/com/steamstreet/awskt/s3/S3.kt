@@ -178,9 +178,11 @@ internal class DefaultS3(
         operation: String,
         safety: OperationSafety,
         inspectBeforeBody: ((status: Int, headers: Map<String, String>) -> Unit)? = null,
+        validateBody: ((response: AwsHttpResponse) -> Unit)? = null,
     ): AwsHttpResponse = mapS3Errors {
         clientFor(bucket).callRaw(
             inspectBeforeBody = inspectBeforeBody,
+            validateBody = validateBody,
             method = method,
             path = pathFor(bucket, key),
             query = query,
@@ -225,6 +227,10 @@ internal class DefaultS3(
             // Performing this check on the returned response instead would allocate the very array
             // it exists to refuse, which in Lambda is an OOM kill: no stack trace, no typed
             // exception, no CloudWatch error entry, only a truncated invocation.
+            //
+            // A refusal here is never retried: the object really is that big, and it will still be
+            // that big on the next attempt. `callRaw` guarantees that — see `validateBody` below,
+            // whose retry semantics are deliberately the opposite.
             inspectBeforeBody = { status, responseHeaders ->
                 if (status in 200..299) {
                     val declared = responseHeaders.header("content-length")?.toLongOrNull()
@@ -236,6 +242,23 @@ internal class DefaultS3(
                                 "GetObjectRequest.range.",
                         )
                     }
+                }
+            },
+            // Checked *inside* the retry loop, where a replay can still fix it. A truncated body is
+            // a dead connection, not a verdict about the object — which is the one case in this
+            // method where fetching it again is exactly the right answer.
+            //
+            // Skipped for a body that is over the ceiling, so the two guards cannot fight: that
+            // refusal is a policy decision made below, and raising it as truncation here would put
+            // it on the retryable side of the loop, which is the bug this arrangement fixes.
+            validateBody = { validated ->
+                if (validated.body.size.toLong() <= config.maxBufferedDownloadBytes) {
+                    checkDownloadComplete(
+                        declared = validated.headers.header("content-length")?.toLongOrNull(),
+                        actual = validated.body.size.toLong(),
+                        requestId = validated.headers.header("x-amz-request-id"),
+                        extendedRequestId = validated.headers.header("x-amz-id-2"),
+                    )
                 }
             },
         )
@@ -251,13 +274,6 @@ internal class DefaultS3(
                     "(the declared Content-Length was $declared). Use GetObjectRequest.range.",
             )
         }
-
-        checkDownloadComplete(
-            declared = declared,
-            actual = response.body.size.toLong(),
-            requestId = response.headers.header("x-amz-request-id"),
-            extendedRequestId = response.headers.header("x-amz-id-2"),
-        )
 
         return GetObjectResponse(
             body = response.body,
@@ -351,15 +367,17 @@ internal class DefaultS3(
 /**
  * A short body with an honest `Content-Length` is a truncated download, not a small object.
  *
- * Extracted so it can be asserted directly: Ktor's own `MockEngine` validates `Content-Length`
- * and raises an `IllegalStateException` before a client-level check could ever see the body, so
- * the scenario cannot be staged through the mock transport.
+ * Called from `getObject`'s `validateBody`, which runs **inside** `callRaw`'s retry loop, so a
+ * truncation is replayed rather than reported. That placement is load-bearing: the same check made
+ * on the response `callRaw` returned would sit past the last point a retry is possible, and a
+ * failure this library documents as retryable would in fact be permanent.
  *
- * **That is defence in depth rather than redundancy.** Whether the *real* engine notices a stream
- * that died mid-body is engine-dependent — this library runs CIO on the JVM and Curl on native, and
- * Curl's response-body handling is the reason this project pinned a newer Ktor in the first place.
- * On `linuxArm64`, the one target whose tests cannot run locally, "the engine will throw" is an
- * assumption rather than an observation.
+ * **That is defence in depth rather than redundancy.** Ktor's client core does compare
+ * `Content-Length` against a `ByteArray` body and raise before this check is reached — but whether
+ * a *real* engine notices a stream that died mid-body is engine-dependent, and this library runs
+ * CIO on the JVM and Curl on native, whose response-body handling is the reason this project pinned
+ * a newer Ktor in the first place. On `linuxArm64`, the one target whose tests cannot run locally,
+ * "something upstream will throw" is an assumption rather than an observation.
  */
 internal fun checkDownloadComplete(
     declared: Long?,
