@@ -106,6 +106,65 @@ public interface Sns : AutoCloseable {
         topicArn: String,
         entries: List<PublishBatchRequestEntry>,
     ): PublishBatchResponse
+
+    // -- Mobile push endpoints ---------------------------------------------------------------
+    //
+    // Registering one device against a platform application. See `MobilePush.kt` for the whole
+    // picture, and for why `registerDevice` rather than `createPlatformEndpoint` is what a caller
+    // should normally reach for.
+
+    /**
+     * Registers a device token as a platform endpoint.
+     *
+     * **[registerDevice] is almost certainly what you want instead.** Called directly, this
+     * operation has two behaviours that make it unsafe as a device-registration primitive:
+     *
+     * - a token already registered **with different attributes** raises [InvalidParameterException]
+     *   with the existing ARN buried in the message text, rather than returning it; and
+     * - a token already registered with *matching* attributes returns the existing ARN **without
+     *   re-enabling it**, so the result may be an endpoint SNS will not deliver to.
+     *
+     * `IDEMPOTENT` in the narrow sense that matters to the retry loop: replaying the identical
+     * request returns the same endpoint ARN rather than creating a second endpoint.
+     */
+    public suspend fun createPlatformEndpoint(
+        request: CreatePlatformEndpointRequest,
+    ): CreatePlatformEndpointResponse
+
+    /**
+     * Reads an endpoint's `Token`, `Enabled` and `CustomUserData`.
+     *
+     * @throws NotFoundException if the endpoint has been deleted — which is how a stored ARN goes
+     *   stale, and why [registerDevice] starts from the token rather than from an ARN.
+     */
+    public suspend fun getEndpointAttributes(endpointArn: String): EndpointAttributes
+
+    /**
+     * Writes an endpoint's attributes. Returns nothing.
+     *
+     * The operation that re-enables an endpoint SNS disabled and updates a rotated device token.
+     * Attributes not named are left alone, so a repair can send `Token` and `Enabled` without
+     * disturbing `CustomUserData`.
+     */
+    public suspend fun setEndpointAttributes(endpointArn: String, attributes: Map<String, String>)
+
+    /**
+     * Deletes an endpoint. Returns nothing.
+     *
+     * `IDEMPOTENT`, and unusually forgiving: SNS answers **success** for an endpoint that does not
+     * exist, so a duplicate delete is not an error and does not need catching.
+     */
+    public suspend fun deleteEndpoint(endpointArn: String)
+
+    /**
+     * Lists one page of a platform application's endpoints.
+     *
+     * **[ListEndpointsResponse.nextToken] can be non-null on a short page.** See [listAllEndpoints].
+     */
+    public suspend fun listEndpointsByPlatformApplication(
+        platformApplicationArn: String,
+        nextToken: String? = null,
+    ): ListEndpointsResponse
 }
 
 /** Configuration for [Sns]. */
@@ -262,6 +321,76 @@ internal class DefaultSns(
                 )
             },
         )
+    }
+
+    // -- Mobile push endpoints ---------------------------------------------------------------
+    //
+    // All five are IDEMPOTENT. None creates a second resource on a replay: CreatePlatformEndpoint
+    // returns the existing endpoint for an identical request, Set and Delete converge on a state,
+    // and Get and List are reads. This is the one group in this module where the transport may
+    // safely replay an ambiguous failure.
+
+    override suspend fun createPlatformEndpoint(
+        request: CreatePlatformEndpointRequest,
+    ): CreatePlatformEndpointResponse {
+        val xml = mapErrors {
+            client.callRaw(
+                method = "POST",
+                body = request.toForm(),
+                operation = "CreatePlatformEndpoint",
+                safety = OperationSafety.IDEMPOTENT,
+            )
+        }.body.decodeToString()
+        return CreatePlatformEndpointResponse(endpointArn = Xml.text(xml, "EndpointArn"))
+    }
+
+    override suspend fun getEndpointAttributes(endpointArn: String): EndpointAttributes {
+        val xml = mapErrors {
+            client.callRaw(
+                method = "POST",
+                body = getEndpointAttributesForm(endpointArn),
+                operation = "GetEndpointAttributes",
+                safety = OperationSafety.IDEMPOTENT,
+            )
+        }.body.decodeToString()
+        return EndpointAttributes(Xml.attributeMap(Xml.block(xml, "Attributes")))
+    }
+
+    override suspend fun setEndpointAttributes(endpointArn: String, attributes: Map<String, String>) {
+        mapErrors {
+            client.callRaw(
+                method = "POST",
+                body = setEndpointAttributesForm(endpointArn, attributes),
+                operation = "SetEndpointAttributes",
+                safety = OperationSafety.IDEMPOTENT,
+            )
+        }
+    }
+
+    override suspend fun deleteEndpoint(endpointArn: String) {
+        mapErrors {
+            client.callRaw(
+                method = "POST",
+                body = deleteEndpointForm(endpointArn),
+                operation = "DeleteEndpoint",
+                safety = OperationSafety.IDEMPOTENT,
+            )
+        }
+    }
+
+    override suspend fun listEndpointsByPlatformApplication(
+        platformApplicationArn: String,
+        nextToken: String?,
+    ): ListEndpointsResponse {
+        val xml = mapErrors {
+            client.callRaw(
+                method = "POST",
+                body = listEndpointsForm(platformApplicationArn, nextToken),
+                operation = "ListEndpointsByPlatformApplication",
+                safety = OperationSafety.IDEMPOTENT,
+            )
+        }.body.decodeToString()
+        return parseListEndpoints(xml)
     }
 
     override fun close() {

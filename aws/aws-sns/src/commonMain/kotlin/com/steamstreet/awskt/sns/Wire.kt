@@ -74,6 +74,27 @@ internal fun FormBody.putMessageAttributes(prefix: String, attributes: Map<Strin
     }
 }
 
+/**
+ * Flattens a plain `Map<String, String>` under [prefix].
+ *
+ * **`key` and `value`, lowercased — not the `Name`/`Value` that [putMessageAttributes] uses.** The
+ * two are genuinely different on the wire: `MessageAttributes` carries an
+ * `@xmlName`-style override in SNS's model, and the endpoint-attribute maps do not, so they get the
+ * query protocol's default map spelling. Using one module's spelling for the other's map produces a
+ * request SNS accepts and silently ignores, which is the worst of the available failures.
+ *
+ * Verified against the AWS SDK's own serializers: `PublishOperationSerializer` carries a
+ * `FormUrlMapName("Name", "Value")` trait and `CreatePlatformEndpointOperationSerializer` carries
+ * none.
+ */
+internal fun FormBody.putStringMap(prefix: String, attributes: Map<String, String>?) {
+    attributes?.entries?.forEachIndexed { index, (key, value) ->
+        val entry = "$prefix.entry.${index + 1}"
+        put("$entry.key", key)
+        put("$entry.value", value)
+    }
+}
+
 // -- XML reading ---------------------------------------------------------------------------------
 
 /**
@@ -124,26 +145,45 @@ internal object Xml {
     }
 
     /**
-     * The inner XML of every `<member>` directly inside [xml].
+     * The inner XML of every `<tag>…</tag>` in [xml], in document order.
      *
-     * Non-recursive by construction: it scans for `<member>` / `</member>` pairs in order and does
-     * not track nesting. That is correct here because SNS's batch result members contain no nested
-     * members, and it is the assumption that would break first if this were reused elsewhere.
+     * Non-recursive by construction: it scans for open/close pairs in order and does not track
+     * nesting. That is correct for every shape this module reads — batch result members, endpoint
+     * members and attribute entries all contain no nested element of their own name — and it is the
+     * assumption that would break first if this were reused elsewhere.
      */
-    fun members(xml: String?): List<String> {
+    fun elements(xml: String?, tag: String): List<String> {
         if (xml == null) return emptyList()
+        val open = "<$tag>"
+        val close = "</$tag>"
         val out = mutableListOf<String>()
         var cursor = 0
         while (true) {
-            val start = xml.indexOf("<member>", cursor)
+            val start = xml.indexOf(open, cursor)
             if (start < 0) break
-            val end = xml.indexOf("</member>", start + 8)
+            val end = xml.indexOf(close, start + open.length)
             if (end < 0) break
-            out += xml.substring(start + 8, end)
-            cursor = end + 9
+            out += xml.substring(start + open.length, end)
+            cursor = end + close.length
         }
         return out
     }
+
+    /** The inner XML of every `<member>` in [xml]. */
+    fun members(xml: String?): List<String> = elements(xml, "member")
+
+    /**
+     * Reads an `<entry><key>…</key><value>…</value></entry>` list into a map.
+     *
+     * The query protocol's default map encoding, which SNS uses for every endpoint and platform
+     * attribute map. An entry whose `<value>` is empty or self-closing reads as `""` rather than
+     * being dropped: SNS uses an empty string to mean "set but blank", and dropping it would make
+     * that indistinguishable from "absent".
+     */
+    fun attributeMap(xml: String?): Map<String, String> = elements(xml, "entry").mapNotNull { entry ->
+        val key = text(entry, "key") ?: return@mapNotNull null
+        key to (text(entry, "value") ?: "")
+    }.toMap()
 
     /**
      * The five predefined XML entities.

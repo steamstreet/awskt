@@ -2172,7 +2172,10 @@ That was not ceremony — it corrected three things this plan would otherwise ha
 - `aws-sqs`: `SendMessage`, `SendMessageBatch`, `ReceiveMessage`, `DeleteMessage`,
   `DeleteMessageBatch`, `ChangeMessageVisibility`, `ChangeMessageVisibilityBatch`, `GetQueueUrl`.
   Queue lifecycle is out.
-- `aws-sns`: `Publish`, `PublishBatch`. Topic and subscription lifecycle is out.
+- `aws-sns`: `Publish`, `PublishBatch`, plus mobile push endpoints — `CreatePlatformEndpoint`,
+  `GetEndpointAttributes`, `SetEndpointAttributes`, `DeleteEndpoint`,
+  `ListEndpointsByPlatformApplication`. Topic and subscription lifecycle is out, as is *platform
+  application* management. See the mobile push addendum below.
 - `aws-scheduler`: `CreateSchedule`, `GetSchedule`, `UpdateSchedule`, `DeleteSchedule`,
   `ListSchedules`. Schedule *group* management and tagging are out.
 
@@ -2313,6 +2316,85 @@ including 11 new ones covering the restJson1 and awsQuery seams.
 > `aws.sdk.kotlin:sns` is not currently in the version catalog. Adding it as a `jvmTest`-only
 > dependency and comparing our form body against the SDK's, using M3's technique unchanged, is the
 > obvious next increment and the first thing to do if SNS misbehaves against the real service.
+
+#### M9 addendum — SNS mobile push (iOS and Android)
+
+Added 2026-08-14, same day, on request. Extends `aws-sns` rather than adding a module: mobile push
+*is* SNS, and a separate artifact would split one service's client in two.
+
+**In scope: platform endpoints.** A **platform application** registers *your app* with APNs or FCM,
+is created once from a signing key, and holds a secret — provisioning, and out of scope for the same
+reason `CreateTopic` is. A **platform endpoint** registers *one device*, is created at runtime on
+every install and on every token rotation, and is where all the difficulty lives. Five operations:
+`CreatePlatformEndpoint`, `GetEndpointAttributes`, `SetEndpointAttributes`, `DeleteEndpoint`,
+`ListEndpointsByPlatformApplication`.
+
+**Two traps absorbed, and they are the reason this is more than five thin wrappers.**
+
+1. **`registerDevice` — device registration is not one call, and the error path carries data.**
+   `CreatePlatformEndpoint` on a token already registered *with different attributes* does not
+   return the existing endpoint; it raises `InvalidParameter` **with the ARN inside the message
+   text**, and AWS's own documented procedure (the pseudo-code in the SNS developer guide) is to
+   regex it out. Worse, the *success* path is not safe either: a token registered with matching
+   attributes returns the existing ARN **without re-enabling it**, and SNS disables endpoints by
+   itself whenever APNs or FCM rejects a token. So an app that registers once at install and never
+   again silently stops receiving notifications, with nothing erroring anywhere.
+
+   `registerDevice(platformApplicationArn, token)` does create → always-get → repair-if-needed, and
+   returns an ARN guaranteed to hold that token and be enabled. Two API calls steady-state, three
+   when a repair is needed; the second is **not** skippable, because nothing in the create response
+   distinguishes "created new and enabled" from "returned an endpoint APNs disabled last week".
+   Parsing an error message is fragile and there is no alternative — if AWS rewords it, the helper
+   stops recognising the case and rethrows the original exception rather than guessing.
+
+2. **`mobilePushMessage` — a push payload is double-encoded JSON.** The per-platform payloads are
+   JSON documents carried as **strings** inside a JSON envelope:
+   `{"default":"…","APNS":"{\"aps\":{…}}"}`. Writing the natural nested-object form is rejected with
+   an error that does not explain the shape, and building the envelope by string concatenation —
+   the other common approach — breaks the first time a notification body contains a quote or a
+   newline, which for user-generated content is immediately. The builder goes through a real JSON
+   encoder so the escaping is not this library's opinion. `apnsAlert()` and `fcmNotification()`
+   build the two common payloads; both document that the schemas are Apple's and Google's, not
+   AWS's, and that anything beyond a plain alert should be built by the caller.
+
+**Three smaller things worth knowing, all documented at the point of use**
+
+- **`GCM` means FCM.** Google retired GCM in 2018; SNS never renamed it, in ARNs or in envelope
+  keys. There is no `FCM` value on the wire. `PushPlatform.FCM` is an alias with `"GCM"` behind it.
+- **`APNS` and `APNS_SANDBOX` are different platform applications**, not a flag. A development
+  build's token registered against production APNs does not fail at registration — it fails
+  silently at delivery, which is the most common "push doesn't work on my debug build" cause.
+- **`Enabled` is the string `"true"`/`"false"`**, not a JSON boolean.
+  `EndpointAttributes.enabled` parses it; comparing the raw value to a Kotlin `Boolean` is a bug
+  that reads as correct.
+
+**Endpoint attribute maps use `entry.N.key`/`entry.N.value`** — the query protocol's *default* map
+spelling — where `MessageAttributes` uses `entry.N.Name`/`.Value`. The two genuinely differ, and the
+wrong spelling produces a request SNS accepts and silently ignores. Verified against the SDK:
+`PublishOperationSerializer` carries a `FormUrlMapName("Name","Value")` trait and
+`CreatePlatformEndpointOperationSerializer` carries none.
+
+**One earlier decision in this plan was revised, deliberately.** `aws-sns`'s build file previously
+recorded that the module had no `kotlinx-serialization-json` dependency, because SNS's protocol has
+no JSON in it. That reasoning is still right *about the protocol* and was wrong as a rule for the
+module: the push envelope is **application data SNS carries opaquely**, not wire framing, and
+hand-rolling its escaping to preserve a dependency boundary would trade correctness for tidiness.
+The rule is narrowed rather than dropped — **no `@Serializable` and no JSON on the request/response
+path**, `Wire.kt` remains the only protocol codec — and the build file says so.
+
+**Verification**: `aws-sns` is now at **51 tests, 0 failures** (24 new). The registration dance is
+tested through all five of its paths: first registration, ARN recovery from the error message,
+re-enabling a disabled endpoint, updating a rotated token, and leaving a healthy endpoint untouched
+— plus rethrowing an unrelated `InvalidParameter`. The envelope is tested for string-not-object
+values and for quote/newline round-tripping through both layers of encoding.
+
+> **The `fcmNotification` payload shape is the one thing here that could not be settled from the SDK
+> jar**, because it is a *service* behaviour rather than a wire format. It emits the legacy
+> `{"notification":{…}}` shape under the `GCM` key. AWS migrated the transport behind that key to
+> FCM HTTP v1 in 2024 and states that existing payloads continue to work by translation, so this
+> should be correct — but it is documentation rather than something read out of an artifact, and it
+> is the first thing to check if Android notifications arrive empty. The raw
+> `platform(PushPlatform.GCM, json)` path is unaffected either way.
 
 ---
 

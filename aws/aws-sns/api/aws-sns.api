@@ -31,9 +31,52 @@ public final class com/steamstreet/awskt/sns/BatchResultErrorEntry {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/steamstreet/awskt/sns/CreatePlatformEndpointRequest {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttributes ()Ljava/util/Map;
+	public final fun getCustomUserData ()Ljava/lang/String;
+	public final fun getPlatformApplicationArn ()Ljava/lang/String;
+	public final fun getToken ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/sns/CreatePlatformEndpointResponse {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/sns/CreatePlatformEndpointResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/sns/CreatePlatformEndpointResponse;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/sns/CreatePlatformEndpointResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEndpointArn ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/steamstreet/awskt/sns/EmptyBatchRequestException : com/steamstreet/awskt/sns/SnsException {
 	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/sns/EndpointAttribute {
+	public static final field CUSTOM_USER_DATA Ljava/lang/String;
+	public static final field ENABLED Ljava/lang/String;
+	public static final field INSTANCE Lcom/steamstreet/awskt/sns/EndpointAttribute;
+	public static final field TOKEN Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/sns/EndpointAttributes {
+	public fun <init> (Ljava/util/Map;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCustomUserData ()Ljava/lang/String;
+	public final fun getEnabled ()Ljava/lang/Boolean;
+	public final fun getRaw ()Ljava/util/Map;
+	public final fun getToken ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/steamstreet/awskt/sns/EndpointDisabledException : com/steamstreet/awskt/sns/SnsException {
@@ -66,6 +109,21 @@ public final class com/steamstreet/awskt/sns/InvalidSecurityException : com/stea
 	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
+public final class com/steamstreet/awskt/sns/ListEndpointsResponse {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/util/List;Ljava/lang/String;)Lcom/steamstreet/awskt/sns/ListEndpointsResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/sns/ListEndpointsResponse;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/sns/ListEndpointsResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEndpoints ()Ljava/util/List;
+	public final fun getNextToken ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/steamstreet/awskt/sns/MessageAttributeValue {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;[B)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;[BILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -77,6 +135,32 @@ public final class com/steamstreet/awskt/sns/MessageAttributeValue {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/steamstreet/awskt/sns/MobilePushKt {
+	public static final fun apnsAlert (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Z)Ljava/lang/String;
+	public static synthetic fun apnsAlert$default (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;ZILjava/lang/Object;)Ljava/lang/String;
+	public static final fun fcmNotification (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Ljava/lang/String;
+	public static synthetic fun fcmNotification$default (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Ljava/lang/String;
+	public static final fun listAllEndpoints (Lcom/steamstreet/awskt/sns/Sns;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun listAllEndpoints$default (Lcom/steamstreet/awskt/sns/Sns;Ljava/lang/String;ILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun mobilePushMessage (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lcom/steamstreet/awskt/sns/MobilePushMessage;
+	public static synthetic fun mobilePushMessage$default (Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/steamstreet/awskt/sns/MobilePushMessage;
+	public static final fun publishToDevice (Lcom/steamstreet/awskt/sns/Sns;Ljava/lang/String;Lcom/steamstreet/awskt/sns/MobilePushMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun registerDevice (Lcom/steamstreet/awskt/sns/Sns;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun registerDevice$default (Lcom/steamstreet/awskt/sns/Sns;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/sns/MobilePushMessage {
+	public final fun getDefault ()Ljava/lang/String;
+	public final fun getPayloads ()Ljava/util/Map;
+	public final fun toMessageJson ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/sns/MobilePushMessageBuilder {
+	public final fun platform (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun platform (Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;)V
+}
+
 public final class com/steamstreet/awskt/sns/NotFoundException : com/steamstreet/awskt/sns/SnsException {
 	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -85,6 +169,17 @@ public final class com/steamstreet/awskt/sns/NotFoundException : com/steamstreet
 public final class com/steamstreet/awskt/sns/PlatformApplicationDisabledException : com/steamstreet/awskt/sns/SnsException {
 	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/sns/PlatformEndpoint {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Lcom/steamstreet/awskt/sns/EndpointAttributes;)V
+	public synthetic fun <init> (Ljava/lang/String;Lcom/steamstreet/awskt/sns/EndpointAttributes;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttributes ()Lcom/steamstreet/awskt/sns/EndpointAttributes;
+	public final fun getEndpointArn ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/steamstreet/awskt/sns/PublishBatchPartialFailureException : com/steamstreet/awskt/sns/SnsException {
@@ -172,10 +267,36 @@ public final class com/steamstreet/awskt/sns/PublishResponse {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/steamstreet/awskt/sns/PushPlatform {
+	public static final field ADM Ljava/lang/String;
+	public static final field APNS Ljava/lang/String;
+	public static final field APNS_SANDBOX Ljava/lang/String;
+	public static final field APNS_VOIP Ljava/lang/String;
+	public static final field APNS_VOIP_SANDBOX Ljava/lang/String;
+	public static final field BAIDU Ljava/lang/String;
+	public static final field FCM Ljava/lang/String;
+	public static final field GCM Ljava/lang/String;
+	public static final field INSTANCE Lcom/steamstreet/awskt/sns/PushPlatform;
+	public static final field MACOS Ljava/lang/String;
+	public static final field MACOS_SANDBOX Ljava/lang/String;
+	public static final field MPNS Ljava/lang/String;
+	public static final field WNS Ljava/lang/String;
+}
+
 public abstract interface class com/steamstreet/awskt/sns/Sns : java/lang/AutoCloseable {
+	public abstract fun createPlatformEndpoint (Lcom/steamstreet/awskt/sns/CreatePlatformEndpointRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun deleteEndpoint (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun getClient ()Lcom/steamstreet/awskt/core/AwsServiceClient;
+	public abstract fun getEndpointAttributes (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun listEndpointsByPlatformApplication (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun listEndpointsByPlatformApplication$default (Lcom/steamstreet/awskt/sns/Sns;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public abstract fun publish (Lcom/steamstreet/awskt/sns/PublishRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun publishBatch (Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun setEndpointAttributes (Ljava/lang/String;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/sns/Sns$DefaultImpls {
+	public static synthetic fun listEndpointsByPlatformApplication$default (Lcom/steamstreet/awskt/sns/Sns;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public final class com/steamstreet/awskt/sns/SnsConfig {
