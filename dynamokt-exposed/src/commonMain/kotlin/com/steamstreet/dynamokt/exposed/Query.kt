@@ -1,15 +1,14 @@
 package com.steamstreet.dynamokt.exposed
 
-import com.steamstreet.awskt.dynamodb.BatchGetItemRequest
 import com.steamstreet.awskt.dynamodb.GetItemRequest
 import com.steamstreet.awskt.dynamodb.QueryRequest
 import com.steamstreet.awskt.dynamodb.QueryResponse
 import com.steamstreet.awskt.dynamodb.ScanRequest
 import com.steamstreet.awskt.dynamodb.ScanResponse
 import com.steamstreet.awskt.dynamodb.Select
+import com.steamstreet.awskt.dynamodb.batchGetAll
 import com.steamstreet.awskt.dynamodb.orNullIfEmpty
 import com.steamstreet.dynamokt.AttributeValue
-import com.steamstreet.awskt.dynamodb.KeysAndAttributes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
@@ -780,39 +779,51 @@ public class Query(
         keys: List<Pair<Any, Any?>>,
         projectionExpression: String?,
         projectionNames: Map<String, String>?
-    ): Flow<ResultRow> = flow {
-        val pkColumn = table.partitionKey ?: error("Table ${table.tableName} has no partition key defined")
-        val skColumn = table.sortKey
+    ): Flow<ResultRow> = batchGetRows(table, database, keys, projectionExpression, projectionNames)
+}
 
-        // DynamoDB BatchGetItem has a limit of 100 items per request
-        keys.chunked(100).forEach { chunk ->
-            val keysAndAttributes = KeysAndAttributes(
-                keys = chunk.map { (pk, sk) ->
-                    buildMap {
-                        @Suppress("UNCHECKED_CAST")
-                        put(pkColumn.name, (pkColumn as Column<Any?>).toAttributeValue(pk))
+/**
+ * The one BatchGetItem implementation, shared by the `keys(...)` query route and the deprecated
+ * [Table.batchGet].
+ *
+ * Chunking, and the retry of anything DynamoDB reports as `UnprocessedKeys`, belong to the client's
+ * `batchGetAll`. Reading only `Responses` - what this code used to do - loses items whenever the
+ * request is throttled or the 16 MB response cap is hit, with no error to show for it.
+ *
+ * ### What the caller gets
+ *
+ * - **Order is undefined.** DynamoDB returns a batch's items in whatever order it likes, so rows
+ *   do not follow the key list. Match rows back to keys by their key attributes.
+ * - **Duplicate keys collapse.** A key repeated in [keys] is requested once (DynamoDB rejects a
+ *   request containing the same key twice) and so yields at most one row.
+ * - **Missing items are simply absent.** A key with no item produces no row, exactly as
+ *   `BatchGetItem` reports it.
+ * - **A shortfall throws.** If keys are still unprocessed after the client's retries, the flow
+ *   fails with `BatchGetIncompleteException`, which carries the items already retrieved and the
+ *   keys still owed rather than quietly returning a short list.
+ *
+ * @throws IllegalArgumentException if a pair does not match the table's key schema; see
+ *   [batchKeyItems]
+ */
+internal fun batchGetRows(
+    table: Table,
+    database: Database,
+    keys: List<Pair<Any, Any?>>,
+    projectionExpression: String? = null,
+    projectionNames: Map<String, String>? = null
+): Flow<ResultRow> = flow {
+    val keyItems = table.batchKeyItems(keys, "keys()")
+    if (keyItems.isEmpty()) return@flow
 
-                        if (skColumn != null && sk != null) {
-                            @Suppress("UNCHECKED_CAST")
-                            put(skColumn.name, (skColumn as Column<Any?>).toAttributeValue(sk))
-                        }
-                    }
-                },
-                consistentRead = database.defaultConsistentRead,
-                projectionExpression = projectionExpression,
-                expressionAttributeNames = projectionNames?.takeIf { projectionExpression != null },
-            )
+    val items = database.client.batchGetAll(
+        tableName = database.resolveTableName(table),
+        keys = keyItems,
+        consistentRead = database.defaultConsistentRead,
+        projectionExpression = projectionExpression,
+        expressionAttributeNames = projectionNames?.takeIf { projectionExpression != null },
+    )
 
-            val resolvedTableName = database.resolveTableName(table)
-            val result = database.client.batchGetItem(
-                BatchGetItemRequest(mapOf(resolvedTableName to keysAndAttributes)),
-            )
-
-            result.responses?.get(resolvedTableName)?.forEach { item ->
-                emit(ResultRow(table, item))
-            }
-        }
-    }
+    items.forEach { emit(ResultRow(table, it)) }
 }
 
 /**
@@ -879,6 +890,9 @@ public fun Table.scan(database: Database): Query {
 /**
  * Batch get multiple items by their full keys.
  *
+ * Shares [batchGetRows] with the `keys(...)` route, so the deprecated path retries
+ * `UnprocessedKeys` and validates keys exactly as the supported one does.
+ *
  * @param keys List of partition key / sort key pairs (sort key is null for tables without one)
  * @deprecated Use selectAll(database).where { keys(...) } instead for a unified API
  */
@@ -889,37 +903,7 @@ public fun Table.scan(database: Database): Query {
 public fun Table.batchGet(
     database: Database,
     keys: List<Pair<Any, Any?>>
-): Flow<ResultRow> = flow {
-    val pkColumn = partitionKey ?: error("Table $tableName has no partition key defined")
-    val skColumn = sortKey
-
-    // DynamoDB BatchGetItem has a limit of 100 items per request
-    keys.chunked(100).forEach { chunk ->
-        val keysAndAttributes = KeysAndAttributes(
-            keys = chunk.map { (pk, sk) ->
-                buildMap {
-                    @Suppress("UNCHECKED_CAST")
-                    put(pkColumn.name, (pkColumn as Column<Any?>).toAttributeValue(pk))
-
-                    if (skColumn != null && sk != null) {
-                        @Suppress("UNCHECKED_CAST")
-                        put(skColumn.name, (skColumn as Column<Any?>).toAttributeValue(sk))
-                    }
-                }
-            },
-            consistentRead = database.defaultConsistentRead,
-        )
-
-        val resolvedTableName = database.resolveTableName(this@batchGet)
-        val result = database.client.batchGetItem(
-            BatchGetItemRequest(mapOf(resolvedTableName to keysAndAttributes)),
-        )
-
-        result.responses?.get(resolvedTableName)?.forEach { item ->
-            emit(ResultRow(this@batchGet, item))
-        }
-    }
-}
+): Flow<ResultRow> = batchGetRows(this, database, keys)
 
 // ============================================================================
 // Legacy API - kept for backwards compatibility

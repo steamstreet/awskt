@@ -14,6 +14,13 @@ public final class com/steamstreet/dynamokt/exposed/AttributeNotExistsOp : com/s
 	public final fun getColumn ()Lcom/steamstreet/dynamokt/exposed/Column;
 }
 
+public final class com/steamstreet/dynamokt/exposed/BatchKt {
+	public static final fun batchDelete (Lcom/steamstreet/dynamokt/exposed/Table;Lcom/steamstreet/dynamokt/exposed/Database;Ljava/util/List;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun batchDelete$default (Lcom/steamstreet/dynamokt/exposed/Table;Lcom/steamstreet/dynamokt/exposed/Database;Ljava/util/List;ILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun batchInsert (Lcom/steamstreet/dynamokt/exposed/Table;Lcom/steamstreet/dynamokt/exposed/Database;Ljava/lang/Iterable;ILkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun batchInsert$default (Lcom/steamstreet/dynamokt/exposed/Table;Lcom/steamstreet/dynamokt/exposed/Database;Ljava/lang/Iterable;ILkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
 public final class com/steamstreet/dynamokt/exposed/BeginsWithOp : com/steamstreet/dynamokt/exposed/Op {
 	public fun <init> (Lcom/steamstreet/dynamokt/exposed/Column;Ljava/lang/String;)V
 	public final fun getColumn ()Lcom/steamstreet/dynamokt/exposed/Column;
