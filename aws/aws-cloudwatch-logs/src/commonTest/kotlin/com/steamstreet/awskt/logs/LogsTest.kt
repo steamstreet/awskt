@@ -387,6 +387,28 @@ class StopQueryTest {
         assertEquals(false, stopped)
     }
 
+    /**
+     * The shape real AWS actually sends for a query in a terminal status — captured on the wire on
+     * 2026-08-15 — is a 400 `InvalidParameterException`, not `success = false`.
+     */
+    @Test
+    fun treatsTheServicesAlreadyEndedErrorAsANonEvent() = runTest {
+        val stopped = harnessLogs(LogsHarness()) {
+            """{"__type":"InvalidParameterException","message":"Query is already ended with Complete (Service: AWSLogs; Status Code: 400; Error Code: InvalidParameterException; Request ID: 2f2932c0-bc7e-4214-bd04-aaf18d69bbf3; Proxy: null)"}""" to HttpStatusCode.BadRequest
+        }.stopQuery(QUERY_ID)
+        assertEquals(false, stopped)
+    }
+
+    /** The same code for a genuinely bad parameter is not "already ended" and must not be hidden. */
+    @Test
+    fun doesNotSwallowAnUnrelatedInvalidParameter() = runTest {
+        assertFailsWith<InvalidParameterException> {
+            harnessLogs(LogsHarness()) {
+                """{"__type":"InvalidParameterException","message":"1 validation error detected: Value 'x' at 'queryId' failed to satisfy constraint"}""" to HttpStatusCode.BadRequest
+            }.stopQuery(QUERY_ID)
+        }
+    }
+
     @Test
     fun swallowsAnAgedOutQueryId() = runTest {
         val stopped = harnessLogs(LogsHarness()) {

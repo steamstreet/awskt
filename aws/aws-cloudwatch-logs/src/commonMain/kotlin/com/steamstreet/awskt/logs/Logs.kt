@@ -103,8 +103,10 @@ public interface Logs : AutoCloseable {
     /**
      * Stops a running query.
      *
-     * [StopQueryResponse.success] is false when the query had already finished, which is not an
-     * error — see [stopQuery], the convenience that treats it as the non-event it is.
+     * A query that has already reached a terminal status **raises [InvalidParameterException]**
+     * (`Query is already ended with Complete`) rather than answering `success = false` — observed
+     * against real AWS on 2026-08-15, contrary to what the shape of [StopQueryResponse] suggests.
+     * See [stopQuery], the convenience that treats it as the non-event it is.
      */
     public suspend fun stopQuery(request: StopQueryRequest): StopQueryResponse
 }
@@ -338,15 +340,29 @@ public suspend fun Logs.queryRows(
 /**
  * Stops a query, treating "it had already finished" as the non-event it is.
  *
- * `StopQuery` answers `success = false` — not an error — for a query that has already reached a
- * terminal status, and raises [ResourceNotFoundException] for one that has aged out entirely. Both
- * mean "there is nothing running", which is what the caller wanted, so both are swallowed. A
- * genuine failure — no permission, service unavailable — still propagates.
+ * What the service actually does, observed on the wire on 2026-08-15 rather than read from the
+ * response shape:
  *
- * @return whether a running query was actually stopped.
+ * - a query that is running, or that **was stopped by request** — even long after it settled at
+ *   `Cancelled` — answers `success = true`. Stopping is idempotent; a repeat stop is not an error;
+ * - a query that **ended on its own** (`Complete`, and by the message's wording `Failed` and
+ *   `Timeout`) raises [InvalidParameterException] with the message `Query is already ended with
+ *   Complete`. That code is shared with genuinely invalid parameters, so it is matched on its
+ *   message here and swallowed; any other `InvalidParameterException` still propagates;
+ * - a query id that has aged out entirely raises [ResourceNotFoundException], also swallowed;
+ * - `success = false`, the answer the response type suggests, has not been observed. It is treated
+ *   as "nothing was running" if it ever arrives.
+ *
+ * All the swallowed cases mean "there is nothing running", which is what the caller wanted. A
+ * genuine failure — no permission, service unavailable, a malformed id — still propagates.
+ *
+ * @return `true` if the query is stopped by request (this call or an earlier one), `false` if it
+ *   had already ended on its own or is gone.
  */
 public suspend fun Logs.stopQuery(queryId: String): Boolean = try {
     stopQuery(StopQueryRequest(queryId)).success
 } catch (alreadyGone: ResourceNotFoundException) {
     false
+} catch (alreadyEnded: InvalidParameterException) {
+    if (alreadyEnded.message?.contains("already ended", ignoreCase = true) == true) false else throw alreadyEnded
 }

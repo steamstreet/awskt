@@ -1,7 +1,10 @@
 package com.steamstreet.awskt.logs
 
 import com.steamstreet.awskt.core.awsEnv
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -178,12 +181,68 @@ class LiveLogsTest {
 
             assertTrue(!queryId.isNullOrBlank(), "StartQuery returned no queryId")
             // Either outcome is correct: true if it was still running, false if it had already
-            // finished — which on an empty group it very well may have.
+            // finished — which on a small group it very well may have.
             val stopped = logs.stopQuery(queryId)
             println("[live] Insights query $queryId stopped=$stopped")
 
-            // And stopping it a second time is a non-event rather than an error.
-            assertEquals(false, logs.stopQuery(queryId))
+            // Wait for the query to actually reach a terminal status. Cancellation is asynchronous
+            // and bounded: a query on a small window ends within a second or two either way.
+            var status = logs.getQueryResults(GetQueryResultsRequest(queryId)).status
+            var polls = 0
+            while (status !in QueryStatus.TERMINAL && polls++ < 15) {
+                // A real second, not a virtual one — see the class KDoc.
+                withContext(Dispatchers.Default) { delay(1.seconds) }
+                status = logs.getQueryResults(GetQueryResultsRequest(queryId)).status
+            }
+            println("[live] Insights query $queryId settled at $status after $polls poll(s)")
+            assertTrue(status in QueryStatus.TERMINAL, "query never reached a terminal status: $status")
+
+            // Stopping is idempotent from the service's side: a query that settled at `Cancelled`
+            // answers `success = true` again, and one that got to `Complete` first is the
+            // "already ended" error, which the convenience swallows. Neither is an error here.
+            val again = logs.stopQuery(queryId)
+            println("[live] second stop of a $status query returned $again")
+            assertEquals(status == QueryStatus.CANCELLED, again, "second stop of a $status query")
+        }
+    }
+
+    /**
+     * Stopping a query that ended **on its own** — the case that, on the wire, is not `success =
+     * false` but `InvalidParameterException: Query is already ended with Complete`. This is what
+     * `query`'s timeout path hits when the query completes between its last poll and the stop, and
+     * the reason the convenience swallows that specific message.
+     */
+    @Test
+    fun stoppingACompletedQueryIsANonEvent() = runTest {
+        val group = logGroup() ?: run {
+            println("[live] skipped — set AWS credentials and SMOKE_LOG_GROUP")
+            return@runTest
+        }
+
+        logs().use { logs ->
+            val queryId = logs.startQuery(
+                StartQueryRequest(
+                    queryString = "fields @timestamp | limit 1",
+                    startTime = nowSeconds() - 3600,
+                    endTime = nowSeconds(),
+                    logGroupNames = listOf(group),
+                ),
+            ).queryId!!
+
+            var status = logs.getQueryResults(GetQueryResultsRequest(queryId)).status
+            var polls = 0
+            while (status != QueryStatus.COMPLETE && polls++ < 30) {
+                withContext(Dispatchers.Default) { delay(1.seconds) }
+                status = logs.getQueryResults(GetQueryResultsRequest(queryId)).status
+            }
+            assertEquals(QueryStatus.COMPLETE, status, "query did not complete in time")
+
+            assertEquals(false, logs.stopQuery(queryId), "stopping a Complete query")
+            // And the raw operation is what the convenience is protecting callers from.
+            val raw = runCatching { logs.stopQuery(StopQueryRequest(queryId)) }.exceptionOrNull()
+            assertTrue(raw is InvalidParameterException, "raw StopQuery on a Complete query threw $raw")
+            assertContains(raw.message!!, "already ended")
+            println("[live] raw StopQuery on a Complete query: ${raw.message}")
         }
     }
 }

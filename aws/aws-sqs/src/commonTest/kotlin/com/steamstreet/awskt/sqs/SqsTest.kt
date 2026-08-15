@@ -148,7 +148,10 @@ class SqsProtocolTest {
     @Test
     fun deleteAndVisibilityOperationsReturnNothingAndTargetCorrectly() = runTest {
         val h = SqsHarness()
-        val sqs = harnessSqs(h) { "{}" to HttpStatusCode.OK }
+        // Real SQS answers both of these with a 200 and `Content-Length: 0` — an *empty* body, not
+        // the `{}` the AWS-JSON 1.0 convention suggests. Observed on the wire on 2026-08-15, and the
+        // first deployed smoke on Graviton failed on exactly this. The mock answers the same way.
+        val sqs = harnessSqs(h) { "" to HttpStatusCode.OK }
         sqs.deleteMessage(DeleteMessageRequest(QUEUE, "rh-1"))
         sqs.changeMessageVisibility(ChangeMessageVisibilityRequest(QUEUE, "rh-1", 60))
 

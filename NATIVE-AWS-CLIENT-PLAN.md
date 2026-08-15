@@ -2597,6 +2597,42 @@ is therefore meaningful in an account where only some fixtures exist.
 >    in front of a real chunked response.
 > 3. The rest, then the deployed `services` probe on Graviton.
 
+> **STATUS 2026-08-15: RUN AGAINST AWS, ALL GREEN — after fixing the three bugs the run found.**
+>
+> Every `Live*Test` (M8–M10 and M12) has now passed on **JVM/CIO and macosArm64/Curl**, and the
+> deployed smoke's `services` mode passes on **Graviton** with all seven probes running, none
+> skipped, repeatedly on warm containers (~2.5–2.8 s, ~100 MB). Account 443844975891, fixtures as
+> recorded in `docs/live-smoke.md`. The first Graviton run failed two of seven probes and the JVM
+> live run failed one test, which is the whole argument for M11 in one paragraph:
+>
+> 1. **SQS `DeleteMessage` / `ChangeMessageVisibility` answer 200 with `Content-Length: 0`** — an
+>    empty body, not the `{}` the AWS-JSON 1.0 convention suggests and the MockEngine suite assumed.
+>    `callJson` fed `""` to the decoder and threw. Fixed in `aws-core` for every typed JSON call
+>    (`callJson`, `callRestJson`, `callRestJsonNoBody` now share one blank-tolerant decoder), and
+>    the SQS mock now answers the way the service does.
+> 2. **`converseStream` violated flow context preservation under Curl.** Ktor 3.x runs
+>    `HttpStatement.execute`'s block on the *engine* dispatcher on non-JVM platforms (Ktor 4 will
+>    everywhere), so `consume` ran on `Dispatchers.IO` and `emit` into the outer `flow { }` was
+>    illegal. JVM Ktor keeps the caller's dispatcher, which is why 37 hermetic tests passed on JVM;
+>    **the same tests fail 13/37 on `macosArm64`**, and that target had simply never been run for
+>    this module. Fixed with `channelFlow` + `send`, with the mid-stream failure delivered through
+>    `close(cause)` rather than by throwing, so events emitted before a failure are still delivered
+>    (a `channelFlow` block that throws *cancels* the channel and drops its buffer). `callStreaming`'s
+>    KDoc now states the dispatcher contract for anyone else using the seam. A `withContext` hop
+>    back to the caller's dispatcher was tried first and is not a fix: *any* `withContext` between a
+>    `flow` builder and `emit` is itself an invariant violation.
+> 3. **CloudWatch Logs `StopQuery` on an ended query is not `success = false`.** A query that ended
+>    on its own raises `InvalidParameterException: Query is already ended with Complete`; a query
+>    stopped by request answers `success = true` on every repeat, indefinitely. The
+>    `Logs.stopQuery(queryId)` convenience now swallows the "already ended" message — the exact case
+>    `query()`'s timeout path hits when the query completes between its last poll and the stop — and
+>    its KDoc records what the service actually does. `LiveLogsTest` now proves both cases.
+>
+> Also observed and worth having on record: SNS's hand-written form encoder and XML reader are
+> confirmed against the real service (single publish and a 12-message batch across two requests),
+> and `converseStreamReceivesFramesAcrossChunkBoundaries` passed on both engines, so `callStreaming`
+> has now been in front of a real chunked response.
+
 ---
 
 ### M12 — CloudWatch Logs Insights (1.5 days)

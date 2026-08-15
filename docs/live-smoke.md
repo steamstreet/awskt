@@ -121,3 +121,37 @@ payload is meaningful in an account where only some fixtures exist.
 
 The other modes are unchanged: `ping`, `get`, `event`, `getevent` for latency measurement, and the
 default `full` for the DynamoDB and S3 correctness workload.
+
+### Deploying it
+
+`.github/scripts/native-smoke.sh` builds nothing — run `./gradlew :lambda:lambda-native-smoke:packageLambda
+:lambda:lambda-native-smoke:packageNativeLayer` first — and then creates or updates everything the
+function needs, deploys it, and invokes both the `full` and the `services` modes, failing on any
+probe that ran and failed.
+
+```bash
+export AWS_PROFILE=<admin-ish profile> AWS_REGION=us-west-2 AWSKT_LIVE_SMOKE=1
+# Optional: the fixtures that cost money or already exist in every account. Unset = that probe skips.
+export SMOKE_KMS_KEY_ID=alias/my-key SMOKE_SECRET_ID=my/secret SMOKE_BEDROCK_MODEL_ID=amazon.nova-lite-v1:0
+bash .github/scripts/native-smoke.sh
+```
+
+What it owns, all named `awskt-native-smoke*` and all idempotent to re-run:
+
+| Resource | Why the script creates it rather than reusing one |
+|---|---|
+| DynamoDB table `awskt-native-smoke` | as before |
+| SQS queue `awskt-native-smoke` | the probe *sends*; an existing queue has a consumer that would eat the message |
+| SNS topic `awskt-native-smoke` (no subscriptions) | the probe *publishes*; an existing topic has subscribers who would receive it |
+| IAM role `awskt-native-smoke-scheduler-role` | `CreateSchedule` needs a role Scheduler can assume, and the function needs `iam:PassRole` on it. It can only invoke the smoke function, and the schedule is disabled, dated 2099 and deleted in the same invocation |
+| IAM role `awskt-native-smoke-role` | the function's own; its inline policy is scoped to exactly the resources above plus, when configured, the one KMS key, secret and model |
+| Layer `awskt-native-libcrypt` | a new version per run |
+| Function `awskt-native-smoke` | `SMOKE_MEMORY_MB` (default 512) |
+
+The scheduler target and the Insights log group are the function itself and its own log group; the
+script derives both. Nothing it creates is billed at rest.
+
+The account it has been run in is `443844975891` (`vegasful-test`), using `alias/vegasful-test-key`,
+`vegasful/test/tiny` and `amazon.nova-lite-v1:0` for the three pass-through fixtures. The
+`ai-vegasful-test-deploy` (`AgentDeploy`) role is **not** sufficient — it cannot read or update the
+function or its role — so this needs the SSO administrator profile.

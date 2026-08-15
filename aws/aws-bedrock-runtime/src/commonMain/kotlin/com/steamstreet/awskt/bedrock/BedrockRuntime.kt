@@ -16,7 +16,8 @@ import com.steamstreet.awskt.core.resolveRegion
 import com.steamstreet.awskt.signing.sigV4UriEncode
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * Bedrock Runtime's **restJson1** dialect.
@@ -205,25 +206,41 @@ internal class DefaultBedrockRuntime(
         )
     }
 
-    override fun converseStream(request: ConverseRequest): Flow<ConverseStreamEvent> = flow {
+    override fun converseStream(request: ConverseRequest): Flow<ConverseStreamEvent> = channelFlow {
         val body = com.steamstreet.awskt.core.awsJson
             .encodeToString(ConverseBody.serializer(), request.toBody())
             .encodeToByteArray()
 
-        mapErrors {
-            client.callStreaming(
-                method = "POST",
-                path = modelPath(request.modelId, "converse-stream"),
-                body = body,
-                operation = "ConverseStream",
-                safety = OperationSafety.IDEMPOTENT,
-            ) { _, _, channel ->
-                // Collected inside `callStreaming`'s scope, which is what keeps the connection open
-                // for the duration. Emitting from here into the outer `flow` builder is safe
-                // because it all runs in the collector's own coroutine — nothing here switches
-                // context, which is the thing flow purity actually forbids.
-                channel.awsEventStream().collect { frame -> emit(frame.toConverseEvent()) }
+        // `channelFlow` + `send`, not `flow` + `emit`, and the difference is load-bearing. Ktor 3.x
+        // runs the response block on the *engine's* dispatcher on non-JVM platforms — under the
+        // native Curl engine the lambda below is on `Dispatchers.IO` while the collector is wherever
+        // it was — and `emit` from there violates flow context preservation. The first deployed
+        // Graviton smoke failed with exactly that, and only there: JVM Ktor keeps the caller's
+        // dispatcher. `send` is legal from any context.
+        //
+        // The try/catch is what preserves "events before a mid-stream failure are still delivered".
+        // A `channelFlow` block that *throws* cancels the channel and discards anything buffered in
+        // it; one that `close(cause)`s and returns lets the collector drain the buffer and then
+        // throws the cause. Cancellation is rethrown, because it means the collector went away and
+        // there is nobody to close for.
+        try {
+            mapErrors {
+                client.callStreaming(
+                    method = "POST",
+                    path = modelPath(request.modelId, "converse-stream"),
+                    body = body,
+                    operation = "ConverseStream",
+                    safety = OperationSafety.IDEMPOTENT,
+                ) { _, _, channel ->
+                    // Collected inside `callStreaming`'s scope, which is what keeps the connection
+                    // open for the duration.
+                    channel.awsEventStream().collect { frame -> send(frame.toConverseEvent()) }
+                }
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (failure: Throwable) {
+            close(failure)
         }
     }
 

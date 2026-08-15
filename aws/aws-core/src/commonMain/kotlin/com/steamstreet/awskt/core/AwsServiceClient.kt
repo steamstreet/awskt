@@ -657,6 +657,15 @@ public class AwsServiceClient(
      *   **The channel is only valid inside this call** — Ktor closes the connection when the block
      *   returns, so a [consume] that stashes the channel and returns hands its caller a dead one.
      *   Anything derived from the stream must be fully realized before returning.
+     *
+     *   **It may run on the HTTP engine's dispatcher, not the caller's.** Ktor 3.x hands the
+     *   response block to the engine dispatcher on non-JVM platforms — `Dispatchers.IO` under the
+     *   native Curl engine — and Ktor 4 will do so everywhere. A [consume] that feeds a `flow { }`
+     *   builder's `emit` from here violates flow context preservation and fails at runtime, on the
+     *   deployment target only; hopping back with `withContext` does not help, because *any*
+     *   `withContext` between the builder and `emit` is itself a violation. Use `channelFlow { }`
+     *   and `send`, which is legal from any context — `converseStream` in `aws-bedrock-runtime` is
+     *   the worked example, including how it keeps events that preceded a mid-stream failure.
      * @return whatever [consume] returned.
      */
     public suspend fun <T> callStreaming(

@@ -81,7 +81,7 @@ public suspend fun <Req, Res> AwsServiceClient.callJson(
         operation = operation,
         safety = safety,
     )
-    return json.decodeFromString(responseSerializer, response.body.decodeToString())
+    return json.decodeResponseBody(responseSerializer, response.body)
 }
 
 /**
@@ -129,7 +129,7 @@ public suspend fun <Req, Res> AwsServiceClient.callRestJson(
         operation = operation,
         safety = safety,
     )
-    return json.decodeFromString(responseSerializer, response.body.decodeToString())
+    return json.decodeResponseBody(responseSerializer, response.body)
 }
 
 /**
@@ -165,10 +165,19 @@ public suspend fun <Res> AwsServiceClient.callRestJsonNoBody(
         operation = operation,
         safety = safety,
     )
-    // A 204, or a 200 whose body AWS left empty, is a legitimate answer for these verbs — decoding
-    // "" throws a SerializationException naming a JSON parse position, which describes nothing the
-    // caller can act on. "{}" deserializes to a response object with every field at its default,
-    // which is what an empty answer means.
-    val text = response.body.decodeToString().ifBlank { "{}" }
-    return json.decodeFromString(responseSerializer, text)
+    return json.decodeResponseBody(responseSerializer, response.body)
 }
+
+/**
+ * Decodes a 2xx response body, treating an empty one as an empty JSON object.
+ *
+ * An empty body on a success is a legitimate answer under every JSON protocol here, not only for
+ * the body-less REST verbs: a 204; a restJson1 `DELETE`; and — found on the wire, not in a spec —
+ * SQS answering `DeleteMessage` and `ChangeMessageVisibility` with a 200 and `Content-Length: 0`
+ * where the AWS-JSON 1.0 convention would be `{}`. Decoding `""` throws a SerializationException
+ * naming a JSON parse position, which describes nothing the caller can act on. `"{}"` deserializes
+ * to a response object with every field at its default, which is what an empty answer means — and
+ * a response type with a required field still fails, now with the field's name.
+ */
+private fun <Res> Json.decodeResponseBody(deserializer: DeserializationStrategy<Res>, body: ByteArray): Res =
+    decodeFromString(deserializer, body.decodeToString().ifBlank { "{}" })
