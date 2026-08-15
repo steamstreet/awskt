@@ -112,6 +112,8 @@ public final class com/steamstreet/awskt/core/AwsServiceClient {
 	public synthetic fun <init> (Lio/ktor/client/HttpClient;Lcom/steamstreet/awskt/core/AwsCredentialsProvider;Lcom/steamstreet/awskt/core/AwsEndpoint;Ljava/lang/String;Lcom/steamstreet/awskt/core/AwsProtocol;Lcom/steamstreet/awskt/core/RetryConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lcom/steamstreet/awskt/core/AwsCallObserver;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun callRaw (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;[BLjava/lang/String;Lcom/steamstreet/awskt/core/OperationSafety;Lcom/steamstreet/awskt/signing/PayloadHash;Lcom/steamstreet/awskt/signing/SignedBodyHeader;ZZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun callRaw$default (Lcom/steamstreet/awskt/core/AwsServiceClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;[BLjava/lang/String;Lcom/steamstreet/awskt/core/OperationSafety;Lcom/steamstreet/awskt/signing/PayloadHash;Lcom/steamstreet/awskt/signing/SignedBodyHeader;ZZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun callStreaming (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;[BLjava/lang/String;Lcom/steamstreet/awskt/core/OperationSafety;Lcom/steamstreet/awskt/signing/PayloadHash;Lcom/steamstreet/awskt/signing/SignedBodyHeader;ZZLkotlin/jvm/functions/Function4;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun callStreaming$default (Lcom/steamstreet/awskt/core/AwsServiceClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;[BLjava/lang/String;Lcom/steamstreet/awskt/core/OperationSafety;Lcom/steamstreet/awskt/signing/PayloadHash;Lcom/steamstreet/awskt/signing/SignedBodyHeader;ZZLkotlin/jvm/functions/Function4;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public class com/steamstreet/awskt/core/AwsServiceException : java/lang/Exception {
@@ -189,6 +191,25 @@ public final class com/steamstreet/awskt/core/ErrorDetails {
 
 public final class com/steamstreet/awskt/core/ErrorsKt {
 	public static final fun transactionCancellationReasons ([B)Ljava/util/List;
+}
+
+public final class com/steamstreet/awskt/core/EventStreamException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/core/EventStreamKt {
+	public static final fun awsEventStream (Lio/ktor/utils/io/ByteReadChannel;)Lkotlinx/coroutines/flow/Flow;
+}
+
+public final class com/steamstreet/awskt/core/EventStreamMessage {
+	public fun <init> (Ljava/util/Map;[B)V
+	public final fun getEventType ()Ljava/lang/String;
+	public final fun getExceptionType ()Ljava/lang/String;
+	public final fun getHeaders ()Ljava/util/Map;
+	public final fun getMessageType ()Ljava/lang/String;
+	public final fun getPayload ()[B
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/steamstreet/awskt/core/HttpClient_jvmKt {

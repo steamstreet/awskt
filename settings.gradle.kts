@@ -27,6 +27,7 @@ dependencyResolutionManagement {
     }
 }
 include(":aws:aws-signing")
+include(":aws:aws-bedrock-runtime")
 include(":aws:aws-core")
 include(":aws:aws-dynamodb")
 include(":aws:aws-eventbridge")

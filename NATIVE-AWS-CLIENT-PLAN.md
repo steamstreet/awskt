@@ -42,7 +42,7 @@ Three things are settled by evidence, not opinion:
 
 ## 1. Module Overview
 
-**Module Name**: `aws/aws-signing`, `aws/aws-core`, `aws/aws-dynamodb`, `aws/aws-eventbridge`, `aws/aws-s3`, `aws/aws-secretsmanager`, `aws/aws-kms`, `aws/aws-sqs`, `aws/aws-sns`, `aws/aws-scheduler`
+**Module Name**: `aws/aws-signing`, `aws/aws-core`, `aws/aws-dynamodb`, `aws/aws-eventbridge`, `aws/aws-s3`, `aws/aws-secretsmanager`, `aws/aws-kms`, `aws/aws-sqs`, `aws/aws-sns`, `aws/aws-scheduler`, `aws/aws-bedrock-runtime`
 
 **Dependencies**:
 - `aws-signing` → KotlinCrypto only. **No Ktor. No awskt modules.** That constraint is what lets AWS's own fixture corpus drive the signer directly. It carries **both** header and query-string (presign) signing — query signing is pure string/byte work with no S3 knowledge, no HTTP client and no I/O.
@@ -59,6 +59,8 @@ Three things are settled by evidence, not opinion:
   protocol, so there is no JSON in either direction and `Wire.kt` carries the codec instead. A
   `@Serializable` appearing in that module means somebody has misread the protocol. Same
   relationship to `:lambda:lambda-sns` as above.
+- `aws-bedrock-runtime` → `aws-core`. The **data plane** only; the `bedrock` control plane is a
+  separate service with a separate endpoint and is not covered.
 - `aws-scheduler` → `aws-core`. **Unrelated to `aws-eventbridge`** despite the shared brand:
   EventBridge Scheduler is a separate service with its own endpoint (`scheduler`), its own protocol
   (restJson1, where EventBridge is AWS-JSON 1.1) and no overlapping operations.
@@ -409,15 +411,16 @@ awskt/
 | M7 | Native targets, Lambda runtime, packaging | 10.5 | M6 | yes |
 | **M8** | **`aws-secretsmanager` + `aws-kms` data planes** | **2** | M6 | **yes** |
 | **M9** | **`aws-sqs` + `aws-sns` + `aws-scheduler` data planes** | **3.5** | M6 | **yes** |
+| **M10** | **`aws-bedrock-runtime`: Converse + ConverseStream (response streaming)** | **4** | M9 | **yes** |
 | | **Planned (1 FTE)** | **78.5** | | |
 | | **With 20% contingency** | **~94** | | |
 | | *Critical path with a 2nd developer* | *63 (~76)* | | |
 
-**M8 and M9 are deliberately outside the totals.** Both were added on 2026-08-14, after M7 landed,
-and folding 5.5 days into a "78.5 planned" figure that was quoted in a staffing decision would
-rewrite history to make the estimate look better than it was. The v1 plan was 78.5 days for seven
-milestones; M8 and M9 are scope additions on top of a delivered plan, and are counted separately
-for that reason.
+**M8, M9 and M10 are deliberately outside the totals.** All were added on 2026-08-14, after M7
+landed, and folding 9.5 days into a "78.5 planned" figure that was quoted in a staffing decision
+would rewrite history to make the estimate look better than it was. The v1 plan was 78.5 days for
+seven milestones; M8, M9 and M10 are scope additions on top of a delivered plan, and are counted
+separately for that reason.
 
 ### Parallelization, stated honestly
 
@@ -2395,6 +2398,130 @@ values and for quote/newline round-tripping through both layers of encoding.
 > should be correct — but it is documentation rather than something read out of an artifact, and it
 > is the first thing to check if Android notifications arrive empty. The raw
 > `platform(PushPlatform.GCM, json)` path is unaffected either way.
+
+---
+
+### M10 — Bedrock Runtime: Converse and ConverseStream (4 days)
+
+Added 2026-08-14, on request. The first module in this library that needs something `aws-core` did
+not have: **a streaming response**.
+
+**Scope**: `Converse` and `ConverseStream`. `InvokeModel` and `InvokeModelWithResponseStream` are
+out, and the reason is not effort — they take whatever JSON the chosen model's provider defined, so
+a typed client for them would be a typed wrapper around an untyped blob and switching models would
+mean rewriting the request. Converse is the model-independent API and therefore the only one a
+portable typed client can be written against. Both remain reachable through the extension seam.
+
+**This partially advances the "streaming deferred to v2" decision, and says so rather than
+pretending otherwise.** §2 defers streaming request *and* response bodies. M10 delivers
+**responses only**: `AwsServiceClient.callStreaming` hands a `ByteReadChannel` to a caller-supplied
+consumer, while the request body remains a materialized `ByteArray`, so none of the chunked-signing
+machinery a streaming *request* needs exists. That is enough for every AWS event-stream service and
+is deliberately **not** enough for S3's `GetObject`, which additionally wants a memory ceiling, a
+`Range` interaction and a truncation check. `aws-s3` is untouched.
+
+**Tasks**
+
+- [x] `aws-core`: `AwsServiceClient.callStreaming`, with retry semantics narrower than `callRaw`'s.
+- [x] `aws-core`: `EventStream.kt` — `vnd.amazon.eventstream` frame decoding with both CRCs, and a
+      hand-written IEEE CRC-32.
+- [x] `aws-core`: `signAttempt` extracted from `callRaw`'s loop so both paths sign identically.
+- [x] `aws/aws-bedrock-runtime`: Converse, ConverseStream, the `ContentBlock` union, tool calling,
+      `accumulate()`.
+- [x] JVM ABI dumps for both; klib dumps still blocked.
+
+**Where the event-stream decoder lives, and why that is not inconsistent with M9**
+
+In `aws-core`, whereas M9 kept SNS's query codec inside `aws-sns`. The two look like the same call
+and are not. SNS's form encoder is shaped by SNS's *service* model — which structures flatten, which
+map spelling each field wants — so generalizing it means generalizing SNS. Event-stream framing has
+**no service content whatsoever**: the same frames carry Bedrock's `ConverseStream`, Kinesis's
+`SubscribeToShard`, S3's `SelectObjectContent` and Transcribe's streaming, and the decoder cannot
+tell them apart. The deciding argument is smaller still: `callStreaming` hands out a raw
+`ByteReadChannel`, and every AWS service that streams frames it this way, so shipping the transport
+without the decoder ships half a tool.
+
+**Retry semantics for a stream, which are narrower than `callRaw`'s and have to be**
+
+A stream is retryable right up until the first byte of a **successful** body is handed out, and not
+afterwards. Transport failures before a response retry normally; a non-2xx has its (small, bounded)
+body materialized and is classified and retried normally; a 2xx is handed to the consumer and
+**nothing that happens inside the consumer is ever retried**. There is deliberately no `validateBody`
+equivalent — `callRaw` can offer one because it holds the whole body before deciding, and a stream
+has no such moment.
+
+> **A test caught a real bug here, and it is worth recording rather than quietly fixing.** The first
+> implementation let an exception thrown by the consumer propagate into the transport `catch`, where
+> `classifyTransportFailure` answered AMBIGUOUS — as it does for anything unrecognised — and
+> retried. The observable effect: Bedrock reporting `ModelStreamErrorException` half-way through a
+> generation caused the **entire call to be replayed**, so the caller saw a partial answer, then a
+> second different partial answer, and was billed for both. Fixed with a `ConsumerFailure` marker,
+> the same technique `callRaw` already used for `InspectionRefusal` — the precedent existed and the
+> first implementation simply did not apply it. The test that caught it
+> (`eventsBeforeAMidStreamFailureAreStillDelivered`) asserts the event count, which is why it caught
+> it at all: an assertion on the exception type alone would have passed.
+
+**Decisions worth reviewing**
+
+1. **`ContentBlock` is a sealed hierarchy *with* an `Unknown` arm.** A closed sealed union would
+   have the failure mode `aws-kms`'s KDoc argues against for enums — AWS adds variants, and
+   `reasoningContent`, `citationsContent` and `cachePoint` all postdate the API's launch. `Unknown`
+   carries an unrecognised variant as raw JSON, so the exhaustive `when` survives *and* forward
+   compatibility does. The AWS SDK reaches the same conclusion, generating its own `SdkUnknown`.
+2. **Round-tripping is a correctness requirement, not a nicety.** Converse is stateless, so a
+   multi-turn conversation resends the assistant's previous turns — and for reasoning models the
+   reasoning block must be echoed back byte-for-byte, signature included, or the turn is rejected.
+   That is why `ContentBlock.Reasoning` keeps its raw `JsonElement` rather than decomposing into
+   fields, and why `Unknown` exists at all. Tested by asserting that encode→decode→encode is
+   byte-identical for both.
+3. **`accumulate()` accumulates per `contentBlockIndex`, not over concatenated text.** A reply can
+   have several blocks open at once — reasoning alongside text, or two tool calls — and deltas carry
+   the index they belong to. A naive fold produces the right answer for plain text and splices two
+   tool calls into unparseable JSON for the interesting case. Tool input compounds it: Bedrock
+   streams it as **partial JSON text**, so a single delta is usually not valid JSON on its own.
+   There is a test for the interleaved-two-tools case specifically.
+4. **`BedrockRuntimeConfig.httpTimeouts` defaults far higher than the library's** — 120s socket,
+   600s request, against 30s/30s. A long generation legitimately takes minutes, and during a stream
+   the socket sits idle between tokens whenever the model pauses. The socket timeout bounds the gap
+   *between* bytes rather than the whole response, which is why it is set generously rather than
+   disabled: a genuinely hung connection should still fail.
+5. **`retryConfig` is documented as a thing to tune *down*.** Every retry is a second full
+   generation, billed in full; the library's four-attempt default is right for a `GetItem` and is a
+   4× bill ceiling here.
+6. **The signing name is `bedrock`, the endpoint prefix is `bedrock-runtime`.** They differ, and
+   signing against the wrong one is a `SignatureDoesNotMatch` that says nothing about which.
+7. **Model ids are percent-encoded whole**, and here that is not ceremonial as it was in
+   `aws-scheduler`: an inference-profile ARN contains `/` and occupies one path segment, so left raw
+   it would split the path and address an operation that does not exist.
+
+**Verification**: `./gradlew :aws:aws-bedrock-runtime:jvmTest :aws:aws-core:jvmTest` — **33 new
+Bedrock tests and 26 new `aws-core` tests, 0 failures**; `aws-core` now at 172. The event-stream
+decoder is tested against frames built independently from the specification, and the CRC-32 is
+checked against its **published check value** (`123456789` → `0xCBF43926`) rather than against
+itself — without that, a wrong polynomial would produce frames the decoder happily accepts and AWS
+rejects, and every test would still pass.
+
+> **STATUS: M10's CODE IS COMPLETE (2026-08-14). The same two gaps as M8 and M9 apply, plus one
+> specific to streaming.**
+>
+> **1. No native compilation, JVM ABI dumps only.** Identical cause: `download.jetbrains.com` is
+> blocked by egress policy. `checkLegacyAbi` is red on `aws-core` and `aws-bedrock-runtime` until
+> the klib dumps are generated on a networked host.
+>
+> **2. No live or LocalStack run.** MockEngine only — which for this module means **no real model
+> has ever been invoked through this client**. Everything below the wire format is unexercised.
+>
+> **3. `callStreaming` has never run against a real chunked HTTP response.** `MockEngine` serves the
+> whole body at once, so the tests prove the *decoder* handles a stream of frames and do **not**
+> prove the transport handles a body that arrives slowly, in arbitrary chunk boundaries, across many
+> seconds. Frame boundaries falling mid-read is exactly the case a mock cannot produce. That is the
+> single highest-value thing to test next, and a LocalStack or live `ConverseStream` against a real
+> model is the way to do it.
+>
+> Also unverified, and cheap to add later: no SDK differential for Converse. The protocol is
+> restJson1, which M9 established, but the `ContentBlock` union encoding is new and hand-written, and
+> a differential against `aws.sdk.kotlin:bedrockruntime` would check it independently of the tests
+> that were written alongside it.
 
 ---
 

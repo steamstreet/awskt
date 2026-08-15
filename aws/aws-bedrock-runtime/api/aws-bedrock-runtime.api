@@ -1,0 +1,917 @@
+public final class com/steamstreet/awskt/bedrock/AccessDeniedException : com/steamstreet/awskt/bedrock/BedrockException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public class com/steamstreet/awskt/bedrock/BedrockException : com/steamstreet/awskt/core/AwsServiceException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public abstract interface class com/steamstreet/awskt/bedrock/BedrockRuntime : java/lang/AutoCloseable {
+	public abstract fun converse (Lcom/steamstreet/awskt/bedrock/ConverseRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun converseStream (Lcom/steamstreet/awskt/bedrock/ConverseRequest;)Lkotlinx/coroutines/flow/Flow;
+	public abstract fun getClient ()Lcom/steamstreet/awskt/core/AwsServiceClient;
+}
+
+public final class com/steamstreet/awskt/bedrock/BedrockRuntimeConfig {
+	public fun <init> ()V
+	public final fun getCaInfo ()Ljava/lang/String;
+	public final fun getCredentialsProvider ()Lcom/steamstreet/awskt/core/AwsCredentialsProvider;
+	public final fun getEndpointUrl ()Ljava/lang/String;
+	public final fun getHttpClient ()Lio/ktor/client/HttpClient;
+	public final fun getHttpTimeouts ()Lcom/steamstreet/awskt/core/AwsHttpTimeouts;
+	public final fun getObserver ()Lcom/steamstreet/awskt/core/AwsCallObserver;
+	public final fun getRegion ()Ljava/lang/String;
+	public final fun getRetryConfig ()Lcom/steamstreet/awskt/core/RetryConfig;
+	public final fun setCaInfo (Ljava/lang/String;)V
+	public final fun setCredentialsProvider (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;)V
+	public final fun setEndpointUrl (Ljava/lang/String;)V
+	public final fun setHttpClient (Lio/ktor/client/HttpClient;)V
+	public final fun setHttpTimeouts (Lcom/steamstreet/awskt/core/AwsHttpTimeouts;)V
+	public final fun setObserver (Lcom/steamstreet/awskt/core/AwsCallObserver;)V
+	public final fun setRegion (Ljava/lang/String;)V
+	public final fun setRetryConfig (Lcom/steamstreet/awskt/core/RetryConfig;)V
+}
+
+public final class com/steamstreet/awskt/bedrock/BedrockRuntimeKt {
+	public static final fun BedrockRuntime (Lkotlin/jvm/functions/Function1;)Lcom/steamstreet/awskt/bedrock/BedrockRuntime;
+	public static synthetic fun BedrockRuntime$default (Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/BedrockRuntime;
+	public static final fun ask (Lcom/steamstreet/awskt/bedrock/BedrockRuntime;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun ask$default (Lcom/steamstreet/awskt/bedrock/BedrockRuntime;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun getBEDROCK_RUNTIME_PROTOCOL ()Lcom/steamstreet/awskt/core/AwsProtocol;
+	public static final fun plusReply (Ljava/util/List;Lcom/steamstreet/awskt/bedrock/ConverseResponse;)Ljava/util/List;
+}
+
+public final class com/steamstreet/awskt/bedrock/BinarySource {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/BinarySource$Companion;
+	public fun <init> ()V
+	public fun <init> ([BLcom/steamstreet/awskt/bedrock/S3Location;)V
+	public synthetic fun <init> ([BLcom/steamstreet/awskt/bedrock/S3Location;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBytes ()[B
+	public final fun getS3Location ()Lcom/steamstreet/awskt/bedrock/S3Location;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/BinarySource$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/BinarySource$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/BinarySource;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/BinarySource;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/BinarySource$Companion {
+	public final fun bytes ([B)Lcom/steamstreet/awskt/bedrock/BinarySource;
+	public final fun s3 (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/bedrock/BinarySource;
+	public static synthetic fun s3$default (Lcom/steamstreet/awskt/bedrock/BinarySource$Companion;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/BinarySource;
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/CachePointSpec {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/CachePointSpec$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/bedrock/CachePointSpec;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/CachePointSpec;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/CachePointSpec;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/CachePointSpec$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/CachePointSpec$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/CachePointSpec;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/CachePointSpec;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/CachePointSpec$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public abstract interface class com/steamstreet/awskt/bedrock/ContentBlock {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/ContentBlock$Companion;
+}
+
+public final class com/steamstreet/awskt/bedrock/ContentBlock$CachePoint : com/steamstreet/awskt/bedrock/ContentBlock {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/bedrock/ContentBlock$CachePoint;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ContentBlock$CachePoint;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ContentBlock$CachePoint;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ContentBlock$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/ContentBlock$Document : com/steamstreet/awskt/bedrock/ContentBlock {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/bedrock/BinarySource;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFormat ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getSource ()Lcom/steamstreet/awskt/bedrock/BinarySource;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ContentBlock$Image : com/steamstreet/awskt/bedrock/ContentBlock {
+	public fun <init> (Ljava/lang/String;Lcom/steamstreet/awskt/bedrock/BinarySource;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFormat ()Ljava/lang/String;
+	public final fun getSource ()Lcom/steamstreet/awskt/bedrock/BinarySource;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ContentBlock$Reasoning : com/steamstreet/awskt/bedrock/ContentBlock {
+	public fun <init> (Lkotlinx/serialization/json/JsonElement;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getRaw ()Lkotlinx/serialization/json/JsonElement;
+	public final fun getText ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ContentBlock$Text : com/steamstreet/awskt/bedrock/ContentBlock {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/bedrock/ContentBlock$Text;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ContentBlock$Text;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ContentBlock$Text;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getText ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ContentBlock$ToolResult : com/steamstreet/awskt/bedrock/ContentBlock {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;)Lcom/steamstreet/awskt/bedrock/ContentBlock$ToolResult;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ContentBlock$ToolResult;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ContentBlock$ToolResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContent ()Ljava/util/List;
+	public final fun getStatus ()Ljava/lang/String;
+	public final fun getToolUseId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ContentBlock$ToolUse : com/steamstreet/awskt/bedrock/ContentBlock {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lkotlinx/serialization/json/JsonElement;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)Lcom/steamstreet/awskt/bedrock/ContentBlock$ToolUse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ContentBlock$ToolUse;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ContentBlock$ToolUse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getInput ()Lkotlinx/serialization/json/JsonElement;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getToolUseId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ContentBlock$Unknown : com/steamstreet/awskt/bedrock/ContentBlock {
+	public fun <init> (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lkotlinx/serialization/json/JsonElement;
+	public final fun copy (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)Lcom/steamstreet/awskt/bedrock/ContentBlock$Unknown;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ContentBlock$Unknown;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ContentBlock$Unknown;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getValue ()Lkotlinx/serialization/json/JsonElement;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ContentBlockSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/ContentBlockSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/ContentBlock;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/ContentBlock;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class com/steamstreet/awskt/bedrock/ConversationRole {
+	public static final field ASSISTANT Ljava/lang/String;
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/ConversationRole;
+	public static final field USER Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ConverseMetrics {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/ConverseMetrics$Companion;
+	public fun <init> ()V
+	public fun <init> (J)V
+	public synthetic fun <init> (JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()J
+	public final fun copy (J)Lcom/steamstreet/awskt/bedrock/ConverseMetrics;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ConverseMetrics;JILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ConverseMetrics;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLatencyMs ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/ConverseMetrics$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/ConverseMetrics$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/ConverseMetrics;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/ConverseMetrics;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/ConverseMetrics$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/ConverseOutput {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/ConverseOutput$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/bedrock/Message;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/bedrock/Message;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/bedrock/Message;
+	public final fun copy (Lcom/steamstreet/awskt/bedrock/Message;)Lcom/steamstreet/awskt/bedrock/ConverseOutput;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ConverseOutput;Lcom/steamstreet/awskt/bedrock/Message;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ConverseOutput;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessage ()Lcom/steamstreet/awskt/bedrock/Message;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/ConverseOutput$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/ConverseOutput$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/ConverseOutput;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/ConverseOutput;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/ConverseOutput$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/ConverseRequest {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/bedrock/InferenceConfiguration;Lcom/steamstreet/awskt/bedrock/ToolConfiguration;Lkotlinx/serialization/json/JsonElement;Ljava/util/List;Lkotlinx/serialization/json/JsonElement;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/bedrock/InferenceConfiguration;Lcom/steamstreet/awskt/bedrock/ToolConfiguration;Lkotlinx/serialization/json/JsonElement;Ljava/util/List;Lkotlinx/serialization/json/JsonElement;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Lcom/steamstreet/awskt/bedrock/InferenceConfiguration;
+	public final fun component5 ()Lcom/steamstreet/awskt/bedrock/ToolConfiguration;
+	public final fun component6 ()Lkotlinx/serialization/json/JsonElement;
+	public final fun component7 ()Ljava/util/List;
+	public final fun component8 ()Lkotlinx/serialization/json/JsonElement;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/bedrock/InferenceConfiguration;Lcom/steamstreet/awskt/bedrock/ToolConfiguration;Lkotlinx/serialization/json/JsonElement;Ljava/util/List;Lkotlinx/serialization/json/JsonElement;)Lcom/steamstreet/awskt/bedrock/ConverseRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ConverseRequest;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/steamstreet/awskt/bedrock/InferenceConfiguration;Lcom/steamstreet/awskt/bedrock/ToolConfiguration;Lkotlinx/serialization/json/JsonElement;Ljava/util/List;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ConverseRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAdditionalModelRequestFields ()Lkotlinx/serialization/json/JsonElement;
+	public final fun getAdditionalModelResponseFieldPaths ()Ljava/util/List;
+	public final fun getGuardrailConfig ()Lkotlinx/serialization/json/JsonElement;
+	public final fun getInferenceConfig ()Lcom/steamstreet/awskt/bedrock/InferenceConfiguration;
+	public final fun getMessages ()Ljava/util/List;
+	public final fun getModelId ()Ljava/lang/String;
+	public final fun getSystem ()Ljava/util/List;
+	public final fun getToolConfig ()Lcom/steamstreet/awskt/bedrock/ToolConfiguration;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ConverseResponse {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/ConverseResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/bedrock/ConverseOutput;Ljava/lang/String;Lcom/steamstreet/awskt/bedrock/TokenUsage;Lcom/steamstreet/awskt/bedrock/ConverseMetrics;Lkotlinx/serialization/json/JsonElement;Lkotlinx/serialization/json/JsonElement;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/bedrock/ConverseOutput;Ljava/lang/String;Lcom/steamstreet/awskt/bedrock/TokenUsage;Lcom/steamstreet/awskt/bedrock/ConverseMetrics;Lkotlinx/serialization/json/JsonElement;Lkotlinx/serialization/json/JsonElement;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/bedrock/ConverseOutput;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lcom/steamstreet/awskt/bedrock/TokenUsage;
+	public final fun component4 ()Lcom/steamstreet/awskt/bedrock/ConverseMetrics;
+	public final fun component5 ()Lkotlinx/serialization/json/JsonElement;
+	public final fun component6 ()Lkotlinx/serialization/json/JsonElement;
+	public final fun copy (Lcom/steamstreet/awskt/bedrock/ConverseOutput;Ljava/lang/String;Lcom/steamstreet/awskt/bedrock/TokenUsage;Lcom/steamstreet/awskt/bedrock/ConverseMetrics;Lkotlinx/serialization/json/JsonElement;Lkotlinx/serialization/json/JsonElement;)Lcom/steamstreet/awskt/bedrock/ConverseResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ConverseResponse;Lcom/steamstreet/awskt/bedrock/ConverseOutput;Ljava/lang/String;Lcom/steamstreet/awskt/bedrock/TokenUsage;Lcom/steamstreet/awskt/bedrock/ConverseMetrics;Lkotlinx/serialization/json/JsonElement;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ConverseResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAdditionalModelResponseFields ()Lkotlinx/serialization/json/JsonElement;
+	public final fun getMessage ()Lcom/steamstreet/awskt/bedrock/Message;
+	public final fun getMetrics ()Lcom/steamstreet/awskt/bedrock/ConverseMetrics;
+	public final fun getOutput ()Lcom/steamstreet/awskt/bedrock/ConverseOutput;
+	public final fun getStopReason ()Ljava/lang/String;
+	public final fun getText ()Ljava/lang/String;
+	public final fun getToolUses ()Ljava/util/List;
+	public final fun getTrace ()Lkotlinx/serialization/json/JsonElement;
+	public final fun getUsage ()Lcom/steamstreet/awskt/bedrock/TokenUsage;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/ConverseResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/ConverseResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/ConverseResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/ConverseResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/ConverseResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public abstract interface class com/steamstreet/awskt/bedrock/ConverseStreamEvent {
+}
+
+public final class com/steamstreet/awskt/bedrock/ConverseStreamEvent$ContentBlockDelta : com/steamstreet/awskt/bedrock/ConverseStreamEvent {
+	public fun <init> (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)V
+	public synthetic fun <init> (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Lkotlinx/serialization/json/JsonElement;
+	public final fun copy (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$ContentBlockDelta;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$ContentBlockDelta;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$ContentBlockDelta;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContentBlockIndex ()I
+	public final fun getRaw ()Lkotlinx/serialization/json/JsonElement;
+	public final fun getReasoningText ()Ljava/lang/String;
+	public final fun getText ()Ljava/lang/String;
+	public final fun getToolUseInput ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ConverseStreamEvent$ContentBlockStart : com/steamstreet/awskt/bedrock/ConverseStreamEvent {
+	public fun <init> (ILcom/steamstreet/awskt/bedrock/ToolUseStart;)V
+	public synthetic fun <init> (ILcom/steamstreet/awskt/bedrock/ToolUseStart;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()Lcom/steamstreet/awskt/bedrock/ToolUseStart;
+	public final fun copy (ILcom/steamstreet/awskt/bedrock/ToolUseStart;)Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$ContentBlockStart;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$ContentBlockStart;ILcom/steamstreet/awskt/bedrock/ToolUseStart;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$ContentBlockStart;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContentBlockIndex ()I
+	public final fun getToolUse ()Lcom/steamstreet/awskt/bedrock/ToolUseStart;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ConverseStreamEvent$ContentBlockStop : com/steamstreet/awskt/bedrock/ConverseStreamEvent {
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$ContentBlockStop;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$ContentBlockStop;IILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$ContentBlockStop;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContentBlockIndex ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ConverseStreamEvent$MessageStart : com/steamstreet/awskt/bedrock/ConverseStreamEvent {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$MessageStart;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$MessageStart;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$MessageStart;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getRole ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ConverseStreamEvent$MessageStop : com/steamstreet/awskt/bedrock/ConverseStreamEvent {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)V
+	public synthetic fun <init> (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lkotlinx/serialization/json/JsonElement;
+	public final fun copy (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$MessageStop;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$MessageStop;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$MessageStop;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAdditionalModelResponseFields ()Lkotlinx/serialization/json/JsonElement;
+	public final fun getStopReason ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ConverseStreamEvent$Metadata : com/steamstreet/awskt/bedrock/ConverseStreamEvent {
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/bedrock/TokenUsage;Lcom/steamstreet/awskt/bedrock/ConverseMetrics;Lkotlinx/serialization/json/JsonElement;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/bedrock/TokenUsage;Lcom/steamstreet/awskt/bedrock/ConverseMetrics;Lkotlinx/serialization/json/JsonElement;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/bedrock/TokenUsage;
+	public final fun component2 ()Lcom/steamstreet/awskt/bedrock/ConverseMetrics;
+	public final fun component3 ()Lkotlinx/serialization/json/JsonElement;
+	public final fun copy (Lcom/steamstreet/awskt/bedrock/TokenUsage;Lcom/steamstreet/awskt/bedrock/ConverseMetrics;Lkotlinx/serialization/json/JsonElement;)Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$Metadata;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$Metadata;Lcom/steamstreet/awskt/bedrock/TokenUsage;Lcom/steamstreet/awskt/bedrock/ConverseMetrics;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$Metadata;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMetrics ()Lcom/steamstreet/awskt/bedrock/ConverseMetrics;
+	public final fun getTrace ()Lkotlinx/serialization/json/JsonElement;
+	public final fun getUsage ()Lcom/steamstreet/awskt/bedrock/TokenUsage;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ConverseStreamEvent$Unknown : com/steamstreet/awskt/bedrock/ConverseStreamEvent {
+	public fun <init> (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lkotlinx/serialization/json/JsonElement;
+	public final fun copy (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$Unknown;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$Unknown;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ConverseStreamEvent$Unknown;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEventType ()Ljava/lang/String;
+	public final fun getPayload ()Lkotlinx/serialization/json/JsonElement;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/InferenceConfiguration {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/InferenceConfiguration$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Float;Ljava/lang/Float;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/Float;Ljava/lang/Float;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Integer;
+	public final fun component2 ()Ljava/lang/Float;
+	public final fun component3 ()Ljava/lang/Float;
+	public final fun component4 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/Integer;Ljava/lang/Float;Ljava/lang/Float;Ljava/util/List;)Lcom/steamstreet/awskt/bedrock/InferenceConfiguration;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/InferenceConfiguration;Ljava/lang/Integer;Ljava/lang/Float;Ljava/lang/Float;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/InferenceConfiguration;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMaxTokens ()Ljava/lang/Integer;
+	public final fun getStopSequences ()Ljava/util/List;
+	public final fun getTemperature ()Ljava/lang/Float;
+	public final fun getTopP ()Ljava/lang/Float;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/InferenceConfiguration$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/InferenceConfiguration$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/InferenceConfiguration;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/InferenceConfiguration;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/InferenceConfiguration$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/InternalServerException : com/steamstreet/awskt/bedrock/BedrockException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/bedrock/Message {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/Message$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lcom/steamstreet/awskt/bedrock/Message;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/Message;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/Message;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContent ()Ljava/util/List;
+	public final fun getRole ()Ljava/lang/String;
+	public final fun getText ()Ljava/lang/String;
+	public final fun getToolUses ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/Message$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/Message$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/Message;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/Message;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/Message$Companion {
+	public final fun assistant (Ljava/lang/String;)Lcom/steamstreet/awskt/bedrock/Message;
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+	public final fun user (Ljava/lang/String;)Lcom/steamstreet/awskt/bedrock/Message;
+}
+
+public final class com/steamstreet/awskt/bedrock/ModelErrorException : com/steamstreet/awskt/bedrock/BedrockException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/bedrock/ModelNotReadyException : com/steamstreet/awskt/bedrock/BedrockException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/bedrock/ModelStreamErrorException : com/steamstreet/awskt/bedrock/BedrockException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/bedrock/ModelTimeoutException : com/steamstreet/awskt/bedrock/BedrockException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/bedrock/ResourceNotFoundException : com/steamstreet/awskt/bedrock/BedrockException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/bedrock/S3Location {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/S3Location$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/bedrock/S3Location;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/S3Location;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/S3Location;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBucketOwner ()Ljava/lang/String;
+	public final fun getUri ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/S3Location$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/S3Location$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/S3Location;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/S3Location;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/S3Location$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/ServiceUnavailableException : com/steamstreet/awskt/bedrock/BedrockException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/bedrock/SpecificToolChoice {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/SpecificToolChoice$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/bedrock/SpecificToolChoice;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/SpecificToolChoice;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/SpecificToolChoice;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/SpecificToolChoice$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/SpecificToolChoice$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/SpecificToolChoice;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/SpecificToolChoice;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/SpecificToolChoice$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/StopReason {
+	public static final field CONTENT_FILTERED Ljava/lang/String;
+	public static final field END_TURN Ljava/lang/String;
+	public static final field GUARDRAIL_INTERVENED Ljava/lang/String;
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/StopReason;
+	public static final field MAX_TOKENS Ljava/lang/String;
+	public static final field STOP_SEQUENCE Ljava/lang/String;
+	public static final field TOOL_USE Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/StreamKt {
+	public static final fun accumulate (Lkotlinx/coroutines/flow/Flow;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun textDeltas (Lkotlinx/coroutines/flow/Flow;)Lkotlinx/coroutines/flow/Flow;
+}
+
+public final class com/steamstreet/awskt/bedrock/SystemContentBlock {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/SystemContentBlock$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Lcom/steamstreet/awskt/bedrock/CachePointSpec;)V
+	public synthetic fun <init> (Ljava/lang/String;Lcom/steamstreet/awskt/bedrock/CachePointSpec;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lcom/steamstreet/awskt/bedrock/CachePointSpec;
+	public final fun copy (Ljava/lang/String;Lcom/steamstreet/awskt/bedrock/CachePointSpec;)Lcom/steamstreet/awskt/bedrock/SystemContentBlock;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/SystemContentBlock;Ljava/lang/String;Lcom/steamstreet/awskt/bedrock/CachePointSpec;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/SystemContentBlock;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCachePoint ()Lcom/steamstreet/awskt/bedrock/CachePointSpec;
+	public final fun getText ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/SystemContentBlock$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/SystemContentBlock$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/SystemContentBlock;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/SystemContentBlock;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/SystemContentBlock$Companion {
+	public final fun cachePoint ()Lcom/steamstreet/awskt/bedrock/SystemContentBlock;
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+	public final fun text (Ljava/lang/String;)Lcom/steamstreet/awskt/bedrock/SystemContentBlock;
+}
+
+public final class com/steamstreet/awskt/bedrock/ThrottlingException : com/steamstreet/awskt/bedrock/BedrockException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/bedrock/TokenUsage {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/TokenUsage$Companion;
+	public fun <init> ()V
+	public fun <init> (IIILjava/lang/Integer;Ljava/lang/Integer;)V
+	public synthetic fun <init> (IIILjava/lang/Integer;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()Ljava/lang/Integer;
+	public final fun component5 ()Ljava/lang/Integer;
+	public final fun copy (IIILjava/lang/Integer;Ljava/lang/Integer;)Lcom/steamstreet/awskt/bedrock/TokenUsage;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/TokenUsage;IIILjava/lang/Integer;Ljava/lang/Integer;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/TokenUsage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCacheReadInputTokens ()Ljava/lang/Integer;
+	public final fun getCacheWriteInputTokens ()Ljava/lang/Integer;
+	public final fun getInputTokens ()I
+	public final fun getOutputTokens ()I
+	public final fun getTotalTokens ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/TokenUsage$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/TokenUsage$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/TokenUsage;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/TokenUsage;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/TokenUsage$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/Tool {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/Tool$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/bedrock/ToolSpecification;Lcom/steamstreet/awskt/bedrock/CachePointSpec;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/bedrock/ToolSpecification;Lcom/steamstreet/awskt/bedrock/CachePointSpec;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/bedrock/ToolSpecification;
+	public final fun component2 ()Lcom/steamstreet/awskt/bedrock/CachePointSpec;
+	public final fun copy (Lcom/steamstreet/awskt/bedrock/ToolSpecification;Lcom/steamstreet/awskt/bedrock/CachePointSpec;)Lcom/steamstreet/awskt/bedrock/Tool;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/Tool;Lcom/steamstreet/awskt/bedrock/ToolSpecification;Lcom/steamstreet/awskt/bedrock/CachePointSpec;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/Tool;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCachePoint ()Lcom/steamstreet/awskt/bedrock/CachePointSpec;
+	public final fun getToolSpec ()Lcom/steamstreet/awskt/bedrock/ToolSpecification;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/Tool$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/Tool$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/Tool;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/Tool;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/Tool$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+	public final fun spec (Lcom/steamstreet/awskt/bedrock/ToolSpecification;)Lcom/steamstreet/awskt/bedrock/Tool;
+}
+
+public final class com/steamstreet/awskt/bedrock/ToolChoice {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/ToolChoice$Companion;
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/serialization/json/JsonObject;Lkotlinx/serialization/json/JsonObject;Lcom/steamstreet/awskt/bedrock/SpecificToolChoice;)V
+	public synthetic fun <init> (Lkotlinx/serialization/json/JsonObject;Lkotlinx/serialization/json/JsonObject;Lcom/steamstreet/awskt/bedrock/SpecificToolChoice;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lkotlinx/serialization/json/JsonObject;
+	public final fun component2 ()Lkotlinx/serialization/json/JsonObject;
+	public final fun component3 ()Lcom/steamstreet/awskt/bedrock/SpecificToolChoice;
+	public final fun copy (Lkotlinx/serialization/json/JsonObject;Lkotlinx/serialization/json/JsonObject;Lcom/steamstreet/awskt/bedrock/SpecificToolChoice;)Lcom/steamstreet/awskt/bedrock/ToolChoice;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ToolChoice;Lkotlinx/serialization/json/JsonObject;Lkotlinx/serialization/json/JsonObject;Lcom/steamstreet/awskt/bedrock/SpecificToolChoice;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ToolChoice;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAny ()Lkotlinx/serialization/json/JsonObject;
+	public final fun getAuto ()Lkotlinx/serialization/json/JsonObject;
+	public final fun getTool ()Lcom/steamstreet/awskt/bedrock/SpecificToolChoice;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/ToolChoice$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/ToolChoice$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/ToolChoice;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/ToolChoice;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/ToolChoice$Companion {
+	public final fun any ()Lcom/steamstreet/awskt/bedrock/ToolChoice;
+	public final fun auto ()Lcom/steamstreet/awskt/bedrock/ToolChoice;
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+	public final fun tool (Ljava/lang/String;)Lcom/steamstreet/awskt/bedrock/ToolChoice;
+}
+
+public final class com/steamstreet/awskt/bedrock/ToolConfiguration {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/ToolConfiguration$Companion;
+	public fun <init> (Ljava/util/List;Lcom/steamstreet/awskt/bedrock/ToolChoice;)V
+	public synthetic fun <init> (Ljava/util/List;Lcom/steamstreet/awskt/bedrock/ToolChoice;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Lcom/steamstreet/awskt/bedrock/ToolChoice;
+	public final fun copy (Ljava/util/List;Lcom/steamstreet/awskt/bedrock/ToolChoice;)Lcom/steamstreet/awskt/bedrock/ToolConfiguration;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ToolConfiguration;Ljava/util/List;Lcom/steamstreet/awskt/bedrock/ToolChoice;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ToolConfiguration;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getToolChoice ()Lcom/steamstreet/awskt/bedrock/ToolChoice;
+	public final fun getTools ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/ToolConfiguration$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/ToolConfiguration$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/ToolConfiguration;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/ToolConfiguration;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/ToolConfiguration$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/ToolInputSchema {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/ToolInputSchema$Companion;
+	public fun <init> (Lkotlinx/serialization/json/JsonElement;)V
+	public final fun component1 ()Lkotlinx/serialization/json/JsonElement;
+	public final fun copy (Lkotlinx/serialization/json/JsonElement;)Lcom/steamstreet/awskt/bedrock/ToolInputSchema;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ToolInputSchema;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ToolInputSchema;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getJson ()Lkotlinx/serialization/json/JsonElement;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/ToolInputSchema$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/ToolInputSchema$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/ToolInputSchema;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/ToolInputSchema;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/ToolInputSchema$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/ToolResultContent {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/ToolResultContent$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)V
+	public synthetic fun <init> (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lkotlinx/serialization/json/JsonElement;
+	public final fun copy (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)Lcom/steamstreet/awskt/bedrock/ToolResultContent;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ToolResultContent;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ToolResultContent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getJson ()Lkotlinx/serialization/json/JsonElement;
+	public final fun getText ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/ToolResultContent$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/ToolResultContent$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/ToolResultContent;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/ToolResultContent;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/ToolResultContent$Companion {
+	public final fun json (Lkotlinx/serialization/json/JsonElement;)Lcom/steamstreet/awskt/bedrock/ToolResultContent;
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+	public final fun text (Ljava/lang/String;)Lcom/steamstreet/awskt/bedrock/ToolResultContent;
+}
+
+public final class com/steamstreet/awskt/bedrock/ToolResultStatus {
+	public static final field ERROR Ljava/lang/String;
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/ToolResultStatus;
+	public static final field SUCCESS Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ToolSpecification {
+	public static final field Companion Lcom/steamstreet/awskt/bedrock/ToolSpecification$Companion;
+	public fun <init> (Ljava/lang/String;Lcom/steamstreet/awskt/bedrock/ToolInputSchema;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Lcom/steamstreet/awskt/bedrock/ToolInputSchema;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lcom/steamstreet/awskt/bedrock/ToolInputSchema;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Lcom/steamstreet/awskt/bedrock/ToolInputSchema;Ljava/lang/String;)Lcom/steamstreet/awskt/bedrock/ToolSpecification;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ToolSpecification;Ljava/lang/String;Lcom/steamstreet/awskt/bedrock/ToolInputSchema;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ToolSpecification;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getInputSchema ()Lcom/steamstreet/awskt/bedrock/ToolInputSchema;
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/bedrock/ToolSpecification$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/bedrock/ToolSpecification$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/bedrock/ToolSpecification;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/bedrock/ToolSpecification;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/ToolSpecification$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/bedrock/ToolUseStart {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/bedrock/ToolUseStart;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/bedrock/ToolUseStart;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/bedrock/ToolUseStart;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getToolUseId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/bedrock/ValidationException : com/steamstreet/awskt/bedrock/BedrockException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
