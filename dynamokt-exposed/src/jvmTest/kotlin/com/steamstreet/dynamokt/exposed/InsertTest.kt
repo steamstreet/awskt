@@ -1,9 +1,13 @@
 package com.steamstreet.dynamokt.exposed
 
+import com.steamstreet.awskt.dynamodb.ConditionalCheckFailedException
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeNull
 import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 @Testcontainers
 class InsertTest : ExposedTestBase() {
@@ -92,5 +96,67 @@ class InsertTest : ExposedTestBase() {
         result[Users.name].shouldBeEqualTo("Result Test")
         result[Users.email].shouldBeEqualTo("result@example.com")
         result[Users.age].shouldBeEqualTo(35)
+    }
+
+    @Test
+    fun `test insert without the partition key is rejected`() = runTest {
+        createTable(Users)
+
+        // Previously this reached DynamoDB and came back as an opaque ValidationException.
+        val failure = assertFailsWith<IllegalArgumentException> {
+            Users.insert(database) {
+                it[name] = "No Key"
+                it[email] = "nokey@example.com"
+                it[age] = 1
+            }
+        }
+        assertTrue(failure.message!!.contains("users"), "message should name the table: ${failure.message}")
+        assertTrue(failure.message!!.contains("id"), "message should name the column: ${failure.message}")
+    }
+
+    @Test
+    fun `test insert replaces an existing item wholesale`() = runTest {
+        createTable(Users)
+
+        Users.insert(database) {
+            it[id] = "user#put"
+            it[name] = "First"
+            it[email] = "first@example.com"
+            it[age] = 30
+        }
+
+        // insert is PutItem: the second write replaces the item, dropping the attributes it omits.
+        Users.insert(database) {
+            it[id] = "user#put"
+            it[name] = "Second"
+        }
+
+        val user = Users.get(database) { Users.id eq "user#put" }!!
+        user[Users.name].shouldBeEqualTo("Second")
+        user.getOrNull(Users.email).shouldBeNull()
+    }
+
+    @Test
+    fun `test ifNotExists gives Exposed-style insert semantics`() = runTest {
+        createTable(Users)
+
+        Users.insert(database) {
+            it[id] = "user#once"
+            it[name] = "First"
+            it[email] = "first@example.com"
+            it[age] = 30
+        }
+
+        assertFailsWith<ConditionalCheckFailedException> {
+            Users.insert(database) {
+                it[id] = "user#once"
+                it[name] = "Second"
+                it[email] = "second@example.com"
+                it[age] = 31
+                it.ifNotExists()
+            }
+        }
+
+        Users.get(database) { Users.id eq "user#once" }!![Users.name].shouldBeEqualTo("First")
     }
 }

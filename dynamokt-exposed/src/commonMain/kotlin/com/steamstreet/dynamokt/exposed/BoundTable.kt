@@ -6,13 +6,21 @@ import kotlinx.coroutines.flow.Flow
  * A table bound to a specific database instance.
  * Allows calling table operations without passing the database each time.
  *
+ * This is the binding API: `TableInScope` (`inDatabase`/`inScope`) and the `withTables` scope are
+ * deprecated in its favour, because three ways to say the same thing is two too many and only this
+ * one covers the whole surface - queries, scans, batches and transactions included.
+ *
  * Example:
  * ```
  * val users = database.bind(Users)
  * users.selectAll().where { id eq "123" }
  * users.select(Users.id, Users.name).where { id eq "123" }
  * users.insert { it[name] = "John" }
+ * users.get { Users.id eq "123" }
  * ```
+ *
+ * A `BoundTable` is also accepted directly inside `database.transaction { }` and
+ * `database.transactionGet { }`.
  */
 public class BoundTable<T : Table>(
     public val table: T,
@@ -110,6 +118,25 @@ public suspend fun <T : Table> BoundTable<T>.insert(
 }
 
 /**
+ * Get a single item from the bound table using a where clause.
+ *
+ * Delegates to `selectAll().where(...).firstOrNull()`, so the same index selection applies: a full
+ * primary key becomes a GetItem, a partition key match becomes a Query, and anything the chosen
+ * index cannot express as a key condition becomes a server-side filter.
+ *
+ * Example:
+ * ```
+ * val users = database.bind(Users)
+ * val user = users.get { Users.id eq "user#123" }
+ * ```
+ */
+public suspend fun <T : Table> BoundTable<T>.get(
+    where: SqlExpressionBuilder.() -> Op<Boolean>
+): ResultRow? {
+    return table.get(database, where)
+}
+
+/**
  * Update an item in the bound table.
  *
  * Example:
@@ -158,4 +185,42 @@ public suspend fun <T : Table> BoundTable<T>.delete(
     block: T.(DeleteStatement) -> Unit
 ): Boolean {
     return table.delete(database, where, block)
+}
+
+/**
+ * Write many items into the bound table in one go. See [Table.batchInsert] for the semantics:
+ * these are puts, conditions are not available, and a shortfall throws
+ * `BatchWriteIncompleteException` naming the writes that did not land.
+ *
+ * Example:
+ * ```
+ * val users = database.bind(Users)
+ * users.batchInsert(newUsers) { statement, user ->
+ *     statement[Users.id] = user.id
+ *     statement[Users.name] = user.name
+ * }
+ * ```
+ */
+public suspend fun <T : Table, E> BoundTable<T>.batchInsert(
+    items: Iterable<E>,
+    concurrency: Int = 1,
+    block: T.(InsertStatement, E) -> Unit
+): List<ResultRow> {
+    return table.batchInsert(database, items, concurrency, block)
+}
+
+/**
+ * Delete many items from the bound table by their full primary keys. See [Table.batchDelete].
+ *
+ * Example:
+ * ```
+ * val users = database.bind(Users)
+ * users.batchDelete(listOf("user#1" to null, "user#2" to null))
+ * ```
+ */
+public suspend fun <T : Table> BoundTable<T>.batchDelete(
+    keys: List<Pair<Any, Any?>>,
+    concurrency: Int = 1
+) {
+    table.batchDelete(database, keys, concurrency)
 }

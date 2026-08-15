@@ -6,6 +6,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 @Testcontainers
 class ConditionalWriteTest : ExposedTestBase() {
@@ -288,5 +289,194 @@ class ConditionalWriteTest : ExposedTestBase() {
                 it.condition { status neq "deleted" }
             }
         }
+    }
+
+    // -- Non-key conditions in the where clause --------------------------------------------------
+    //
+    // `{ id eq x and version eq 1 }` reads as optimistic locking, so it has to behave that way:
+    // the non-key conjuncts become the operation's ConditionExpression rather than being dropped.
+
+    @Test
+    fun `test update where clause condition beyond the key is enforced`() = runTest {
+        createTable(Users)
+
+        Users.insert(database) {
+            it[id] = "user#123"
+            it[name] = "John"
+            it[version] = 1
+        }
+
+        // Matching version: the update goes through.
+        val updated = Users.update(database, { (Users.id eq "user#123") and (Users.version eq 1) }) {
+            it[name] = "John Updated"
+            it[version] = 2
+        }
+        updated[Users.name].shouldBeEqualTo("John Updated")
+        updated[Users.version].shouldBeEqualTo(2)
+
+        // Stale version: the same where clause must now fail rather than write unconditionally.
+        assertFailsWith<ConditionalCheckFailedException> {
+            Users.update(database, { (Users.id eq "user#123") and (Users.version eq 1) }) {
+                it[name] = "Stale Writer"
+                it[version] = 3
+            }
+        }
+
+        val user = Users.get(database) { Users.id eq "user#123" }!!
+        user[Users.name].shouldBeEqualTo("John Updated")
+        user[Users.version].shouldBeEqualTo(2)
+    }
+
+    @Test
+    fun `test update where clause condition is ANDed with an explicit condition`() = runTest {
+        createTable(Users)
+
+        Users.insert(database) {
+            it[id] = "user#123"
+            it[name] = "John"
+            it[version] = 1
+            it[status] = "active"
+        }
+
+        // Where residual holds, explicit condition does not: the whole thing must fail.
+        assertFailsWith<ConditionalCheckFailedException> {
+            Users.update(database, { (Users.id eq "user#123") and (Users.version eq 1) }) {
+                it[name] = "Nope"
+                it.condition { status eq "inactive" }
+            }
+        }
+
+        // Both hold: it succeeds.
+        val updated = Users.update(database, { (Users.id eq "user#123") and (Users.version eq 1) }) {
+            it[name] = "John Updated"
+            it.condition { status eq "active" }
+        }
+        updated[Users.name].shouldBeEqualTo("John Updated")
+    }
+
+    @Test
+    fun `test delete where clause condition beyond the key is enforced`() = runTest {
+        createTable(Users)
+
+        Users.insert(database) {
+            it[id] = "user#123"
+            it[name] = "John"
+            it[version] = 1
+        }
+
+        assertFailsWith<ConditionalCheckFailedException> {
+            Users.delete(database) { (Users.id eq "user#123") and (Users.version eq 9) }
+        }
+        // The item is still there - the version condition rejected the delete.
+        Users.get(database) { Users.id eq "user#123" }!![Users.name].shouldBeEqualTo("John")
+
+        val deleted = Users.delete(database) { (Users.id eq "user#123") and (Users.version eq 1) }
+        deleted.shouldBeEqualTo(true)
+        Users.get(database) { Users.id eq "user#123" } shouldBeEqualTo null
+    }
+
+    // -- Update is an upsert unless told otherwise -----------------------------------------------
+
+    @Test
+    fun `test update creates a missing item by default`() = runTest {
+        createTable(Users)
+
+        // DynamoDB's UpdateItem is an upsert. This documents the (deliberately unchanged) default.
+        Users.update(database, { Users.id eq "user#ghost" }) {
+            it[name] = "Created By Update"
+        }
+
+        Users.get(database) { Users.id eq "user#ghost" }!![Users.name]
+            .shouldBeEqualTo("Created By Update")
+    }
+
+    @Test
+    fun `test ifExists prevents an update from creating a missing item`() = runTest {
+        createTable(Users)
+
+        assertFailsWith<ConditionalCheckFailedException> {
+            Users.update(database, { Users.id eq "user#ghost" }) {
+                it[name] = "Created By Update"
+                it.ifExists()
+            }
+        }
+
+        Users.get(database) { Users.id eq "user#ghost" } shouldBeEqualTo null
+    }
+
+    @Test
+    fun `test ifExists allows an update to an existing item`() = runTest {
+        createTable(Users)
+
+        Users.insert(database) {
+            it[id] = "user#123"
+            it[name] = "John"
+            it[version] = 1
+        }
+
+        val updated = Users.update(database, { Users.id eq "user#123" }) {
+            it[name] = "John Updated"
+            it.ifExists()
+        }
+        updated[Users.name].shouldBeEqualTo("John Updated")
+    }
+
+    @Test
+    fun `test ifExists combines with an explicit condition`() = runTest {
+        createTable(Users)
+
+        Users.insert(database) {
+            it[id] = "user#123"
+            it[name] = "John"
+            it[version] = 1
+        }
+
+        // Order must not matter: condition {} set first, then ifExists().
+        assertFailsWith<ConditionalCheckFailedException> {
+            Users.update(database, { Users.id eq "user#123" }) {
+                it[name] = "Nope"
+                it.condition { version eq 7 }
+                it.ifExists()
+            }
+        }
+
+        // ... and the other way round.
+        assertFailsWith<ConditionalCheckFailedException> {
+            Users.update(database, { Users.id eq "user#123" }) {
+                it[name] = "Nope"
+                it.ifExists()
+                it.condition { version eq 7 }
+            }
+        }
+
+        Users.get(database) { Users.id eq "user#123" }!![Users.name].shouldBeEqualTo("John")
+    }
+
+    // -- Update expression overlap guard ---------------------------------------------------------
+
+    @Test
+    fun `test setting and incrementing the same column is rejected`() = runTest {
+        createTable(Users)
+
+        val failure = assertFailsWith<IllegalArgumentException> {
+            Users.update(database, { Users.id eq "user#123" }) {
+                it[version] = 5
+                it.increment(version, 1)
+            }
+        }
+        assertTrue(failure.message!!.contains("version"), "message should name the column: ${failure.message}")
+    }
+
+    @Test
+    fun `test setting and removing the same column is rejected`() = runTest {
+        createTable(Users)
+
+        val failure = assertFailsWith<IllegalArgumentException> {
+            Users.update(database, { Users.id eq "user#123" }) {
+                it[status] = "active"
+                it.remove(status)
+            }
+        }
+        assertTrue(failure.message!!.contains("status"), "message should name the column: ${failure.message}")
     }
 }

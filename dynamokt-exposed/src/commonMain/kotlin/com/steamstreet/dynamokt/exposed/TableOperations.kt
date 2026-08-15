@@ -58,25 +58,134 @@ internal fun Table.buildKey(pk: Any?, sk: Any?): Map<String, AttributeValue> {
 }
 
 /**
- * Extract the partition and sort key values from a where clause.
- * Throws if the partition key isn't specified with an equality condition.
+ * A where clause for a single-item operation (update, delete, condition check, transactional
+ * get), split into the primary key that identifies the item and everything else.
+ *
+ * @property pk the partition key value
+ * @property sk the sort key value, or `null` for a table without a sort key
+ * @property residual every top-level conjunct that was not a primary key equality, re-ANDed.
+ *   For writes this is folded into the operation's ConditionExpression so it actually constrains
+ *   the write; for reads there is nowhere to put it and it is an error.
  */
-internal fun Table.extractKeyValues(where: SqlExpressionBuilder.() -> Op<Boolean>): Pair<Any, Any?> {
-    val op = SqlExpressionBuilder().where()
-    val keyValues = extractKeyValues(op)
+internal class KeyWhere(
+    val pk: Any,
+    val sk: Any?,
+    val residual: Op<Boolean>?
+)
 
-    val pkColumn = partitionKey ?: error("Table $tableName has no partition key")
-    val skColumn = sortKey
-
-    val pk = keyValues[pkColumn] ?: error("Partition key ${pkColumn.name} not specified in where clause")
-    val sk = skColumn?.let { keyValues[it] }
-
-    return pk to sk
+/**
+ * Combine two optional conditions with AND, dropping nulls.
+ */
+internal fun combineConditions(first: Op<Boolean>?, second: Op<Boolean>?): Op<Boolean>? = when {
+    first == null -> second
+    second == null -> first
+    else -> AndOp(first, second)
 }
 
 /**
+ * Split a single-item where clause into its primary key and a residual condition.
+ *
+ * Walks the top-level AND spine only: an `eq` on the partition key (and, for a composite-key
+ * table, an `eq` on the sort key) identifies the item, and *everything else* - including
+ * conditions on key columns beyond the first equality, and anything under an `or` - becomes the
+ * residual. Callers must either fold the residual into a ConditionExpression or reject it; it
+ * must never be silently dropped, because `{ id eq x and version eq 1 }` reads as optimistic
+ * locking and has to behave that way.
+ *
+ * @param operation the caller's name, used in error messages ("update", "delete", ...)
+ */
+internal fun Table.decomposeItemWhere(
+    where: SqlExpressionBuilder.() -> Op<Boolean>,
+    operation: String
+): KeyWhere = decomposeItemWhere(SqlExpressionBuilder().where(), operation)
+
+/**
+ * Split an already-built single-item where clause. See the lambda overload for the rules.
+ */
+internal fun Table.decomposeItemWhere(op: Op<Boolean>, operation: String): KeyWhere {
+    val pkColumn = partitionKey
+        ?: throw IllegalArgumentException(
+            "Table '$tableName' has no partition key, so $operation cannot identify an item."
+        )
+    val skColumn = sortKey
+
+    if (containsKeysOp(op)) {
+        throw IllegalArgumentException(
+            "keys() is not valid in $operation on table '$tableName'. It selects a set of items, " +
+                "while $operation targets exactly one - issue one $operation per key instead."
+        )
+    }
+
+    var pk: Any? = null
+    var pkFound = false
+    var sk: Any? = null
+    var skFound = false
+    var residual: Op<Boolean>? = null
+
+    fun walk(node: Op<Boolean>) {
+        when {
+            node is AndOp -> {
+                walk(node.left)
+                walk(node.right)
+            }
+
+            node is EqOp<*> && !pkFound && node.column.name == pkColumn.name -> {
+                pk = node.value
+                pkFound = true
+            }
+
+            node is EqOp<*> && skColumn != null && !skFound && node.column.name == skColumn.name -> {
+                sk = node.value
+                skFound = true
+            }
+
+            else -> residual = combineConditions(residual, node)
+        }
+    }
+    walk(op)
+
+    if (!pkFound) {
+        throw IllegalArgumentException(
+            "$operation on table '$tableName' requires the partition key '${pkColumn.name}' to be " +
+                "matched with eq in the where clause (for example { ${pkColumn.name} eq value })."
+        )
+    }
+    if (skColumn != null && !skFound) {
+        throw IllegalArgumentException(
+            "$operation on table '$tableName' requires the full primary key; sort key " +
+                "'${skColumn.name}' must use eq. A range condition such as beginsWith, gt or " +
+                "between cannot identify a single item - query for the items first, then " +
+                "$operation each one."
+        )
+    }
+    val pkValue = pk
+        ?: throw IllegalArgumentException(
+            "$operation on table '$tableName' was given a null partition key '${pkColumn.name}'."
+        )
+
+    return KeyWhere(pkValue, sk, residual)
+}
+
+/**
+ * Build the error message for an insert that is missing its partition key. Shared by the direct
+ * and transactional paths so both report the same thing.
+ */
+internal fun missingPartitionKeyMessage(table: Table, pkColumn: Column<*>): String =
+    "Insert into table '${table.tableName}' is missing a value for partition key column " +
+        "'${pkColumn.name}'. Set it (for example it[${pkColumn.name}] = ...) before executing."
+
+/**
  * Insert statement builder for type-safe DynamoDB put operations.
- * Similar to Exposed's insert.
+ *
+ * ### This is a put, not a SQL INSERT
+ *
+ * DynamoDB has no "insert" - this renders a `PutItem`, which **replaces any existing item with
+ * the same primary key wholesale**. Attributes present on the old item but absent from this
+ * statement are gone, and no error is raised. That is the native DynamoDB behaviour and it is
+ * kept deliberately, because it is what "write this item" usually means here.
+ *
+ * Call [ifNotExists] for Exposed-style insert semantics: the write then fails with
+ * `ConditionalCheckFailedException` if the item already exists.
  */
 public class InsertStatement(
     public val table: Table,
@@ -111,7 +220,9 @@ public class InsertStatement(
     }
 
     /**
-     * Shorthand to only insert if the item doesn't exist (attribute_not_exists on partition key)
+     * Only insert if the item doesn't already exist (`attribute_not_exists` on the partition
+     * key). This gives the statement Exposed-style insert semantics: an existing item is not
+     * replaced, the write fails with `ConditionalCheckFailedException` instead.
      */
     public fun ifNotExists() {
         val pk = table.partitionKey ?: error("Table ${table.tableName} has no partition key")
@@ -133,6 +244,10 @@ public class InsertStatement(
             @Suppress("UNCHECKED_CAST")
             column.name to (column as Column<Any?>).toAttributeValue(value)
         }
+
+        val pkColumn = table.partitionKey
+            ?: error("Table ${table.tableName} has no partition key")
+        require(item.containsKey(pkColumn.name)) { missingPartitionKeyMessage(table, pkColumn) }
 
         // Build condition expression if present
         val nameIndex = mutableMapOf<String, String>()
@@ -169,6 +284,12 @@ public class InsertStatement(
 /**
  * Insert a new item into the table.
  * Example: Users.insert(db) { it[name] = "John"; it[age] = 30 }
+ *
+ * **This is a put, not a SQL INSERT.** An existing item with the same primary key is replaced
+ * wholesale, losing any attributes this statement does not set. Call
+ * [InsertStatement.ifNotExists] inside the block for Exposed-style insert semantics.
+ *
+ * @throws IllegalArgumentException if the partition key column was not set
  */
 public suspend fun <T : Table> T.insert(
     database: Database,
@@ -190,7 +311,14 @@ public suspend fun Table.get(
 }
 
 /**
- * Update statement builder for type-safe DynamoDB update operations
+ * Update statement builder for type-safe DynamoDB update operations.
+ *
+ * ### An update creates the item if it is missing
+ *
+ * DynamoDB's `UpdateItem` is an upsert: updating a key that does not exist **creates** an item
+ * holding the key plus whatever this statement sets, rather than being the no-op an Exposed user
+ * expects from `UPDATE ... WHERE`. That native behaviour is kept; call [ifExists] to require the
+ * item to already exist, which turns a miss into a `ConditionalCheckFailedException`.
  */
 public class UpdateStatement(
     public val table: Table,
@@ -203,6 +331,13 @@ public class UpdateStatement(
     private val adds = mutableMapOf<Column<*>, Number>()
 
     private var conditionOp: Op<Boolean>? = null
+
+    /**
+     * Conditions from the where clause that were not part of the primary key. Folded into the
+     * ConditionExpression alongside any explicit [condition] so that both the direct-execute and
+     * the transactional build paths apply them.
+     */
+    internal var whereResidual: Op<Boolean>? = null
 
     /**
      * Set a column value
@@ -235,6 +370,13 @@ public class UpdateStatement(
     }
 
     /**
+     * Increment a `Long` column. Pass a negative [amount] to decrement.
+     */
+    public fun increment(column: Column<Long>, amount: Long = 1L) {
+        adds[column] = amount
+    }
+
+    /**
      * Add a condition expression for conditional update.
      * The update will only succeed if the condition is met.
      *
@@ -251,10 +393,32 @@ public class UpdateStatement(
     }
 
     /**
+     * Require that the item already exists (`attribute_exists` on the partition key), turning
+     * this upsert into a true update: a missing item fails with
+     * `ConditionalCheckFailedException` instead of being created.
+     *
+     * This ANDs into any condition set by [condition], in either order.
+     */
+    public fun ifExists() {
+        val pkColumn = table.partitionKey ?: error("Table ${table.tableName} has no partition key")
+        conditionOp = combineConditions(conditionOp, AttributeExistsOp(pkColumn))
+    }
+
+    /**
      * Render the statement into the key, update expression and condition DynamoDB needs.
      */
     internal fun build(): BuiltUpdate {
         val key = table.buildKey(pk, sk)
+
+        val overlapping = (sets.keys + adds.keys + removes).filter { column ->
+            listOf(sets.containsKey(column), adds.containsKey(column), removes.contains(column))
+                .count { it } > 1
+        }
+        require(overlapping.isEmpty()) {
+            "Update on table '${table.tableName}' touches ${overlapping.joinToString { "'${it.name}'" }} " +
+                "in more than one of set / increment / remove. DynamoDB rejects an update expression " +
+                "that mentions the same attribute twice - pick one clause per column."
+        }
 
         val nameIndex = mutableMapOf<String, String>()
         val valueIndex = mutableMapOf<String, AttributeValue>()
@@ -302,8 +466,10 @@ public class UpdateStatement(
 
         val updateExpression = updateParts.joinToString(" ")
 
-        // Build condition expression if present
-        val conditionExpression = conditionOp?.let { op ->
+        // Build condition expression from the where residual and any explicit condition. Both are
+        // rendered in one call: buildConditionExpression restarts its placeholder counter per call,
+        // so two calls sharing these maps would collide.
+        val conditionExpression = combineConditions(whereResidual, conditionOp)?.let { op ->
             buildConditionExpression(op, nameIndex, valueIndex)
         }
 
@@ -335,14 +501,27 @@ public class UpdateStatement(
 /**
  * Update an item in the table using a where clause.
  * Example: Users.update(database, { Users.id eq "user#123" }) { it[age] = 31 }
+ *
+ * The where clause must match the full primary key with `eq`. Any *further* conditions in it -
+ * `{ id eq "user#123" and version eq 1 }` - are applied as a DynamoDB ConditionExpression, so the
+ * update fails with `ConditionalCheckFailedException` when they do not hold. They are never
+ * silently ignored.
+ *
+ * **An update creates the item if it is missing** (DynamoDB `UpdateItem` is an upsert). Call
+ * [UpdateStatement.ifExists] inside the block to require the item to already exist.
+ *
+ * @throws IllegalArgumentException if the where clause does not pin the full primary key
  */
 public suspend fun <T : Table> T.update(
     database: Database,
     where: SqlExpressionBuilder.() -> Op<Boolean>,
     block: T.(UpdateStatement) -> Unit
 ): ResultRow {
-    val (pk, sk) = extractKeyValues(where)
-    return UpdateStatement(this, database, pk, sk).also { block(it) }.execute()
+    val keyWhere = decomposeItemWhere(where, "update")
+    return UpdateStatement(this, database, keyWhere.pk, keyWhere.sk)
+        .also { it.whereResidual = keyWhere.residual }
+        .also { block(it) }
+        .execute()
 }
 
 /**
@@ -355,6 +534,12 @@ public class DeleteStatement(
     public val sk: Any? = null
 ) {
     private var conditionOp: Op<Boolean>? = null
+
+    /**
+     * Conditions from the where clause that were not part of the primary key. Folded into the
+     * ConditionExpression alongside any explicit [condition].
+     */
+    internal var whereResidual: Op<Boolean>? = null
 
     /**
      * Add a condition expression for conditional delete.
@@ -377,10 +562,11 @@ public class DeleteStatement(
     internal fun build(): BuiltDelete {
         val key = table.buildKey(pk, sk)
 
-        // Build condition expression if present
+        // Build condition expression if present. One call, so the placeholder counter inside
+        // buildConditionExpression cannot produce colliding names.
         val nameIndex = mutableMapOf<String, String>()
         val valueIndex = mutableMapOf<String, AttributeValue>()
-        val conditionExpression = conditionOp?.let { op ->
+        val conditionExpression = combineConditions(whereResidual, conditionOp)?.let { op ->
             buildConditionExpression(op, nameIndex, valueIndex)
         }
 
@@ -388,46 +574,69 @@ public class DeleteStatement(
     }
 
     /**
-     * Execute the delete operation
+     * Execute the delete operation.
+     *
+     * @return true if an item was actually deleted, false if nothing existed at that key.
+     *   DynamoDB's delete is idempotent, so deleting a missing item is a success, not an error;
+     *   the returned old attributes are what distinguishes the two.
      */
     public suspend fun execute(): Boolean {
         val built = build()
 
-        database.client.deleteItem(
+        val result = database.client.deleteItem(
             DeleteItemRequest(
                 tableName = database.resolveTableName(table),
                 key = built.key,
                 conditionExpression = built.conditionExpression,
                 expressionAttributeNames = built.attributeNames.orNullIfEmpty(),
                 expressionAttributeValues = built.attributeValues.orNullIfEmpty(),
+                returnValues = ReturnValue.AllOld,
             ),
         )
 
-        return true
+        return !result.attributes.isNullOrEmpty()
     }
 }
 
 /**
  * Delete an item from the table using a where clause.
  * Example: Users.delete(database) { Users.id eq "user#123" }
+ *
+ * The where clause must match the full primary key with `eq`; any further conditions become a
+ * ConditionExpression, so a delete whose extra conditions do not hold fails with
+ * `ConditionalCheckFailedException` rather than deleting.
+ *
+ * @return true if an item existed at that key and was deleted, false if there was nothing there
+ * @throws IllegalArgumentException if the where clause does not pin the full primary key
  */
 public suspend fun Table.delete(
     database: Database,
     where: SqlExpressionBuilder.() -> Op<Boolean>
 ): Boolean {
-    val (pk, sk) = extractKeyValues(where)
-    return DeleteStatement(this, database, pk, sk).execute()
+    val keyWhere = decomposeItemWhere(where, "delete")
+    return DeleteStatement(this, database, keyWhere.pk, keyWhere.sk)
+        .also { it.whereResidual = keyWhere.residual }
+        .execute()
 }
 
 /**
  * Delete an item from the table using a where clause with optional condition.
  * Example: Users.delete(database, { Users.id eq "user#123" }) { it.condition { status eq "inactive" } }
+ *
+ * The where clause must match the full primary key with `eq`; any further conditions are ANDed
+ * with the block's `condition { }` into a single ConditionExpression.
+ *
+ * @return true if an item existed at that key and was deleted, false if there was nothing there
+ * @throws IllegalArgumentException if the where clause does not pin the full primary key
  */
 public suspend fun <T : Table> T.delete(
     database: Database,
     where: SqlExpressionBuilder.() -> Op<Boolean>,
     block: T.(DeleteStatement) -> Unit
 ): Boolean {
-    val (pk, sk) = extractKeyValues(where)
-    return DeleteStatement(this, database, pk, sk).also { block(it) }.execute()
+    val keyWhere = decomposeItemWhere(where, "delete")
+    return DeleteStatement(this, database, keyWhere.pk, keyWhere.sk)
+        .also { it.whereResidual = keyWhere.residual }
+        .also { block(it) }
+        .execute()
 }

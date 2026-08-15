@@ -82,7 +82,6 @@ final class com.steamstreet.awskt.eventbridge/PutEventsPartialFailureException :
 
     final val failed // com.steamstreet.awskt.eventbridge/PutEventsPartialFailureException.failed|{}failed[0]
         final fun <get-failed>(): kotlin.collections/List<kotlin/Pair<com.steamstreet.awskt.eventbridge/PutEventsEntry, com.steamstreet.awskt.eventbridge/PutEventsResultEntry>> // com.steamstreet.awskt.eventbridge/PutEventsPartialFailureException.failed.<get-failed>|<get-failed>(){}[0]
-
     final val succeeded // com.steamstreet.awskt.eventbridge/PutEventsPartialFailureException.succeeded|{}succeeded[0]
         final fun <get-succeeded>(): kotlin.collections/List<com.steamstreet.awskt.eventbridge/PutEventsResultEntry> // com.steamstreet.awskt.eventbridge/PutEventsPartialFailureException.succeeded.<get-succeeded>|<get-succeeded>(){}[0]
 }

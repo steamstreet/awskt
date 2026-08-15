@@ -64,10 +64,34 @@ public abstract class Table(public val tableName: String) {
         LongColumn(this, name).also { _columns.add(it) }
 
     /**
+     * Define a double (Double) column. See [DoubleColumn] for the precision caveat.
+     */
+    public fun double(name: String): DoubleColumn =
+        DoubleColumn(this, name).also { _columns.add(it) }
+
+    /**
      * Define a boolean column
      */
     public fun bool(name: String): BoolColumn =
         BoolColumn(this, name).also { _columns.add(it) }
+
+    /**
+     * Define a binary (ByteArray) column
+     */
+    public fun binary(name: String): BinaryColumn =
+        BinaryColumn(this, name).also { _columns.add(it) }
+
+    /**
+     * Define a string set (`Set<String>`) column. DynamoDB has no empty set — see [StringSetColumn].
+     */
+    public fun stringSet(name: String): StringSetColumn =
+        StringSetColumn(this, name).also { _columns.add(it) }
+
+    /**
+     * Define a number set (`Set<Long>`) column. DynamoDB has no empty set — see [NumberSetColumn].
+     */
+    public fun numberSet(name: String): NumberSetColumn =
+        NumberSetColumn(this, name).also { _columns.add(it) }
 
     /**
      * Define an enumeration column storing the enum's ordinal as a number.
