@@ -168,10 +168,10 @@ final class com.steamstreet.awskt.core/AwsServiceClient { // com.steamstreet.aws
 final class com.steamstreet.awskt.core/BatchRetry { // com.steamstreet.awskt.core/BatchRetry|null[0]
     constructor <init>(com.steamstreet.awskt.core/RetryConfig = ..., kotlin/Function0<kotlin/Double> = ..., kotlin.coroutines/SuspendFunction1<kotlin/Long, kotlin/Unit> = ...) // com.steamstreet.awskt.core/BatchRetry.<init>|<init>(com.steamstreet.awskt.core.RetryConfig;kotlin.Function0<kotlin.Double>;kotlin.coroutines.SuspendFunction1<kotlin.Long,kotlin.Unit>){}[0]
 
-    final suspend fun awaitResubmit(kotlin/Int, kotlin/Long): kotlin/Long? // com.steamstreet.awskt.core/BatchRetry.awaitResubmit|awaitResubmit(kotlin.Int;kotlin.Long){}[0]
-
     final val config // com.steamstreet.awskt.core/BatchRetry.config|{}config[0]
         final fun <get-config>(): com.steamstreet.awskt.core/RetryConfig // com.steamstreet.awskt.core/BatchRetry.config.<get-config>|<get-config>(){}[0]
+
+    final suspend fun awaitResubmit(kotlin/Int, kotlin/Long): kotlin/Long? // com.steamstreet.awskt.core/BatchRetry.awaitResubmit|awaitResubmit(kotlin.Int;kotlin.Long){}[0]
 
     final object Companion { // com.steamstreet.awskt.core/BatchRetry.Companion|null[0]
         final val Default // com.steamstreet.awskt.core/BatchRetry.Companion.Default|{}Default[0]
