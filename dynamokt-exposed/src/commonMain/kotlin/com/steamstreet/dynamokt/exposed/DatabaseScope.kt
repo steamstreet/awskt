@@ -1,33 +1,46 @@
 package com.steamstreet.dynamokt.exposed
 
 /**
+ * The message shared by everything deprecated in this file. Binding a table to a database has three
+ * spellings - [BoundTable], [TableInScope] and the [DatabaseScope] free functions - which differ
+ * only in surface: `BoundTable` is the one that also covers queries, scans, batch operations and
+ * transactions, so it is the one that stays.
+ */
+private const val USE_BOUND_TABLE: String =
+    "Use database.bind(table), which covers queries, scans and batch operations too."
+
+/**
  * Provides a scoped context for database operations.
- * Similar to Exposed's transaction block.
  *
- * Example:
- * ```
- * database.withTables {
- *     Users.insert {
- *         it[Users.id] = "user#123"
- *         it[Users.name] = "John"
- *     }
- *
- *     Orders.update("order#456") {
- *         it[Orders.status] = "SHIPPED"
- *     }
- * }
- * ```
+ * @deprecated in effect: everything reachable through this scope is deprecated in favour of
+ * [BoundTable]. The class itself is not marked deprecated only because it still appears in the
+ * signatures of the deprecated functions.
  */
 public class DatabaseScope(public val database: Database) {
     /**
      * Bind a table to this database scope for cleaner API usage
      */
+    @Deprecated(
+        USE_BOUND_TABLE,
+        ReplaceWith("database.bind(this)", "com.steamstreet.dynamokt.exposed.bind"),
+        DeprecationLevel.WARNING
+    )
+    @Suppress("DEPRECATION")
     public fun <T : Table> T.inScope(): TableInScope<T> = TableInScope(this, database)
 }
 
 /**
  * A table bound to a specific database, allowing operations without passing database explicitly.
+ *
+ * @deprecated Use [BoundTable] via `database.bind(table)`. It supports the same insert / get /
+ * update / delete, and additionally `selectAll()`, `select(...)`, `scan()`, `batchInsert` and
+ * `batchDelete`, and can be used inside `database.transaction { }`.
  */
+@Deprecated(
+    USE_BOUND_TABLE,
+    ReplaceWith("BoundTable", "com.steamstreet.dynamokt.exposed.BoundTable"),
+    DeprecationLevel.WARNING
+)
 public class TableInScope<T : Table>(
     public val table: T,
     public val database: Database
@@ -63,18 +76,16 @@ public class TableInScope<T : Table>(
 
 /**
  * Execute database operations within a scoped context.
- * Similar to Exposed's transaction block.
  *
- * Example:
- * ```
- * database.withTables {
- *     val usersInScope = Users.inScope()
- *     usersInScope.insert {
- *         it[Users.id] = "user#123"
- *     }
- * }
- * ```
+ * @deprecated The scope buys nothing a bound table does not: bind each table once with
+ * `database.bind(table)` and call it directly. Note that this was never a transaction - for atomic
+ * writes use `database.transaction { }`.
  */
+@Deprecated(
+    "Bind each table with database.bind(table) instead; this scope is not a transaction. " +
+        "Use database.transaction { } for atomic writes.",
+    level = DeprecationLevel.WARNING
+)
 public suspend fun <T> Database.withTables(block: suspend DatabaseScope.() -> T): T {
     return DatabaseScope(this).block()
 }
@@ -82,25 +93,29 @@ public suspend fun <T> Database.withTables(block: suspend DatabaseScope.() -> T)
 /**
  * Bind a table to a database for scoped operations.
  *
- * Example:
- * ```
- * val usersDb = Users.inDatabase(database)
- * usersDb.insert {
- *     it[Users.id] = "user#123"
- * }
- * usersDb.update({ Users.id eq "user#123" }) {
- *     it[Users.age] = 31
- * }
- * ```
+ * @deprecated Use `database.bind(table)`, which returns a [BoundTable] covering the full operation
+ * surface.
  */
+@Deprecated(
+    USE_BOUND_TABLE,
+    ReplaceWith("database.bind(this)", "com.steamstreet.dynamokt.exposed.bind"),
+    DeprecationLevel.WARNING
+)
+@Suppress("DEPRECATION")
 public fun <T : Table> T.inDatabase(database: Database): TableInScope<T> {
     return TableInScope(this, database)
 }
 
 /**
- * Extension functions to allow table operations directly within DatabaseScope
- * without explicit inScope() call.
+ * Insert into a table from within a [DatabaseScope].
+ *
+ * @deprecated Use `database.bind(table).insert(block)`.
  */
+@Deprecated(
+    USE_BOUND_TABLE,
+    ReplaceWith("database.bind(table).insert(block)", "com.steamstreet.dynamokt.exposed.bind"),
+    DeprecationLevel.WARNING
+)
 public suspend fun <T : Table> DatabaseScope.insert(
     table: T,
     block: T.(InsertStatement) -> Unit
@@ -108,6 +123,16 @@ public suspend fun <T : Table> DatabaseScope.insert(
     return table.insert(database, block)
 }
 
+/**
+ * Read a single item from within a [DatabaseScope].
+ *
+ * @deprecated Use `database.bind(table).get(where)`.
+ */
+@Deprecated(
+    USE_BOUND_TABLE,
+    ReplaceWith("database.bind(table).get(where)", "com.steamstreet.dynamokt.exposed.bind"),
+    DeprecationLevel.WARNING
+)
 public suspend fun <T : Table> DatabaseScope.get(
     table: T,
     where: SqlExpressionBuilder.() -> Op<Boolean>
@@ -115,6 +140,16 @@ public suspend fun <T : Table> DatabaseScope.get(
     return table.get(database, where)
 }
 
+/**
+ * Update an item from within a [DatabaseScope].
+ *
+ * @deprecated Use `database.bind(table).update(where, block)`.
+ */
+@Deprecated(
+    USE_BOUND_TABLE,
+    ReplaceWith("database.bind(table).update(where, block)", "com.steamstreet.dynamokt.exposed.bind"),
+    DeprecationLevel.WARNING
+)
 public suspend fun <T : Table> DatabaseScope.update(
     table: T,
     where: SqlExpressionBuilder.() -> Op<Boolean>,
@@ -123,6 +158,16 @@ public suspend fun <T : Table> DatabaseScope.update(
     return table.update(database, where, block)
 }
 
+/**
+ * Delete an item from within a [DatabaseScope].
+ *
+ * @deprecated Use `database.bind(table).delete(where)`.
+ */
+@Deprecated(
+    USE_BOUND_TABLE,
+    ReplaceWith("database.bind(table).delete(where)", "com.steamstreet.dynamokt.exposed.bind"),
+    DeprecationLevel.WARNING
+)
 public suspend fun <T : Table> DatabaseScope.delete(
     table: T,
     where: SqlExpressionBuilder.() -> Op<Boolean>

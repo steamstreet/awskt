@@ -63,10 +63,15 @@ public final class com/steamstreet/dynamokt/exposed/BoundTable {
 }
 
 public final class com/steamstreet/dynamokt/exposed/BoundTableKt {
+	public static final fun batchDelete (Lcom/steamstreet/dynamokt/exposed/BoundTable;Ljava/util/List;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun batchDelete$default (Lcom/steamstreet/dynamokt/exposed/BoundTable;Ljava/util/List;ILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun batchGet (Lcom/steamstreet/dynamokt/exposed/BoundTable;Ljava/util/List;)Lkotlinx/coroutines/flow/Flow;
+	public static final fun batchInsert (Lcom/steamstreet/dynamokt/exposed/BoundTable;Ljava/lang/Iterable;ILkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun batchInsert$default (Lcom/steamstreet/dynamokt/exposed/BoundTable;Ljava/lang/Iterable;ILkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun bind (Lcom/steamstreet/dynamokt/exposed/Database;Lcom/steamstreet/dynamokt/exposed/Table;)Lcom/steamstreet/dynamokt/exposed/BoundTable;
 	public static final fun delete (Lcom/steamstreet/dynamokt/exposed/BoundTable;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun delete (Lcom/steamstreet/dynamokt/exposed/BoundTable;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun get (Lcom/steamstreet/dynamokt/exposed/BoundTable;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun insert (Lcom/steamstreet/dynamokt/exposed/BoundTable;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun scan (Lcom/steamstreet/dynamokt/exposed/BoundTable;)Lcom/steamstreet/dynamokt/exposed/Query;
 	public static final fun select (Lcom/steamstreet/dynamokt/exposed/BoundTable;Lcom/steamstreet/dynamokt/exposed/Column;[Lcom/steamstreet/dynamokt/exposed/Column;)Lcom/steamstreet/dynamokt/exposed/Query;
@@ -434,6 +439,14 @@ public final class com/steamstreet/dynamokt/exposed/ResultRow {
 	public final fun getTable ()Lcom/steamstreet/dynamokt/exposed/Table;
 	public final fun hasValue (Lcom/steamstreet/dynamokt/exposed/Column;)Z
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/dynamokt/exposed/SchemaUtils {
+	public static final field INSTANCE Lcom/steamstreet/dynamokt/exposed/SchemaUtils;
+	public final fun createMissingTables (Lcom/steamstreet/dynamokt/exposed/Database;[Lcom/steamstreet/dynamokt/exposed/Table;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun createTable (Lcom/steamstreet/dynamokt/exposed/Database;Lcom/steamstreet/dynamokt/exposed/Table;Lcom/steamstreet/awskt/dynamodb/BillingMode;Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;Lcom/steamstreet/awskt/dynamodb/StreamSpecification;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun createTable$default (Lcom/steamstreet/dynamokt/exposed/SchemaUtils;Lcom/steamstreet/dynamokt/exposed/Database;Lcom/steamstreet/dynamokt/exposed/Table;Lcom/steamstreet/awskt/dynamodb/BillingMode;Lcom/steamstreet/awskt/dynamodb/ProvisionedThroughput;Lcom/steamstreet/awskt/dynamodb/StreamSpecification;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun dropTable (Lcom/steamstreet/dynamokt/exposed/Database;Lcom/steamstreet/dynamokt/exposed/Table;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public class com/steamstreet/dynamokt/exposed/SqlExpressionBuilder {
