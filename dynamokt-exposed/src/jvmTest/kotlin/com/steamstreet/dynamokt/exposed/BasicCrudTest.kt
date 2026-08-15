@@ -5,6 +5,8 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
 import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 @Testcontainers
 class BasicCrudTest : ExposedTestBase() {
@@ -28,6 +30,11 @@ class BasicCrudTest : ExposedTestBase() {
         val id = varchar("id").partitionKey()
         val name = varchar("name")
         val description = varchar("description").nullable()
+    }
+
+    object Counters : Table("counters") {
+        val id = varchar("id").partitionKey()
+        val hits = long("hits")
     }
 
     @Test
@@ -249,6 +256,164 @@ class BasicCrudTest : ExposedTestBase() {
         // getOrNull on a present, non-null nullable column must not throw (previously a
         // ClassCastException from calling asNull() on a non-Null AttributeValue).
         product2.getOrNull(Products.description).shouldBeEqualTo("A cool gadget")
+    }
+
+    // -- Delete reports whether anything was there -----------------------------------------------
+
+    @Test
+    fun `test delete reports whether an item existed`() = runTest {
+        createTable(Users)
+
+        // Nothing at that key: DynamoDB's delete is idempotent, so this is a success, but false.
+        Users.delete(database) { Users.id eq "user#absent" }.shouldBeEqualTo(false)
+
+        Users.insert(database) {
+            it[id] = "user#present"
+            it[name] = "Present"
+            it[age] = 30
+            it[active] = true
+        }
+
+        Users.delete(database) { Users.id eq "user#present" }.shouldBeEqualTo(true)
+        // ... and deleting it a second time now reports false.
+        Users.delete(database) { Users.id eq "user#present" }.shouldBeEqualTo(false)
+    }
+
+    @Test
+    fun `test conditional delete reports whether an item existed`() = runTest {
+        createTable(Users)
+
+        Users.delete(database, { Users.id eq "user#absent" }) { }.shouldBeEqualTo(false)
+
+        Users.insert(database) {
+            it[id] = "user#present"
+            it[name] = "Present"
+            it[age] = 30
+            it[active] = true
+        }
+
+        Users.delete(database, { Users.id eq "user#present" }) {
+            it.condition { active eq true }
+        }.shouldBeEqualTo(true)
+    }
+
+    // -- Long increments -------------------------------------------------------------------------
+
+    @Test
+    fun `test increment a long column`() = runTest {
+        createTable(Counters)
+
+        Counters.insert(database) {
+            it[id] = "counter#1"
+            it[hits] = 5_000_000_000L
+        }
+
+        Counters.update(database, { Counters.id eq "counter#1" }) {
+            it.increment(Counters.hits, 3L)
+        }
+        Counters.get(database) { Counters.id eq "counter#1" }!![Counters.hits]
+            .shouldBeEqualTo(5_000_000_003L)
+
+        // Default amount is 1.
+        Counters.update(database, { Counters.id eq "counter#1" }) {
+            it.increment(Counters.hits)
+        }
+        Counters.get(database) { Counters.id eq "counter#1" }!![Counters.hits]
+            .shouldBeEqualTo(5_000_000_004L)
+
+        // Negative amounts decrement.
+        Counters.update(database, { Counters.id eq "counter#1" }) {
+            it.increment(Counters.hits, -4L)
+        }
+        Counters.get(database) { Counters.id eq "counter#1" }!![Counters.hits]
+            .shouldBeEqualTo(5_000_000_000L)
+    }
+
+    // -- Where clauses that cannot identify a single item ----------------------------------------
+
+    @Test
+    fun `test update without the partition key is rejected`() = runTest {
+        createTable(Users)
+
+        val failure = assertFailsWith<IllegalArgumentException> {
+            Users.update(database, { Users.name eq "John Doe" }) {
+                it[age] = 31
+            }
+        }
+        assertTrue(failure.message!!.contains("id"), "message should name the key: ${failure.message}")
+    }
+
+    @Test
+    fun `test update without the sort key is rejected`() = runTest {
+        createTable(Orders)
+
+        val failure = assertFailsWith<IllegalArgumentException> {
+            Orders.update(database, { Orders.customerId eq "customer#1" }) {
+                it[amount] = 150
+            }
+        }
+        assertTrue(
+            failure.message!!.contains("orderId"),
+            "message should name the sort key: ${failure.message}",
+        )
+    }
+
+    @Test
+    fun `test a range condition on the sort key is rejected for update and delete`() = runTest {
+        createTable(Orders)
+
+        // beginsWith cannot pin a single item, so it is the same error as omitting the sort key.
+        assertFailsWith<IllegalArgumentException> {
+            Orders.update(database, {
+                (Orders.customerId eq "customer#1") and (Orders.orderId beginsWith "order#")
+            }) {
+                it[amount] = 150
+            }
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            Orders.delete(database) {
+                (Orders.customerId eq "customer#1") and (Orders.orderId beginsWith "order#")
+            }
+        }
+    }
+
+    @Test
+    fun `test keys is rejected for update and delete`() = runTest {
+        createTable(Users)
+
+        assertFailsWith<IllegalArgumentException> {
+            Users.delete(database) { keys(listOf("user#1" to null, "user#2" to null)) }
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            Users.update(database, { keys(listOf("user#1" to null)) }) {
+                it[age] = 1
+            }
+        }
+    }
+
+    @Test
+    fun `test a non-key condition on a composite key table is applied as a condition`() = runTest {
+        createTable(Orders)
+
+        Orders.insert(database) {
+            it[customerId] = "customer#1"
+            it[orderId] = "order#001"
+            it[amount] = 100
+        }
+
+        // Full key plus a non-key conjunct: the conjunct becomes the ConditionExpression.
+        Orders.update(database, {
+            (Orders.customerId eq "customer#1") and (Orders.orderId eq "order#001") and
+                (Orders.amount eq 100)
+        }) {
+            it[amount] = 150
+        }
+
+        Orders.get(database) {
+            (Orders.customerId eq "customer#1") and (Orders.orderId eq "order#001")
+        }!![Orders.amount].shouldBeEqualTo(150)
     }
 }
 

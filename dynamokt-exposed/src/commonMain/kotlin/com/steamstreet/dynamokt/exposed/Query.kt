@@ -1,14 +1,18 @@
 package com.steamstreet.dynamokt.exposed
 
-import com.steamstreet.awskt.dynamodb.BatchGetItemRequest
 import com.steamstreet.awskt.dynamodb.GetItemRequest
 import com.steamstreet.awskt.dynamodb.QueryRequest
+import com.steamstreet.awskt.dynamodb.QueryResponse
 import com.steamstreet.awskt.dynamodb.ScanRequest
+import com.steamstreet.awskt.dynamodb.ScanResponse
+import com.steamstreet.awskt.dynamodb.Select
+import com.steamstreet.awskt.dynamodb.batchGetAll
 import com.steamstreet.awskt.dynamodb.orNullIfEmpty
 import com.steamstreet.dynamokt.AttributeValue
-import com.steamstreet.awskt.dynamodb.KeysAndAttributes
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 
 /**
@@ -16,18 +20,24 @@ import kotlinx.coroutines.flow.toList
  */
 internal sealed class IndexMatch {
     /**
-     * Full key provided - use GetItem
+     * Full primary key equality with nothing left to filter - use GetItem
      */
     data class GetItem(val pkColumn: Column<*>, val skColumn: Column<*>?) : IndexMatch()
 
     /**
-     * Partition key matches - use Query on table or index
+     * Partition key matches - use Query on the table or one of its indices.
+     *
+     * @property residual the conjuncts that are not key conditions of this index.
+     *   They are rendered as a `FilterExpression` so they are applied server-side
+     *   rather than silently dropped.
      */
     data class Query(
         val index: Index?,
         val pkColumn: Column<*>,
         val skColumn: Column<*>?,
-        val sortKeyCondition: ColumnCondition?
+        val pkCondition: ColumnCondition.Eq,
+        val sortKeyCondition: ColumnCondition?,
+        val residual: Op<Boolean>?
     ) : IndexMatch()
 
     /**
@@ -37,81 +47,172 @@ internal sealed class IndexMatch {
 }
 
 /**
- * Exception thrown when select() cannot find an appropriate index
+ * Thrown when no table or index partition key is pinned with `eq`, so the query
+ * cannot be served as a GetItem or Query. Use `scan()` instead.
  */
 public class NoIndexMatchException(message: String) : IllegalArgumentException(message)
 
 /**
- * Finds the best index match for the given operation.
- * Returns GetItem if full key is specified, Query if partition key matches, or NoMatch.
+ * Thrown by [Query.startAfter] when a pagination token cannot be decoded, so a
+ * corrupt or foreign cursor surfaces as a caller error rather than a raw
+ * serialization failure.
  */
-internal fun Table.findIndexMatch(op: Op<Boolean>): IndexMatch {
-    val conditions = extractConditions(op)
-    val eqColumns = conditions.filterIsInstance<ColumnCondition.Eq>().map { it.column }.toSet()
+public class InvalidPageTokenException(
+    message: String,
+    cause: Throwable? = null
+) : IllegalArgumentException(message, cause)
 
-    // Find sort key condition (non-eq condition on a sort key column)
-    fun findSortKeyCondition(skColumn: Column<*>?): ColumnCondition? {
-        if (skColumn == null) return null
-        return conditions.find { condition ->
-            val col = when (condition) {
-                is ColumnCondition.Eq -> condition.column
-                is ColumnCondition.Gt -> condition.column
-                is ColumnCondition.Lt -> condition.column
-                is ColumnCondition.Ge -> condition.column
-                is ColumnCondition.Le -> condition.column
-                is ColumnCondition.Between -> condition.column
-                is ColumnCondition.BeginsWith -> condition.column
-            }
-            col == skColumn && condition !is ColumnCondition.Eq
+/**
+ * A table or index that could serve a query: its partition key must carry a
+ * top-level equality condition, and its sort key may carry one range condition.
+ */
+private class IndexCandidate(
+    val index: Index?,
+    val pkColumn: Column<*>,
+    val skColumn: Column<*>?
+)
+
+/** A candidate plus the way this particular where-tree splits across it. */
+private class CandidatePlan(
+    val candidate: IndexCandidate,
+    val pkCondition: ColumnCondition.Eq,
+    val sortKeyConditions: List<ColumnCondition>,
+    val residual: List<Op<Boolean>>
+) {
+    /**
+     * 1 = base-table full primary key equality, 2 = sort key constrained,
+     * 3 = partition key only. Lower wins; ties break on candidate order.
+     */
+    val tier: Int
+        get() = when {
+            candidate.index == null &&
+                (candidate.skColumn == null ||
+                    (sortKeyConditions.size == 1 && sortKeyConditions[0] is ColumnCondition.Eq)) -> 1
+            sortKeyConditions.isNotEmpty() -> 2
+            else -> 3
         }
-    }
-
-    // 1. Check table's primary key first
-    val pk = partitionKey
-    if (pk != null && pk in eqColumns) {
-        val sk = sortKey
-        val skCondition = findSortKeyCondition(sk)
-
-        // If SK exists and is specified with eq, it's a GetItem
-        if (sk == null || sk in eqColumns) {
-            return IndexMatch.GetItem(pk, sk)
-        }
-
-        // Otherwise it's a Query (with optional SK condition)
-        return IndexMatch.Query(
-            index = null,
-            pkColumn = pk,
-            skColumn = sk,
-            sortKeyCondition = skCondition
-        )
-    }
-
-    // 2. Check GSIs
-    for (index in indices) {
-        if (index.partitionKey in eqColumns) {
-            val skCondition = findSortKeyCondition(index.sortKey)
-
-            // GSIs always use Query (even with full key, since GetItem doesn't work on GSIs)
-            return IndexMatch.Query(
-                index = index,
-                pkColumn = index.partitionKey,
-                skColumn = index.sortKey,
-                sortKeyCondition = skCondition
-            )
-        }
-    }
-
-    // 3. No match found
-    return IndexMatch.NoMatch
 }
 
 /**
- * Builds a DynamoDB key condition expression from the operation
+ * Finds the best index match for the given operation.
+ *
+ * Every table, GSI and LSI whose partition key carries a top-level equality is a
+ * candidate; the one whose sort key is also constrained wins over a bare
+ * partition-key match, and the base table wins ties. Conditions the chosen index
+ * cannot express as key conditions become the match's `residual`.
+ */
+internal fun Table.findIndexMatch(op: Op<Boolean>): IndexMatch {
+    val conjuncts = flattenAnd(op)
+    val parsed = conjuncts.map { keyConditionOrNull(it) }
+
+    val tablePk = partitionKey
+    val tableSk = sortKey
+    // Bound outside buildList: inside it, `indices` would resolve to the list's own index range.
+    val secondaryIndices = indices
+
+    val candidates = buildList {
+        if (tablePk != null) add(IndexCandidate(null, tablePk, tableSk))
+        secondaryIndices.forEach { index ->
+            when (index) {
+                is GlobalSecondaryIndex -> add(IndexCandidate(index, index.partitionKey, index.sortKey))
+                // An LSI shares the table's partition key, so it is only reachable when there is one.
+                is LocalSecondaryIndex -> if (tablePk != null) add(IndexCandidate(index, tablePk, index.sortKey))
+            }
+        }
+    }
+
+    val plans = candidates.mapNotNull { candidate ->
+        var pkCondition: ColumnCondition.Eq? = null
+        val sortKeyConditions = mutableListOf<ColumnCondition>()
+        val residual = mutableListOf<Op<Boolean>>()
+
+        conjuncts.forEachIndexed { i, conjunct ->
+            val condition = parsed[i]
+            val column = condition?.conditionColumn
+            when {
+                condition is ColumnCondition.Eq && column == candidate.pkColumn && pkCondition == null ->
+                    pkCondition = condition
+                column != null && candidate.skColumn != null && column == candidate.skColumn ->
+                    sortKeyConditions.add(condition)
+                else -> residual.add(conjunct)
+            }
+        }
+
+        pkCondition?.let { CandidatePlan(candidate, it, sortKeyConditions, residual) }
+    }
+
+    val chosen = plans.minByOrNull { it.tier } ?: return IndexMatch.NoMatch
+
+    val sortKeyCondition = chosen.candidate.skColumn?.let {
+        coalesceSortKeyConditions(it, chosen.sortKeyConditions)
+    }
+
+    // DynamoDB rejects a FilterExpression that mentions the queried index's own key attributes,
+    // so anything left over on those columns has nowhere to go.
+    val keyNames = setOfNotNull(chosen.candidate.pkColumn.name, chosen.candidate.skColumn?.name)
+    val strandedKeyColumns = chosen.residual
+        .flatMap { referencedColumns(it) }
+        .filter { it.name in keyNames }
+        .map { it.name }
+        .distinct()
+    require(strandedKeyColumns.isEmpty()) {
+        "Condition on key attribute(s) ${strandedKeyColumns.joinToString()} cannot be expressed: " +
+            "DynamoDB allows one condition per key attribute in a KeyConditionExpression and forbids " +
+            "key attributes of the queried index in a FilterExpression."
+    }
+
+    val residual = chosen.residual.reduceOrNull { left, right -> AndOp(left, right) }
+
+    if (chosen.tier == 1 && residual == null) {
+        return IndexMatch.GetItem(chosen.candidate.pkColumn, chosen.candidate.skColumn)
+    }
+
+    return IndexMatch.Query(
+        index = chosen.candidate.index,
+        pkColumn = chosen.candidate.pkColumn,
+        skColumn = chosen.candidate.skColumn,
+        pkCondition = chosen.pkCondition,
+        sortKeyCondition = sortKeyCondition,
+        residual = residual
+    )
+}
+
+/**
+ * Reduce the conditions on a sort key to the single condition DynamoDB allows.
+ * `ge` + `le` is the one combination that folds cleanly, into an (inclusive)
+ * BETWEEN; anything else is rejected rather than silently narrowed.
+ */
+private fun coalesceSortKeyConditions(
+    skColumn: Column<*>,
+    conditions: List<ColumnCondition>
+): ColumnCondition? {
+    if (conditions.size <= 1) return conditions.firstOrNull()
+
+    if (conditions.size == 2) {
+        val ge = conditions.filterIsInstance<ColumnCondition.Ge>().singleOrNull()
+        val le = conditions.filterIsInstance<ColumnCondition.Le>().singleOrNull()
+        if (ge != null && le != null) {
+            return ColumnCondition.Between(skColumn, ge.value, le.value)
+        }
+    }
+
+    throw IllegalArgumentException(
+        "Sort key '${skColumn.name}' has ${conditions.size} conditions. DynamoDB accepts one " +
+            "condition per key attribute in a KeyConditionExpression, and key attributes cannot be " +
+            "moved into a FilterExpression. Only 'ge' combined with 'le' folds into a BETWEEN."
+    )
+}
+
+/**
+ * Builds a DynamoDB key condition expression for the chosen index's keys.
+ * Placeholders use the `attr` prefix so they never collide with the `fattr`
+ * placeholders of a FilterExpression built into the same request.
  */
 internal fun buildKeyConditionExpression(
     pkColumn: Column<*>,
+    pkCondition: ColumnCondition.Eq,
     skColumn: Column<*>?,
-    conditions: List<ColumnCondition>,
+    skCondition: ColumnCondition?,
     nameIndex: MutableMap<String, String>,
     valueIndex: MutableMap<String, AttributeValue>
 ): String {
@@ -122,76 +223,59 @@ internal fun buildKeyConditionExpression(
 
     val parts = mutableListOf<String>()
 
-    // Partition key (always eq)
-    val pkEq = conditions.filterIsInstance<ColumnCondition.Eq>().find { it.column == pkColumn }
-    if (pkEq != null) {
+    run {
         val nameKey = nextNameKey()
         val valueKey = nextValueKey()
         nameIndex[nameKey] = pkColumn.name
         @Suppress("UNCHECKED_CAST")
-        valueIndex[valueKey] = (pkColumn as Column<Any?>).toAttributeValue(pkEq.value)
+        valueIndex[valueKey] = (pkColumn as Column<Any?>).toAttributeValue(pkCondition.value)
         parts.add("$nameKey = $valueKey")
     }
 
-    // Sort key condition (if any)
-    if (skColumn != null) {
-        val skConditions = conditions.filter {
-            when (it) {
-                is ColumnCondition.Eq -> it.column == skColumn
-                is ColumnCondition.Gt -> it.column == skColumn
-                is ColumnCondition.Lt -> it.column == skColumn
-                is ColumnCondition.Ge -> it.column == skColumn
-                is ColumnCondition.Le -> it.column == skColumn
-                is ColumnCondition.Between -> it.column == skColumn
-                is ColumnCondition.BeginsWith -> it.column == skColumn
+    if (skColumn != null && skCondition != null) {
+        val nameKey = nextNameKey()
+        nameIndex[nameKey] = skColumn.name
+
+        @Suppress("UNCHECKED_CAST")
+        val col = skColumn as Column<Any?>
+
+        when (skCondition) {
+            is ColumnCondition.Eq -> {
+                val valueKey = nextValueKey()
+                valueIndex[valueKey] = col.toAttributeValue(skCondition.value)
+                parts.add("$nameKey = $valueKey")
             }
-        }
-
-        for (condition in skConditions) {
-            val nameKey = nextNameKey()
-            nameIndex[nameKey] = skColumn.name
-
-            @Suppress("UNCHECKED_CAST")
-            val col = skColumn as Column<Any?>
-
-            when (condition) {
-                is ColumnCondition.Eq -> {
-                    val valueKey = nextValueKey()
-                    valueIndex[valueKey] = col.toAttributeValue(condition.value)
-                    parts.add("$nameKey = $valueKey")
-                }
-                is ColumnCondition.Gt -> {
-                    val valueKey = nextValueKey()
-                    valueIndex[valueKey] = col.toAttributeValue(condition.value)
-                    parts.add("$nameKey > $valueKey")
-                }
-                is ColumnCondition.Lt -> {
-                    val valueKey = nextValueKey()
-                    valueIndex[valueKey] = col.toAttributeValue(condition.value)
-                    parts.add("$nameKey < $valueKey")
-                }
-                is ColumnCondition.Ge -> {
-                    val valueKey = nextValueKey()
-                    valueIndex[valueKey] = col.toAttributeValue(condition.value)
-                    parts.add("$nameKey >= $valueKey")
-                }
-                is ColumnCondition.Le -> {
-                    val valueKey = nextValueKey()
-                    valueIndex[valueKey] = col.toAttributeValue(condition.value)
-                    parts.add("$nameKey <= $valueKey")
-                }
-                is ColumnCondition.Between -> {
-                    val valueKey1 = nextValueKey()
-                    val valueKey2 = nextValueKey()
-                    valueIndex[valueKey1] = col.toAttributeValue(condition.from)
-                    valueIndex[valueKey2] = col.toAttributeValue(condition.to)
-                    parts.add("$nameKey BETWEEN $valueKey1 AND $valueKey2")
-                }
-                is ColumnCondition.BeginsWith -> {
-                    val valueKey = nextValueKey()
-                    valueIndex[valueKey] = AttributeValue.S(condition.prefix)
-                    parts.add("begins_with($nameKey, $valueKey)")
-                }
+            is ColumnCondition.Gt -> {
+                val valueKey = nextValueKey()
+                valueIndex[valueKey] = col.toAttributeValue(skCondition.value)
+                parts.add("$nameKey > $valueKey")
+            }
+            is ColumnCondition.Lt -> {
+                val valueKey = nextValueKey()
+                valueIndex[valueKey] = col.toAttributeValue(skCondition.value)
+                parts.add("$nameKey < $valueKey")
+            }
+            is ColumnCondition.Ge -> {
+                val valueKey = nextValueKey()
+                valueIndex[valueKey] = col.toAttributeValue(skCondition.value)
+                parts.add("$nameKey >= $valueKey")
+            }
+            is ColumnCondition.Le -> {
+                val valueKey = nextValueKey()
+                valueIndex[valueKey] = col.toAttributeValue(skCondition.value)
+                parts.add("$nameKey <= $valueKey")
+            }
+            is ColumnCondition.Between -> {
+                val valueKey1 = nextValueKey()
+                val valueKey2 = nextValueKey()
+                valueIndex[valueKey1] = col.toAttributeValue(skCondition.from)
+                valueIndex[valueKey2] = col.toAttributeValue(skCondition.to)
+                parts.add("$nameKey BETWEEN $valueKey1 AND $valueKey2")
+            }
+            is ColumnCondition.BeginsWith -> {
+                val valueKey = nextValueKey()
+                valueIndex[valueKey] = AttributeValue.S(skCondition.prefix)
+                parts.add("begins_with($nameKey, $valueKey)")
             }
         }
     }
@@ -222,9 +306,23 @@ public class Query(
 
     /**
      * Add a where clause to the query.
+     *
+     * @throws IllegalStateException if a where clause was already specified; a
+     *   second call would silently discard the first, so use [andWhere] instead.
      */
     public fun where(op: SqlExpressionBuilder.() -> Op<Boolean>): Query {
+        check(whereOp == null) { "where clause already specified; use andWhere" }
         whereOp = SqlExpressionBuilder().op()
+        return this
+    }
+
+    /**
+     * AND an additional condition into the existing where clause, or set it when
+     * there is none yet.
+     */
+    public fun andWhere(op: SqlExpressionBuilder.() -> Op<Boolean>): Query {
+        val addition = SqlExpressionBuilder().op()
+        whereOp = whereOp?.let { AndOp(it, addition) } ?: addition
         return this
     }
 
@@ -261,7 +359,14 @@ public class Query(
      * between the two layers.
      */
     public fun startAfter(token: String?): Query {
-        startKey = token?.decodePageToken()
+        startKey = token?.let { raw ->
+            try {
+                raw.decodePageToken()
+            } catch (e: IllegalArgumentException) {
+                // kotlinx.serialization's SerializationException is itself an IllegalArgumentException.
+                throw InvalidPageTokenException("Invalid page token: ${e.message}", e)
+            }
+        }
         return this
     }
 
@@ -288,12 +393,43 @@ public class Query(
     }
 
     private fun noIndexMatch(op: Op<Boolean>): Nothing {
-        val conditionColumns = extractAllConditionColumns(op).map { it.name }
+        val conditionColumns = referencedColumns(op).map { it.name }
         throw NoIndexMatchException(
             "No index found for query on table '${table.tableName}'. " +
             "Columns in condition: $conditionColumns. " +
-            "Use selectAll() without where for full table scans."
+            "A query needs an equality condition on the partition key of the table or one of its " +
+            "indices; use scan() to evaluate this condition as a filter instead."
         )
+    }
+
+    /**
+     * The DynamoDB operation this query resolves to. Resolved once per terminal
+     * so that routing, and any routing error, is identical across [asFlow],
+     * [page] and [count].
+     */
+    private sealed class Route {
+        class BatchGet(val keys: List<Pair<Any, Any?>>) : Route()
+        class Scan(val filter: Op<Boolean>?) : Route()
+        class Get(val op: Op<Boolean>, val match: IndexMatch.GetItem) : Route()
+        class Index(val match: IndexMatch.Query) : Route()
+    }
+
+    private fun route(): Route {
+        val op = whereOp
+
+        // keys() maps to BatchGetItem, which takes no expressions at all.
+        require(op == null || op is KeysOp || !containsKeysOp(op)) {
+            "keys() cannot be combined with other conditions"
+        }
+
+        if (op is KeysOp) return Route.BatchGet(op.keys)
+        if (op == null || isScan) return Route.Scan(op)
+
+        return when (val match = table.findIndexMatch(op)) {
+            is IndexMatch.NoMatch -> noIndexMatch(op)
+            is IndexMatch.GetItem -> Route.Get(op, match)
+            is IndexMatch.Query -> Route.Index(match)
+        }
     }
 
     /**
@@ -303,27 +439,27 @@ public class Query(
      * every page, so unbounded reads return all matching rows without silent
      * first-page truncation. When [limit] is set it caps the total number of
      * rows emitted across all pages.
+     *
+     * Conditions the chosen index cannot express as key conditions are applied
+     * server-side as a `FilterExpression`, so the emitted rows always satisfy the
+     * full where clause.
      */
-    public fun asFlow(): Flow<ResultRow> {
-        val op = whereOp
+    public fun asFlow(): Flow<ResultRow> = buildFlow(limitValue)
+
+    /**
+     * [asFlow] with the request limit a terminal wants when the caller set none.
+     * A page limit only bounds how much DynamoDB evaluates per request; the
+     * loops still follow `LastEvaluatedKey`, so a filtered first page that comes
+     * back empty does not end the flow early.
+     */
+    private fun buildFlow(effectiveLimit: Int?): Flow<ResultRow> {
         val (projectionExpression, projectionNames) = buildProjection()
 
-        // Check for batch get (KeysOp)
-        if (op is KeysOp) {
-            return executeBatchGet(op.keys, projectionExpression, projectionNames)
-        }
-
-        // If no where clause or marked as scan, do a scan
-        if (op == null || isScan) {
-            return executeScan(op, projectionExpression, projectionNames)
-        }
-
-        val match = table.findIndexMatch(op)
-
-        return when (match) {
-            is IndexMatch.NoMatch -> noIndexMatch(op)
-            is IndexMatch.GetItem -> executeGetItem(op, match, projectionExpression, projectionNames)
-            is IndexMatch.Query -> executeQuery(op, match, projectionExpression, projectionNames)
+        return when (val route = route()) {
+            is Route.BatchGet -> executeBatchGet(route.keys, projectionExpression, projectionNames)
+            is Route.Scan -> executeScan(route.filter, projectionExpression, projectionNames, effectiveLimit)
+            is Route.Get -> executeGetItem(route.op, route.match, projectionExpression, projectionNames)
+            is Route.Index -> executeQuery(route.match, projectionExpression, projectionNames, effectiveLimit)
         }
     }
 
@@ -333,36 +469,39 @@ public class Query(
      *
      * Exactly one DynamoDB request is issued. The `nextToken` is surfaced
      * faithfully from `LastEvaluatedKey`: it may be non-null even on a short or
-     * empty page (DynamoDB's 1 MB cap), and `null` only when the underlying
-     * request reports no more pages.
+     * empty page (DynamoDB's 1 MB cap, or a `FilterExpression` that rejected the
+     * whole page), and `null` only when the underlying request reports no more
+     * pages.
      *
-     * For [IndexMatch.GetItem]-routed lookups (full key supplied) and batch-get
-     * (`keys(...)`) reads there is no cursor concept, so `nextToken` is always
-     * `null`; [limit] and ordering are ignored on those paths.
+     * For [IndexMatch.GetItem]-routed lookups (full key supplied, nothing left to
+     * filter) and batch-get (`keys(...)`) reads there is no cursor concept, so
+     * `nextToken` is always `null`; [limit] and ordering are ignored on those paths.
      */
     public suspend fun page(): PageResult {
-        val op = whereOp
         val (projectionExpression, projectionNames) = buildProjection()
 
-        if (op is KeysOp) {
-            val rows = executeBatchGet(op.keys, projectionExpression, projectionNames).toList()
-            return PageResult(rows, null)
-        }
-
-        if (op == null || isScan) {
-            val (items, last) = scanPage(op, projectionExpression, projectionNames, startKey, limitValue)
-            return PageResult(items.map { ResultRow(table, it) }, last?.encodePageToken())
-        }
-
-        return when (val match = table.findIndexMatch(op)) {
-            is IndexMatch.NoMatch -> noIndexMatch(op)
-            is IndexMatch.GetItem -> {
-                val rows = executeGetItem(op, match, projectionExpression, projectionNames).toList()
+        return when (val route = route()) {
+            is Route.BatchGet -> {
+                val rows = executeBatchGet(route.keys, projectionExpression, projectionNames).toList()
                 PageResult(rows, null)
             }
-            is IndexMatch.Query -> {
-                val (items, last) = queryPage(op, match, projectionExpression, projectionNames, startKey, limitValue)
-                PageResult(items.map { ResultRow(table, it) }, last?.encodePageToken())
+            is Route.Scan -> {
+                val response = scanPage(route.filter, projectionExpression, projectionNames, startKey, limitValue)
+                PageResult(
+                    (response.items ?: emptyList()).map { ResultRow(table, it) },
+                    response.lastEvaluatedKey?.encodePageToken()
+                )
+            }
+            is Route.Get -> {
+                val rows = executeGetItem(route.op, route.match, projectionExpression, projectionNames).toList()
+                PageResult(rows, null)
+            }
+            is Route.Index -> {
+                val response = queryPage(route.match, projectionExpression, projectionNames, startKey, limitValue)
+                PageResult(
+                    (response.items ?: emptyList()).map { ResultRow(table, it) },
+                    response.lastEvaluatedKey?.encodePageToken()
+                )
             }
         }
     }
@@ -370,53 +509,101 @@ public class Query(
     /**
      * Execute the query and collect all results into a list.
      */
-    public suspend fun toList(): List<ResultRow> {
-        val results = mutableListOf<ResultRow>()
-        asFlow().collect { results.add(it) }
-        return results
-    }
+    public suspend fun toList(): List<ResultRow> = asFlow().toList()
 
     /**
      * Execute the query and return the first result, or null if none.
+     *
+     * Collection is cancelled after the first row, and when no [limit] was set
+     * the underlying request asks for a single row, so this does not paginate
+     * the whole partition.
      */
-    public suspend fun firstOrNull(): ResultRow? {
-        var result: ResultRow? = null
-        asFlow().collect {
-            if (result == null) result = it
-        }
-        return result
-    }
+    public suspend fun firstOrNull(): ResultRow? = buildFlow(limitValue ?: 1).firstOrNull()
 
     /**
      * Execute the query and return exactly one result.
+     *
+     * Reads at most two rows; the request limit is 2 when no [limit] was set.
+     *
      * @throws NoSuchElementException if no results
      * @throws IllegalArgumentException if more than one result
      */
     public suspend fun single(): ResultRow {
-        var result: ResultRow? = null
-        var count = 0
-        asFlow().collect {
-            count++
-            if (count == 1) result = it
-        }
-        if (count == 0) throw NoSuchElementException("Query returned no results")
-        if (count > 1) throw IllegalArgumentException("Query returned more than one result")
-        return result!!
+        val rows = buildFlow(limitValue ?: 2).take(2).toList()
+        if (rows.isEmpty()) throw NoSuchElementException("Query returned no results")
+        require(rows.size == 1) { "Query returned more than one result" }
+        return rows[0]
     }
 
     /**
      * Execute the query and return exactly one result, or null if none.
+     *
+     * Reads at most two rows; the request limit is 2 when no [limit] was set.
+     *
      * @throws IllegalArgumentException if more than one result
      */
     public suspend fun singleOrNull(): ResultRow? {
-        var result: ResultRow? = null
-        var count = 0
-        asFlow().collect {
-            count++
-            if (count == 1) result = it
+        val rows = buildFlow(limitValue ?: 2).take(2).toList()
+        require(rows.size <= 1) { "Query returned more than one result" }
+        return rows.firstOrNull()
+    }
+
+    /**
+     * Count the matching rows without transferring them.
+     *
+     * Queries use `Select=COUNT`; scans sum the `Count` DynamoDB reports per page
+     * while projecting only the partition key. Both follow `LastEvaluatedKey` to
+     * the end, so the result covers every page rather than the first one. When
+     * [limit] is set it caps the returned count.
+     *
+     * @throws UnsupportedOperationException for `keys()` (batch-get) queries,
+     *   which have no server-side count.
+     */
+    public suspend fun count(): Long {
+        return when (val route = route()) {
+            is Route.BatchGet -> throw UnsupportedOperationException(
+                "count() is not supported for keys() queries"
+            )
+            is Route.Get -> {
+                val keyProjection = "#cntpk"
+                val keyNames = mapOf(keyProjection to route.match.pkColumn.name)
+                if (executeGetItem(route.op, route.match, keyProjection, keyNames).firstOrNull() != null) 1L else 0L
+            }
+            is Route.Index -> countPages { start, pageLimit ->
+                val response = queryPage(route.match, null, null, start, pageLimit, Select.Count)
+                (response.count ?: response.items?.size ?: 0) to response.lastEvaluatedKey
+            }
+            is Route.Scan -> {
+                // ScanRequest has no Select field, so the payload is trimmed with a
+                // partition-key-only projection instead; Count is reported either way.
+                val pkName = table.partitionKey?.name
+                val projection = if (pkName != null) "#cntpk" else null
+                val names = if (pkName != null) mapOf("#cntpk" to pkName) else null
+                countPages { start, pageLimit ->
+                    val response = scanPage(route.filter, projection, names, start, pageLimit)
+                    (response.count ?: response.items?.size ?: 0) to response.lastEvaluatedKey
+                }
+            }
         }
-        if (count > 1) throw IllegalArgumentException("Query returned more than one result")
-        return result
+    }
+
+    /**
+     * Walk every page of a counting request, summing the per-page counts and
+     * stopping at [limit] when one is set.
+     */
+    private suspend inline fun countPages(
+        page: (Map<String, AttributeValue>?, Int?) -> Pair<Int, Map<String, AttributeValue>?>
+    ): Long {
+        val cap = limitValue?.toLong()
+        var total = 0L
+        var exclusiveStart = startKey
+        while (true) {
+            val (count, last) = page(exclusiveStart, cap?.let { (it - total).toInt() })
+            total += count
+            if (cap != null && total >= cap) return cap
+            exclusiveStart = last?.takeIf { it.isNotEmpty() } ?: break
+        }
+        return total
     }
 
     private fun executeGetItem(
@@ -453,62 +640,68 @@ public class Query(
     }
 
     /**
-     * Issue a single query (or index query) request, returning the page's items
-     * and the raw `LastEvaluatedKey` (null when there are no more pages).
+     * Issue a single query (or index query) request.
+     *
+     * The key conditions and the residual filter are built into the same
+     * placeholder maps: key placeholders use the `attr` prefix and filter
+     * placeholders the `fattr` prefix, so the two never collide.
      */
     private suspend fun queryPage(
-        op: Op<Boolean>,
         match: IndexMatch.Query,
         projectionExpression: String?,
         projectionNames: Map<String, String>?,
         exclusiveStart: Map<String, AttributeValue>?,
-        pageLimit: Int?
-    ): Pair<List<Map<String, AttributeValue>>, Map<String, AttributeValue>?> {
-        val conditions = extractConditions(op)
+        pageLimit: Int?,
+        select: Select? = null
+    ): QueryResponse {
         val nameIndex = mutableMapOf<String, String>()
         val valueIndex = mutableMapOf<String, AttributeValue>()
 
         val keyConditionExpression = buildKeyConditionExpression(
             match.pkColumn,
+            match.pkCondition,
             match.skColumn,
-            conditions,
+            match.sortKeyCondition,
             nameIndex,
             valueIndex
         )
 
+        // Conditions the index cannot express as key conditions are applied server-side.
+        val filterExpression = match.residual?.let { buildFilterExpression(it, nameIndex, valueIndex) }
+
         // Merge projection names into nameIndex
         projectionNames?.let { nameIndex.putAll(it) }
 
-        val result = database.client.query(
+        return database.client.query(
             QueryRequest(
                 tableName = database.resolveTableName(table),
                 indexName = match.index?.name,
                 keyConditionExpression = keyConditionExpression,
+                filterExpression = filterExpression,
                 projectionExpression = projectionExpression,
                 expressionAttributeNames = nameIndex.orNullIfEmpty(),
                 expressionAttributeValues = valueIndex.orNullIfEmpty(),
-                // A GSI cannot be read consistently, so the flag only applies to the base table.
-                consistentRead = if (match.index == null) database.defaultConsistentRead else false,
+                // Only a GSI is eventually consistent; the base table and its LSIs honour the flag.
+                consistentRead = if (match.index is GlobalSecondaryIndex) false else database.defaultConsistentRead,
                 scanIndexForward = false.takeIf { !scanForward },
                 exclusiveStartKey = exclusiveStart,
                 limit = pageLimit,
+                select = select,
             ),
         )
-
-        return (result.items ?: emptyList()) to result.lastEvaluatedKey
     }
 
     private fun executeQuery(
-        op: Op<Boolean>,
         match: IndexMatch.Query,
         projectionExpression: String?,
-        projectionNames: Map<String, String>?
+        projectionNames: Map<String, String>?,
+        totalLimit: Int?
     ): Flow<ResultRow> = flow {
         var exclusiveStart = startKey
-        var remaining = limitValue
+        var remaining = totalLimit
         while (true) {
-            val (items, last) = queryPage(op, match, projectionExpression, projectionNames, exclusiveStart, remaining)
-            for (item in items) {
+            val response = queryPage(match, projectionExpression, projectionNames, exclusiveStart, remaining)
+            for (item in response.items ?: emptyList()) {
                 emit(ResultRow(table, item))
                 if (remaining != null) {
                     val next = remaining - 1
@@ -519,13 +712,12 @@ public class Query(
             // Emptiness, not nullity: DynamoDB can return `"LastEvaluatedKey": {}`, and a `== null`
             // check treats that as "there is another page", re-issuing the identical request
             // forever. Same rule as the client's own paginators.
-            exclusiveStart = last?.takeIf { it.isNotEmpty() } ?: break
+            exclusiveStart = response.lastEvaluatedKey?.takeIf { it.isNotEmpty() } ?: break
         }
     }
 
     /**
-     * Issue a single scan request, returning the page's items and the raw
-     * `LastEvaluatedKey` (null when there are no more pages).
+     * Issue a single scan request.
      */
     private suspend fun scanPage(
         filterOp: Op<Boolean>?,
@@ -533,7 +725,7 @@ public class Query(
         projectionNames: Map<String, String>?,
         exclusiveStart: Map<String, AttributeValue>?,
         pageLimit: Int?
-    ): Pair<List<Map<String, AttributeValue>>, Map<String, AttributeValue>?> {
+    ): ScanResponse {
         val nameIndex = mutableMapOf<String, String>()
         val valueIndex = mutableMapOf<String, AttributeValue>()
         var filterExpression: String? = null
@@ -545,7 +737,7 @@ public class Query(
         // Merge projection names into nameIndex
         projectionNames?.let { nameIndex.putAll(it) }
 
-        val result = database.client.scan(
+        return database.client.scan(
             ScanRequest(
                 tableName = database.resolveTableName(table),
                 filterExpression = filterExpression,
@@ -556,20 +748,19 @@ public class Query(
                 limit = pageLimit,
             ),
         )
-
-        return (result.items ?: emptyList()) to result.lastEvaluatedKey
     }
 
     private fun executeScan(
         filterOp: Op<Boolean>?,
         projectionExpression: String?,
-        projectionNames: Map<String, String>?
+        projectionNames: Map<String, String>?,
+        totalLimit: Int?
     ): Flow<ResultRow> = flow {
         var exclusiveStart = startKey
-        var remaining = limitValue
+        var remaining = totalLimit
         while (true) {
-            val (items, last) = scanPage(filterOp, projectionExpression, projectionNames, exclusiveStart, remaining)
-            for (item in items) {
+            val response = scanPage(filterOp, projectionExpression, projectionNames, exclusiveStart, remaining)
+            for (item in response.items ?: emptyList()) {
                 emit(ResultRow(table, item))
                 if (remaining != null) {
                     val next = remaining - 1
@@ -580,7 +771,7 @@ public class Query(
             // Emptiness, not nullity: DynamoDB can return `"LastEvaluatedKey": {}`, and a `== null`
             // check treats that as "there is another page", re-issuing the identical request
             // forever. Same rule as the client's own paginators.
-            exclusiveStart = last?.takeIf { it.isNotEmpty() } ?: break
+            exclusiveStart = response.lastEvaluatedKey?.takeIf { it.isNotEmpty() } ?: break
         }
     }
 
@@ -588,39 +779,51 @@ public class Query(
         keys: List<Pair<Any, Any?>>,
         projectionExpression: String?,
         projectionNames: Map<String, String>?
-    ): Flow<ResultRow> = flow {
-        val pkColumn = table.partitionKey ?: error("Table ${table.tableName} has no partition key defined")
-        val skColumn = table.sortKey
+    ): Flow<ResultRow> = batchGetRows(table, database, keys, projectionExpression, projectionNames)
+}
 
-        // DynamoDB BatchGetItem has a limit of 100 items per request
-        keys.chunked(100).forEach { chunk ->
-            val keysAndAttributes = KeysAndAttributes(
-                keys = chunk.map { (pk, sk) ->
-                    buildMap {
-                        @Suppress("UNCHECKED_CAST")
-                        put(pkColumn.name, (pkColumn as Column<Any?>).toAttributeValue(pk))
+/**
+ * The one BatchGetItem implementation, shared by the `keys(...)` query route and the deprecated
+ * [Table.batchGet].
+ *
+ * Chunking, and the retry of anything DynamoDB reports as `UnprocessedKeys`, belong to the client's
+ * `batchGetAll`. Reading only `Responses` - what this code used to do - loses items whenever the
+ * request is throttled or the 16 MB response cap is hit, with no error to show for it.
+ *
+ * ### What the caller gets
+ *
+ * - **Order is undefined.** DynamoDB returns a batch's items in whatever order it likes, so rows
+ *   do not follow the key list. Match rows back to keys by their key attributes.
+ * - **Duplicate keys collapse.** A key repeated in [keys] is requested once (DynamoDB rejects a
+ *   request containing the same key twice) and so yields at most one row.
+ * - **Missing items are simply absent.** A key with no item produces no row, exactly as
+ *   `BatchGetItem` reports it.
+ * - **A shortfall throws.** If keys are still unprocessed after the client's retries, the flow
+ *   fails with `BatchGetIncompleteException`, which carries the items already retrieved and the
+ *   keys still owed rather than quietly returning a short list.
+ *
+ * @throws IllegalArgumentException if a pair does not match the table's key schema; see
+ *   [batchKeyItems]
+ */
+internal fun batchGetRows(
+    table: Table,
+    database: Database,
+    keys: List<Pair<Any, Any?>>,
+    projectionExpression: String? = null,
+    projectionNames: Map<String, String>? = null
+): Flow<ResultRow> = flow {
+    val keyItems = table.batchKeyItems(keys, "keys()")
+    if (keyItems.isEmpty()) return@flow
 
-                        if (skColumn != null && sk != null) {
-                            @Suppress("UNCHECKED_CAST")
-                            put(skColumn.name, (skColumn as Column<Any?>).toAttributeValue(sk))
-                        }
-                    }
-                },
-                consistentRead = database.defaultConsistentRead,
-                projectionExpression = projectionExpression,
-                expressionAttributeNames = projectionNames?.takeIf { projectionExpression != null },
-            )
+    val items = database.client.batchGetAll(
+        tableName = database.resolveTableName(table),
+        keys = keyItems,
+        consistentRead = database.defaultConsistentRead,
+        projectionExpression = projectionExpression,
+        expressionAttributeNames = projectionNames?.takeIf { projectionExpression != null },
+    )
 
-            val resolvedTableName = database.resolveTableName(table)
-            val result = database.client.batchGetItem(
-                BatchGetItemRequest(mapOf(resolvedTableName to keysAndAttributes)),
-            )
-
-            result.responses?.get(resolvedTableName)?.forEach { item ->
-                emit(ResultRow(table, item))
-            }
-        }
-    }
+    items.forEach { emit(ResultRow(table, it)) }
 }
 
 /**
@@ -657,6 +860,11 @@ public fun Table.select(
  * Select all columns from the table.
  * Returns a Query that can be further configured with where(), etc.
  *
+ * The where clause must pin the partition key of the table or one of its
+ * indices with `eq`; the best-matching index is chosen automatically and any
+ * remaining conditions become a server-side filter. Use [scan] when there is no
+ * such key.
+ *
  * Example:
  * ```
  * Users.selectAll(database).where { Users.id eq "123" }
@@ -682,6 +890,9 @@ public fun Table.scan(database: Database): Query {
 /**
  * Batch get multiple items by their full keys.
  *
+ * Shares [batchGetRows] with the `keys(...)` route, so the deprecated path retries
+ * `UnprocessedKeys` and validates keys exactly as the supported one does.
+ *
  * @param keys List of partition key / sort key pairs (sort key is null for tables without one)
  * @deprecated Use selectAll(database).where { keys(...) } instead for a unified API
  */
@@ -692,37 +903,7 @@ public fun Table.scan(database: Database): Query {
 public fun Table.batchGet(
     database: Database,
     keys: List<Pair<Any, Any?>>
-): Flow<ResultRow> = flow {
-    val pkColumn = partitionKey ?: error("Table $tableName has no partition key defined")
-    val skColumn = sortKey
-
-    // DynamoDB BatchGetItem has a limit of 100 items per request
-    keys.chunked(100).forEach { chunk ->
-        val keysAndAttributes = KeysAndAttributes(
-            keys = chunk.map { (pk, sk) ->
-                buildMap {
-                    @Suppress("UNCHECKED_CAST")
-                    put(pkColumn.name, (pkColumn as Column<Any?>).toAttributeValue(pk))
-
-                    if (skColumn != null && sk != null) {
-                        @Suppress("UNCHECKED_CAST")
-                        put(skColumn.name, (skColumn as Column<Any?>).toAttributeValue(sk))
-                    }
-                }
-            },
-            consistentRead = database.defaultConsistentRead,
-        )
-
-        val resolvedTableName = database.resolveTableName(this@batchGet)
-        val result = database.client.batchGetItem(
-            BatchGetItemRequest(mapOf(resolvedTableName to keysAndAttributes)),
-        )
-
-        result.responses?.get(resolvedTableName)?.forEach { item ->
-            emit(ResultRow(this@batchGet, item))
-        }
-    }
-}
+): Flow<ResultRow> = batchGetRows(this, database, keys)
 
 // ============================================================================
 // Legacy API - kept for backwards compatibility
@@ -730,7 +911,8 @@ public fun Table.batchGet(
 
 /**
  * Select items from the table using the best available index.
- * Automatically chooses between GetItem and Query based on the where clause.
+ * Automatically chooses between GetItem and Query based on the where clause;
+ * conditions the chosen index cannot express become a filter.
  *
  * @throws NoIndexMatchException if no index can satisfy the query (would require a Scan)
  * @deprecated Use selectAll(database).where { } instead
@@ -898,6 +1080,26 @@ private fun buildExpressionInternal(
                 val nameKey = nextNameKey()
                 nameIndex[nameKey] = operation.column.name
                 "attribute_not_exists($nameKey)"
+            }
+            is InListOp<*> -> {
+                val nameKey = nextNameKey()
+                nameIndex[nameKey] = operation.column.name
+                @Suppress("UNCHECKED_CAST")
+                val col = operation.column as Column<Any?>
+                val valueKeys = operation.values.map { value ->
+                    nextValueKey().also { valueIndex[it] = col.toAttributeValue(value) }
+                }
+                "$nameKey IN (${valueKeys.joinToString(", ")})"
+            }
+            is ContainsOp -> {
+                val nameKey = nextNameKey()
+                val valueKey = nextValueKey()
+                nameIndex[nameKey] = operation.column.name
+                valueIndex[valueKey] = operation.value
+                "contains($nameKey, $valueKey)"
+            }
+            is NotOp -> {
+                "NOT (${build(operation.op)})"
             }
             is AndOp -> {
                 "(${build(operation.left)}) AND (${build(operation.right)})"

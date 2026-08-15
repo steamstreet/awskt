@@ -7,6 +7,7 @@ import org.amshove.kluent.shouldNotBeNull
 import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 @Testcontainers
 class TransactionTest : ExposedTestBase() {
@@ -348,5 +349,132 @@ class TransactionTest : ExposedTestBase() {
 
         Accounts.get(database) { Accounts.id eq "account#1" }!![Accounts.balance].shouldBeEqualTo(450)
         Transfers.get(database) { Transfers.id eq "transfer#1" }!![Transfers.amount].shouldBeEqualTo(50)
+    }
+
+    // -- Where clause conditions inside a transaction --------------------------------------------
+
+    @Test
+    fun `test transactional update applies conditions from the where clause`() = runTest {
+        createTables()
+        account("account#1", 500)
+
+        // The status conjunct is not part of the key, so it becomes the operation's condition
+        // and cancels the transaction instead of being silently dropped.
+        assertFailsWith<TransactionCanceledException> {
+            database.transaction {
+                Accounts.update({ (Accounts.id eq "account#1") and (Accounts.status eq "FROZEN") }) {
+                    it[Accounts.balance] = 0
+                }
+            }
+        }
+
+        Accounts.get(database) { Accounts.id eq "account#1" }!![Accounts.balance].shouldBeEqualTo(500)
+
+        // The matching value goes through.
+        database.transaction {
+            Accounts.update({ (Accounts.id eq "account#1") and (Accounts.status eq "ACTIVE") }) {
+                it[Accounts.balance] = 0
+            }
+        }
+        Accounts.get(database) { Accounts.id eq "account#1" }!![Accounts.balance].shouldBeEqualTo(0)
+    }
+
+    @Test
+    fun `test transactional delete applies conditions from the where clause`() = runTest {
+        createTables()
+        account("account#1", 500)
+
+        assertFailsWith<TransactionCanceledException> {
+            database.transaction {
+                Accounts.delete { (Accounts.id eq "account#1") and (Accounts.status eq "FROZEN") }
+            }
+        }
+
+        Accounts.get(database) { Accounts.id eq "account#1" }.shouldNotBeNull()
+    }
+
+    @Test
+    fun `test transactional get rejects conditions beyond the key`() = runTest {
+        createTables()
+        account("account#1", 500)
+
+        // A read has no ConditionExpression, so a non-key condition cannot be honoured.
+        assertFailsWith<IllegalArgumentException> {
+            database.transactionGet {
+                Accounts.get { (Accounts.id eq "account#1") and (Accounts.status eq "ACTIVE") }
+            }
+        }
+    }
+
+    // -- Limits and validation -------------------------------------------------------------------
+
+    @Test
+    fun `test exceeding the transaction limit fails when the operation is added`() = runTest {
+        createTables()
+
+        val failure = assertFailsWith<IllegalArgumentException> {
+            database.transaction {
+                repeat(MAX_TRANSACTION_ITEMS + 1) { index ->
+                    Transfers.insert {
+                        it[id] = "transfer#$index"
+                        it[amount] = index
+                        it[state] = "PENDING"
+                    }
+                }
+            }
+        }
+        assertTrue(
+            failure.message!!.contains("$MAX_TRANSACTION_ITEMS"),
+            "message should name the limit: ${failure.message}",
+        )
+
+        // Nothing was committed - the failure happened while building.
+        Transfers.get(database) { Transfers.id eq "transfer#0" } shouldBeEqualTo null
+    }
+
+    @Test
+    fun `test a transaction of exactly the maximum size is accepted`() = runTest {
+        createTables()
+
+        database.transaction {
+            repeat(MAX_TRANSACTION_ITEMS) { index ->
+                Transfers.insert {
+                    it[id] = "transfer#$index"
+                    it[amount] = index
+                    it[state] = "PENDING"
+                }
+            }
+            size shouldBeEqualTo MAX_TRANSACTION_ITEMS
+        }
+
+        Transfers.get(database) { Transfers.id eq "transfer#99" }.shouldNotBeNull()
+    }
+
+    @Test
+    fun `test transactional insert without the partition key is rejected`() = runTest {
+        createTables()
+
+        val failure = assertFailsWith<IllegalArgumentException> {
+            database.transaction {
+                Transfers.insert {
+                    it[amount] = 10
+                    it[state] = "PENDING"
+                }
+            }
+        }
+        assertTrue(failure.message!!.contains("id"), "message should name the column: ${failure.message}")
+    }
+
+    @Test
+    fun `test transactional update without the partition key is rejected`() = runTest {
+        createTables()
+
+        assertFailsWith<IllegalArgumentException> {
+            database.transaction {
+                Accounts.update({ Accounts.status eq "ACTIVE" }) {
+                    it[Accounts.balance] = 1
+                }
+            }
+        }
     }
 }

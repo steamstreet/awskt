@@ -1,5 +1,7 @@
 package com.steamstreet.dynamokt.exposed
 
+import com.steamstreet.dynamokt.AttributeValue
+
 /**
  * Base class for SQL-like operations/expressions.
  * Similar to Exposed's Op class.
@@ -72,6 +74,29 @@ public class AttributeExistsOp(public val column: Column<*>) : Op<Boolean>()
 public class AttributeNotExistsOp(public val column: Column<*>) : Op<Boolean>()
 
 /**
+ * Negation of another operation, rendered as `NOT (...)`.
+ * Never usable as a key condition; it can only appear in filter or condition expressions.
+ */
+public class NotOp(public val op: Op<Boolean>) : Op<Boolean>()
+
+/**
+ * Membership test, rendered as `#a IN (:v1, :v2, ...)`.
+ * DynamoDB caps the operand list at 100 entries; never usable as a key condition.
+ */
+public class InListOp<T>(public val column: Column<T>, public val values: List<T>) : Op<Boolean>()
+
+/**
+ * `contains(#a, :v)` - substring containment for string attributes, element
+ * membership for list attributes.
+ *
+ * The comparand is already converted to an [AttributeValue] because the two
+ * builder overloads convert through different columns: the string form through
+ * the attribute's own column, the list form through its element column.
+ * Never usable as a key condition.
+ */
+public class ContainsOp(public val column: Column<*>, public val value: AttributeValue) : Op<Boolean>()
+
+/**
  * Batch keys operation - signals that the query should use BatchGetItem
  * with the specified list of primary key values.
  */
@@ -97,6 +122,18 @@ public operator fun Column<Int>.plus(amount: Int): IncrementExpr<Int> = Incremen
  * Enables syntax: it[count] = count + 1L
  */
 public operator fun Column<Long>.plus(amount: Long): IncrementExpr<Long> = IncrementExpr(this, amount)
+
+/**
+ * Minus operator for Int columns to create decrement expressions.
+ * Enables syntax: it[count] = count - 1
+ */
+public operator fun Column<Int>.minus(amount: Int): IncrementExpr<Int> = IncrementExpr(this, -amount)
+
+/**
+ * Minus operator for Long columns to create decrement expressions.
+ * Enables syntax: it[count] = count - 1L
+ */
+public operator fun Column<Long>.minus(amount: Long): IncrementExpr<Long> = IncrementExpr(this, -amount)
 
 /**
  * Expression builder for where clauses.
@@ -153,6 +190,41 @@ public open class SqlExpressionBuilder {
      * Not equal operator
      */
     public infix fun <T> Column<T>.neq(value: T): Op<Boolean> = NeOp(this, value)
+
+    /**
+     * Negate a condition. Only valid in filter and condition expressions, never
+     * as a key condition.
+     */
+    public fun not(op: Op<Boolean>): Op<Boolean> = NotOp(op)
+
+    /**
+     * Membership test against a literal list, rendered as `#a IN (...)`.
+     * DynamoDB accepts between 1 and 100 operands.
+     */
+    public infix fun <T> Column<T>.inList(values: List<T>): Op<Boolean> {
+        require(values.isNotEmpty()) { "inList requires at least one value" }
+        require(values.size <= 100) { "inList supports at most 100 values, got ${values.size}" }
+        return InListOp(this, values)
+    }
+
+    /**
+     * Substring containment for string attributes.
+     */
+    public infix fun Column<String>.contains(substring: String): Op<Boolean> =
+        ContainsOp(this, AttributeValue.S(substring))
+
+    /**
+     * Element membership for list attributes. The element is converted through
+     * the list's element column, so it is encoded exactly as it was stored.
+     */
+    public infix fun <T> Column<List<T>>.contains(element: T): Op<Boolean> {
+        @Suppress("UNCHECKED_CAST")
+        val elements = (this as? ListColumn<T>)?.elementColumn
+        requireNotNull(elements) {
+            "contains(element) requires a column declared with Table.list(...); ${this.name} is not one"
+        }
+        return ContainsOp(this, elements.toAttributeValue(element))
+    }
 
     /**
      * Check if attribute exists
@@ -213,39 +285,51 @@ internal sealed class ColumnCondition {
     public data class BeginsWith(val column: Column<*>, val prefix: String) : ColumnCondition()
 }
 
+/** The column an already-parsed condition applies to. */
+internal val ColumnCondition.conditionColumn: Column<*>
+    get() = when (this) {
+        is ColumnCondition.Eq -> this.column
+        is ColumnCondition.Gt -> this.column
+        is ColumnCondition.Lt -> this.column
+        is ColumnCondition.Ge -> this.column
+        is ColumnCondition.Le -> this.column
+        is ColumnCondition.Between -> this.column
+        is ColumnCondition.BeginsWith -> this.column
+    }
+
+/**
+ * Flatten the top-level AND spine into its conjuncts. Everything else - `OR`
+ * subtrees, `NOT`, single comparisons - comes back as a single element, because
+ * only a top-level conjunct can be split between a key condition and a filter.
+ */
+internal fun flattenAnd(op: Op<Boolean>): List<Op<Boolean>> = when (op) {
+    is AndOp -> flattenAnd(op.left) + flattenAnd(op.right)
+    else -> listOf(op)
+}
+
+/**
+ * The [ColumnCondition] form of an op, or null when the op can never be a
+ * DynamoDB key condition (`neq`, `IN`, `contains`, `NOT`, existence checks,
+ * `OR` subtrees, `keys()`).
+ */
+internal fun keyConditionOrNull(op: Op<Boolean>): ColumnCondition? = when (op) {
+    is EqOp<*> -> ColumnCondition.Eq(op.column, op.value)
+    is GtOp<*> -> ColumnCondition.Gt(op.column, op.value)
+    is LtOp<*> -> ColumnCondition.Lt(op.column, op.value)
+    is GeOp<*> -> ColumnCondition.Ge(op.column, op.value)
+    is LeOp<*> -> ColumnCondition.Le(op.column, op.value)
+    is BetweenOp<*> -> ColumnCondition.Between(op.column, op.from, op.to)
+    is BeginsWithOp -> ColumnCondition.BeginsWith(op.column, op.prefix)
+    else -> null
+}
+
 /**
  * Extract all conditions from a where clause operation.
  * Note: This is primarily used for key condition extraction for queries,
  * so attribute existence operations and neq are not included.
  */
-internal fun extractConditions(op: Op<Boolean>): List<ColumnCondition> {
-    val conditions = mutableListOf<ColumnCondition>()
-
-    fun collect(operation: Op<Boolean>) {
-        when (operation) {
-            is EqOp<*> -> conditions.add(ColumnCondition.Eq(operation.column, operation.value))
-            is GtOp<*> -> conditions.add(ColumnCondition.Gt(operation.column, operation.value))
-            is LtOp<*> -> conditions.add(ColumnCondition.Lt(operation.column, operation.value))
-            is GeOp<*> -> conditions.add(ColumnCondition.Ge(operation.column, operation.value))
-            is LeOp<*> -> conditions.add(ColumnCondition.Le(operation.column, operation.value))
-            is BetweenOp<*> -> conditions.add(ColumnCondition.Between(operation.column, operation.from, operation.to))
-            is BeginsWithOp -> conditions.add(ColumnCondition.BeginsWith(operation.column, operation.prefix))
-            is AndOp -> {
-                collect(operation.left)
-                collect(operation.right)
-            }
-            // These are used for condition expressions, not key/filter conditions
-            is OrOp -> { /* Not used for key conditions */ }
-            is NeOp<*> -> { /* Not used for key conditions */ }
-            is AttributeExistsOp -> { /* Not used for key conditions */ }
-            is AttributeNotExistsOp -> { /* Not used for key conditions */ }
-            is KeysOp -> { /* Handled separately in Query */ }
-        }
-    }
-
-    collect(op)
-    return conditions
-}
+internal fun extractConditions(op: Op<Boolean>): List<ColumnCondition> =
+    flattenAnd(op).mapNotNull { keyConditionOrNull(it) }
 
 /**
  * Get all columns that have equality conditions
@@ -260,16 +344,56 @@ internal fun extractEqColumns(op: Op<Boolean>): Set<Column<*>> {
 /**
  * Get all columns involved in any condition
  */
-internal fun extractAllConditionColumns(op: Op<Boolean>): Set<Column<*>> {
-    return extractConditions(op).map {
-        when (it) {
-            is ColumnCondition.Eq -> it.column
-            is ColumnCondition.Gt -> it.column
-            is ColumnCondition.Lt -> it.column
-            is ColumnCondition.Ge -> it.column
-            is ColumnCondition.Le -> it.column
-            is ColumnCondition.Between -> it.column
-            is ColumnCondition.BeginsWith -> it.column
+internal fun extractAllConditionColumns(op: Op<Boolean>): Set<Column<*>> =
+    extractConditions(op).map { it.conditionColumn }.toSet()
+
+/**
+ * Every column referenced anywhere in the tree, including inside `OR`, `NOT`
+ * and the operators that can only ever be filters. Used to report unusable
+ * queries and to reject filters over the queried index's own key attributes.
+ */
+internal fun referencedColumns(op: Op<Boolean>): Set<Column<*>> {
+    val columns = mutableSetOf<Column<*>>()
+
+    fun collect(operation: Op<Boolean>) {
+        when (operation) {
+            is EqOp<*> -> columns.add(operation.column)
+            is NeOp<*> -> columns.add(operation.column)
+            is GtOp<*> -> columns.add(operation.column)
+            is LtOp<*> -> columns.add(operation.column)
+            is GeOp<*> -> columns.add(operation.column)
+            is LeOp<*> -> columns.add(operation.column)
+            is BetweenOp<*> -> columns.add(operation.column)
+            is BeginsWithOp -> columns.add(operation.column)
+            is InListOp<*> -> columns.add(operation.column)
+            is ContainsOp -> columns.add(operation.column)
+            is AttributeExistsOp -> columns.add(operation.column)
+            is AttributeNotExistsOp -> columns.add(operation.column)
+            is NotOp -> collect(operation.op)
+            is AndOp -> {
+                collect(operation.left)
+                collect(operation.right)
+            }
+            is OrOp -> {
+                collect(operation.left)
+                collect(operation.right)
+            }
+            is KeysOp -> { /* references the key columns implicitly, never by column */ }
         }
-    }.toSet()
+    }
+
+    collect(op)
+    return columns
+}
+
+/**
+ * True when a `keys()` op appears anywhere in the tree. `keys()` routes to
+ * BatchGetItem and cannot be combined with anything else.
+ */
+internal fun containsKeysOp(op: Op<Boolean>): Boolean = when (op) {
+    is KeysOp -> true
+    is AndOp -> containsKeysOp(op.left) || containsKeysOp(op.right)
+    is OrOp -> containsKeysOp(op.left) || containsKeysOp(op.right)
+    is NotOp -> containsKeysOp(op.op)
+    else -> false
 }
