@@ -2525,6 +2525,75 @@ rejects, and every test would still pass.
 
 ---
 
+### M11 — Live smoke coverage for M8–M10 (1 day)
+
+Added 2026-08-14. M8, M9 and M10 each shipped with the same recorded gap — "no live or LocalStack
+run, MockEngine only" — and this closes the *ability* to run one. It does not close the gap itself:
+see the status note.
+
+**Two suites, covering different things.**
+
+| | `Live*Test` | `lambda-native-smoke` `services` mode |
+|---|---|---|
+| Runs on | JVM (CIO) and macosArm64 (Curl) | a deployed Lambda, **linuxArm64** |
+| Proves | the wire format against real AWS | the same, *on the architecture that ships* |
+
+The second is not redundant with the first. `linuxArm64` is a **Tier 2 Kotlin/Native target with
+test execution unsupported**, so nothing else in this repository executes one line of code on
+Graviton — the same argument that justified the smoke function at M7, now extended to six more
+clients.
+
+**Tasks**
+
+- [x] `Live*Test` in `aws-kms`, `aws-secretsmanager`, `aws-sqs`, `aws-sns`, `aws-scheduler` and
+      `aws-bedrock-runtime`, each in `commonTest` and each self-skipping without credentials —
+      following `aws-core`'s existing `LiveTransportTest` idiom exactly.
+- [x] Six new probes in the native smoke function's `services` mode, each independently gated.
+- [x] `docs/live-smoke.md` — what to set, what to run, what a fixture needs.
+
+**Two properties that are load-bearing rather than tidy**
+
+1. **Everything cleans up after itself.** SQS messages are received and deleted; Scheduler schedules
+   are deleted in a `finally`. A live suite that leaks a schedule per run eventually trips the
+   per-group account quota — exactly what `ServiceQuotaExceededException`'s KDoc warns about — and
+   would break the account it runs in rather than merely failing.
+2. **Secrets Manager is read-only on purpose.** `PutSecretValue` creates a retained version on every
+   call, so exercising it live would accumulate versions against a quota. Its idempotency-token
+   behaviour is asserted hermetically instead, where the assertion is about *our request* rather
+   than about the service's storage — which is the half worth testing anyway.
+
+**No probe is added to the smoke function's required environment.** An existing deployment has
+`AWS_REGION`, `SMOKE_TABLE_NAME` and `SMOKE_BUCKET_NAME` and must keep working untouched; an unset
+probe reports `skipped`, and `allOk` is false only when a probe *ran and failed*. The same payload
+is therefore meaningful in an account where only some fixtures exist.
+
+> **STATUS: the suites exist and are compile-verified. NOT ONE OF THEM HAS BEEN RUN AGAINST AWS.**
+>
+> The authoring host has no usable AWS credentials — the ones in its environment are placeholders
+> that AWS rejects with `UnrecognizedClientException` — no Docker daemon, so LocalStack is not an
+> option either, and no Kotlin/Native toolchain, so the smoke function cannot even be built here.
+> **Every live suite in this commit has been executed exactly once: in skip mode.** That is the
+> honest state, and the gap M8–M10 recorded is still open — what changed is that closing it is now
+> one `./gradlew` invocation by someone with credentials rather than a piece of work.
+>
+> **The native smoke additions were compile-verified by a throwaway JVM module**, not by the native
+> compiler. The 155 lines of probe code were extracted verbatim into a temporary `jvm()` module
+> depending on the same six clients, compiled, and the module deleted. That checks every API call,
+> named argument and import; it does **not** check native compilation of the module as a whole —
+> the `native-lambda` plugin, target-specific linking, or anything platform-conditional. The probe
+> code contains nothing platform-conditional, which is why the substitution is worth something, but
+> it is a substitution.
+>
+> Run order, when someone has an account:
+> 1. `./gradlew :aws:aws-sns:jvmTest` with `SMOKE_TOPIC_ARN` — the hand-written form encoder and XML
+>    reader have no differential and no independent confirmation at all.
+> 2. `./gradlew :aws:aws-bedrock-runtime:jvmTest` with `SMOKE_BEDROCK_MODEL_ID` —
+>    `converseStreamReceivesFramesAcrossChunkBoundaries` is the only test that puts `callStreaming`
+>    in front of a real chunked response.
+> 3. The rest, then the deployed `services` probe on Graviton.
+
+---
+
 ## 7. Corrected file triage for `dynamokt` (M5a)
 
 The draft plan claimed "5 files migrate by deleting a single import line". Verified against source, the real split is:

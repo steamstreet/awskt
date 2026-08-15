@@ -1,0 +1,114 @@
+# Running the live smoke suites
+
+Everything in this repository is hermetic by default. The suites below make **real AWS calls** and
+self-skip when their environment variables are absent, so `./gradlew check` on a laptop with no
+credentials behaves exactly as it always has.
+
+There are two of them and they cover different things:
+
+| | `Live*Test` (JVM / macOS) | `lambda-native-smoke` (`services` mode) |
+|---|---|---|
+| Runs on | your machine, JVM + macosArm64 | a deployed Lambda, **linuxArm64** |
+| Proves | the wire format against real AWS | the same, *on the architecture that ships* |
+| Cost to run | one `./gradlew` invocation | a deploy |
+
+The second is not redundant. **Kotlin/Native `linuxArm64` is a Tier 2 target with test execution
+unsupported**, so nothing else in this repository executes a single line of code on Graviton. A
+client that compiles for it and faults on it would otherwise ship unnoticed.
+
+---
+
+## The JVM live suites
+
+Each module has one, and each skips unless both AWS credentials *and* its own variable are present.
+
+```bash
+eval "$(aws configure export-credentials --profile my-profile --format env)"
+export AWS_REGION=us-west-2
+```
+
+| Module | Variable | Fixture needed |
+|---|---|---|
+| `aws-kms` | `SMOKE_KMS_KEY_ID` | a symmetric `ENCRYPT_DECRYPT` key or alias |
+| `aws-secretsmanager` | `SMOKE_SECRET_ID` | any readable secret (read-only; never written) |
+| `aws-sqs` | `SMOKE_QUEUE_URL` | a **standard** (non-FIFO) queue |
+| `aws-sns` | `SMOKE_TOPIC_ARN` | a topic, ideally with no subscriptions |
+| `aws-scheduler` | `SMOKE_SCHEDULER_TARGET_ARN`, `SMOKE_SCHEDULER_ROLE_ARN` | a target and a role trusting `scheduler.amazonaws.com` |
+| `aws-bedrock-runtime` | `SMOKE_BEDROCK_MODEL_ID` | model access granted in the account |
+| `aws-core` | *(credentials alone)* | none — calls `ListTables` |
+
+```bash
+# One module
+./gradlew :aws:aws-kms:jvmTest
+
+# All of them
+./gradlew :aws:aws-core:jvmTest :aws:aws-kms:jvmTest :aws:aws-secretsmanager:jvmTest \
+          :aws:aws-sqs:jvmTest :aws:aws-sns:jvmTest :aws:aws-scheduler:jvmTest \
+          :aws:aws-bedrock-runtime:jvmTest
+
+# On macOS, the same tests through the Curl engine rather than CIO — worth doing at least once,
+# because the native Lambda uses Curl and CIO is not evidence about it.
+./gradlew :aws:aws-kms:macosArm64Test
+```
+
+Everything the suites create, they delete: SQS messages are received and deleted, Scheduler
+schedules are deleted in a `finally`. Secrets Manager is read-only by design — `PutSecretValue`
+would accumulate secret versions against an account quota, so its idempotency-token behaviour is
+asserted hermetically instead.
+
+### The two that are worth running even if you skip the rest
+
+- **`aws-sns`** carries the only hand-written form encoder and the only hand-written XML reader in
+  the library. Every other module's protocol was proven by an earlier differential; this one's was
+  written from the wire format and checked only against tests written alongside it. A real 200 from
+  SNS is the first independent confirmation either half is right.
+- **`aws-bedrock-runtime`'s `converseStreamReceivesFramesAcrossChunkBoundaries`** is the only test
+  that runs `callStreaming` against a **real chunked HTTP response**. `MockEngine` serves a body in
+  one piece, so the hermetic tests prove the frame decoder works and cannot prove the transport
+  survives a frame split across two network reads. A model generating tokens over several seconds
+  produces exactly that.
+
+**Bedrock costs money.** The calls are deliberately tiny — a handful of tokens, `maxTokens` capped —
+but they are real inference, unlike every other live suite here.
+
+---
+
+## The deployed native smoke function
+
+`lambda/lambda-native-smoke` ships to Graviton and is invoked with a JSON payload naming a mode.
+The `services` mode covers Secrets Manager, KMS, SQS, SNS, Scheduler and Bedrock.
+
+```bash
+aws lambda invoke \
+  --function-name awskt-native-smoke \
+  --payload '{"mode":"services"}' --cli-binary-format raw-in-base64-out \
+  /dev/stdout | jq
+```
+
+```json
+{
+  "requestId": "…",
+  "probes": [
+    {"service": "secretsmanager", "ok": true, "detail": "read 42 chars (redacted)"},
+    {"service": "kms",            "ok": true, "detail": "round-tripped 184 ciphertext bytes"},
+    {"service": "sqs",            "ok": true, "detail": "sent 1, received 1 of 1, deleted 1"},
+    {"service": "sns",            "ok": true, "detail": "published 9c1f…"},
+    {"service": "scheduler",      "ok": false, "skipped": true,
+                                  "detail": "SMOKE_SCHEDULER_TARGET_ARN not set"},
+    {"service": "bedrock",        "ok": true,
+                                  "detail": "converse='pong', stream delivered 23 deltas"}
+  ],
+  "allOk": true
+}
+```
+
+Each probe is gated on the same variable its JVM counterpart uses, set on the function rather than
+in your shell. **None of them is required**: an existing deployment has `AWS_REGION`,
+`SMOKE_TABLE_NAME` and `SMOKE_BUCKET_NAME` and keeps working untouched, and an unset probe reports
+`skipped` rather than failing the invocation.
+
+`allOk` is false only when a probe *ran and failed* — skipped probes do not fail it, so the same
+payload is meaningful in an account where only some fixtures exist.
+
+The other modes are unchanged: `ping`, `get`, `event`, `getevent` for latency measurement, and the
+default `full` for the DynamoDB and S3 correctness workload.

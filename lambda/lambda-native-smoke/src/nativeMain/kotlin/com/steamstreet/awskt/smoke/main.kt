@@ -8,6 +8,30 @@ import com.steamstreet.awskt.dynamodb.PutItemRequest
 import com.steamstreet.awskt.eventbridge.EventBridge
 import com.steamstreet.awskt.eventbridge.PutEventsEntry
 import com.steamstreet.awskt.eventbridge.PutEventsResponse
+import com.steamstreet.awskt.bedrock.BedrockRuntime
+import com.steamstreet.awskt.bedrock.ConverseRequest
+import com.steamstreet.awskt.bedrock.InferenceConfiguration
+import com.steamstreet.awskt.bedrock.Message as BedrockMessage
+import com.steamstreet.awskt.bedrock.ask
+import com.steamstreet.awskt.bedrock.textDeltas
+import com.steamstreet.awskt.kms.Kms
+import com.steamstreet.awskt.kms.decrypt
+import com.steamstreet.awskt.kms.encrypt
+import com.steamstreet.awskt.scheduler.ActionAfterCompletion
+import com.steamstreet.awskt.scheduler.CreateScheduleRequest
+import com.steamstreet.awskt.scheduler.DeleteScheduleRequest
+import com.steamstreet.awskt.scheduler.GetScheduleRequest
+import com.steamstreet.awskt.scheduler.ScheduleState
+import com.steamstreet.awskt.scheduler.Scheduler
+import com.steamstreet.awskt.scheduler.Target
+import com.steamstreet.awskt.secretsmanager.SecretsManager
+import com.steamstreet.awskt.secretsmanager.getSecretString
+import com.steamstreet.awskt.sns.Sns
+import com.steamstreet.awskt.sns.publish
+import com.steamstreet.awskt.sqs.Sqs
+import com.steamstreet.awskt.sqs.deleteMessage
+import com.steamstreet.awskt.sqs.receiveMessages
+import com.steamstreet.awskt.sqs.sendMessage
 import com.steamstreet.awskt.s3.GetObjectRequest
 import com.steamstreet.awskt.s3.PutObjectRequest
 import com.steamstreet.awskt.s3.S3
@@ -15,6 +39,7 @@ import com.steamstreet.awskt.s3.S3Presigner
 import com.steamstreet.awskt.core.defaultCredentialsProvider
 import com.steamstreet.dynamokt.AttributeValue
 import com.steamstreet.env.Env
+import kotlinx.coroutines.flow.toList
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
@@ -118,6 +143,161 @@ private data class MinimalResult(
     val failedEntryCount: Int? = null,
 )
 
+// -- M8–M10 services ---------------------------------------------------------------------------
+//
+// Secrets Manager, KMS, SQS, SNS, Scheduler and Bedrock, each behind its own environment variable.
+//
+// **Every one is optional and none is added to `initialize`'s required set.** An existing deployment
+// of this function has three variables set and must keep working untouched; a probe whose variable
+// is absent reports "skipped" rather than failing the invocation. That also makes the function
+// useful in an account where only some of these exist.
+//
+// Clients are held in `lazy` module state, which is the pattern the `dynamoClient` note above
+// argues for: one TLS handshake per container rather than one per invocation.
+
+private val secretsClient by lazy {
+    SecretsManager { region = Env["AWS_REGION"]; credentialsProvider = credentials; caInfo = CA_BUNDLE }
+}
+
+private val kmsClient by lazy {
+    Kms { region = Env["AWS_REGION"]; credentialsProvider = credentials; caInfo = CA_BUNDLE }
+}
+
+private val sqsClient by lazy {
+    Sqs { region = Env["AWS_REGION"]; credentialsProvider = credentials; caInfo = CA_BUNDLE }
+}
+
+private val snsClient by lazy {
+    Sns { region = Env["AWS_REGION"]; credentialsProvider = credentials; caInfo = CA_BUNDLE }
+}
+
+private val schedulerClient by lazy {
+    Scheduler { region = Env["AWS_REGION"]; credentialsProvider = credentials; caInfo = CA_BUNDLE }
+}
+
+private val bedrockClient by lazy {
+    BedrockRuntime { region = Env["AWS_REGION"]; credentialsProvider = credentials; caInfo = CA_BUNDLE }
+}
+
+/**
+ * One service's outcome.
+ *
+ * [ok] is the assertion — a round trip that came back with what went in — rather than "the call did
+ * not throw". The distinction matters: a client that base64-encodes wrongly in both directions
+ * returns 200s all day and fails this.
+ */
+@Serializable
+private data class ProbeResult(
+    val service: String,
+    val ok: Boolean,
+    val detail: String? = null,
+    val skipped: Boolean = false,
+    val error: String? = null,
+)
+
+@Serializable
+private data class ServicesResult(
+    val requestId: String,
+    val probes: List<ProbeResult>,
+    val allOk: Boolean,
+)
+
+/**
+ * Runs one probe, converting a failure into a result rather than an invocation error.
+ *
+ * A smoke function that dies on the first broken service reports one bug per deployment. Collecting
+ * every probe reports all of them at once, which for a suite covering six clients is the difference
+ * between one round trip and six.
+ */
+private suspend fun probe(service: String, variable: String, block: suspend (String) -> String): ProbeResult {
+    val configured = Env.optional(variable)
+        ?: return ProbeResult(service, ok = false, skipped = true, detail = "$variable not set")
+    return try {
+        ProbeResult(service, ok = true, detail = block(configured))
+    } catch (failure: Throwable) {
+        ProbeResult(service, ok = false, error = "${failure::class.simpleName}: ${failure.message}")
+    }
+}
+
+/** Every M8–M10 client, exercised against real AWS from Graviton. */
+private suspend fun runServiceProbes(requestId: String): List<ProbeResult> = listOf(
+    probe("secretsmanager", "SMOKE_SECRET_ID") { id ->
+        val value = secretsClient.getSecretString(id)
+        require(!value.isNullOrEmpty()) { "secret came back empty" }
+        "read ${value.length} chars (redacted)"
+    },
+
+    // The strongest oracle here: a client that mishandles base64 blobs cannot get its own
+    // plaintext back out of a service that handles them correctly.
+    probe("kms", "SMOKE_KMS_KEY_ID") { key ->
+        val plaintext = "awskt smoke $requestId — 日本語"
+        val context = mapOf("purpose" to "awskt-smoke")
+        val blob = kmsClient.encrypt(key, plaintext.encodeToByteArray(), context)
+        val recovered = kmsClient.decrypt(key, blob, context).decodeToString()
+        require(recovered == plaintext) { "KMS round trip changed the plaintext" }
+        "round-tripped ${blob.size} ciphertext bytes"
+    },
+
+    probe("sqs", "SMOKE_QUEUE_URL") { queue ->
+        val marker = "awskt-smoke-$requestId"
+        sqsClient.sendMessage(queue, marker)
+        // Short wait: this runs inside a Lambda with a bounded timeout, and the assertion that
+        // matters — that the send and the receive both parse — does not need the message back.
+        val received = sqsClient.receiveMessages(queue, maxNumberOfMessages = 10, waitTimeSeconds = 5)
+        val ours = received.filter { it.body == marker }
+        ours.forEach { sqsClient.deleteMessage(queue, it) }
+        "sent 1, received ${ours.size} of ${received.size}, deleted ${ours.size}"
+    },
+
+    probe("sns", "SMOKE_TOPIC_ARN") { topic ->
+        // The form encoder and the XML reader, which are hand-written and have no differential.
+        val id = snsClient.publish(topic, "awskt smoke $requestId — a b & c + d = e", "awskt smoke")
+        require(!id.isNullOrBlank()) { "SNS returned no MessageId" }
+        "published $id"
+    },
+
+    probe("scheduler", "SMOKE_SCHEDULER_TARGET_ARN") { targetArn ->
+        val role = Env.optional("SMOKE_SCHEDULER_ROLE_ARN")
+            ?: error("SMOKE_SCHEDULER_ROLE_ARN not set")
+        val name = "awskt-smoke-$requestId".take(64)
+        try {
+            schedulerClient.createSchedule(
+                CreateScheduleRequest(
+                    name = name,
+                    // Far future and disabled: this must never actually fire.
+                    scheduleExpression = "at(2099-01-01T00:00:00)",
+                    target = Target(arn = targetArn, roleArn = role, input = """{"smoke":true}"""),
+                    state = ScheduleState.DISABLED,
+                    actionAfterCompletion = ActionAfterCompletion.DELETE,
+                )
+            )
+            val read = schedulerClient.getSchedule(GetScheduleRequest(name))
+            require(read.name == name) { "GetSchedule returned '${read.name}'" }
+            "created and read '$name'"
+        } finally {
+            // Schedules count against a per-group account quota; leaking one per invocation would
+            // eventually break the account this smoke function runs in.
+            runCatching { schedulerClient.deleteSchedule(DeleteScheduleRequest(name)) }
+        }
+    },
+
+    // The only probe that costs money, and the only one that exercises `callStreaming` against a
+    // real chunked response — the gap the plan's M10 status note names as highest-value.
+    probe("bedrock", "SMOKE_BEDROCK_MODEL_ID") { model ->
+        val answer = bedrockClient.ask(model, "Reply with exactly the word: pong", maxTokens = 16)
+        require(answer.isNotBlank()) { "the model returned no text" }
+        val deltas = bedrockClient.converseStream(
+            ConverseRequest(
+                modelId = model,
+                messages = listOf(BedrockMessage.user("Count from 1 to 20, one per line.")),
+                inferenceConfig = InferenceConfiguration(maxTokens = 200, temperature = 0f),
+            )
+        ).textDeltas().toList()
+        require(deltas.size > 1) { "converseStream produced ${deltas.size} delta(s) — did it stream?" }
+        "converse='${answer.trim().take(20)}', stream delivered ${deltas.size} deltas"
+    },
+)
+
 private suspend fun getFixedItem(): String? {
     val table = Env["SMOKE_TABLE_NAME"]
     val got = dynamoClient.getItem(
@@ -175,6 +355,21 @@ public fun main(): Unit = nativeLambda(
                     requestId = requestId,
                     eventId = response.entries?.firstOrNull()?.eventId,
                     failedEntryCount = response.failedEntryCount,
+                )
+            )
+        }
+
+        // Every M8–M10 client — Secrets Manager, KMS, SQS, SNS, Scheduler, Bedrock — against real
+        // AWS from Graviton. Each probe is independently gated on its own environment variable and
+        // reports rather than throws, so one broken service does not hide the other five.
+        "services" -> {
+            val probes = runServiceProbes(requestId)
+            return@nativeLambda json.encodeToString(
+                ServicesResult.serializer(),
+                ServicesResult(
+                    requestId = requestId,
+                    probes = probes,
+                    allOk = probes.none { !it.ok && !it.skipped },
                 )
             )
         }

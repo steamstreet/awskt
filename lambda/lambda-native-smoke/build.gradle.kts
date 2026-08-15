@@ -30,6 +30,15 @@ kotlin {
                 implementation(projects.aws.awsDynamodb)
                 implementation(projects.aws.awsS3)
                 implementation(projects.aws.awsEventbridge)
+                // M8–M10. Every one of these is `linuxArm64` code that nothing else in this
+                // repository can execute: Kotlin/Native Tier 2 does not run tests, so a client that
+                // compiles for Graviton and faults on it would otherwise ship unnoticed.
+                implementation(projects.aws.awsSecretsmanager)
+                implementation(projects.aws.awsKms)
+                implementation(projects.aws.awsSqs)
+                implementation(projects.aws.awsSns)
+                implementation(projects.aws.awsScheduler)
+                implementation(projects.aws.awsBedrockRuntime)
                 implementation(projects.dynamo)
                 implementation(projects.env)
                 implementation(libs.kotlin.serialization.json)
