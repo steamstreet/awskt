@@ -1,0 +1,812 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:aws-kms>
+abstract interface com.steamstreet.awskt.kms/Kms : kotlin/AutoCloseable { // com.steamstreet.awskt.kms/Kms|null[0]
+    abstract val client // com.steamstreet.awskt.kms/Kms.client|{}client[0]
+        abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.kms/Kms.client.<get-client>|<get-client>(){}[0]
+
+    abstract suspend fun decrypt(com.steamstreet.awskt.kms/DecryptRequest): com.steamstreet.awskt.kms/DecryptResponse // com.steamstreet.awskt.kms/Kms.decrypt|decrypt(com.steamstreet.awskt.kms.DecryptRequest){}[0]
+    abstract suspend fun encrypt(com.steamstreet.awskt.kms/EncryptRequest): com.steamstreet.awskt.kms/EncryptResponse // com.steamstreet.awskt.kms/Kms.encrypt|encrypt(com.steamstreet.awskt.kms.EncryptRequest){}[0]
+    abstract suspend fun generateDataKey(com.steamstreet.awskt.kms/GenerateDataKeyRequest): com.steamstreet.awskt.kms/GenerateDataKeyResponse // com.steamstreet.awskt.kms/Kms.generateDataKey|generateDataKey(com.steamstreet.awskt.kms.GenerateDataKeyRequest){}[0]
+    abstract suspend fun generateDataKeyWithoutPlaintext(com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest): com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse // com.steamstreet.awskt.kms/Kms.generateDataKeyWithoutPlaintext|generateDataKeyWithoutPlaintext(com.steamstreet.awskt.kms.GenerateDataKeyWithoutPlaintextRequest){}[0]
+    abstract suspend fun generateRandom(com.steamstreet.awskt.kms/GenerateRandomRequest): com.steamstreet.awskt.kms/GenerateRandomResponse // com.steamstreet.awskt.kms/Kms.generateRandom|generateRandom(com.steamstreet.awskt.kms.GenerateRandomRequest){}[0]
+    abstract suspend fun getPublicKey(com.steamstreet.awskt.kms/GetPublicKeyRequest): com.steamstreet.awskt.kms/GetPublicKeyResponse // com.steamstreet.awskt.kms/Kms.getPublicKey|getPublicKey(com.steamstreet.awskt.kms.GetPublicKeyRequest){}[0]
+    abstract suspend fun reEncrypt(com.steamstreet.awskt.kms/ReEncryptRequest): com.steamstreet.awskt.kms/ReEncryptResponse // com.steamstreet.awskt.kms/Kms.reEncrypt|reEncrypt(com.steamstreet.awskt.kms.ReEncryptRequest){}[0]
+    abstract suspend fun sign(com.steamstreet.awskt.kms/SignRequest): com.steamstreet.awskt.kms/SignResponse // com.steamstreet.awskt.kms/Kms.sign|sign(com.steamstreet.awskt.kms.SignRequest){}[0]
+    abstract suspend fun verify(com.steamstreet.awskt.kms/VerifyRequest): com.steamstreet.awskt.kms/VerifyResponse // com.steamstreet.awskt.kms/Kms.verify|verify(com.steamstreet.awskt.kms.VerifyRequest){}[0]
+}
+
+final class com.steamstreet.awskt.kms/DecryptRequest { // com.steamstreet.awskt.kms/DecryptRequest|null[0]
+    constructor <init>(kotlin/ByteArray, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/Boolean? = ...) // com.steamstreet.awskt.kms/DecryptRequest.<init>|<init>(kotlin.ByteArray;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlin.Boolean?){}[0]
+
+    final val ciphertextBlob // com.steamstreet.awskt.kms/DecryptRequest.ciphertextBlob|{}ciphertextBlob[0]
+        final fun <get-ciphertextBlob>(): kotlin/ByteArray // com.steamstreet.awskt.kms/DecryptRequest.ciphertextBlob.<get-ciphertextBlob>|<get-ciphertextBlob>(){}[0]
+    final val dryRun // com.steamstreet.awskt.kms/DecryptRequest.dryRun|{}dryRun[0]
+        final fun <get-dryRun>(): kotlin/Boolean? // com.steamstreet.awskt.kms/DecryptRequest.dryRun.<get-dryRun>|<get-dryRun>(){}[0]
+    final val encryptionAlgorithm // com.steamstreet.awskt.kms/DecryptRequest.encryptionAlgorithm|{}encryptionAlgorithm[0]
+        final fun <get-encryptionAlgorithm>(): kotlin/String? // com.steamstreet.awskt.kms/DecryptRequest.encryptionAlgorithm.<get-encryptionAlgorithm>|<get-encryptionAlgorithm>(){}[0]
+    final val encryptionContext // com.steamstreet.awskt.kms/DecryptRequest.encryptionContext|{}encryptionContext[0]
+        final fun <get-encryptionContext>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.kms/DecryptRequest.encryptionContext.<get-encryptionContext>|<get-encryptionContext>(){}[0]
+    final val grantTokens // com.steamstreet.awskt.kms/DecryptRequest.grantTokens|{}grantTokens[0]
+        final fun <get-grantTokens>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.kms/DecryptRequest.grantTokens.<get-grantTokens>|<get-grantTokens>(){}[0]
+    final val keyId // com.steamstreet.awskt.kms/DecryptRequest.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String? // com.steamstreet.awskt.kms/DecryptRequest.keyId.<get-keyId>|<get-keyId>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/DecryptRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/DecryptRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/DecryptRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/DecryptRequest> { // com.steamstreet.awskt.kms/DecryptRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/DecryptRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/DecryptRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/DecryptRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/DecryptRequest // com.steamstreet.awskt.kms/DecryptRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/DecryptRequest) // com.steamstreet.awskt.kms/DecryptRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.DecryptRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/DecryptRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.kms/DecryptRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/DecryptRequest> // com.steamstreet.awskt.kms/DecryptRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/DecryptResponse { // com.steamstreet.awskt.kms/DecryptResponse|null[0]
+    constructor <init>(kotlin/ByteArray, kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.kms/DecryptResponse.<init>|<init>(kotlin.ByteArray;kotlin.String?;kotlin.String?){}[0]
+
+    final val encryptionAlgorithm // com.steamstreet.awskt.kms/DecryptResponse.encryptionAlgorithm|{}encryptionAlgorithm[0]
+        final fun <get-encryptionAlgorithm>(): kotlin/String? // com.steamstreet.awskt.kms/DecryptResponse.encryptionAlgorithm.<get-encryptionAlgorithm>|<get-encryptionAlgorithm>(){}[0]
+    final val keyId // com.steamstreet.awskt.kms/DecryptResponse.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String? // com.steamstreet.awskt.kms/DecryptResponse.keyId.<get-keyId>|<get-keyId>(){}[0]
+    final val plaintext // com.steamstreet.awskt.kms/DecryptResponse.plaintext|{}plaintext[0]
+        final fun <get-plaintext>(): kotlin/ByteArray // com.steamstreet.awskt.kms/DecryptResponse.plaintext.<get-plaintext>|<get-plaintext>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/DecryptResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/DecryptResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/DecryptResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/DecryptResponse> { // com.steamstreet.awskt.kms/DecryptResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/DecryptResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/DecryptResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/DecryptResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/DecryptResponse // com.steamstreet.awskt.kms/DecryptResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/DecryptResponse) // com.steamstreet.awskt.kms/DecryptResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.DecryptResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/DecryptResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/DecryptResponse> // com.steamstreet.awskt.kms/DecryptResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/DependencyTimeoutException : com.steamstreet.awskt.kms/KmsException { // com.steamstreet.awskt.kms/DependencyTimeoutException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kms/DependencyTimeoutException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kms/DisabledException : com.steamstreet.awskt.kms/KmsException { // com.steamstreet.awskt.kms/DisabledException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kms/DisabledException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kms/DryRunOperationException : com.steamstreet.awskt.kms/KmsException { // com.steamstreet.awskt.kms/DryRunOperationException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kms/DryRunOperationException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kms/EncryptRequest { // com.steamstreet.awskt.kms/EncryptRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/ByteArray, kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/Boolean? = ...) // com.steamstreet.awskt.kms/EncryptRequest.<init>|<init>(kotlin.String;kotlin.ByteArray;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlin.Boolean?){}[0]
+
+    final val dryRun // com.steamstreet.awskt.kms/EncryptRequest.dryRun|{}dryRun[0]
+        final fun <get-dryRun>(): kotlin/Boolean? // com.steamstreet.awskt.kms/EncryptRequest.dryRun.<get-dryRun>|<get-dryRun>(){}[0]
+    final val encryptionAlgorithm // com.steamstreet.awskt.kms/EncryptRequest.encryptionAlgorithm|{}encryptionAlgorithm[0]
+        final fun <get-encryptionAlgorithm>(): kotlin/String? // com.steamstreet.awskt.kms/EncryptRequest.encryptionAlgorithm.<get-encryptionAlgorithm>|<get-encryptionAlgorithm>(){}[0]
+    final val encryptionContext // com.steamstreet.awskt.kms/EncryptRequest.encryptionContext|{}encryptionContext[0]
+        final fun <get-encryptionContext>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.kms/EncryptRequest.encryptionContext.<get-encryptionContext>|<get-encryptionContext>(){}[0]
+    final val grantTokens // com.steamstreet.awskt.kms/EncryptRequest.grantTokens|{}grantTokens[0]
+        final fun <get-grantTokens>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.kms/EncryptRequest.grantTokens.<get-grantTokens>|<get-grantTokens>(){}[0]
+    final val keyId // com.steamstreet.awskt.kms/EncryptRequest.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String // com.steamstreet.awskt.kms/EncryptRequest.keyId.<get-keyId>|<get-keyId>(){}[0]
+    final val plaintext // com.steamstreet.awskt.kms/EncryptRequest.plaintext|{}plaintext[0]
+        final fun <get-plaintext>(): kotlin/ByteArray // com.steamstreet.awskt.kms/EncryptRequest.plaintext.<get-plaintext>|<get-plaintext>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/EncryptRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/EncryptRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/EncryptRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/EncryptRequest> { // com.steamstreet.awskt.kms/EncryptRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/EncryptRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/EncryptRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/EncryptRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/EncryptRequest // com.steamstreet.awskt.kms/EncryptRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/EncryptRequest) // com.steamstreet.awskt.kms/EncryptRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.EncryptRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/EncryptRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.kms/EncryptRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/EncryptRequest> // com.steamstreet.awskt.kms/EncryptRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/EncryptResponse { // com.steamstreet.awskt.kms/EncryptResponse|null[0]
+    constructor <init>(kotlin/ByteArray, kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.kms/EncryptResponse.<init>|<init>(kotlin.ByteArray;kotlin.String?;kotlin.String?){}[0]
+
+    final val ciphertextBlob // com.steamstreet.awskt.kms/EncryptResponse.ciphertextBlob|{}ciphertextBlob[0]
+        final fun <get-ciphertextBlob>(): kotlin/ByteArray // com.steamstreet.awskt.kms/EncryptResponse.ciphertextBlob.<get-ciphertextBlob>|<get-ciphertextBlob>(){}[0]
+    final val encryptionAlgorithm // com.steamstreet.awskt.kms/EncryptResponse.encryptionAlgorithm|{}encryptionAlgorithm[0]
+        final fun <get-encryptionAlgorithm>(): kotlin/String? // com.steamstreet.awskt.kms/EncryptResponse.encryptionAlgorithm.<get-encryptionAlgorithm>|<get-encryptionAlgorithm>(){}[0]
+    final val keyId // com.steamstreet.awskt.kms/EncryptResponse.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String? // com.steamstreet.awskt.kms/EncryptResponse.keyId.<get-keyId>|<get-keyId>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/EncryptResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/EncryptResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/EncryptResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/EncryptResponse> { // com.steamstreet.awskt.kms/EncryptResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/EncryptResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/EncryptResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/EncryptResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/EncryptResponse // com.steamstreet.awskt.kms/EncryptResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/EncryptResponse) // com.steamstreet.awskt.kms/EncryptResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.EncryptResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/EncryptResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/EncryptResponse> // com.steamstreet.awskt.kms/EncryptResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/GenerateDataKeyRequest { // com.steamstreet.awskt.kms/GenerateDataKeyRequest|null[0]
+    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin/String? = ..., kotlin/Int? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/Boolean? = ...) // com.steamstreet.awskt.kms/GenerateDataKeyRequest.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.String?;kotlin.Int?;kotlin.collections.List<kotlin.String>?;kotlin.Boolean?){}[0]
+
+    final val dryRun // com.steamstreet.awskt.kms/GenerateDataKeyRequest.dryRun|{}dryRun[0]
+        final fun <get-dryRun>(): kotlin/Boolean? // com.steamstreet.awskt.kms/GenerateDataKeyRequest.dryRun.<get-dryRun>|<get-dryRun>(){}[0]
+    final val encryptionContext // com.steamstreet.awskt.kms/GenerateDataKeyRequest.encryptionContext|{}encryptionContext[0]
+        final fun <get-encryptionContext>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.kms/GenerateDataKeyRequest.encryptionContext.<get-encryptionContext>|<get-encryptionContext>(){}[0]
+    final val grantTokens // com.steamstreet.awskt.kms/GenerateDataKeyRequest.grantTokens|{}grantTokens[0]
+        final fun <get-grantTokens>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.kms/GenerateDataKeyRequest.grantTokens.<get-grantTokens>|<get-grantTokens>(){}[0]
+    final val keyId // com.steamstreet.awskt.kms/GenerateDataKeyRequest.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String // com.steamstreet.awskt.kms/GenerateDataKeyRequest.keyId.<get-keyId>|<get-keyId>(){}[0]
+    final val keySpec // com.steamstreet.awskt.kms/GenerateDataKeyRequest.keySpec|{}keySpec[0]
+        final fun <get-keySpec>(): kotlin/String? // com.steamstreet.awskt.kms/GenerateDataKeyRequest.keySpec.<get-keySpec>|<get-keySpec>(){}[0]
+    final val numberOfBytes // com.steamstreet.awskt.kms/GenerateDataKeyRequest.numberOfBytes|{}numberOfBytes[0]
+        final fun <get-numberOfBytes>(): kotlin/Int? // com.steamstreet.awskt.kms/GenerateDataKeyRequest.numberOfBytes.<get-numberOfBytes>|<get-numberOfBytes>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.kms/GenerateDataKeyRequest.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.kms/GenerateDataKeyRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.kms/GenerateDataKeyRequest.component3|component3(){}[0]
+    final fun component4(): kotlin/Int? // com.steamstreet.awskt.kms/GenerateDataKeyRequest.component4|component4(){}[0]
+    final fun component5(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.kms/GenerateDataKeyRequest.component5|component5(){}[0]
+    final fun component6(): kotlin/Boolean? // com.steamstreet.awskt.kms/GenerateDataKeyRequest.component6|component6(){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin/String? = ..., kotlin/Int? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/Boolean? = ...): com.steamstreet.awskt.kms/GenerateDataKeyRequest // com.steamstreet.awskt.kms/GenerateDataKeyRequest.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.String?;kotlin.Int?;kotlin.collections.List<kotlin.String>?;kotlin.Boolean?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/GenerateDataKeyRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/GenerateDataKeyRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/GenerateDataKeyRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/GenerateDataKeyRequest> { // com.steamstreet.awskt.kms/GenerateDataKeyRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/GenerateDataKeyRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/GenerateDataKeyRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/GenerateDataKeyRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/GenerateDataKeyRequest // com.steamstreet.awskt.kms/GenerateDataKeyRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/GenerateDataKeyRequest) // com.steamstreet.awskt.kms/GenerateDataKeyRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.GenerateDataKeyRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/GenerateDataKeyRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.kms/GenerateDataKeyRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/GenerateDataKeyRequest> // com.steamstreet.awskt.kms/GenerateDataKeyRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/GenerateDataKeyResponse { // com.steamstreet.awskt.kms/GenerateDataKeyResponse|null[0]
+    constructor <init>(kotlin/ByteArray, kotlin/ByteArray, kotlin/String? = ...) // com.steamstreet.awskt.kms/GenerateDataKeyResponse.<init>|<init>(kotlin.ByteArray;kotlin.ByteArray;kotlin.String?){}[0]
+
+    final val ciphertextBlob // com.steamstreet.awskt.kms/GenerateDataKeyResponse.ciphertextBlob|{}ciphertextBlob[0]
+        final fun <get-ciphertextBlob>(): kotlin/ByteArray // com.steamstreet.awskt.kms/GenerateDataKeyResponse.ciphertextBlob.<get-ciphertextBlob>|<get-ciphertextBlob>(){}[0]
+    final val keyId // com.steamstreet.awskt.kms/GenerateDataKeyResponse.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String? // com.steamstreet.awskt.kms/GenerateDataKeyResponse.keyId.<get-keyId>|<get-keyId>(){}[0]
+    final val plaintext // com.steamstreet.awskt.kms/GenerateDataKeyResponse.plaintext|{}plaintext[0]
+        final fun <get-plaintext>(): kotlin/ByteArray // com.steamstreet.awskt.kms/GenerateDataKeyResponse.plaintext.<get-plaintext>|<get-plaintext>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/GenerateDataKeyResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/GenerateDataKeyResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/GenerateDataKeyResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/GenerateDataKeyResponse> { // com.steamstreet.awskt.kms/GenerateDataKeyResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/GenerateDataKeyResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/GenerateDataKeyResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/GenerateDataKeyResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/GenerateDataKeyResponse // com.steamstreet.awskt.kms/GenerateDataKeyResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/GenerateDataKeyResponse) // com.steamstreet.awskt.kms/GenerateDataKeyResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.GenerateDataKeyResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/GenerateDataKeyResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/GenerateDataKeyResponse> // com.steamstreet.awskt.kms/GenerateDataKeyResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest { // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest|null[0]
+    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin/String? = ..., kotlin/Int? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/Boolean? = ...) // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.String?;kotlin.Int?;kotlin.collections.List<kotlin.String>?;kotlin.Boolean?){}[0]
+
+    final val dryRun // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.dryRun|{}dryRun[0]
+        final fun <get-dryRun>(): kotlin/Boolean? // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.dryRun.<get-dryRun>|<get-dryRun>(){}[0]
+    final val encryptionContext // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.encryptionContext|{}encryptionContext[0]
+        final fun <get-encryptionContext>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.encryptionContext.<get-encryptionContext>|<get-encryptionContext>(){}[0]
+    final val grantTokens // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.grantTokens|{}grantTokens[0]
+        final fun <get-grantTokens>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.grantTokens.<get-grantTokens>|<get-grantTokens>(){}[0]
+    final val keyId // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.keyId.<get-keyId>|<get-keyId>(){}[0]
+    final val keySpec // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.keySpec|{}keySpec[0]
+        final fun <get-keySpec>(): kotlin/String? // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.keySpec.<get-keySpec>|<get-keySpec>(){}[0]
+    final val numberOfBytes // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.numberOfBytes|{}numberOfBytes[0]
+        final fun <get-numberOfBytes>(): kotlin/Int? // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.numberOfBytes.<get-numberOfBytes>|<get-numberOfBytes>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.component3|component3(){}[0]
+    final fun component4(): kotlin/Int? // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.component4|component4(){}[0]
+    final fun component5(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.component5|component5(){}[0]
+    final fun component6(): kotlin/Boolean? // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.component6|component6(){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin/String? = ..., kotlin/Int? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/Boolean? = ...): com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.String?;kotlin.Int?;kotlin.collections.List<kotlin.String>?;kotlin.Boolean?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest> { // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest) // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.GenerateDataKeyWithoutPlaintextRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest> // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse { // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse|null[0]
+    constructor <init>(kotlin/ByteArray, kotlin/String? = ...) // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.<init>|<init>(kotlin.ByteArray;kotlin.String?){}[0]
+
+    final val ciphertextBlob // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.ciphertextBlob|{}ciphertextBlob[0]
+        final fun <get-ciphertextBlob>(): kotlin/ByteArray // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.ciphertextBlob.<get-ciphertextBlob>|<get-ciphertextBlob>(){}[0]
+    final val keyId // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String? // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.keyId.<get-keyId>|<get-keyId>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse> { // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse) // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.GenerateDataKeyWithoutPlaintextResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse> // com.steamstreet.awskt.kms/GenerateDataKeyWithoutPlaintextResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/GenerateRandomRequest { // com.steamstreet.awskt.kms/GenerateRandomRequest|null[0]
+    constructor <init>(kotlin/Int, kotlin/String? = ...) // com.steamstreet.awskt.kms/GenerateRandomRequest.<init>|<init>(kotlin.Int;kotlin.String?){}[0]
+
+    final val customKeyStoreId // com.steamstreet.awskt.kms/GenerateRandomRequest.customKeyStoreId|{}customKeyStoreId[0]
+        final fun <get-customKeyStoreId>(): kotlin/String? // com.steamstreet.awskt.kms/GenerateRandomRequest.customKeyStoreId.<get-customKeyStoreId>|<get-customKeyStoreId>(){}[0]
+    final val numberOfBytes // com.steamstreet.awskt.kms/GenerateRandomRequest.numberOfBytes|{}numberOfBytes[0]
+        final fun <get-numberOfBytes>(): kotlin/Int // com.steamstreet.awskt.kms/GenerateRandomRequest.numberOfBytes.<get-numberOfBytes>|<get-numberOfBytes>(){}[0]
+
+    final fun component1(): kotlin/Int // com.steamstreet.awskt.kms/GenerateRandomRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.kms/GenerateRandomRequest.component2|component2(){}[0]
+    final fun copy(kotlin/Int = ..., kotlin/String? = ...): com.steamstreet.awskt.kms/GenerateRandomRequest // com.steamstreet.awskt.kms/GenerateRandomRequest.copy|copy(kotlin.Int;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/GenerateRandomRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/GenerateRandomRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/GenerateRandomRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/GenerateRandomRequest> { // com.steamstreet.awskt.kms/GenerateRandomRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/GenerateRandomRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/GenerateRandomRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/GenerateRandomRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/GenerateRandomRequest // com.steamstreet.awskt.kms/GenerateRandomRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/GenerateRandomRequest) // com.steamstreet.awskt.kms/GenerateRandomRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.GenerateRandomRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/GenerateRandomRequest.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/GenerateRandomRequest> // com.steamstreet.awskt.kms/GenerateRandomRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/GenerateRandomResponse { // com.steamstreet.awskt.kms/GenerateRandomResponse|null[0]
+    constructor <init>(kotlin/ByteArray) // com.steamstreet.awskt.kms/GenerateRandomResponse.<init>|<init>(kotlin.ByteArray){}[0]
+
+    final val plaintext // com.steamstreet.awskt.kms/GenerateRandomResponse.plaintext|{}plaintext[0]
+        final fun <get-plaintext>(): kotlin/ByteArray // com.steamstreet.awskt.kms/GenerateRandomResponse.plaintext.<get-plaintext>|<get-plaintext>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/GenerateRandomResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/GenerateRandomResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/GenerateRandomResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/GenerateRandomResponse> { // com.steamstreet.awskt.kms/GenerateRandomResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/GenerateRandomResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/GenerateRandomResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/GenerateRandomResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/GenerateRandomResponse // com.steamstreet.awskt.kms/GenerateRandomResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/GenerateRandomResponse) // com.steamstreet.awskt.kms/GenerateRandomResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.GenerateRandomResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/GenerateRandomResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/GenerateRandomResponse> // com.steamstreet.awskt.kms/GenerateRandomResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/GetPublicKeyRequest { // com.steamstreet.awskt.kms/GetPublicKeyRequest|null[0]
+    constructor <init>(kotlin/String, kotlin.collections/List<kotlin/String>? = ...) // com.steamstreet.awskt.kms/GetPublicKeyRequest.<init>|<init>(kotlin.String;kotlin.collections.List<kotlin.String>?){}[0]
+
+    final val grantTokens // com.steamstreet.awskt.kms/GetPublicKeyRequest.grantTokens|{}grantTokens[0]
+        final fun <get-grantTokens>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.kms/GetPublicKeyRequest.grantTokens.<get-grantTokens>|<get-grantTokens>(){}[0]
+    final val keyId // com.steamstreet.awskt.kms/GetPublicKeyRequest.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String // com.steamstreet.awskt.kms/GetPublicKeyRequest.keyId.<get-keyId>|<get-keyId>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.kms/GetPublicKeyRequest.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.kms/GetPublicKeyRequest.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/List<kotlin/String>? = ...): com.steamstreet.awskt.kms/GetPublicKeyRequest // com.steamstreet.awskt.kms/GetPublicKeyRequest.copy|copy(kotlin.String;kotlin.collections.List<kotlin.String>?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/GetPublicKeyRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/GetPublicKeyRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/GetPublicKeyRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/GetPublicKeyRequest> { // com.steamstreet.awskt.kms/GetPublicKeyRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/GetPublicKeyRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/GetPublicKeyRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/GetPublicKeyRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/GetPublicKeyRequest // com.steamstreet.awskt.kms/GetPublicKeyRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/GetPublicKeyRequest) // com.steamstreet.awskt.kms/GetPublicKeyRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.GetPublicKeyRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/GetPublicKeyRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.kms/GetPublicKeyRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/GetPublicKeyRequest> // com.steamstreet.awskt.kms/GetPublicKeyRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/GetPublicKeyResponse { // com.steamstreet.awskt.kms/GetPublicKeyResponse|null[0]
+    constructor <init>(kotlin/ByteArray, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ...) // com.steamstreet.awskt.kms/GetPublicKeyResponse.<init>|<init>(kotlin.ByteArray;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?){}[0]
+
+    final val encryptionAlgorithms // com.steamstreet.awskt.kms/GetPublicKeyResponse.encryptionAlgorithms|{}encryptionAlgorithms[0]
+        final fun <get-encryptionAlgorithms>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.kms/GetPublicKeyResponse.encryptionAlgorithms.<get-encryptionAlgorithms>|<get-encryptionAlgorithms>(){}[0]
+    final val keyAgreementAlgorithms // com.steamstreet.awskt.kms/GetPublicKeyResponse.keyAgreementAlgorithms|{}keyAgreementAlgorithms[0]
+        final fun <get-keyAgreementAlgorithms>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.kms/GetPublicKeyResponse.keyAgreementAlgorithms.<get-keyAgreementAlgorithms>|<get-keyAgreementAlgorithms>(){}[0]
+    final val keyId // com.steamstreet.awskt.kms/GetPublicKeyResponse.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String? // com.steamstreet.awskt.kms/GetPublicKeyResponse.keyId.<get-keyId>|<get-keyId>(){}[0]
+    final val keySpec // com.steamstreet.awskt.kms/GetPublicKeyResponse.keySpec|{}keySpec[0]
+        final fun <get-keySpec>(): kotlin/String? // com.steamstreet.awskt.kms/GetPublicKeyResponse.keySpec.<get-keySpec>|<get-keySpec>(){}[0]
+    final val keyUsage // com.steamstreet.awskt.kms/GetPublicKeyResponse.keyUsage|{}keyUsage[0]
+        final fun <get-keyUsage>(): kotlin/String? // com.steamstreet.awskt.kms/GetPublicKeyResponse.keyUsage.<get-keyUsage>|<get-keyUsage>(){}[0]
+    final val publicKey // com.steamstreet.awskt.kms/GetPublicKeyResponse.publicKey|{}publicKey[0]
+        final fun <get-publicKey>(): kotlin/ByteArray // com.steamstreet.awskt.kms/GetPublicKeyResponse.publicKey.<get-publicKey>|<get-publicKey>(){}[0]
+    final val signingAlgorithms // com.steamstreet.awskt.kms/GetPublicKeyResponse.signingAlgorithms|{}signingAlgorithms[0]
+        final fun <get-signingAlgorithms>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.kms/GetPublicKeyResponse.signingAlgorithms.<get-signingAlgorithms>|<get-signingAlgorithms>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/GetPublicKeyResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/GetPublicKeyResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/GetPublicKeyResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/GetPublicKeyResponse> { // com.steamstreet.awskt.kms/GetPublicKeyResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/GetPublicKeyResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/GetPublicKeyResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/GetPublicKeyResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/GetPublicKeyResponse // com.steamstreet.awskt.kms/GetPublicKeyResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/GetPublicKeyResponse) // com.steamstreet.awskt.kms/GetPublicKeyResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.GetPublicKeyResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/GetPublicKeyResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.kms/GetPublicKeyResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/GetPublicKeyResponse> // com.steamstreet.awskt.kms/GetPublicKeyResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/IncorrectKeyException : com.steamstreet.awskt.kms/KmsException { // com.steamstreet.awskt.kms/IncorrectKeyException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kms/IncorrectKeyException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kms/InvalidCiphertextException : com.steamstreet.awskt.kms/KmsException { // com.steamstreet.awskt.kms/InvalidCiphertextException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kms/InvalidCiphertextException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kms/InvalidGrantTokenException : com.steamstreet.awskt.kms/KmsException { // com.steamstreet.awskt.kms/InvalidGrantTokenException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kms/InvalidGrantTokenException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kms/InvalidKeyUsageException : com.steamstreet.awskt.kms/KmsException { // com.steamstreet.awskt.kms/InvalidKeyUsageException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kms/InvalidKeyUsageException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kms/KeyUnavailableException : com.steamstreet.awskt.kms/KmsException { // com.steamstreet.awskt.kms/KeyUnavailableException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kms/KeyUnavailableException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kms/KmsConfig { // com.steamstreet.awskt.kms/KmsConfig|null[0]
+    constructor <init>() // com.steamstreet.awskt.kms/KmsConfig.<init>|<init>(){}[0]
+
+    final var caInfo // com.steamstreet.awskt.kms/KmsConfig.caInfo|{}caInfo[0]
+        final fun <get-caInfo>(): kotlin/String? // com.steamstreet.awskt.kms/KmsConfig.caInfo.<get-caInfo>|<get-caInfo>(){}[0]
+        final fun <set-caInfo>(kotlin/String?) // com.steamstreet.awskt.kms/KmsConfig.caInfo.<set-caInfo>|<set-caInfo>(kotlin.String?){}[0]
+    final var credentialsProvider // com.steamstreet.awskt.kms/KmsConfig.credentialsProvider|{}credentialsProvider[0]
+        final fun <get-credentialsProvider>(): com.steamstreet.awskt.core/AwsCredentialsProvider? // com.steamstreet.awskt.kms/KmsConfig.credentialsProvider.<get-credentialsProvider>|<get-credentialsProvider>(){}[0]
+        final fun <set-credentialsProvider>(com.steamstreet.awskt.core/AwsCredentialsProvider?) // com.steamstreet.awskt.kms/KmsConfig.credentialsProvider.<set-credentialsProvider>|<set-credentialsProvider>(com.steamstreet.awskt.core.AwsCredentialsProvider?){}[0]
+    final var endpointUrl // com.steamstreet.awskt.kms/KmsConfig.endpointUrl|{}endpointUrl[0]
+        final fun <get-endpointUrl>(): kotlin/String? // com.steamstreet.awskt.kms/KmsConfig.endpointUrl.<get-endpointUrl>|<get-endpointUrl>(){}[0]
+        final fun <set-endpointUrl>(kotlin/String?) // com.steamstreet.awskt.kms/KmsConfig.endpointUrl.<set-endpointUrl>|<set-endpointUrl>(kotlin.String?){}[0]
+    final var httpClient // com.steamstreet.awskt.kms/KmsConfig.httpClient|{}httpClient[0]
+        final fun <get-httpClient>(): io.ktor.client/HttpClient? // com.steamstreet.awskt.kms/KmsConfig.httpClient.<get-httpClient>|<get-httpClient>(){}[0]
+        final fun <set-httpClient>(io.ktor.client/HttpClient?) // com.steamstreet.awskt.kms/KmsConfig.httpClient.<set-httpClient>|<set-httpClient>(io.ktor.client.HttpClient?){}[0]
+    final var httpTimeouts // com.steamstreet.awskt.kms/KmsConfig.httpTimeouts|{}httpTimeouts[0]
+        final fun <get-httpTimeouts>(): com.steamstreet.awskt.core/AwsHttpTimeouts // com.steamstreet.awskt.kms/KmsConfig.httpTimeouts.<get-httpTimeouts>|<get-httpTimeouts>(){}[0]
+        final fun <set-httpTimeouts>(com.steamstreet.awskt.core/AwsHttpTimeouts) // com.steamstreet.awskt.kms/KmsConfig.httpTimeouts.<set-httpTimeouts>|<set-httpTimeouts>(com.steamstreet.awskt.core.AwsHttpTimeouts){}[0]
+    final var observer // com.steamstreet.awskt.kms/KmsConfig.observer|{}observer[0]
+        final fun <get-observer>(): com.steamstreet.awskt.core/AwsCallObserver? // com.steamstreet.awskt.kms/KmsConfig.observer.<get-observer>|<get-observer>(){}[0]
+        final fun <set-observer>(com.steamstreet.awskt.core/AwsCallObserver?) // com.steamstreet.awskt.kms/KmsConfig.observer.<set-observer>|<set-observer>(com.steamstreet.awskt.core.AwsCallObserver?){}[0]
+    final var region // com.steamstreet.awskt.kms/KmsConfig.region|{}region[0]
+        final fun <get-region>(): kotlin/String? // com.steamstreet.awskt.kms/KmsConfig.region.<get-region>|<get-region>(){}[0]
+        final fun <set-region>(kotlin/String?) // com.steamstreet.awskt.kms/KmsConfig.region.<set-region>|<set-region>(kotlin.String?){}[0]
+    final var retryConfig // com.steamstreet.awskt.kms/KmsConfig.retryConfig|{}retryConfig[0]
+        final fun <get-retryConfig>(): com.steamstreet.awskt.core/RetryConfig // com.steamstreet.awskt.kms/KmsConfig.retryConfig.<get-retryConfig>|<get-retryConfig>(){}[0]
+        final fun <set-retryConfig>(com.steamstreet.awskt.core/RetryConfig) // com.steamstreet.awskt.kms/KmsConfig.retryConfig.<set-retryConfig>|<set-retryConfig>(com.steamstreet.awskt.core.RetryConfig){}[0]
+}
+
+final class com.steamstreet.awskt.kms/KmsInternalException : com.steamstreet.awskt.kms/KmsException { // com.steamstreet.awskt.kms/KmsInternalException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kms/KmsInternalException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kms/KmsInvalidSignatureException : com.steamstreet.awskt.kms/KmsException { // com.steamstreet.awskt.kms/KmsInvalidSignatureException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kms/KmsInvalidSignatureException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kms/KmsInvalidStateException : com.steamstreet.awskt.kms/KmsException { // com.steamstreet.awskt.kms/KmsInvalidStateException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kms/KmsInvalidStateException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kms/KmsUnsupportedOperationException : com.steamstreet.awskt.kms/KmsException { // com.steamstreet.awskt.kms/KmsUnsupportedOperationException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kms/KmsUnsupportedOperationException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kms/LimitExceededException : com.steamstreet.awskt.kms/KmsException { // com.steamstreet.awskt.kms/LimitExceededException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kms/LimitExceededException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kms/NotFoundException : com.steamstreet.awskt.kms/KmsException { // com.steamstreet.awskt.kms/NotFoundException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kms/NotFoundException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kms/ReEncryptRequest { // com.steamstreet.awskt.kms/ReEncryptRequest|null[0]
+    constructor <init>(kotlin/ByteArray, kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/Boolean? = ...) // com.steamstreet.awskt.kms/ReEncryptRequest.<init>|<init>(kotlin.ByteArray;kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.String?;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlin.Boolean?){}[0]
+
+    final val ciphertextBlob // com.steamstreet.awskt.kms/ReEncryptRequest.ciphertextBlob|{}ciphertextBlob[0]
+        final fun <get-ciphertextBlob>(): kotlin/ByteArray // com.steamstreet.awskt.kms/ReEncryptRequest.ciphertextBlob.<get-ciphertextBlob>|<get-ciphertextBlob>(){}[0]
+    final val destinationEncryptionAlgorithm // com.steamstreet.awskt.kms/ReEncryptRequest.destinationEncryptionAlgorithm|{}destinationEncryptionAlgorithm[0]
+        final fun <get-destinationEncryptionAlgorithm>(): kotlin/String? // com.steamstreet.awskt.kms/ReEncryptRequest.destinationEncryptionAlgorithm.<get-destinationEncryptionAlgorithm>|<get-destinationEncryptionAlgorithm>(){}[0]
+    final val destinationEncryptionContext // com.steamstreet.awskt.kms/ReEncryptRequest.destinationEncryptionContext|{}destinationEncryptionContext[0]
+        final fun <get-destinationEncryptionContext>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.kms/ReEncryptRequest.destinationEncryptionContext.<get-destinationEncryptionContext>|<get-destinationEncryptionContext>(){}[0]
+    final val destinationKeyId // com.steamstreet.awskt.kms/ReEncryptRequest.destinationKeyId|{}destinationKeyId[0]
+        final fun <get-destinationKeyId>(): kotlin/String // com.steamstreet.awskt.kms/ReEncryptRequest.destinationKeyId.<get-destinationKeyId>|<get-destinationKeyId>(){}[0]
+    final val dryRun // com.steamstreet.awskt.kms/ReEncryptRequest.dryRun|{}dryRun[0]
+        final fun <get-dryRun>(): kotlin/Boolean? // com.steamstreet.awskt.kms/ReEncryptRequest.dryRun.<get-dryRun>|<get-dryRun>(){}[0]
+    final val grantTokens // com.steamstreet.awskt.kms/ReEncryptRequest.grantTokens|{}grantTokens[0]
+        final fun <get-grantTokens>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.kms/ReEncryptRequest.grantTokens.<get-grantTokens>|<get-grantTokens>(){}[0]
+    final val sourceEncryptionAlgorithm // com.steamstreet.awskt.kms/ReEncryptRequest.sourceEncryptionAlgorithm|{}sourceEncryptionAlgorithm[0]
+        final fun <get-sourceEncryptionAlgorithm>(): kotlin/String? // com.steamstreet.awskt.kms/ReEncryptRequest.sourceEncryptionAlgorithm.<get-sourceEncryptionAlgorithm>|<get-sourceEncryptionAlgorithm>(){}[0]
+    final val sourceEncryptionContext // com.steamstreet.awskt.kms/ReEncryptRequest.sourceEncryptionContext|{}sourceEncryptionContext[0]
+        final fun <get-sourceEncryptionContext>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.kms/ReEncryptRequest.sourceEncryptionContext.<get-sourceEncryptionContext>|<get-sourceEncryptionContext>(){}[0]
+    final val sourceKeyId // com.steamstreet.awskt.kms/ReEncryptRequest.sourceKeyId|{}sourceKeyId[0]
+        final fun <get-sourceKeyId>(): kotlin/String? // com.steamstreet.awskt.kms/ReEncryptRequest.sourceKeyId.<get-sourceKeyId>|<get-sourceKeyId>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/ReEncryptRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/ReEncryptRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/ReEncryptRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/ReEncryptRequest> { // com.steamstreet.awskt.kms/ReEncryptRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/ReEncryptRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/ReEncryptRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/ReEncryptRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/ReEncryptRequest // com.steamstreet.awskt.kms/ReEncryptRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/ReEncryptRequest) // com.steamstreet.awskt.kms/ReEncryptRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.ReEncryptRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/ReEncryptRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.kms/ReEncryptRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/ReEncryptRequest> // com.steamstreet.awskt.kms/ReEncryptRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/ReEncryptResponse { // com.steamstreet.awskt.kms/ReEncryptResponse|null[0]
+    constructor <init>(kotlin/ByteArray, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.kms/ReEncryptResponse.<init>|<init>(kotlin.ByteArray;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val ciphertextBlob // com.steamstreet.awskt.kms/ReEncryptResponse.ciphertextBlob|{}ciphertextBlob[0]
+        final fun <get-ciphertextBlob>(): kotlin/ByteArray // com.steamstreet.awskt.kms/ReEncryptResponse.ciphertextBlob.<get-ciphertextBlob>|<get-ciphertextBlob>(){}[0]
+    final val destinationEncryptionAlgorithm // com.steamstreet.awskt.kms/ReEncryptResponse.destinationEncryptionAlgorithm|{}destinationEncryptionAlgorithm[0]
+        final fun <get-destinationEncryptionAlgorithm>(): kotlin/String? // com.steamstreet.awskt.kms/ReEncryptResponse.destinationEncryptionAlgorithm.<get-destinationEncryptionAlgorithm>|<get-destinationEncryptionAlgorithm>(){}[0]
+    final val keyId // com.steamstreet.awskt.kms/ReEncryptResponse.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String? // com.steamstreet.awskt.kms/ReEncryptResponse.keyId.<get-keyId>|<get-keyId>(){}[0]
+    final val sourceEncryptionAlgorithm // com.steamstreet.awskt.kms/ReEncryptResponse.sourceEncryptionAlgorithm|{}sourceEncryptionAlgorithm[0]
+        final fun <get-sourceEncryptionAlgorithm>(): kotlin/String? // com.steamstreet.awskt.kms/ReEncryptResponse.sourceEncryptionAlgorithm.<get-sourceEncryptionAlgorithm>|<get-sourceEncryptionAlgorithm>(){}[0]
+    final val sourceKeyId // com.steamstreet.awskt.kms/ReEncryptResponse.sourceKeyId|{}sourceKeyId[0]
+        final fun <get-sourceKeyId>(): kotlin/String? // com.steamstreet.awskt.kms/ReEncryptResponse.sourceKeyId.<get-sourceKeyId>|<get-sourceKeyId>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/ReEncryptResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/ReEncryptResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/ReEncryptResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/ReEncryptResponse> { // com.steamstreet.awskt.kms/ReEncryptResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/ReEncryptResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/ReEncryptResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/ReEncryptResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/ReEncryptResponse // com.steamstreet.awskt.kms/ReEncryptResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/ReEncryptResponse) // com.steamstreet.awskt.kms/ReEncryptResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.ReEncryptResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/ReEncryptResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/ReEncryptResponse> // com.steamstreet.awskt.kms/ReEncryptResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/SignRequest { // com.steamstreet.awskt.kms/SignRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/ByteArray, kotlin/String, kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/Boolean? = ...) // com.steamstreet.awskt.kms/SignRequest.<init>|<init>(kotlin.String;kotlin.ByteArray;kotlin.String;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlin.Boolean?){}[0]
+
+    final val dryRun // com.steamstreet.awskt.kms/SignRequest.dryRun|{}dryRun[0]
+        final fun <get-dryRun>(): kotlin/Boolean? // com.steamstreet.awskt.kms/SignRequest.dryRun.<get-dryRun>|<get-dryRun>(){}[0]
+    final val grantTokens // com.steamstreet.awskt.kms/SignRequest.grantTokens|{}grantTokens[0]
+        final fun <get-grantTokens>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.kms/SignRequest.grantTokens.<get-grantTokens>|<get-grantTokens>(){}[0]
+    final val keyId // com.steamstreet.awskt.kms/SignRequest.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String // com.steamstreet.awskt.kms/SignRequest.keyId.<get-keyId>|<get-keyId>(){}[0]
+    final val message // com.steamstreet.awskt.kms/SignRequest.message|{}message[0]
+        final fun <get-message>(): kotlin/ByteArray // com.steamstreet.awskt.kms/SignRequest.message.<get-message>|<get-message>(){}[0]
+    final val messageType // com.steamstreet.awskt.kms/SignRequest.messageType|{}messageType[0]
+        final fun <get-messageType>(): kotlin/String? // com.steamstreet.awskt.kms/SignRequest.messageType.<get-messageType>|<get-messageType>(){}[0]
+    final val signingAlgorithm // com.steamstreet.awskt.kms/SignRequest.signingAlgorithm|{}signingAlgorithm[0]
+        final fun <get-signingAlgorithm>(): kotlin/String // com.steamstreet.awskt.kms/SignRequest.signingAlgorithm.<get-signingAlgorithm>|<get-signingAlgorithm>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/SignRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/SignRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/SignRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/SignRequest> { // com.steamstreet.awskt.kms/SignRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/SignRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/SignRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/SignRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/SignRequest // com.steamstreet.awskt.kms/SignRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/SignRequest) // com.steamstreet.awskt.kms/SignRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.SignRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/SignRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.kms/SignRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/SignRequest> // com.steamstreet.awskt.kms/SignRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/SignResponse { // com.steamstreet.awskt.kms/SignResponse|null[0]
+    constructor <init>(kotlin/ByteArray, kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.kms/SignResponse.<init>|<init>(kotlin.ByteArray;kotlin.String?;kotlin.String?){}[0]
+
+    final val keyId // com.steamstreet.awskt.kms/SignResponse.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String? // com.steamstreet.awskt.kms/SignResponse.keyId.<get-keyId>|<get-keyId>(){}[0]
+    final val signature // com.steamstreet.awskt.kms/SignResponse.signature|{}signature[0]
+        final fun <get-signature>(): kotlin/ByteArray // com.steamstreet.awskt.kms/SignResponse.signature.<get-signature>|<get-signature>(){}[0]
+    final val signingAlgorithm // com.steamstreet.awskt.kms/SignResponse.signingAlgorithm|{}signingAlgorithm[0]
+        final fun <get-signingAlgorithm>(): kotlin/String? // com.steamstreet.awskt.kms/SignResponse.signingAlgorithm.<get-signingAlgorithm>|<get-signingAlgorithm>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/SignResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/SignResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/SignResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/SignResponse> { // com.steamstreet.awskt.kms/SignResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/SignResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/SignResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/SignResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/SignResponse // com.steamstreet.awskt.kms/SignResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/SignResponse) // com.steamstreet.awskt.kms/SignResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.SignResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/SignResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/SignResponse> // com.steamstreet.awskt.kms/SignResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/VerifyRequest { // com.steamstreet.awskt.kms/VerifyRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/ByteArray, kotlin/ByteArray, kotlin/String, kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/Boolean? = ...) // com.steamstreet.awskt.kms/VerifyRequest.<init>|<init>(kotlin.String;kotlin.ByteArray;kotlin.ByteArray;kotlin.String;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlin.Boolean?){}[0]
+
+    final val dryRun // com.steamstreet.awskt.kms/VerifyRequest.dryRun|{}dryRun[0]
+        final fun <get-dryRun>(): kotlin/Boolean? // com.steamstreet.awskt.kms/VerifyRequest.dryRun.<get-dryRun>|<get-dryRun>(){}[0]
+    final val grantTokens // com.steamstreet.awskt.kms/VerifyRequest.grantTokens|{}grantTokens[0]
+        final fun <get-grantTokens>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.kms/VerifyRequest.grantTokens.<get-grantTokens>|<get-grantTokens>(){}[0]
+    final val keyId // com.steamstreet.awskt.kms/VerifyRequest.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String // com.steamstreet.awskt.kms/VerifyRequest.keyId.<get-keyId>|<get-keyId>(){}[0]
+    final val message // com.steamstreet.awskt.kms/VerifyRequest.message|{}message[0]
+        final fun <get-message>(): kotlin/ByteArray // com.steamstreet.awskt.kms/VerifyRequest.message.<get-message>|<get-message>(){}[0]
+    final val messageType // com.steamstreet.awskt.kms/VerifyRequest.messageType|{}messageType[0]
+        final fun <get-messageType>(): kotlin/String? // com.steamstreet.awskt.kms/VerifyRequest.messageType.<get-messageType>|<get-messageType>(){}[0]
+    final val signature // com.steamstreet.awskt.kms/VerifyRequest.signature|{}signature[0]
+        final fun <get-signature>(): kotlin/ByteArray // com.steamstreet.awskt.kms/VerifyRequest.signature.<get-signature>|<get-signature>(){}[0]
+    final val signingAlgorithm // com.steamstreet.awskt.kms/VerifyRequest.signingAlgorithm|{}signingAlgorithm[0]
+        final fun <get-signingAlgorithm>(): kotlin/String // com.steamstreet.awskt.kms/VerifyRequest.signingAlgorithm.<get-signingAlgorithm>|<get-signingAlgorithm>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/VerifyRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/VerifyRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/VerifyRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/VerifyRequest> { // com.steamstreet.awskt.kms/VerifyRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/VerifyRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/VerifyRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/VerifyRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/VerifyRequest // com.steamstreet.awskt.kms/VerifyRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/VerifyRequest) // com.steamstreet.awskt.kms/VerifyRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.VerifyRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/VerifyRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.kms/VerifyRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/VerifyRequest> // com.steamstreet.awskt.kms/VerifyRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kms/VerifyResponse { // com.steamstreet.awskt.kms/VerifyResponse|null[0]
+    constructor <init>(kotlin/Boolean = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.kms/VerifyResponse.<init>|<init>(kotlin.Boolean;kotlin.String?;kotlin.String?){}[0]
+
+    final val keyId // com.steamstreet.awskt.kms/VerifyResponse.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String? // com.steamstreet.awskt.kms/VerifyResponse.keyId.<get-keyId>|<get-keyId>(){}[0]
+    final val signatureValid // com.steamstreet.awskt.kms/VerifyResponse.signatureValid|{}signatureValid[0]
+        final fun <get-signatureValid>(): kotlin/Boolean // com.steamstreet.awskt.kms/VerifyResponse.signatureValid.<get-signatureValid>|<get-signatureValid>(){}[0]
+    final val signingAlgorithm // com.steamstreet.awskt.kms/VerifyResponse.signingAlgorithm|{}signingAlgorithm[0]
+        final fun <get-signingAlgorithm>(): kotlin/String? // com.steamstreet.awskt.kms/VerifyResponse.signingAlgorithm.<get-signingAlgorithm>|<get-signingAlgorithm>(){}[0]
+
+    final fun component1(): kotlin/Boolean // com.steamstreet.awskt.kms/VerifyResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.kms/VerifyResponse.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.kms/VerifyResponse.component3|component3(){}[0]
+    final fun copy(kotlin/Boolean = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.kms/VerifyResponse // com.steamstreet.awskt.kms/VerifyResponse.copy|copy(kotlin.Boolean;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kms/VerifyResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kms/VerifyResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kms/VerifyResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kms/VerifyResponse> { // com.steamstreet.awskt.kms/VerifyResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kms/VerifyResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kms/VerifyResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kms/VerifyResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kms/VerifyResponse // com.steamstreet.awskt.kms/VerifyResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kms/VerifyResponse) // com.steamstreet.awskt.kms/VerifyResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kms.VerifyResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kms/VerifyResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kms/VerifyResponse> // com.steamstreet.awskt.kms/VerifyResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+open class com.steamstreet.awskt.kms/KmsException : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.kms/KmsException|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kms/KmsException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final object com.steamstreet.awskt.kms/DataKeySpec { // com.steamstreet.awskt.kms/DataKeySpec|null[0]
+    final const val AES_128 // com.steamstreet.awskt.kms/DataKeySpec.AES_128|{}AES_128[0]
+        final fun <get-AES_128>(): kotlin/String // com.steamstreet.awskt.kms/DataKeySpec.AES_128.<get-AES_128>|<get-AES_128>(){}[0]
+    final const val AES_256 // com.steamstreet.awskt.kms/DataKeySpec.AES_256|{}AES_256[0]
+        final fun <get-AES_256>(): kotlin/String // com.steamstreet.awskt.kms/DataKeySpec.AES_256.<get-AES_256>|<get-AES_256>(){}[0]
+}
+
+final object com.steamstreet.awskt.kms/EncryptionAlgorithm { // com.steamstreet.awskt.kms/EncryptionAlgorithm|null[0]
+    final const val RSAES_OAEP_SHA_1 // com.steamstreet.awskt.kms/EncryptionAlgorithm.RSAES_OAEP_SHA_1|{}RSAES_OAEP_SHA_1[0]
+        final fun <get-RSAES_OAEP_SHA_1>(): kotlin/String // com.steamstreet.awskt.kms/EncryptionAlgorithm.RSAES_OAEP_SHA_1.<get-RSAES_OAEP_SHA_1>|<get-RSAES_OAEP_SHA_1>(){}[0]
+    final const val RSAES_OAEP_SHA_256 // com.steamstreet.awskt.kms/EncryptionAlgorithm.RSAES_OAEP_SHA_256|{}RSAES_OAEP_SHA_256[0]
+        final fun <get-RSAES_OAEP_SHA_256>(): kotlin/String // com.steamstreet.awskt.kms/EncryptionAlgorithm.RSAES_OAEP_SHA_256.<get-RSAES_OAEP_SHA_256>|<get-RSAES_OAEP_SHA_256>(){}[0]
+    final const val SM2PKE // com.steamstreet.awskt.kms/EncryptionAlgorithm.SM2PKE|{}SM2PKE[0]
+        final fun <get-SM2PKE>(): kotlin/String // com.steamstreet.awskt.kms/EncryptionAlgorithm.SM2PKE.<get-SM2PKE>|<get-SM2PKE>(){}[0]
+    final const val SYMMETRIC_DEFAULT // com.steamstreet.awskt.kms/EncryptionAlgorithm.SYMMETRIC_DEFAULT|{}SYMMETRIC_DEFAULT[0]
+        final fun <get-SYMMETRIC_DEFAULT>(): kotlin/String // com.steamstreet.awskt.kms/EncryptionAlgorithm.SYMMETRIC_DEFAULT.<get-SYMMETRIC_DEFAULT>|<get-SYMMETRIC_DEFAULT>(){}[0]
+}
+
+final object com.steamstreet.awskt.kms/KeySpec { // com.steamstreet.awskt.kms/KeySpec|null[0]
+    final const val ECC_NIST_P256 // com.steamstreet.awskt.kms/KeySpec.ECC_NIST_P256|{}ECC_NIST_P256[0]
+        final fun <get-ECC_NIST_P256>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.ECC_NIST_P256.<get-ECC_NIST_P256>|<get-ECC_NIST_P256>(){}[0]
+    final const val ECC_NIST_P384 // com.steamstreet.awskt.kms/KeySpec.ECC_NIST_P384|{}ECC_NIST_P384[0]
+        final fun <get-ECC_NIST_P384>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.ECC_NIST_P384.<get-ECC_NIST_P384>|<get-ECC_NIST_P384>(){}[0]
+    final const val ECC_NIST_P521 // com.steamstreet.awskt.kms/KeySpec.ECC_NIST_P521|{}ECC_NIST_P521[0]
+        final fun <get-ECC_NIST_P521>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.ECC_NIST_P521.<get-ECC_NIST_P521>|<get-ECC_NIST_P521>(){}[0]
+    final const val ECC_SECG_P256K1 // com.steamstreet.awskt.kms/KeySpec.ECC_SECG_P256K1|{}ECC_SECG_P256K1[0]
+        final fun <get-ECC_SECG_P256K1>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.ECC_SECG_P256K1.<get-ECC_SECG_P256K1>|<get-ECC_SECG_P256K1>(){}[0]
+    final const val HMAC_224 // com.steamstreet.awskt.kms/KeySpec.HMAC_224|{}HMAC_224[0]
+        final fun <get-HMAC_224>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.HMAC_224.<get-HMAC_224>|<get-HMAC_224>(){}[0]
+    final const val HMAC_256 // com.steamstreet.awskt.kms/KeySpec.HMAC_256|{}HMAC_256[0]
+        final fun <get-HMAC_256>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.HMAC_256.<get-HMAC_256>|<get-HMAC_256>(){}[0]
+    final const val HMAC_384 // com.steamstreet.awskt.kms/KeySpec.HMAC_384|{}HMAC_384[0]
+        final fun <get-HMAC_384>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.HMAC_384.<get-HMAC_384>|<get-HMAC_384>(){}[0]
+    final const val HMAC_512 // com.steamstreet.awskt.kms/KeySpec.HMAC_512|{}HMAC_512[0]
+        final fun <get-HMAC_512>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.HMAC_512.<get-HMAC_512>|<get-HMAC_512>(){}[0]
+    final const val ML_DSA_44 // com.steamstreet.awskt.kms/KeySpec.ML_DSA_44|{}ML_DSA_44[0]
+        final fun <get-ML_DSA_44>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.ML_DSA_44.<get-ML_DSA_44>|<get-ML_DSA_44>(){}[0]
+    final const val ML_DSA_65 // com.steamstreet.awskt.kms/KeySpec.ML_DSA_65|{}ML_DSA_65[0]
+        final fun <get-ML_DSA_65>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.ML_DSA_65.<get-ML_DSA_65>|<get-ML_DSA_65>(){}[0]
+    final const val ML_DSA_87 // com.steamstreet.awskt.kms/KeySpec.ML_DSA_87|{}ML_DSA_87[0]
+        final fun <get-ML_DSA_87>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.ML_DSA_87.<get-ML_DSA_87>|<get-ML_DSA_87>(){}[0]
+    final const val RSA_2048 // com.steamstreet.awskt.kms/KeySpec.RSA_2048|{}RSA_2048[0]
+        final fun <get-RSA_2048>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.RSA_2048.<get-RSA_2048>|<get-RSA_2048>(){}[0]
+    final const val RSA_3072 // com.steamstreet.awskt.kms/KeySpec.RSA_3072|{}RSA_3072[0]
+        final fun <get-RSA_3072>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.RSA_3072.<get-RSA_3072>|<get-RSA_3072>(){}[0]
+    final const val RSA_4096 // com.steamstreet.awskt.kms/KeySpec.RSA_4096|{}RSA_4096[0]
+        final fun <get-RSA_4096>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.RSA_4096.<get-RSA_4096>|<get-RSA_4096>(){}[0]
+    final const val SM2 // com.steamstreet.awskt.kms/KeySpec.SM2|{}SM2[0]
+        final fun <get-SM2>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.SM2.<get-SM2>|<get-SM2>(){}[0]
+    final const val SYMMETRIC_DEFAULT // com.steamstreet.awskt.kms/KeySpec.SYMMETRIC_DEFAULT|{}SYMMETRIC_DEFAULT[0]
+        final fun <get-SYMMETRIC_DEFAULT>(): kotlin/String // com.steamstreet.awskt.kms/KeySpec.SYMMETRIC_DEFAULT.<get-SYMMETRIC_DEFAULT>|<get-SYMMETRIC_DEFAULT>(){}[0]
+}
+
+final object com.steamstreet.awskt.kms/KeyUsage { // com.steamstreet.awskt.kms/KeyUsage|null[0]
+    final const val ENCRYPT_DECRYPT // com.steamstreet.awskt.kms/KeyUsage.ENCRYPT_DECRYPT|{}ENCRYPT_DECRYPT[0]
+        final fun <get-ENCRYPT_DECRYPT>(): kotlin/String // com.steamstreet.awskt.kms/KeyUsage.ENCRYPT_DECRYPT.<get-ENCRYPT_DECRYPT>|<get-ENCRYPT_DECRYPT>(){}[0]
+    final const val GENERATE_VERIFY_MAC // com.steamstreet.awskt.kms/KeyUsage.GENERATE_VERIFY_MAC|{}GENERATE_VERIFY_MAC[0]
+        final fun <get-GENERATE_VERIFY_MAC>(): kotlin/String // com.steamstreet.awskt.kms/KeyUsage.GENERATE_VERIFY_MAC.<get-GENERATE_VERIFY_MAC>|<get-GENERATE_VERIFY_MAC>(){}[0]
+    final const val KEY_AGREEMENT // com.steamstreet.awskt.kms/KeyUsage.KEY_AGREEMENT|{}KEY_AGREEMENT[0]
+        final fun <get-KEY_AGREEMENT>(): kotlin/String // com.steamstreet.awskt.kms/KeyUsage.KEY_AGREEMENT.<get-KEY_AGREEMENT>|<get-KEY_AGREEMENT>(){}[0]
+    final const val SIGN_VERIFY // com.steamstreet.awskt.kms/KeyUsage.SIGN_VERIFY|{}SIGN_VERIFY[0]
+        final fun <get-SIGN_VERIFY>(): kotlin/String // com.steamstreet.awskt.kms/KeyUsage.SIGN_VERIFY.<get-SIGN_VERIFY>|<get-SIGN_VERIFY>(){}[0]
+}
+
+final object com.steamstreet.awskt.kms/MessageType { // com.steamstreet.awskt.kms/MessageType|null[0]
+    final const val DIGEST // com.steamstreet.awskt.kms/MessageType.DIGEST|{}DIGEST[0]
+        final fun <get-DIGEST>(): kotlin/String // com.steamstreet.awskt.kms/MessageType.DIGEST.<get-DIGEST>|<get-DIGEST>(){}[0]
+    final const val RAW // com.steamstreet.awskt.kms/MessageType.RAW|{}RAW[0]
+        final fun <get-RAW>(): kotlin/String // com.steamstreet.awskt.kms/MessageType.RAW.<get-RAW>|<get-RAW>(){}[0]
+}
+
+final object com.steamstreet.awskt.kms/SigningAlgorithm { // com.steamstreet.awskt.kms/SigningAlgorithm|null[0]
+    final const val ECDSA_SHA_256 // com.steamstreet.awskt.kms/SigningAlgorithm.ECDSA_SHA_256|{}ECDSA_SHA_256[0]
+        final fun <get-ECDSA_SHA_256>(): kotlin/String // com.steamstreet.awskt.kms/SigningAlgorithm.ECDSA_SHA_256.<get-ECDSA_SHA_256>|<get-ECDSA_SHA_256>(){}[0]
+    final const val ECDSA_SHA_384 // com.steamstreet.awskt.kms/SigningAlgorithm.ECDSA_SHA_384|{}ECDSA_SHA_384[0]
+        final fun <get-ECDSA_SHA_384>(): kotlin/String // com.steamstreet.awskt.kms/SigningAlgorithm.ECDSA_SHA_384.<get-ECDSA_SHA_384>|<get-ECDSA_SHA_384>(){}[0]
+    final const val ECDSA_SHA_512 // com.steamstreet.awskt.kms/SigningAlgorithm.ECDSA_SHA_512|{}ECDSA_SHA_512[0]
+        final fun <get-ECDSA_SHA_512>(): kotlin/String // com.steamstreet.awskt.kms/SigningAlgorithm.ECDSA_SHA_512.<get-ECDSA_SHA_512>|<get-ECDSA_SHA_512>(){}[0]
+    final const val RSASSA_PKCS1_V1_5_SHA_256 // com.steamstreet.awskt.kms/SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_256|{}RSASSA_PKCS1_V1_5_SHA_256[0]
+        final fun <get-RSASSA_PKCS1_V1_5_SHA_256>(): kotlin/String // com.steamstreet.awskt.kms/SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_256.<get-RSASSA_PKCS1_V1_5_SHA_256>|<get-RSASSA_PKCS1_V1_5_SHA_256>(){}[0]
+    final const val RSASSA_PKCS1_V1_5_SHA_384 // com.steamstreet.awskt.kms/SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_384|{}RSASSA_PKCS1_V1_5_SHA_384[0]
+        final fun <get-RSASSA_PKCS1_V1_5_SHA_384>(): kotlin/String // com.steamstreet.awskt.kms/SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_384.<get-RSASSA_PKCS1_V1_5_SHA_384>|<get-RSASSA_PKCS1_V1_5_SHA_384>(){}[0]
+    final const val RSASSA_PKCS1_V1_5_SHA_512 // com.steamstreet.awskt.kms/SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_512|{}RSASSA_PKCS1_V1_5_SHA_512[0]
+        final fun <get-RSASSA_PKCS1_V1_5_SHA_512>(): kotlin/String // com.steamstreet.awskt.kms/SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_512.<get-RSASSA_PKCS1_V1_5_SHA_512>|<get-RSASSA_PKCS1_V1_5_SHA_512>(){}[0]
+    final const val RSASSA_PSS_SHA_256 // com.steamstreet.awskt.kms/SigningAlgorithm.RSASSA_PSS_SHA_256|{}RSASSA_PSS_SHA_256[0]
+        final fun <get-RSASSA_PSS_SHA_256>(): kotlin/String // com.steamstreet.awskt.kms/SigningAlgorithm.RSASSA_PSS_SHA_256.<get-RSASSA_PSS_SHA_256>|<get-RSASSA_PSS_SHA_256>(){}[0]
+    final const val RSASSA_PSS_SHA_384 // com.steamstreet.awskt.kms/SigningAlgorithm.RSASSA_PSS_SHA_384|{}RSASSA_PSS_SHA_384[0]
+        final fun <get-RSASSA_PSS_SHA_384>(): kotlin/String // com.steamstreet.awskt.kms/SigningAlgorithm.RSASSA_PSS_SHA_384.<get-RSASSA_PSS_SHA_384>|<get-RSASSA_PSS_SHA_384>(){}[0]
+    final const val RSASSA_PSS_SHA_512 // com.steamstreet.awskt.kms/SigningAlgorithm.RSASSA_PSS_SHA_512|{}RSASSA_PSS_SHA_512[0]
+        final fun <get-RSASSA_PSS_SHA_512>(): kotlin/String // com.steamstreet.awskt.kms/SigningAlgorithm.RSASSA_PSS_SHA_512.<get-RSASSA_PSS_SHA_512>|<get-RSASSA_PSS_SHA_512>(){}[0]
+    final const val SM2DSA // com.steamstreet.awskt.kms/SigningAlgorithm.SM2DSA|{}SM2DSA[0]
+        final fun <get-SM2DSA>(): kotlin/String // com.steamstreet.awskt.kms/SigningAlgorithm.SM2DSA.<get-SM2DSA>|<get-SM2DSA>(){}[0]
+}
+
+final val com.steamstreet.awskt.kms/KMS_PROTOCOL // com.steamstreet.awskt.kms/KMS_PROTOCOL|{}KMS_PROTOCOL[0]
+    final fun <get-KMS_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.kms/KMS_PROTOCOL.<get-KMS_PROTOCOL>|<get-KMS_PROTOCOL>(){}[0]
+
+final fun com.steamstreet.awskt.kms/Kms(kotlin/Function1<com.steamstreet.awskt.kms/KmsConfig, kotlin/Unit> = ...): com.steamstreet.awskt.kms/Kms // com.steamstreet.awskt.kms/Kms|Kms(kotlin.Function1<com.steamstreet.awskt.kms.KmsConfig,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.awskt.kms/Kms).com.steamstreet.awskt.kms/decrypt(kotlin/String, kotlin/ByteArray, kotlin.collections/Map<kotlin/String, kotlin/String>? = ...): kotlin/ByteArray // com.steamstreet.awskt.kms/decrypt|decrypt@com.steamstreet.awskt.kms.Kms(kotlin.String;kotlin.ByteArray;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
+final suspend fun (com.steamstreet.awskt.kms/Kms).com.steamstreet.awskt.kms/encrypt(kotlin/String, kotlin/ByteArray, kotlin.collections/Map<kotlin/String, kotlin/String>? = ...): kotlin/ByteArray // com.steamstreet.awskt.kms/encrypt|encrypt@com.steamstreet.awskt.kms.Kms(kotlin.String;kotlin.ByteArray;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
+final suspend fun (com.steamstreet.awskt.kms/Kms).com.steamstreet.awskt.kms/getPublicKey(kotlin/String): kotlin/ByteArray // com.steamstreet.awskt.kms/getPublicKey|getPublicKey@com.steamstreet.awskt.kms.Kms(kotlin.String){}[0]
+final suspend fun (com.steamstreet.awskt.kms/Kms).com.steamstreet.awskt.kms/verifySignature(com.steamstreet.awskt.kms/VerifyRequest): kotlin/Boolean // com.steamstreet.awskt.kms/verifySignature|verifySignature@com.steamstreet.awskt.kms.Kms(com.steamstreet.awskt.kms.VerifyRequest){}[0]

@@ -75,6 +75,41 @@ public object DataKeySpec {
 }
 
 /**
+ * Documented values for a **KMS key's** `KeySpec`, as reported by [GetPublicKeyResponse.keySpec].
+ *
+ * Distinct from [DataKeySpec], which names the shape of a *data key* being minted. Only the
+ * asymmetric specs can answer `GetPublicKey`; the symmetric and HMAC ones are listed because the
+ * field can carry them elsewhere and a caller comparing against the wrong object should not have to
+ * guess why nothing matches.
+ */
+public object KeySpec {
+    public const val RSA_2048: String = "RSA_2048"
+    public const val RSA_3072: String = "RSA_3072"
+    public const val RSA_4096: String = "RSA_4096"
+    public const val ECC_NIST_P256: String = "ECC_NIST_P256"
+    public const val ECC_NIST_P384: String = "ECC_NIST_P384"
+    public const val ECC_NIST_P521: String = "ECC_NIST_P521"
+    public const val ECC_SECG_P256K1: String = "ECC_SECG_P256K1"
+    public const val SM2: String = "SM2"
+    public const val ML_DSA_44: String = "ML_DSA_44"
+    public const val ML_DSA_65: String = "ML_DSA_65"
+    public const val ML_DSA_87: String = "ML_DSA_87"
+    public const val SYMMETRIC_DEFAULT: String = "SYMMETRIC_DEFAULT"
+    public const val HMAC_224: String = "HMAC_224"
+    public const val HMAC_256: String = "HMAC_256"
+    public const val HMAC_384: String = "HMAC_384"
+    public const val HMAC_512: String = "HMAC_512"
+}
+
+/** Documented values for `KeyUsage`. */
+public object KeyUsage {
+    public const val SIGN_VERIFY: String = "SIGN_VERIFY"
+    public const val ENCRYPT_DECRYPT: String = "ENCRYPT_DECRYPT"
+    public const val GENERATE_VERIFY_MAC: String = "GENERATE_VERIFY_MAC"
+    public const val KEY_AGREEMENT: String = "KEY_AGREEMENT"
+}
+
+/**
  * Documented values for `MessageType` on [SignRequest] and [VerifyRequest].
  *
  * [DIGEST] means the `Message` field already holds the hash, not the message — used when the
@@ -612,3 +647,67 @@ public data class VerifyResponse(
     @SerialName("KeyId") public val keyId: String? = null,
     @SerialName("SigningAlgorithm") public val signingAlgorithm: String? = null,
 )
+
+/**
+ * `GetPublicKey`. A data class — it carries no bytes.
+ *
+ * Only an **asymmetric** key has a public half. Asking a symmetric or HMAC key is
+ * [KmsUnsupportedOperationException], not an empty answer.
+ */
+@Serializable
+public data class GetPublicKeyRequest(
+    @SerialName("KeyId") val keyId: String,
+    @SerialName("GrantTokens") val grantTokens: List<String>? = null,
+)
+
+/**
+ * `GetPublicKey`'s result. **Not a data class** — it carries bytes.
+ *
+ * [publicKey] is a DER-encoded X.509 `SubjectPublicKeyInfo`, which is what every platform's key
+ * parser takes directly (`X509EncodedKeySpec` on the JVM, `SecKeyCreateWithData` on Apple, or PEM it
+ * by base64-encoding between `-----BEGIN PUBLIC KEY-----` lines). It is not secret — the point of
+ * the operation is to hand it out — so unlike the other byte-carrying types here nothing is redacted
+ * beyond keeping `toString` to a size, and that only because 300 bytes of DER in a log line is
+ * noise, not a leak.
+ *
+ * The algorithm lists say what the key **can** do rather than what the caller asked: exactly one of
+ * [encryptionAlgorithms] / [signingAlgorithms] / [keyAgreementAlgorithms] is populated, according
+ * to [keyUsage]. Verifying a KMS signature locally means picking one of [signingAlgorithms] that
+ * matches the one passed to `Sign` — the DER alone does not encode a padding scheme.
+ */
+@Serializable
+public class GetPublicKeyResponse(
+    @SerialName("PublicKey") @Serializable(with = Base64BlobSerializer::class)
+    public val publicKey: ByteArray,
+    @SerialName("KeyId") public val keyId: String? = null,
+    /** See [KeySpec]. */
+    @SerialName("KeySpec") public val keySpec: String? = null,
+    /** See [KeyUsage]. */
+    @SerialName("KeyUsage") public val keyUsage: String? = null,
+    @SerialName("EncryptionAlgorithms") public val encryptionAlgorithms: List<String>? = null,
+    @SerialName("SigningAlgorithms") public val signingAlgorithms: List<String>? = null,
+    @SerialName("KeyAgreementAlgorithms") public val keyAgreementAlgorithms: List<String>? = null,
+) {
+    override fun equals(other: Any?): Boolean =
+        this === other || (
+            other is GetPublicKeyResponse &&
+                publicKey.contentEquals(other.publicKey) &&
+                keyId == other.keyId &&
+                keySpec == other.keySpec &&
+                keyUsage == other.keyUsage &&
+                encryptionAlgorithms == other.encryptionAlgorithms &&
+                signingAlgorithms == other.signingAlgorithms &&
+                keyAgreementAlgorithms == other.keyAgreementAlgorithms
+            )
+
+    override fun hashCode(): Int {
+        var result = publicKey.contentHashCode()
+        result = 31 * result + (keyId?.hashCode() ?: 0)
+        return result
+    }
+
+    override fun toString(): String =
+        "GetPublicKeyResponse(publicKey=${publicKey.size} bytes, keyId=$keyId, keySpec=$keySpec, " +
+            "keyUsage=$keyUsage, signingAlgorithms=$signingAlgorithms, " +
+            "encryptionAlgorithms=$encryptionAlgorithms, keyAgreementAlgorithms=$keyAgreementAlgorithms)"
+}

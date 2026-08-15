@@ -28,7 +28,8 @@ public val KMS_PROTOCOL: AwsProtocol =
 /**
  * A KMS client covering the **data plane**: the operations that use a key rather than manage one.
  *
- * Encrypt, decrypt, re-encrypt, mint data keys, draw randomness, sign and verify. Key lifecycle —
+ * Encrypt, decrypt, re-encrypt, mint data keys, draw randomness, sign, verify, and fetch the public
+ * half of an asymmetric key so signatures can be verified without a KMS call. Key lifecycle —
  * `CreateKey`, `ScheduleKeyDeletion`, `CreateAlias`, `PutKeyPolicy`, `CreateGrant` — is out of
  * scope: those calls belong to whatever provisions the infrastructure, which for the Lambdas this
  * library exists to serve is CloudFormation or Terraform rather than the function's own runtime.
@@ -129,6 +130,20 @@ public interface Kms : AutoCloseable {
      * ```
      */
     public suspend fun verify(request: VerifyRequest): VerifyResponse
+
+    /**
+     * Fetches the public half of an **asymmetric** key, as DER-encoded `SubjectPublicKeyInfo`.
+     *
+     * The operation that takes verification off the KMS bill: [verify] costs a KMS call per check
+     * and requires `kms:Verify` on the key, whereas a public key fetched once can verify any number
+     * of signatures locally, anywhere, by anyone. The trade is that a caller verifying locally has
+     * to pick the algorithm — see [GetPublicKeyResponse.signingAlgorithms] — and has to trust its
+     * own copy of the key rather than KMS's, which is why the response reports the [GetPublicKeyResponse.keyId]
+     * ARN it came from.
+     *
+     * A symmetric or HMAC key has no public half: [KmsUnsupportedOperationException].
+     */
+    public suspend fun getPublicKey(request: GetPublicKeyRequest): GetPublicKeyResponse
 }
 
 /** Configuration for [Kms]. */
@@ -277,6 +292,13 @@ internal class DefaultKms(
         )
     }
 
+    override suspend fun getPublicKey(request: GetPublicKeyRequest): GetPublicKeyResponse = mapErrors {
+        client.callJson(
+            "GetPublicKey", request, GetPublicKeyRequest.serializer(), GetPublicKeyResponse.serializer(),
+            safety = OperationSafety.IDEMPOTENT,
+        )
+    }
+
     override fun close() {
         if (ownsHttpClient) httpClient?.close()
     }
@@ -337,3 +359,14 @@ public suspend fun Kms.decrypt(
     ciphertextBlob: ByteArray,
     encryptionContext: Map<String, String>? = null,
 ): ByteArray = decrypt(DecryptRequest(ciphertextBlob, keyId, encryptionContext)).plaintext
+
+/**
+ * `GetPublicKey`, then discards everything but the DER.
+ *
+ * For the caller who already knows the key's spec and algorithm — typically because it configured
+ * them — and just wants bytes to hand to a key parser. Reach for [Kms.getPublicKey] when the
+ * response's `KeySpec`, `KeyUsage` or algorithm lists matter, which for anything that has to *choose*
+ * how to verify they do.
+ */
+public suspend fun Kms.getPublicKey(keyId: String): ByteArray =
+    getPublicKey(GetPublicKeyRequest(keyId)).publicKey

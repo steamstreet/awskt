@@ -324,6 +324,67 @@ public final class com/steamstreet/awskt/kms/GenerateRandomResponse$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
+public final class com/steamstreet/awskt/kms/GetPublicKeyRequest {
+	public static final field Companion Lcom/steamstreet/awskt/kms/GetPublicKeyRequest$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lcom/steamstreet/awskt/kms/GetPublicKeyRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/kms/GetPublicKeyRequest;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/awskt/kms/GetPublicKeyRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getGrantTokens ()Ljava/util/List;
+	public final fun getKeyId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/kms/GetPublicKeyRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/kms/GetPublicKeyRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/kms/GetPublicKeyRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/kms/GetPublicKeyRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/kms/GetPublicKeyRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/kms/GetPublicKeyResponse {
+	public static final field Companion Lcom/steamstreet/awskt/kms/GetPublicKeyResponse$Companion;
+	public fun <init> ([BLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;)V
+	public synthetic fun <init> ([BLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEncryptionAlgorithms ()Ljava/util/List;
+	public final fun getKeyAgreementAlgorithms ()Ljava/util/List;
+	public final fun getKeyId ()Ljava/lang/String;
+	public final fun getKeySpec ()Ljava/lang/String;
+	public final fun getKeyUsage ()Ljava/lang/String;
+	public final fun getPublicKey ()[B
+	public final fun getSigningAlgorithms ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/kms/GetPublicKeyResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/kms/GetPublicKeyResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/kms/GetPublicKeyResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/kms/GetPublicKeyResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/kms/GetPublicKeyResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/steamstreet/awskt/kms/IncorrectKeyException : com/steamstreet/awskt/kms/KmsException {
 	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -344,9 +405,37 @@ public final class com/steamstreet/awskt/kms/InvalidKeyUsageException : com/stea
 	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
+public final class com/steamstreet/awskt/kms/KeySpec {
+	public static final field ECC_NIST_P256 Ljava/lang/String;
+	public static final field ECC_NIST_P384 Ljava/lang/String;
+	public static final field ECC_NIST_P521 Ljava/lang/String;
+	public static final field ECC_SECG_P256K1 Ljava/lang/String;
+	public static final field HMAC_224 Ljava/lang/String;
+	public static final field HMAC_256 Ljava/lang/String;
+	public static final field HMAC_384 Ljava/lang/String;
+	public static final field HMAC_512 Ljava/lang/String;
+	public static final field INSTANCE Lcom/steamstreet/awskt/kms/KeySpec;
+	public static final field ML_DSA_44 Ljava/lang/String;
+	public static final field ML_DSA_65 Ljava/lang/String;
+	public static final field ML_DSA_87 Ljava/lang/String;
+	public static final field RSA_2048 Ljava/lang/String;
+	public static final field RSA_3072 Ljava/lang/String;
+	public static final field RSA_4096 Ljava/lang/String;
+	public static final field SM2 Ljava/lang/String;
+	public static final field SYMMETRIC_DEFAULT Ljava/lang/String;
+}
+
 public final class com/steamstreet/awskt/kms/KeyUnavailableException : com/steamstreet/awskt/kms/KmsException {
 	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/kms/KeyUsage {
+	public static final field ENCRYPT_DECRYPT Ljava/lang/String;
+	public static final field GENERATE_VERIFY_MAC Ljava/lang/String;
+	public static final field INSTANCE Lcom/steamstreet/awskt/kms/KeyUsage;
+	public static final field KEY_AGREEMENT Ljava/lang/String;
+	public static final field SIGN_VERIFY Ljava/lang/String;
 }
 
 public abstract interface class com/steamstreet/awskt/kms/Kms : java/lang/AutoCloseable {
@@ -356,6 +445,7 @@ public abstract interface class com/steamstreet/awskt/kms/Kms : java/lang/AutoCl
 	public abstract fun generateDataKeyWithoutPlaintext (Lcom/steamstreet/awskt/kms/GenerateDataKeyWithoutPlaintextRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun generateRandom (Lcom/steamstreet/awskt/kms/GenerateRandomRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun getClient ()Lcom/steamstreet/awskt/core/AwsServiceClient;
+	public abstract fun getPublicKey (Lcom/steamstreet/awskt/kms/GetPublicKeyRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun reEncrypt (Lcom/steamstreet/awskt/kms/ReEncryptRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun sign (Lcom/steamstreet/awskt/kms/SignRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun verify (Lcom/steamstreet/awskt/kms/VerifyRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -409,7 +499,13 @@ public final class com/steamstreet/awskt/kms/KmsKt {
 	public static final fun encrypt (Lcom/steamstreet/awskt/kms/Kms;Ljava/lang/String;[BLjava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun encrypt$default (Lcom/steamstreet/awskt/kms/Kms;Ljava/lang/String;[BLjava/util/Map;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun getKMS_PROTOCOL ()Lcom/steamstreet/awskt/core/AwsProtocol;
+	public static final fun getPublicKey (Lcom/steamstreet/awskt/kms/Kms;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun verifySignature (Lcom/steamstreet/awskt/kms/Kms;Lcom/steamstreet/awskt/kms/VerifyRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/kms/KmsUnsupportedOperationException : com/steamstreet/awskt/kms/KmsException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class com/steamstreet/awskt/kms/LimitExceededException : com/steamstreet/awskt/kms/KmsException {

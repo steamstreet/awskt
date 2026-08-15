@@ -30,6 +30,7 @@ export AWS_REGION=us-west-2
 | Module | Variable | Fixture needed |
 |---|---|---|
 | `aws-kms` | `SMOKE_KMS_KEY_ID` | a symmetric `ENCRYPT_DECRYPT` key or alias |
+| `aws-kms` (`GetPublicKey`, `Sign`/`Verify`) | `SMOKE_KMS_SIGNING_KEY_ID` | an asymmetric `SIGN_VERIFY` key or alias (`alias/vegasful-test-signing` in vegasful-test) |
 | `aws-secretsmanager` | `SMOKE_SECRET_ID` | any readable secret (read-only; never written) |
 | `aws-sqs` | `SMOKE_QUEUE_URL` | a **standard** (non-FIFO) queue |
 | `aws-sns` | `SMOKE_TOPIC_ARN` | a topic, ideally with no subscriptions |

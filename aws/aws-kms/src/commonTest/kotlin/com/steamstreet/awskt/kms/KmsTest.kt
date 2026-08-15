@@ -97,13 +97,14 @@ class KmsProtocolTest {
                     ),
                 )
             },
+            "TrentService.GetPublicKey" to { k -> k.getPublicKey(GetPublicKeyRequest("k")) },
         )
 
         // One response body that satisfies every operation's required fields at once. The
         // deserializer ignores the keys an operation does not declare.
         val everything = """
             {"CiphertextBlob":"Y2lwaGVy","Plaintext":"cGxhaW4=","Signature":"c2lnLWJ5dGVz",
-             "SignatureValid":true,"KeyId":"arn:key"}
+             "SignatureValid":true,"KeyId":"arn:key","PublicKey":"MIIB"}
         """.trimIndent()
 
         for ((expectedTarget, invoke) in cases) {
@@ -270,6 +271,10 @@ class KmsErrorMappingTest {
         assertTrue(
             decryptFailingWith("KMSInvalidStateException", HttpStatusCode.Conflict) is KmsInvalidStateException,
         )
+        assertTrue(
+            decryptFailingWith("UnsupportedOperationException", HttpStatusCode.BadRequest)
+                is KmsUnsupportedOperationException,
+        )
     }
 
     /** An unrecognised code still arrives as a [KmsException] rather than as a raw transport failure. */
@@ -368,5 +373,75 @@ class KmsConvenienceTest {
 
         assertEquals("plain", plaintext.decodeToString())
         assertEquals("arn:key", bodyJson(h.bodies.single())["KeyId"]?.jsonPrimitive?.content)
+    }
+}
+
+/**
+ * `GetPublicKey`, against a response captured from real KMS on 2026-08-15 — an RSA_2048
+ * `SIGN_VERIFY` key — so the fixture is the wire, not a guess at it.
+ */
+class KmsGetPublicKeyTest {
+
+    private val captured = """
+        {"KeyId":"arn:aws:kms:us-west-2:123456789012:key/53109ea2-82e3-4c0b-832b-944e99094a3f",
+         "PublicKey":"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0FDfr2ihPdNdX0cs9iyudrKu3O/X5xaWRdQbSag1yi1CuAmYBtl3LadaE0UXrPnDBK++xYbGN/DumYdDu82wAOBImhc+/ah0qcOhvV7hRhruR12hYxkrLVB2bkwa+NSfrGX6bDMj3N8REKRMNSDeCfkZ+b5H9sXP1dwzJSkLpVBUgkK5AOG0WBkEyC0cVswWfepp5HVq9Og2Fx3onA+BPAsRpIFnXyjhnQ7EmVrEN88FFuJTfAMRn708qFv/99pFaO5aPy5uPzNbglU/dKt186Xjo1iE2K56LkP9nbEollGBO1F/lOibXVAPmPgTscDsJf3fzf4BcLEMclP+0CVTJwIDAQAB",
+         "CustomerMasterKeySpec":"RSA_2048","KeySpec":"RSA_2048","KeyUsage":"SIGN_VERIFY",
+         "SigningAlgorithms":["RSASSA_PKCS1_V1_5_SHA_256","RSASSA_PKCS1_V1_5_SHA_384",
+          "RSASSA_PKCS1_V1_5_SHA_512","RSASSA_PSS_SHA_256","RSASSA_PSS_SHA_384","RSASSA_PSS_SHA_512"]}
+    """.trimIndent()
+
+    @Test
+    fun decodesTheDerAndTheKeyDescription() = runTest {
+        val h = KmsHarness()
+        val response = harnessKms(h) { captured to HttpStatusCode.OK }
+            .getPublicKey(GetPublicKeyRequest("alias/signing", grantTokens = listOf("gt-1")))
+
+        // The request: KeyId and GrantTokens on the wire, nothing else.
+        val sent = bodyJson(h.bodies.single())
+        assertEquals("alias/signing", sent["KeyId"]?.jsonPrimitive?.content)
+        assertEquals(setOf("KeyId", "GrantTokens"), sent.keys)
+
+        // The DER: 294 bytes for RSA-2048 SubjectPublicKeyInfo, starting with a SEQUENCE tag and a
+        // two-byte length (0x30 0x82) — the shape every key parser expects to be handed.
+        assertEquals(294, response.publicKey.size)
+        assertEquals(0x30, response.publicKey[0].toInt() and 0xFF)
+        assertEquals(0x82, response.publicKey[1].toInt() and 0xFF)
+
+        assertEquals(KeySpec.RSA_2048, response.keySpec)
+        assertEquals(KeyUsage.SIGN_VERIFY, response.keyUsage)
+        assertEquals(6, response.signingAlgorithms?.size)
+        assertContains(response.signingAlgorithms!!, SigningAlgorithm.RSASSA_PSS_SHA_256)
+        assertEquals(null, response.encryptionAlgorithms)
+        assertEquals(null, response.keyAgreementAlgorithms)
+        // CustomerMasterKeySpec is deprecated and deliberately not modelled; it must not break decoding.
+        assertTrue(response.keyId!!.startsWith("arn:aws:kms:"))
+    }
+
+    @Test
+    fun convenienceReturnsOnlyTheDer() = runTest {
+        val der = harnessKms(KmsHarness()) { captured to HttpStatusCode.OK }.getPublicKey("alias/signing")
+        assertEquals(294, der.size)
+    }
+
+    /** A symmetric key has no public half, and KMS says so with a code this module now names. */
+    @Test
+    fun aSymmetricKeyIsAnUnsupportedOperation() = runTest {
+        val failure = assertFailsWith<KmsUnsupportedOperationException> {
+            harnessKms(KmsHarness()) {
+                """{"__type":"UnsupportedOperationException","message":"alias/symmetric is a symmetric key"}""" to
+                    HttpStatusCode.BadRequest
+            }.getPublicKey("alias/symmetric")
+        }
+        assertEquals("UnsupportedOperationException", failure.code)
+    }
+
+    @Test
+    fun comparesByContentAndPrintsASize() {
+        val a = GetPublicKeyResponse("der-bytes".encodeToByteArray(), keyId = "k", keySpec = KeySpec.RSA_2048)
+        val b = GetPublicKeyResponse("der-bytes".encodeToByteArray(), keyId = "k", keySpec = KeySpec.RSA_2048)
+        assertEquals(a, b)
+        assertEquals(a.hashCode(), b.hashCode())
+        assertContains(a.toString(), "9 bytes")
+        assertContains(a.toString(), "RSA_2048")
     }
 }

@@ -214,6 +214,27 @@ public class DryRunOperationException(
 ) : KmsException("DryRunOperationException", message, statusCode, requestId, extendedRequestId, cause)
 
 /**
+ * The operation does not apply to this key.
+ *
+ * `GetPublicKey`, `Sign` or `Verify` against a **symmetric** key is the case that produces it: a
+ * symmetric key has no public half and no signature scheme, and KMS reports that as an error rather
+ * than an empty answer. Also raised for an asymmetric key of the wrong shape — `Encrypt` under a
+ * `SIGN_VERIFY` key, say — where [InvalidKeyUsageException] is the more specific code KMS usually
+ * chooses; which one arrives is the service's call, so a caller guarding "this key cannot do that"
+ * should catch both.
+ *
+ * `Kms`-prefixed to keep it apart from `kotlin.UnsupportedOperationException`, which it is not and
+ * must not be confused with in a `catch`.
+ */
+public class KmsUnsupportedOperationException(
+    message: String?,
+    statusCode: Int,
+    requestId: String? = null,
+    extendedRequestId: String? = null,
+    cause: Throwable? = null,
+) : KmsException("UnsupportedOperationException", message, statusCode, requestId, extendedRequestId, cause)
+
+/**
  * Maps `aws-core`'s protocol-level exception onto this module's hierarchy.
  *
  * Unknown codes fall through to [KmsException] rather than being swallowed, so an operation added
@@ -266,6 +287,9 @@ internal inline fun <T> mapErrors(block: () -> T): T = try {
 
         "DryRunOperationException" ->
             DryRunOperationException(e.message, e.statusCode, e.requestId, e.extendedRequestId, e)
+
+        "UnsupportedOperationException" ->
+            KmsUnsupportedOperationException(e.message, e.statusCode, e.requestId, e.extendedRequestId, e)
 
         else -> KmsException(e.code, e.message, e.statusCode, e.requestId, e.extendedRequestId, e)
     }
