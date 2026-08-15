@@ -18,11 +18,27 @@ import com.steamstreet.awskt.dynamodb.orNullIfEmpty
 internal const val MAX_TRANSACTION_ITEMS: Int = 100
 
 /**
+ * The message attached to the deprecated shadows below. Calling a top-level `insert`/`update`/
+ * `delete`/`get` with an explicit `database` inside a transaction block would execute it right
+ * away, outside the transaction - a one-argument difference silently changing atomicity.
+ */
+private const val OUTSIDE_TRANSACTION: String =
+    "This runs immediately, outside the transaction. Drop the 'database' argument to enlist the " +
+        "operation in the transaction, or move the call outside the transaction block."
+
+/**
  * Collects write operations to be committed atomically via DynamoDB's
  * TransactWriteItems. All operations succeed or none of them do.
  *
  * Operations may span multiple tables, but DynamoDB does not allow more than one
  * operation against the same item in a single transaction.
+ *
+ * ### Not thread-safe
+ *
+ * The builder keeps mutable, unsynchronized state. Add every operation from a single coroutine:
+ * do not `launch` (or otherwise fan out) inside the transaction block and add operations
+ * concurrently, or operations can be lost or interleaved unpredictably. Gather your data first,
+ * then add the writes sequentially.
  *
  * Example:
  * ```
@@ -67,7 +83,9 @@ public class Transaction internal constructor(public val database: Database) {
      * Insert an item as part of this transaction.
      *
      * Supports the same conditions as a non-transactional insert, including
-     * [InsertStatement.ifNotExists] and [InsertStatement.condition].
+     * [InsertStatement.ifNotExists] and [InsertStatement.condition]. Like the non-transactional
+     * form this is a put: it replaces an existing item at the same key unless `ifNotExists()`
+     * (or another condition) says otherwise.
      */
     public fun <T : Table> T.insert(block: T.(InsertStatement) -> Unit) {
         val built = InsertStatement(this, database).also { block(it) }.build()
@@ -93,7 +111,10 @@ public class Transaction internal constructor(public val database: Database) {
     /**
      * Update an item as part of this transaction.
      *
-     * The where clause must specify the full primary key with equality conditions.
+     * The where clause must specify the full primary key with equality conditions. Any further
+     * conditions in it are folded into the operation's ConditionExpression, so
+     * `{ id eq "x" and version eq 1 }` cancels the transaction when the version does not match.
+     *
      * Unlike a non-transactional update, no values are returned - DynamoDB does not
      * return item attributes from a transaction.
      */
@@ -101,8 +122,11 @@ public class Transaction internal constructor(public val database: Database) {
         where: SqlExpressionBuilder.() -> Op<Boolean>,
         block: T.(UpdateStatement) -> Unit
     ) {
-        val (pk, sk) = extractKeyValues(where)
-        val built = UpdateStatement(this, database, pk, sk).also { block(it) }.build()
+        val keyWhere = decomposeItemWhere(where, "update")
+        val built = UpdateStatement(this, database, keyWhere.pk, keyWhere.sk)
+            .also { it.whereResidual = keyWhere.residual }
+            .also { block(it) }
+            .build()
         val resolvedName = database.resolveTableName(this)
 
         register(this, built.key)
@@ -129,13 +153,19 @@ public class Transaction internal constructor(public val database: Database) {
 
     /**
      * Delete an item as part of this transaction, with an optional condition.
+     *
+     * As with [update], conditions in the where clause beyond the primary key are folded into the
+     * operation's ConditionExpression rather than discarded.
      */
     public fun <T : Table> T.delete(
         where: SqlExpressionBuilder.() -> Op<Boolean>,
         block: T.(DeleteStatement) -> Unit
     ) {
-        val (pk, sk) = extractKeyValues(where)
-        val built = DeleteStatement(this, database, pk, sk).also { block(it) }.build()
+        val keyWhere = decomposeItemWhere(where, "delete")
+        val built = DeleteStatement(this, database, keyWhere.pk, keyWhere.sk)
+            .also { it.whereResidual = keyWhere.residual }
+            .also { block(it) }
+            .build()
         val resolvedName = database.resolveTableName(this)
 
         register(this, built.key)
@@ -156,6 +186,8 @@ public class Transaction internal constructor(public val database: Database) {
      * Assert something about an item without writing to it. If the condition fails,
      * the entire transaction is cancelled.
      *
+     * Conditions in the where clause beyond the primary key are ANDed into the check.
+     *
      * Example:
      * ```
      * Accounts.conditionCheck({ Accounts.id eq "account#1" }) {
@@ -167,12 +199,15 @@ public class Transaction internal constructor(public val database: Database) {
         where: SqlExpressionBuilder.() -> Op<Boolean>,
         condition: SqlExpressionBuilder.() -> Op<Boolean>
     ) {
-        val (pk, sk) = extractKeyValues(where)
-        val itemKey = buildKey(pk, sk)
+        val keyWhere = decomposeItemWhere(where, "conditionCheck")
+        val itemKey = buildKey(keyWhere.pk, keyWhere.sk)
+
+        val explicit = SqlExpressionBuilder().condition()
+        val checkOp = keyWhere.residual?.let { AndOp(it, explicit) } ?: explicit
 
         val nameIndex = mutableMapOf<String, String>()
         val valueIndex = mutableMapOf<String, AttributeValue>()
-        val expression = buildConditionExpression(SqlExpressionBuilder().condition(), nameIndex, valueIndex)
+        val expression = buildConditionExpression(checkOp, nameIndex, valueIndex)
         val resolvedName = database.resolveTableName(this)
 
         register(this, itemKey)
@@ -225,13 +260,58 @@ public class Transaction internal constructor(public val database: Database) {
         condition: SqlExpressionBuilder.() -> Op<Boolean>
     ): Unit = table.conditionCheck(where, condition)
 
+    // -- Shadows of the immediate, non-transactional operations ----------------------------------
+    //
+    // The top-level `Table.insert(database) { }`, `Table.update(database, where) { }`,
+    // `Table.delete(database, where)` and `Table.get(database, where)` are perfectly callable
+    // inside a transaction block, where they execute at once against the database instead of
+    // joining the transaction. These member extensions shadow them (a member extension on an
+    // implicit receiver wins over a top-level extension) and fail the build with an explanation.
+
+    /** @suppress */
+    @Deprecated(OUTSIDE_TRANSACTION, level = DeprecationLevel.ERROR)
+    public suspend fun <T : Table> T.insert(
+        database: Database,
+        block: T.(InsertStatement) -> Unit
+    ): ResultRow = error(OUTSIDE_TRANSACTION)
+
+    /** @suppress */
+    @Deprecated(OUTSIDE_TRANSACTION, level = DeprecationLevel.ERROR)
+    public suspend fun <T : Table> T.update(
+        database: Database,
+        where: SqlExpressionBuilder.() -> Op<Boolean>,
+        block: T.(UpdateStatement) -> Unit
+    ): ResultRow = error(OUTSIDE_TRANSACTION)
+
+    /** @suppress */
+    @Deprecated(OUTSIDE_TRANSACTION, level = DeprecationLevel.ERROR)
+    public suspend fun Table.delete(
+        database: Database,
+        where: SqlExpressionBuilder.() -> Op<Boolean>
+    ): Boolean = error(OUTSIDE_TRANSACTION)
+
+    /** @suppress */
+    @Deprecated(OUTSIDE_TRANSACTION, level = DeprecationLevel.ERROR)
+    public suspend fun <T : Table> T.delete(
+        database: Database,
+        where: SqlExpressionBuilder.() -> Op<Boolean>,
+        block: T.(DeleteStatement) -> Unit
+    ): Boolean = error(OUTSIDE_TRANSACTION)
+
+    /** @suppress */
+    @Deprecated(OUTSIDE_TRANSACTION, level = DeprecationLevel.ERROR)
+    public suspend fun Table.get(
+        database: Database,
+        where: SqlExpressionBuilder.() -> Op<Boolean>
+    ): ResultRow? = error(OUTSIDE_TRANSACTION)
+
     /**
      * Extract the primary key attributes from a fully built item.
      */
     private fun Table.keyOf(item: Map<String, AttributeValue>): Map<String, AttributeValue> {
         val pkColumn = partitionKey ?: error("Table $tableName has no partition key")
         val pkValue = item[pkColumn.name]
-            ?: error("Partition key ${pkColumn.name} not set on insert into $tableName")
+            ?: error(missingPartitionKeyMessage(this, pkColumn))
 
         return buildMap {
             put(pkColumn.name, pkValue)
@@ -244,9 +324,15 @@ public class Transaction internal constructor(public val database: Database) {
     /**
      * Record the item an operation targets, rejecting a second operation on the same
      * item. DynamoDB cancels such transactions, so failing here gives a clearer error
-     * without a round trip.
+     * without a round trip. Also enforces the transaction size limit at add time, where the
+     * offending call is still on the stack, rather than at commit.
      */
     private fun register(table: Table, key: Map<String, AttributeValue>) {
+        require(items.size < MAX_TRANSACTION_ITEMS) {
+            "Transaction already contains $MAX_TRANSACTION_ITEMS operations, the most DynamoDB " +
+                "allows in one TransactWriteItems call. Split the work into several transactions."
+        }
+
         val target = database.resolveTableName(table) to key
         require(targets.add(target)) {
             "Transaction already contains an operation on item $key in table " +
@@ -280,6 +366,8 @@ public class Transaction internal constructor(public val database: Database) {
  * failed - DynamoDB throws `TransactionCanceledException`, whose
  * `cancellationReasons` identify which operation failed.
  *
+ * Operations must be added from a single coroutine; see [Transaction] for why.
+ *
  * Example:
  * ```
  * database.transaction {
@@ -309,6 +397,8 @@ public suspend fun <T> Database.transaction(
 /**
  * Collects reads to be performed as a single consistent snapshot via DynamoDB's
  * TransactGetItems.
+ *
+ * Like [Transaction], the builder is not thread-safe: add every read from a single coroutine.
  */
 public class TransactionGet internal constructor(public val database: Database) {
     internal val tables: MutableList<Table> = mutableListOf()
@@ -316,12 +406,23 @@ public class TransactionGet internal constructor(public val database: Database) 
 
     /**
      * Read an item as part of this transaction. The where clause must specify the
-     * full primary key with equality conditions.
+     * full primary key with equality conditions, and nothing else: a read has no
+     * ConditionExpression to carry extra conditions, so they would silently not apply.
      */
     public fun <T : Table> T.get(where: SqlExpressionBuilder.() -> Op<Boolean>) {
-        val (pk, sk) = extractKeyValues(where)
-        val itemKey = buildKey(pk, sk)
+        val keyWhere = decomposeItemWhere(where, "a transactional get")
+        require(keyWhere.residual == null) {
+            "A transactional get on table '$tableName' cannot apply conditions - a read has no " +
+                "ConditionExpression. Restrict the where clause to the primary key and check the " +
+                "returned row, or use conditionCheck in a write transaction."
+        }
+        val itemKey = buildKey(keyWhere.pk, keyWhere.sk)
         val resolvedName = database.resolveTableName(this)
+
+        require(items.size < MAX_TRANSACTION_ITEMS) {
+            "Transaction already contains $MAX_TRANSACTION_ITEMS reads, the most DynamoDB allows " +
+                "in one TransactGetItems call."
+        }
 
         tables.add(this)
         items.add(TransactGetItem(Get(tableName = resolvedName, key = itemKey)))
