@@ -15,6 +15,9 @@ import com.steamstreet.awskt.bedrock.Message as BedrockMessage
 import com.steamstreet.awskt.bedrock.ask
 import com.steamstreet.awskt.bedrock.textDeltas
 import com.steamstreet.awskt.kms.Kms
+import com.steamstreet.awskt.logs.Logs
+import com.steamstreet.awskt.logs.StartQueryRequest
+import com.steamstreet.awskt.logs.query
 import com.steamstreet.awskt.kms.decrypt
 import com.steamstreet.awskt.kms.encrypt
 import com.steamstreet.awskt.scheduler.ActionAfterCompletion
@@ -45,6 +48,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * The deployed-Lambda smoke function.
@@ -179,6 +183,10 @@ private val bedrockClient by lazy {
     BedrockRuntime { region = Env["AWS_REGION"]; credentialsProvider = credentials; caInfo = CA_BUNDLE }
 }
 
+private val logsClient by lazy {
+    Logs { region = Env["AWS_REGION"]; credentialsProvider = credentials; caInfo = CA_BUNDLE }
+}
+
 /**
  * One service's outcome.
  *
@@ -295,6 +303,26 @@ private suspend fun runServiceProbes(requestId: String): List<ProbeResult> = lis
         ).textDeltas().toList()
         require(deltas.size > 1) { "converseStream produced ${deltas.size} delta(s) — did it stream?" }
         "converse='${answer.trim().take(20)}', stream delivered ${deltas.size} deltas"
+    },
+
+    // Insights, querying this function's own log group — which is the one log group a Lambda can
+    // always name, and which by the time this runs certainly contains this very invocation.
+    probe("cloudwatch-insights", "SMOKE_LOG_GROUP") { group ->
+        // Epoch SECONDS, not milliseconds — see StartQueryRequest. A fixed wide window rather than
+        // one around "now": this source set has no clock, and a `limit 1` makes the window's width
+        // nearly free while guaranteeing it covers the present.
+        val response = logsClient.query(
+            StartQueryRequest(
+                queryString = "fields @timestamp, @message | sort @timestamp desc | limit 1",
+                // A wide window with a tiny limit: cheap to scan, and guaranteed to cover now.
+                startTime = 1_600_000_000,
+                endTime = 4_100_000_000,
+                logGroupNames = listOf(group),
+            ),
+            timeout = 30.seconds,
+        )
+        require(response.isComplete) { "query ended '${response.status}' rather than Complete" }
+        "completed, ${response.rows.size} row(s), ${response.statistics?.bytesScanned} bytes scanned"
     },
 )
 

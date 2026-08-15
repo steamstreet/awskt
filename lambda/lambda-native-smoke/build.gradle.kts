@@ -39,6 +39,7 @@ kotlin {
                 implementation(projects.aws.awsSns)
                 implementation(projects.aws.awsScheduler)
                 implementation(projects.aws.awsBedrockRuntime)
+                implementation(projects.aws.awsCloudwatchLogs)
                 implementation(projects.dynamo)
                 implementation(projects.env)
                 implementation(libs.kotlin.serialization.json)

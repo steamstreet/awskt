@@ -35,6 +35,7 @@ export AWS_REGION=us-west-2
 | `aws-sns` | `SMOKE_TOPIC_ARN` | a topic, ideally with no subscriptions |
 | `aws-scheduler` | `SMOKE_SCHEDULER_TARGET_ARN`, `SMOKE_SCHEDULER_ROLE_ARN` | a target and a role trusting `scheduler.amazonaws.com` |
 | `aws-bedrock-runtime` | `SMOKE_BEDROCK_MODEL_ID` | model access granted in the account |
+| `aws-cloudwatch-logs` | `SMOKE_LOG_GROUP` | any existing log group — **it may be empty** |
 | `aws-core` | *(credentials alone)* | none — calls `ListTables` |
 
 ```bash
@@ -44,7 +45,7 @@ export AWS_REGION=us-west-2
 # All of them
 ./gradlew :aws:aws-core:jvmTest :aws:aws-kms:jvmTest :aws:aws-secretsmanager:jvmTest \
           :aws:aws-sqs:jvmTest :aws:aws-sns:jvmTest :aws:aws-scheduler:jvmTest \
-          :aws:aws-bedrock-runtime:jvmTest
+          :aws:aws-bedrock-runtime:jvmTest :aws:aws-cloudwatch-logs:jvmTest
 
 # On macOS, the same tests through the Curl engine rather than CIO — worth doing at least once,
 # because the native Lambda uses Curl and CIO is not evidence about it.
@@ -71,6 +72,12 @@ asserted hermetically instead.
 **Bedrock costs money.** The calls are deliberately tiny — a handful of tokens, `maxTokens` capped —
 but they are real inference, unlike every other live suite here.
 
+**Insights is billed on bytes scanned**, not on rows returned, so a query over a wide window on a
+busy log group is expensive however small its `limit`. The suite uses a one-hour window and a
+`limit 5`; the smoke function's probe uses a wide window with `limit 1`, which is cheap because
+Insights stops scanning once the limit is met on a `sort`-free query. Point them at a quiet group
+if you have one.
+
 ---
 
 ## The deployed native smoke function
@@ -96,7 +103,9 @@ aws lambda invoke \
     {"service": "scheduler",      "ok": false, "skipped": true,
                                   "detail": "SMOKE_SCHEDULER_TARGET_ARN not set"},
     {"service": "bedrock",        "ok": true,
-                                  "detail": "converse='pong', stream delivered 23 deltas"}
+                                  "detail": "converse='pong', stream delivered 23 deltas"},
+    {"service": "cloudwatch-insights", "ok": true,
+                                  "detail": "completed, 1 row(s), 4096.0 bytes scanned"}
   ],
   "allOk": true
 }

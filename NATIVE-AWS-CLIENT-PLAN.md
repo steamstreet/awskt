@@ -42,7 +42,7 @@ Three things are settled by evidence, not opinion:
 
 ## 1. Module Overview
 
-**Module Name**: `aws/aws-signing`, `aws/aws-core`, `aws/aws-dynamodb`, `aws/aws-eventbridge`, `aws/aws-s3`, `aws/aws-secretsmanager`, `aws/aws-kms`, `aws/aws-sqs`, `aws/aws-sns`, `aws/aws-scheduler`, `aws/aws-bedrock-runtime`
+**Module Name**: `aws/aws-signing`, `aws/aws-core`, `aws/aws-dynamodb`, `aws/aws-eventbridge`, `aws/aws-s3`, `aws/aws-secretsmanager`, `aws/aws-kms`, `aws/aws-sqs`, `aws/aws-sns`, `aws/aws-scheduler`, `aws/aws-bedrock-runtime`, `aws/aws-cloudwatch-logs`
 
 **Dependencies**:
 - `aws-signing` → KotlinCrypto only. **No Ktor. No awskt modules.** That constraint is what lets AWS's own fixture corpus drive the signer directly. It carries **both** header and query-string (presign) signing — query signing is pure string/byte work with no S3 knowledge, no HTTP client and no I/O.
@@ -59,6 +59,9 @@ Three things are settled by evidence, not opinion:
   protocol, so there is no JSON in either direction and `Wire.kt` carries the codec instead. A
   `@Serializable` appearing in that module means somebody has misread the protocol. Same
   relationship to `:lambda:lambda-sns` as above.
+- `aws-cloudwatch-logs` → `aws-core`. **Not `:logging`**, and the two are unrelated despite the
+  names: `awskt-logging` writes structured entries from an application, this reads them back out
+  of CloudWatch afterwards.
 - `aws-bedrock-runtime` → `aws-core`. The **data plane** only; the `bedrock` control plane is a
   separate service with a separate endpoint and is not covered.
 - `aws-scheduler` → `aws-core`. **Unrelated to `aws-eventbridge`** despite the shared brand:
@@ -412,15 +415,17 @@ awskt/
 | **M8** | **`aws-secretsmanager` + `aws-kms` data planes** | **2** | M6 | **yes** |
 | **M9** | **`aws-sqs` + `aws-sns` + `aws-scheduler` data planes** | **3.5** | M6 | **yes** |
 | **M10** | **`aws-bedrock-runtime`: Converse + ConverseStream (response streaming)** | **4** | M9 | **yes** |
+| **M11** | **Live smoke coverage for M8–M10** | **1** | M10 | **yes** |
+| **M12** | **`aws-cloudwatch-logs`: Insights queries** | **1.5** | M6 | **yes** |
 | | **Planned (1 FTE)** | **78.5** | | |
 | | **With 20% contingency** | **~94** | | |
 | | *Critical path with a 2nd developer* | *63 (~76)* | | |
 
-**M8, M9 and M10 are deliberately outside the totals.** All were added on 2026-08-14, after M7
-landed, and folding 9.5 days into a "78.5 planned" figure that was quoted in a staffing decision
+**M8 through M12 are deliberately outside the totals.** All were added on 2026-08-14, after M7
+landed, and folding 12 days into a "78.5 planned" figure that was quoted in a staffing decision
 would rewrite history to make the estimate look better than it was. The v1 plan was 78.5 days for
-seven milestones; M8, M9 and M10 are scope additions on top of a delivered plan, and are counted
-separately for that reason.
+seven milestones; everything from M8 on is a scope addition on top of a delivered plan, and is
+counted separately for that reason.
 
 ### Parallelization, stated honestly
 
@@ -2591,6 +2596,75 @@ is therefore meaningful in an account where only some fixtures exist.
 >    `converseStreamReceivesFramesAcrossChunkBoundaries` is the only test that puts `callStreaming`
 >    in front of a real chunked response.
 > 3. The rest, then the deployed `services` probe on Graviton.
+
+---
+
+### M12 — CloudWatch Logs Insights (1.5 days)
+
+Added 2026-08-14. `awsJson1_1` with target prefix **`Logs_20140328`** — a dated service name that is
+not derivable from anything — so the protocol was free and all the work is in the shape of the API.
+
+**Scope**: `StartQuery`, `GetQueryResults`, `StopQuery`, plus `query()`, which runs the whole cycle.
+`PutLogEvents` is out on the grounds that a Lambda's stdout already reaches CloudWatch and
+`awskt-logging` is this repository's answer to structured logging — a function calling
+`PutLogEvents` is paying for an API call to do what a `println` does free. `FilterLogEvents` and
+`GetLogEvents` are also out: a different, non-Insights way to read logs.
+
+**Insights is asynchronous, and every design decision here follows from that.**
+
+`StartQuery` returns a query id, not results; the caller polls. `query()` exists because that cycle
+has four properties a caller re-derives, and the first two are silent when wrong:
+
+1. **`GetQueryResults` returns rows before the query has finished.** A `Running` query answers
+   **HTTP 200 with a populated `results` list** that is not the answer — it is however much has
+   matched so far, and it is non-deterministic between runs. This is the fourth appearance in this
+   library of "a failure or a partial result inside a 200", after `PutEvents`,
+   `BatchGetSecretValue` and SQS's `SenderFault`, and it is the least visible of them: nothing about
+   a partial Insights result looks partial.
+2. **`Timeout`, `Failed` and `Cancelled` also carry rows.** Treating "the response parsed" as
+   success turns a query the *service* gave up on into a short answer. `QueryFailedException`
+   carries the partial rows for inspection without pretending they are the result.
+3. **An abandoned query keeps running** and holds one of the account's concurrent-query slots until
+   it times out on its own — see `LimitExceededException`, which for this service means "too many
+   concurrent queries", not "too fast". `query()` stops the query on the timeout path **and on
+   cancellation**, the latter with `NonCancellable`, because the scope is already cancelled at that
+   point and a plain suspending stop would itself be cancelled before it was sent. That is the path
+   that actually leaks: a Lambda hitting its own deadline, every invocation.
+4. **Fixed-interval polling is either slow or wasteful.** Geometric backoff at 1.5× from 250 ms to a
+   2 s ceiling: a query finishing in 300 ms costs two polls, and a minute-long one costs about
+   thirty rather than two hundred and forty.
+
+**`startTime` and `endTime` are epoch SECONDS**, and `FilterLogEvents` on the *same service* takes
+milliseconds. A value carried between the two is wrong by a factor of a thousand and asks for a
+window in the year 56000 — which returns an empty result rather than an error, which is how it
+survives review. `StartQueryRequest.betweenMillis` and `inLastSeconds` exist so the division happens
+in one place rather than at every call site.
+
+**`ResultRow` is the map view of Insights' list-of-name/value-pairs row shape**, with `@ptr` — the
+pointer to the underlying log event, present on every non-`stats` row whether or not the query asked
+for it — reachable through `pointer` and excluded from `selected`.
+
+> **A test failure here produced a real design change rather than a fixed assertion.** The first
+> backoff test counted polls inside a time budget and failed at 48 requests. The backoff was
+> correct: `runTest` makes `delay` virtual while `TimeSource.Monotonic` keeps real time, so the loop
+> spun. Two changes came out of it — `query()` now takes an injectable `timeSource`, the same seam
+> `AwsServiceClient` exposes as `clock` and for exactly the same reason, and the backoff arithmetic
+> moved into `nextPollInterval` where it can be asserted directly instead of inferred from a request
+> count. The timeout test now drives a `TestTimeSource` and is deterministic.
+
+**Verification**: `./gradlew :aws:aws-cloudwatch-logs:jvmTest` — **24 hermetic tests, 0 failures**,
+plus 4 live tests taking their skip path.
+
+> **STATUS: M12's CODE IS COMPLETE (2026-08-14). Same gaps as M8–M11.** No native compilation and
+> JVM-only ABI dumps (`download.jetbrains.com` blocked); no live run, because the authoring host has
+> no usable credentials. `LiveLogsTest` and a `cloudwatch-insights` probe in the smoke function's
+> `services` mode both exist and have run exactly once, in skip mode.
+>
+> The live suite matters more for this module than for most: **every interesting property of
+> Insights is a property of the service's asynchrony.** The hermetic tests prove this client handles
+> a *scripted* sequence of statuses; only a real query proves the scripted sequence is the one AWS
+> produces — in particular that a `Running` status really does arrive with rows attached, which is
+> the assumption the whole `query()` design rests on.
 
 ---
 

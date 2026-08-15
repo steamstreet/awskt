@@ -1,0 +1,367 @@
+public final class com/steamstreet/awskt/logs/AccessDeniedException : com/steamstreet/awskt/logs/LogsException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/logs/GetQueryResultsRequest {
+	public static final field Companion Lcom/steamstreet/awskt/logs/GetQueryResultsRequest$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/logs/GetQueryResultsRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/logs/GetQueryResultsRequest;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/logs/GetQueryResultsRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getQueryId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/logs/GetQueryResultsRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/logs/GetQueryResultsRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/logs/GetQueryResultsRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/logs/GetQueryResultsRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/GetQueryResultsRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/GetQueryResultsResponse {
+	public static final field Companion Lcom/steamstreet/awskt/logs/GetQueryResultsResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/logs/QueryStatistics;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/logs/QueryStatistics;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Lcom/steamstreet/awskt/logs/QueryStatistics;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/logs/QueryStatistics;)Lcom/steamstreet/awskt/logs/GetQueryResultsResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/logs/GetQueryResultsResponse;Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/logs/QueryStatistics;ILjava/lang/Object;)Lcom/steamstreet/awskt/logs/GetQueryResultsResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getResults ()Ljava/util/List;
+	public final fun getRows ()Ljava/util/List;
+	public final fun getStatistics ()Lcom/steamstreet/awskt/logs/QueryStatistics;
+	public final fun getStatus ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isComplete ()Z
+	public final fun isTerminal ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/logs/GetQueryResultsResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/logs/GetQueryResultsResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/logs/GetQueryResultsResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/logs/GetQueryResultsResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/GetQueryResultsResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/InvalidParameterException : com/steamstreet/awskt/logs/LogsException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/logs/LimitExceededException : com/steamstreet/awskt/logs/LogsException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public abstract interface class com/steamstreet/awskt/logs/Logs : java/lang/AutoCloseable {
+	public abstract fun getClient ()Lcom/steamstreet/awskt/core/AwsServiceClient;
+	public abstract fun getQueryResults (Lcom/steamstreet/awskt/logs/GetQueryResultsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun startQuery (Lcom/steamstreet/awskt/logs/StartQueryRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun stopQuery (Lcom/steamstreet/awskt/logs/StopQueryRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/logs/LogsConfig {
+	public fun <init> ()V
+	public final fun getCaInfo ()Ljava/lang/String;
+	public final fun getCredentialsProvider ()Lcom/steamstreet/awskt/core/AwsCredentialsProvider;
+	public final fun getEndpointUrl ()Ljava/lang/String;
+	public final fun getHttpClient ()Lio/ktor/client/HttpClient;
+	public final fun getHttpTimeouts ()Lcom/steamstreet/awskt/core/AwsHttpTimeouts;
+	public final fun getObserver ()Lcom/steamstreet/awskt/core/AwsCallObserver;
+	public final fun getRegion ()Ljava/lang/String;
+	public final fun getRetryConfig ()Lcom/steamstreet/awskt/core/RetryConfig;
+	public final fun setCaInfo (Ljava/lang/String;)V
+	public final fun setCredentialsProvider (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;)V
+	public final fun setEndpointUrl (Ljava/lang/String;)V
+	public final fun setHttpClient (Lio/ktor/client/HttpClient;)V
+	public final fun setHttpTimeouts (Lcom/steamstreet/awskt/core/AwsHttpTimeouts;)V
+	public final fun setObserver (Lcom/steamstreet/awskt/core/AwsCallObserver;)V
+	public final fun setRegion (Ljava/lang/String;)V
+	public final fun setRetryConfig (Lcom/steamstreet/awskt/core/RetryConfig;)V
+}
+
+public class com/steamstreet/awskt/logs/LogsException : com/steamstreet/awskt/core/AwsServiceException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/logs/LogsKt {
+	public static final fun Logs (Lkotlin/jvm/functions/Function1;)Lcom/steamstreet/awskt/logs/Logs;
+	public static synthetic fun Logs$default (Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/steamstreet/awskt/logs/Logs;
+	public static final fun getLOGS_PROTOCOL ()Lcom/steamstreet/awskt/core/AwsProtocol;
+	public static final fun query-Zj3PzBU (Lcom/steamstreet/awskt/logs/Logs;Lcom/steamstreet/awskt/logs/StartQueryRequest;JJJLkotlin/time/TimeSource;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun query-Zj3PzBU$default (Lcom/steamstreet/awskt/logs/Logs;Lcom/steamstreet/awskt/logs/StartQueryRequest;JJJLkotlin/time/TimeSource;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun queryRows-exY8QGI (Lcom/steamstreet/awskt/logs/Logs;Lcom/steamstreet/awskt/logs/StartQueryRequest;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun queryRows-exY8QGI$default (Lcom/steamstreet/awskt/logs/Logs;Lcom/steamstreet/awskt/logs/StartQueryRequest;JLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun stopQuery (Lcom/steamstreet/awskt/logs/Logs;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/logs/MalformedQueryException : com/steamstreet/awskt/logs/LogsException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/logs/QueryFailedException : com/steamstreet/awskt/logs/LogsException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;)V
+	public final fun getPartialResults ()Ljava/util/List;
+	public final fun getQueryId ()Ljava/lang/String;
+	public final fun getStatus ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/logs/QueryStatistics {
+	public static final field Companion Lcom/steamstreet/awskt/logs/QueryStatistics$Companion;
+	public fun <init> ()V
+	public fun <init> (DDD)V
+	public synthetic fun <init> (DDDILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()D
+	public final fun component2 ()D
+	public final fun component3 ()D
+	public final fun copy (DDD)Lcom/steamstreet/awskt/logs/QueryStatistics;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/logs/QueryStatistics;DDDILjava/lang/Object;)Lcom/steamstreet/awskt/logs/QueryStatistics;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBytesScanned ()D
+	public final fun getRecordsMatched ()D
+	public final fun getRecordsScanned ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/logs/QueryStatistics$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/logs/QueryStatistics$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/logs/QueryStatistics;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/logs/QueryStatistics;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/QueryStatistics$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/QueryStatus {
+	public static final field CANCELLED Ljava/lang/String;
+	public static final field COMPLETE Ljava/lang/String;
+	public static final field FAILED Ljava/lang/String;
+	public static final field INSTANCE Lcom/steamstreet/awskt/logs/QueryStatus;
+	public static final field RUNNING Ljava/lang/String;
+	public static final field SCHEDULED Ljava/lang/String;
+	public static final field TIMEOUT Ljava/lang/String;
+	public static final field UNKNOWN Ljava/lang/String;
+	public final fun getTERMINAL ()Ljava/util/Set;
+}
+
+public final class com/steamstreet/awskt/logs/QueryTimedOutException : com/steamstreet/awskt/logs/LogsException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getLastStatus ()Ljava/lang/String;
+	public final fun getQueryId ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/logs/ResourceNotFoundException : com/steamstreet/awskt/logs/LogsException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/logs/ResultField {
+	public static final field Companion Lcom/steamstreet/awskt/logs/ResultField$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/logs/ResultField;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/logs/ResultField;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/logs/ResultField;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getField ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/logs/ResultField$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/logs/ResultField$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/logs/ResultField;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/logs/ResultField;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/ResultField$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/ResultRow {
+	public fun <init> (Ljava/util/List;)V
+	public final fun get (Ljava/lang/String;)Ljava/lang/String;
+	public final fun getFields ()Ljava/util/List;
+	public final fun getPointer ()Ljava/lang/String;
+	public final fun getSelected ()Ljava/util/Map;
+	public final fun getValues ()Ljava/util/Map;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/logs/ServiceUnavailableException : com/steamstreet/awskt/logs/LogsException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/logs/StartQueryRequest {
+	public static final field Companion Lcom/steamstreet/awskt/logs/StartQueryRequest$Companion;
+	public fun <init> (Ljava/lang/String;JJLjava/util/List;Ljava/util/List;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/lang/String;JJLjava/util/List;Ljava/util/List;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()J
+	public final fun component3 ()J
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Ljava/util/List;
+	public final fun component6 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/lang/String;JJLjava/util/List;Ljava/util/List;Ljava/lang/Integer;)Lcom/steamstreet/awskt/logs/StartQueryRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/logs/StartQueryRequest;Ljava/lang/String;JJLjava/util/List;Ljava/util/List;Ljava/lang/Integer;ILjava/lang/Object;)Lcom/steamstreet/awskt/logs/StartQueryRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEndTime ()J
+	public final fun getLimit ()Ljava/lang/Integer;
+	public final fun getLogGroupIdentifiers ()Ljava/util/List;
+	public final fun getLogGroupNames ()Ljava/util/List;
+	public final fun getQueryString ()Ljava/lang/String;
+	public final fun getStartTime ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/logs/StartQueryRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/logs/StartQueryRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/logs/StartQueryRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/logs/StartQueryRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/StartQueryRequest$Companion {
+	public final fun betweenMillis (Ljava/lang/String;JJLjava/util/List;Ljava/util/List;Ljava/lang/Integer;)Lcom/steamstreet/awskt/logs/StartQueryRequest;
+	public static synthetic fun betweenMillis$default (Lcom/steamstreet/awskt/logs/StartQueryRequest$Companion;Ljava/lang/String;JJLjava/util/List;Ljava/util/List;Ljava/lang/Integer;ILjava/lang/Object;)Lcom/steamstreet/awskt/logs/StartQueryRequest;
+	public final fun inLastSeconds (Ljava/lang/String;JJLjava/util/List;Ljava/util/List;Ljava/lang/Integer;)Lcom/steamstreet/awskt/logs/StartQueryRequest;
+	public static synthetic fun inLastSeconds$default (Lcom/steamstreet/awskt/logs/StartQueryRequest$Companion;Ljava/lang/String;JJLjava/util/List;Ljava/util/List;Ljava/lang/Integer;ILjava/lang/Object;)Lcom/steamstreet/awskt/logs/StartQueryRequest;
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/StartQueryResponse {
+	public static final field Companion Lcom/steamstreet/awskt/logs/StartQueryResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/logs/StartQueryResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/logs/StartQueryResponse;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/logs/StartQueryResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getQueryId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/logs/StartQueryResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/logs/StartQueryResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/logs/StartQueryResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/logs/StartQueryResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/StartQueryResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/StopQueryRequest {
+	public static final field Companion Lcom/steamstreet/awskt/logs/StopQueryRequest$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/logs/StopQueryRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/logs/StopQueryRequest;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/logs/StopQueryRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getQueryId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/logs/StopQueryRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/logs/StopQueryRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/logs/StopQueryRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/logs/StopQueryRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/StopQueryRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/StopQueryResponse {
+	public static final field Companion Lcom/steamstreet/awskt/logs/StopQueryResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Z)V
+	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lcom/steamstreet/awskt/logs/StopQueryResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/logs/StopQueryResponse;ZILjava/lang/Object;)Lcom/steamstreet/awskt/logs/StopQueryResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSuccess ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/logs/StopQueryResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/logs/StopQueryResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/logs/StopQueryResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/logs/StopQueryResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/StopQueryResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/logs/ThrottlingException : com/steamstreet/awskt/logs/LogsException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
