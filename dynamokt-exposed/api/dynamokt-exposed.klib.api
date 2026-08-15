@@ -50,12 +50,16 @@ abstract class com.steamstreet.dynamokt.exposed/Table { // com.steamstreet.dynam
     final fun <#A1: kotlin/Any?> (com.steamstreet.dynamokt.exposed/Column<#A1>).sortKey(): com.steamstreet.dynamokt.exposed/Column<#A1> // com.steamstreet.dynamokt.exposed/Table.sortKey|sortKey@com.steamstreet.dynamokt.exposed.Column<0:0>(){0§<kotlin.Any?>}[0]
     final fun <#A1: kotlin/Any?> list(kotlin/String, com.steamstreet.dynamokt.exposed/Column<#A1>): com.steamstreet.dynamokt.exposed/ListColumn<#A1> // com.steamstreet.dynamokt.exposed/Table.list|list(kotlin.String;com.steamstreet.dynamokt.exposed.Column<0:0>){0§<kotlin.Any?>}[0]
     final fun <#A1: kotlin/Enum<#A1>> customEnumeration(kotlin/String, kotlin/Function1<kotlin/String, #A1>, kotlin/Function1<#A1, kotlin/String>): com.steamstreet.dynamokt.exposed/CustomEnumerationColumn<#A1> // com.steamstreet.dynamokt.exposed/Table.customEnumeration|customEnumeration(kotlin.String;kotlin.Function1<kotlin.String,0:0>;kotlin.Function1<0:0,kotlin.String>){0§<kotlin.Enum<0:0>>}[0]
+    final fun binary(kotlin/String): com.steamstreet.dynamokt.exposed/BinaryColumn // com.steamstreet.dynamokt.exposed/Table.binary|binary(kotlin.String){}[0]
     final fun bool(kotlin/String): com.steamstreet.dynamokt.exposed/BoolColumn // com.steamstreet.dynamokt.exposed/Table.bool|bool(kotlin.String){}[0]
+    final fun double(kotlin/String): com.steamstreet.dynamokt.exposed/DoubleColumn // com.steamstreet.dynamokt.exposed/Table.double|double(kotlin.String){}[0]
     final fun gsi(kotlin/String, kotlin/Function1<com.steamstreet.dynamokt.exposed/GlobalSecondaryIndex, kotlin/Unit>): com.steamstreet.dynamokt.exposed/GlobalSecondaryIndex // com.steamstreet.dynamokt.exposed/Table.gsi|gsi(kotlin.String;kotlin.Function1<com.steamstreet.dynamokt.exposed.GlobalSecondaryIndex,kotlin.Unit>){}[0]
     final fun integer(kotlin/String): com.steamstreet.dynamokt.exposed/IntegerColumn // com.steamstreet.dynamokt.exposed/Table.integer|integer(kotlin.String){}[0]
     final fun long(kotlin/String): com.steamstreet.dynamokt.exposed/LongColumn // com.steamstreet.dynamokt.exposed/Table.long|long(kotlin.String){}[0]
     final fun lsi(kotlin/String, kotlin/Function1<com.steamstreet.dynamokt.exposed/LocalSecondaryIndex, kotlin/Unit>): com.steamstreet.dynamokt.exposed/LocalSecondaryIndex // com.steamstreet.dynamokt.exposed/Table.lsi|lsi(kotlin.String;kotlin.Function1<com.steamstreet.dynamokt.exposed.LocalSecondaryIndex,kotlin.Unit>){}[0]
     final fun map(kotlin/String): com.steamstreet.dynamokt.exposed/MapColumn // com.steamstreet.dynamokt.exposed/Table.map|map(kotlin.String){}[0]
+    final fun numberSet(kotlin/String): com.steamstreet.dynamokt.exposed/NumberSetColumn // com.steamstreet.dynamokt.exposed/Table.numberSet|numberSet(kotlin.String){}[0]
+    final fun stringSet(kotlin/String): com.steamstreet.dynamokt.exposed/StringSetColumn // com.steamstreet.dynamokt.exposed/Table.stringSet|stringSet(kotlin.String){}[0]
     final fun text(kotlin/String): com.steamstreet.dynamokt.exposed/TextColumn // com.steamstreet.dynamokt.exposed/Table.text|text(kotlin.String){}[0]
     final fun timestamp(kotlin/String): com.steamstreet.dynamokt.exposed/TimestampColumn // com.steamstreet.dynamokt.exposed/Table.timestamp|timestamp(kotlin.String){}[0]
     final fun varchar(kotlin/String): com.steamstreet.dynamokt.exposed/VarCharColumn // com.steamstreet.dynamokt.exposed/Table.varchar|varchar(kotlin.String){}[0]
@@ -107,6 +111,15 @@ final class <#A: kotlin/Any?> com.steamstreet.dynamokt.exposed/EqOp : com.steams
         final fun <get-column>(): com.steamstreet.dynamokt.exposed/Column<#A> // com.steamstreet.dynamokt.exposed/EqOp.column.<get-column>|<get-column>(){}[0]
     final val value // com.steamstreet.dynamokt.exposed/EqOp.value|{}value[0]
         final fun <get-value>(): #A // com.steamstreet.dynamokt.exposed/EqOp.value.<get-value>|<get-value>(){}[0]
+}
+
+final class <#A: kotlin/Any?> com.steamstreet.dynamokt.exposed/InListOp : com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> { // com.steamstreet.dynamokt.exposed/InListOp|null[0]
+    constructor <init>(com.steamstreet.dynamokt.exposed/Column<#A>, kotlin.collections/List<#A>) // com.steamstreet.dynamokt.exposed/InListOp.<init>|<init>(com.steamstreet.dynamokt.exposed.Column<1:0>;kotlin.collections.List<1:0>){}[0]
+
+    final val column // com.steamstreet.dynamokt.exposed/InListOp.column|{}column[0]
+        final fun <get-column>(): com.steamstreet.dynamokt.exposed/Column<#A> // com.steamstreet.dynamokt.exposed/InListOp.column.<get-column>|<get-column>(){}[0]
+    final val values // com.steamstreet.dynamokt.exposed/InListOp.values|{}values[0]
+        final fun <get-values>(): kotlin.collections/List<#A> // com.steamstreet.dynamokt.exposed/InListOp.values.<get-values>|<get-values>(){}[0]
 }
 
 final class <#A: kotlin/Any?> com.steamstreet.dynamokt.exposed/ListColumn : com.steamstreet.dynamokt.exposed/Column<kotlin.collections/List<#A>> { // com.steamstreet.dynamokt.exposed/ListColumn|null[0]
@@ -260,6 +273,18 @@ final class com.steamstreet.dynamokt.exposed/BeginsWithOp : com.steamstreet.dyna
         final fun <get-prefix>(): kotlin/String // com.steamstreet.dynamokt.exposed/BeginsWithOp.prefix.<get-prefix>|<get-prefix>(){}[0]
 }
 
+final class com.steamstreet.dynamokt.exposed/BinaryColumn : com.steamstreet.dynamokt.exposed/Column<kotlin/ByteArray> { // com.steamstreet.dynamokt.exposed/BinaryColumn|null[0]
+    constructor <init>(com.steamstreet.dynamokt.exposed/Table, kotlin/String) // com.steamstreet.dynamokt.exposed/BinaryColumn.<init>|<init>(com.steamstreet.dynamokt.exposed.Table;kotlin.String){}[0]
+
+    final val name // com.steamstreet.dynamokt.exposed/BinaryColumn.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.steamstreet.dynamokt.exposed/BinaryColumn.name.<get-name>|<get-name>(){}[0]
+    final val table // com.steamstreet.dynamokt.exposed/BinaryColumn.table|{}table[0]
+        final fun <get-table>(): com.steamstreet.dynamokt.exposed/Table // com.steamstreet.dynamokt.exposed/BinaryColumn.table.<get-table>|<get-table>(){}[0]
+
+    final fun fromAttributeValue(com.steamstreet.dynamokt/AttributeValue): kotlin/ByteArray // com.steamstreet.dynamokt.exposed/BinaryColumn.fromAttributeValue|fromAttributeValue(com.steamstreet.dynamokt.AttributeValue){}[0]
+    final fun toAttributeValue(kotlin/ByteArray): com.steamstreet.dynamokt/AttributeValue // com.steamstreet.dynamokt.exposed/BinaryColumn.toAttributeValue|toAttributeValue(kotlin.ByteArray){}[0]
+}
+
 final class com.steamstreet.dynamokt.exposed/BoolColumn : com.steamstreet.dynamokt.exposed/Column<kotlin/Boolean> { // com.steamstreet.dynamokt.exposed/BoolColumn|null[0]
     constructor <init>(com.steamstreet.dynamokt.exposed/Table, kotlin/String) // com.steamstreet.dynamokt.exposed/BoolColumn.<init>|<init>(com.steamstreet.dynamokt.exposed.Table;kotlin.String){}[0]
 
@@ -270,6 +295,15 @@ final class com.steamstreet.dynamokt.exposed/BoolColumn : com.steamstreet.dynamo
 
     final fun fromAttributeValue(com.steamstreet.dynamokt/AttributeValue): kotlin/Boolean // com.steamstreet.dynamokt.exposed/BoolColumn.fromAttributeValue|fromAttributeValue(com.steamstreet.dynamokt.AttributeValue){}[0]
     final fun toAttributeValue(kotlin/Boolean): com.steamstreet.dynamokt/AttributeValue // com.steamstreet.dynamokt.exposed/BoolColumn.toAttributeValue|toAttributeValue(kotlin.Boolean){}[0]
+}
+
+final class com.steamstreet.dynamokt.exposed/ContainsOp : com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> { // com.steamstreet.dynamokt.exposed/ContainsOp|null[0]
+    constructor <init>(com.steamstreet.dynamokt.exposed/Column<*>, com.steamstreet.dynamokt/AttributeValue) // com.steamstreet.dynamokt.exposed/ContainsOp.<init>|<init>(com.steamstreet.dynamokt.exposed.Column<*>;com.steamstreet.dynamokt.AttributeValue){}[0]
+
+    final val column // com.steamstreet.dynamokt.exposed/ContainsOp.column|{}column[0]
+        final fun <get-column>(): com.steamstreet.dynamokt.exposed/Column<*> // com.steamstreet.dynamokt.exposed/ContainsOp.column.<get-column>|<get-column>(){}[0]
+    final val value // com.steamstreet.dynamokt.exposed/ContainsOp.value|{}value[0]
+        final fun <get-value>(): com.steamstreet.dynamokt/AttributeValue // com.steamstreet.dynamokt.exposed/ContainsOp.value.<get-value>|<get-value>(){}[0]
 }
 
 final class com.steamstreet.dynamokt.exposed/Database { // com.steamstreet.dynamokt.exposed/Database|null[0]
@@ -328,6 +362,18 @@ final class com.steamstreet.dynamokt.exposed/DeleteStatement { // com.steamstree
     final suspend fun execute(): kotlin/Boolean // com.steamstreet.dynamokt.exposed/DeleteStatement.execute|execute(){}[0]
 }
 
+final class com.steamstreet.dynamokt.exposed/DoubleColumn : com.steamstreet.dynamokt.exposed/Column<kotlin/Double> { // com.steamstreet.dynamokt.exposed/DoubleColumn|null[0]
+    constructor <init>(com.steamstreet.dynamokt.exposed/Table, kotlin/String) // com.steamstreet.dynamokt.exposed/DoubleColumn.<init>|<init>(com.steamstreet.dynamokt.exposed.Table;kotlin.String){}[0]
+
+    final val name // com.steamstreet.dynamokt.exposed/DoubleColumn.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.steamstreet.dynamokt.exposed/DoubleColumn.name.<get-name>|<get-name>(){}[0]
+    final val table // com.steamstreet.dynamokt.exposed/DoubleColumn.table|{}table[0]
+        final fun <get-table>(): com.steamstreet.dynamokt.exposed/Table // com.steamstreet.dynamokt.exposed/DoubleColumn.table.<get-table>|<get-table>(){}[0]
+
+    final fun fromAttributeValue(com.steamstreet.dynamokt/AttributeValue): kotlin/Double // com.steamstreet.dynamokt.exposed/DoubleColumn.fromAttributeValue|fromAttributeValue(com.steamstreet.dynamokt.AttributeValue){}[0]
+    final fun toAttributeValue(kotlin/Double): com.steamstreet.dynamokt/AttributeValue // com.steamstreet.dynamokt.exposed/DoubleColumn.toAttributeValue|toAttributeValue(kotlin.Double){}[0]
+}
+
 final class com.steamstreet.dynamokt.exposed/GlobalSecondaryIndex : com.steamstreet.dynamokt.exposed/Index { // com.steamstreet.dynamokt.exposed/GlobalSecondaryIndex|null[0]
     constructor <init>(kotlin/String, com.steamstreet.dynamokt.exposed/Table) // com.steamstreet.dynamokt.exposed/GlobalSecondaryIndex.<init>|<init>(kotlin.String;com.steamstreet.dynamokt.exposed.Table){}[0]
 
@@ -371,6 +417,10 @@ final class com.steamstreet.dynamokt.exposed/IntegerColumn : com.steamstreet.dyn
 
     final fun fromAttributeValue(com.steamstreet.dynamokt/AttributeValue): kotlin/Int // com.steamstreet.dynamokt.exposed/IntegerColumn.fromAttributeValue|fromAttributeValue(com.steamstreet.dynamokt.AttributeValue){}[0]
     final fun toAttributeValue(kotlin/Int): com.steamstreet.dynamokt/AttributeValue // com.steamstreet.dynamokt.exposed/IntegerColumn.toAttributeValue|toAttributeValue(kotlin.Int){}[0]
+}
+
+final class com.steamstreet.dynamokt.exposed/InvalidPageTokenException : kotlin/IllegalArgumentException { // com.steamstreet.dynamokt.exposed/InvalidPageTokenException|null[0]
+    constructor <init>(kotlin/String, kotlin/Throwable? = ...) // com.steamstreet.dynamokt.exposed/InvalidPageTokenException.<init>|<init>(kotlin.String;kotlin.Throwable?){}[0]
 }
 
 final class com.steamstreet.dynamokt.exposed/KeysOp : com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> { // com.steamstreet.dynamokt.exposed/KeysOp|null[0]
@@ -426,6 +476,25 @@ final class com.steamstreet.dynamokt.exposed/NoIndexMatchException : kotlin/Ille
     constructor <init>(kotlin/String) // com.steamstreet.dynamokt.exposed/NoIndexMatchException.<init>|<init>(kotlin.String){}[0]
 }
 
+final class com.steamstreet.dynamokt.exposed/NotOp : com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> { // com.steamstreet.dynamokt.exposed/NotOp|null[0]
+    constructor <init>(com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>) // com.steamstreet.dynamokt.exposed/NotOp.<init>|<init>(com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>){}[0]
+
+    final val op // com.steamstreet.dynamokt.exposed/NotOp.op|{}op[0]
+        final fun <get-op>(): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/NotOp.op.<get-op>|<get-op>(){}[0]
+}
+
+final class com.steamstreet.dynamokt.exposed/NumberSetColumn : com.steamstreet.dynamokt.exposed/Column<kotlin.collections/Set<kotlin/Long>> { // com.steamstreet.dynamokt.exposed/NumberSetColumn|null[0]
+    constructor <init>(com.steamstreet.dynamokt.exposed/Table, kotlin/String) // com.steamstreet.dynamokt.exposed/NumberSetColumn.<init>|<init>(com.steamstreet.dynamokt.exposed.Table;kotlin.String){}[0]
+
+    final val name // com.steamstreet.dynamokt.exposed/NumberSetColumn.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.steamstreet.dynamokt.exposed/NumberSetColumn.name.<get-name>|<get-name>(){}[0]
+    final val table // com.steamstreet.dynamokt.exposed/NumberSetColumn.table|{}table[0]
+        final fun <get-table>(): com.steamstreet.dynamokt.exposed/Table // com.steamstreet.dynamokt.exposed/NumberSetColumn.table.<get-table>|<get-table>(){}[0]
+
+    final fun fromAttributeValue(com.steamstreet.dynamokt/AttributeValue): kotlin.collections/Set<kotlin/Long> // com.steamstreet.dynamokt.exposed/NumberSetColumn.fromAttributeValue|fromAttributeValue(com.steamstreet.dynamokt.AttributeValue){}[0]
+    final fun toAttributeValue(kotlin.collections/Set<kotlin/Long>): com.steamstreet.dynamokt/AttributeValue // com.steamstreet.dynamokt.exposed/NumberSetColumn.toAttributeValue|toAttributeValue(kotlin.collections.Set<kotlin.Long>){}[0]
+}
+
 final class com.steamstreet.dynamokt.exposed/OrOp : com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> { // com.steamstreet.dynamokt.exposed/OrOp|null[0]
     constructor <init>(com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>, com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>) // com.steamstreet.dynamokt.exposed/OrOp.<init>|<init>(com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>;com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>){}[0]
 
@@ -452,11 +521,13 @@ final class com.steamstreet.dynamokt.exposed/Query { // com.steamstreet.dynamokt
     final val table // com.steamstreet.dynamokt.exposed/Query.table|{}table[0]
         final fun <get-table>(): com.steamstreet.dynamokt.exposed/Table // com.steamstreet.dynamokt.exposed/Query.table.<get-table>|<get-table>(){}[0]
 
+    final fun andWhere(kotlin/Function1<com.steamstreet.dynamokt.exposed/SqlExpressionBuilder, com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>>): com.steamstreet.dynamokt.exposed/Query // com.steamstreet.dynamokt.exposed/Query.andWhere|andWhere(kotlin.Function1<com.steamstreet.dynamokt.exposed.SqlExpressionBuilder,com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>>){}[0]
     final fun asFlow(): kotlinx.coroutines.flow/Flow<com.steamstreet.dynamokt.exposed/ResultRow> // com.steamstreet.dynamokt.exposed/Query.asFlow|asFlow(){}[0]
     final fun limit(kotlin/Int): com.steamstreet.dynamokt.exposed/Query // com.steamstreet.dynamokt.exposed/Query.limit|limit(kotlin.Int){}[0]
     final fun orderBy(kotlin/Boolean = ...): com.steamstreet.dynamokt.exposed/Query // com.steamstreet.dynamokt.exposed/Query.orderBy|orderBy(kotlin.Boolean){}[0]
     final fun startAfter(kotlin/String?): com.steamstreet.dynamokt.exposed/Query // com.steamstreet.dynamokt.exposed/Query.startAfter|startAfter(kotlin.String?){}[0]
     final fun where(kotlin/Function1<com.steamstreet.dynamokt.exposed/SqlExpressionBuilder, com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>>): com.steamstreet.dynamokt.exposed/Query // com.steamstreet.dynamokt.exposed/Query.where|where(kotlin.Function1<com.steamstreet.dynamokt.exposed.SqlExpressionBuilder,com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>>){}[0]
+    final suspend fun count(): kotlin/Long // com.steamstreet.dynamokt.exposed/Query.count|count(){}[0]
     final suspend fun firstOrNull(): com.steamstreet.dynamokt.exposed/ResultRow? // com.steamstreet.dynamokt.exposed/Query.firstOrNull|firstOrNull(){}[0]
     final suspend fun page(): com.steamstreet.dynamokt.exposed/PageResult // com.steamstreet.dynamokt.exposed/Query.page|page(){}[0]
     final suspend fun single(): com.steamstreet.dynamokt.exposed/ResultRow // com.steamstreet.dynamokt.exposed/Query.single|single(){}[0]
@@ -476,6 +547,18 @@ final class com.steamstreet.dynamokt.exposed/ResultRow { // com.steamstreet.dyna
     final fun <#A1: kotlin/Any?> getOrNull(com.steamstreet.dynamokt.exposed/Column<#A1>): #A1? // com.steamstreet.dynamokt.exposed/ResultRow.getOrNull|getOrNull(com.steamstreet.dynamokt.exposed.Column<0:0>){0§<kotlin.Any?>}[0]
     final fun hasValue(com.steamstreet.dynamokt.exposed/Column<*>): kotlin/Boolean // com.steamstreet.dynamokt.exposed/ResultRow.hasValue|hasValue(com.steamstreet.dynamokt.exposed.Column<*>){}[0]
     final fun toString(): kotlin/String // com.steamstreet.dynamokt.exposed/ResultRow.toString|toString(){}[0]
+}
+
+final class com.steamstreet.dynamokt.exposed/StringSetColumn : com.steamstreet.dynamokt.exposed/Column<kotlin.collections/Set<kotlin/String>> { // com.steamstreet.dynamokt.exposed/StringSetColumn|null[0]
+    constructor <init>(com.steamstreet.dynamokt.exposed/Table, kotlin/String) // com.steamstreet.dynamokt.exposed/StringSetColumn.<init>|<init>(com.steamstreet.dynamokt.exposed.Table;kotlin.String){}[0]
+
+    final val name // com.steamstreet.dynamokt.exposed/StringSetColumn.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.steamstreet.dynamokt.exposed/StringSetColumn.name.<get-name>|<get-name>(){}[0]
+    final val table // com.steamstreet.dynamokt.exposed/StringSetColumn.table|{}table[0]
+        final fun <get-table>(): com.steamstreet.dynamokt.exposed/Table // com.steamstreet.dynamokt.exposed/StringSetColumn.table.<get-table>|<get-table>(){}[0]
+
+    final fun fromAttributeValue(com.steamstreet.dynamokt/AttributeValue): kotlin.collections/Set<kotlin/String> // com.steamstreet.dynamokt.exposed/StringSetColumn.fromAttributeValue|fromAttributeValue(com.steamstreet.dynamokt.AttributeValue){}[0]
+    final fun toAttributeValue(kotlin.collections/Set<kotlin/String>): com.steamstreet.dynamokt/AttributeValue // com.steamstreet.dynamokt.exposed/StringSetColumn.toAttributeValue|toAttributeValue(kotlin.collections.Set<kotlin.String>){}[0]
 }
 
 final class com.steamstreet.dynamokt.exposed/TextColumn : com.steamstreet.dynamokt.exposed/Column<kotlin/String> { // com.steamstreet.dynamokt.exposed/TextColumn|null[0]
@@ -523,6 +606,11 @@ final class com.steamstreet.dynamokt.exposed/Transaction { // com.steamstreet.dy
     final fun <#A1: com.steamstreet.dynamokt.exposed/Table> (com.steamstreet.dynamokt.exposed/BoundTable<#A1>).insert(kotlin/Function2<#A1, com.steamstreet.dynamokt.exposed/InsertStatement, kotlin/Unit>) // com.steamstreet.dynamokt.exposed/Transaction.insert|insert@com.steamstreet.dynamokt.exposed.BoundTable<0:0>(kotlin.Function2<0:0,com.steamstreet.dynamokt.exposed.InsertStatement,kotlin.Unit>){0§<com.steamstreet.dynamokt.exposed.Table>}[0]
     final fun <#A1: com.steamstreet.dynamokt.exposed/Table> (com.steamstreet.dynamokt.exposed/BoundTable<#A1>).update(kotlin/Function1<com.steamstreet.dynamokt.exposed/SqlExpressionBuilder, com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>>, kotlin/Function2<#A1, com.steamstreet.dynamokt.exposed/UpdateStatement, kotlin/Unit>) // com.steamstreet.dynamokt.exposed/Transaction.update|update@com.steamstreet.dynamokt.exposed.BoundTable<0:0>(kotlin.Function1<com.steamstreet.dynamokt.exposed.SqlExpressionBuilder,com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>>;kotlin.Function2<0:0,com.steamstreet.dynamokt.exposed.UpdateStatement,kotlin.Unit>){0§<com.steamstreet.dynamokt.exposed.Table>}[0]
     final fun isEmpty(): kotlin/Boolean // com.steamstreet.dynamokt.exposed/Transaction.isEmpty|isEmpty(){}[0]
+    final suspend fun (com.steamstreet.dynamokt.exposed/Table).delete(com.steamstreet.dynamokt.exposed/Database, kotlin/Function1<com.steamstreet.dynamokt.exposed/SqlExpressionBuilder, com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>>): kotlin/Boolean // com.steamstreet.dynamokt.exposed/Transaction.delete|delete@com.steamstreet.dynamokt.exposed.Table(com.steamstreet.dynamokt.exposed.Database;kotlin.Function1<com.steamstreet.dynamokt.exposed.SqlExpressionBuilder,com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>>){}[0]
+    final suspend fun (com.steamstreet.dynamokt.exposed/Table).get(com.steamstreet.dynamokt.exposed/Database, kotlin/Function1<com.steamstreet.dynamokt.exposed/SqlExpressionBuilder, com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>>): com.steamstreet.dynamokt.exposed/ResultRow? // com.steamstreet.dynamokt.exposed/Transaction.get|get@com.steamstreet.dynamokt.exposed.Table(com.steamstreet.dynamokt.exposed.Database;kotlin.Function1<com.steamstreet.dynamokt.exposed.SqlExpressionBuilder,com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>>){}[0]
+    final suspend fun <#A1: com.steamstreet.dynamokt.exposed/Table> (#A1).delete(com.steamstreet.dynamokt.exposed/Database, kotlin/Function1<com.steamstreet.dynamokt.exposed/SqlExpressionBuilder, com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>>, kotlin/Function2<#A1, com.steamstreet.dynamokt.exposed/DeleteStatement, kotlin/Unit>): kotlin/Boolean // com.steamstreet.dynamokt.exposed/Transaction.delete|delete@0:0(com.steamstreet.dynamokt.exposed.Database;kotlin.Function1<com.steamstreet.dynamokt.exposed.SqlExpressionBuilder,com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>>;kotlin.Function2<0:0,com.steamstreet.dynamokt.exposed.DeleteStatement,kotlin.Unit>){0§<com.steamstreet.dynamokt.exposed.Table>}[0]
+    final suspend fun <#A1: com.steamstreet.dynamokt.exposed/Table> (#A1).insert(com.steamstreet.dynamokt.exposed/Database, kotlin/Function2<#A1, com.steamstreet.dynamokt.exposed/InsertStatement, kotlin/Unit>): com.steamstreet.dynamokt.exposed/ResultRow // com.steamstreet.dynamokt.exposed/Transaction.insert|insert@0:0(com.steamstreet.dynamokt.exposed.Database;kotlin.Function2<0:0,com.steamstreet.dynamokt.exposed.InsertStatement,kotlin.Unit>){0§<com.steamstreet.dynamokt.exposed.Table>}[0]
+    final suspend fun <#A1: com.steamstreet.dynamokt.exposed/Table> (#A1).update(com.steamstreet.dynamokt.exposed/Database, kotlin/Function1<com.steamstreet.dynamokt.exposed/SqlExpressionBuilder, com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>>, kotlin/Function2<#A1, com.steamstreet.dynamokt.exposed/UpdateStatement, kotlin/Unit>): com.steamstreet.dynamokt.exposed/ResultRow // com.steamstreet.dynamokt.exposed/Transaction.update|update@0:0(com.steamstreet.dynamokt.exposed.Database;kotlin.Function1<com.steamstreet.dynamokt.exposed.SqlExpressionBuilder,com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>>;kotlin.Function2<0:0,com.steamstreet.dynamokt.exposed.UpdateStatement,kotlin.Unit>){0§<com.steamstreet.dynamokt.exposed.Table>}[0]
 }
 
 final class com.steamstreet.dynamokt.exposed/TransactionGet { // com.steamstreet.dynamokt.exposed/TransactionGet|null[0]
@@ -549,7 +637,9 @@ final class com.steamstreet.dynamokt.exposed/UpdateStatement { // com.steamstree
     final fun <#A1: kotlin/Any?> set(com.steamstreet.dynamokt.exposed/Column<#A1>, #A1) // com.steamstreet.dynamokt.exposed/UpdateStatement.set|set(com.steamstreet.dynamokt.exposed.Column<0:0>;0:0){0§<kotlin.Any?>}[0]
     final fun <#A1: kotlin/Number> set(com.steamstreet.dynamokt.exposed/Column<#A1>, com.steamstreet.dynamokt.exposed/IncrementExpr<#A1>) // com.steamstreet.dynamokt.exposed/UpdateStatement.set|set(com.steamstreet.dynamokt.exposed.Column<0:0>;com.steamstreet.dynamokt.exposed.IncrementExpr<0:0>){0§<kotlin.Number>}[0]
     final fun condition(kotlin/Function1<com.steamstreet.dynamokt.exposed/SqlExpressionBuilder, com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>>) // com.steamstreet.dynamokt.exposed/UpdateStatement.condition|condition(kotlin.Function1<com.steamstreet.dynamokt.exposed.SqlExpressionBuilder,com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>>){}[0]
+    final fun ifExists() // com.steamstreet.dynamokt.exposed/UpdateStatement.ifExists|ifExists(){}[0]
     final fun increment(com.steamstreet.dynamokt.exposed/Column<kotlin/Int>, kotlin/Int = ...) // com.steamstreet.dynamokt.exposed/UpdateStatement.increment|increment(com.steamstreet.dynamokt.exposed.Column<kotlin.Int>;kotlin.Int){}[0]
+    final fun increment(com.steamstreet.dynamokt.exposed/Column<kotlin/Long>, kotlin/Long = ...) // com.steamstreet.dynamokt.exposed/UpdateStatement.increment|increment(com.steamstreet.dynamokt.exposed.Column<kotlin.Long>;kotlin.Long){}[0]
     final suspend fun execute(): com.steamstreet.dynamokt.exposed/ResultRow // com.steamstreet.dynamokt.exposed/UpdateStatement.execute|execute(){}[0]
 }
 
@@ -571,16 +661,20 @@ open class com.steamstreet.dynamokt.exposed/SqlExpressionBuilder { // com.steams
     final fun (com.steamstreet.dynamokt.exposed/Column<*>).exists(): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.exists|exists@com.steamstreet.dynamokt.exposed.Column<*>(){}[0]
     final fun (com.steamstreet.dynamokt.exposed/Column<*>).notExists(): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.notExists|notExists@com.steamstreet.dynamokt.exposed.Column<*>(){}[0]
     final fun (com.steamstreet.dynamokt.exposed/Column<kotlin/String>).beginsWith(kotlin/String): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.beginsWith|beginsWith@com.steamstreet.dynamokt.exposed.Column<kotlin.String>(kotlin.String){}[0]
+    final fun (com.steamstreet.dynamokt.exposed/Column<kotlin/String>).contains(kotlin/String): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.contains|contains@com.steamstreet.dynamokt.exposed.Column<kotlin.String>(kotlin.String){}[0]
     final fun (com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>).and(com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.and|and@com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>(com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>){}[0]
     final fun (com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>).or(com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.or|or@com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>(com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>){}[0]
     final fun <#A1: kotlin/Any?> (com.steamstreet.dynamokt.exposed/Column<#A1>).eq(#A1): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.eq|eq@com.steamstreet.dynamokt.exposed.Column<0:0>(0:0){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> (com.steamstreet.dynamokt.exposed/Column<#A1>).inList(kotlin.collections/List<#A1>): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.inList|inList@com.steamstreet.dynamokt.exposed.Column<0:0>(kotlin.collections.List<0:0>){0§<kotlin.Any?>}[0]
     final fun <#A1: kotlin/Any?> (com.steamstreet.dynamokt.exposed/Column<#A1>).neq(#A1): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.neq|neq@com.steamstreet.dynamokt.exposed.Column<0:0>(0:0){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> (com.steamstreet.dynamokt.exposed/Column<kotlin.collections/List<#A1>>).contains(#A1): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.contains|contains@com.steamstreet.dynamokt.exposed.Column<kotlin.collections.List<0:0>>(0:0){0§<kotlin.Any?>}[0]
     final fun <#A1: kotlin/Comparable<#A1>> (com.steamstreet.dynamokt.exposed/Column<#A1>).between(#A1, #A1): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.between|between@com.steamstreet.dynamokt.exposed.Column<0:0>(0:0;0:0){0§<kotlin.Comparable<0:0>>}[0]
     final fun <#A1: kotlin/Comparable<#A1>> (com.steamstreet.dynamokt.exposed/Column<#A1>).ge(#A1): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.ge|ge@com.steamstreet.dynamokt.exposed.Column<0:0>(0:0){0§<kotlin.Comparable<0:0>>}[0]
     final fun <#A1: kotlin/Comparable<#A1>> (com.steamstreet.dynamokt.exposed/Column<#A1>).gt(#A1): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.gt|gt@com.steamstreet.dynamokt.exposed.Column<0:0>(0:0){0§<kotlin.Comparable<0:0>>}[0]
     final fun <#A1: kotlin/Comparable<#A1>> (com.steamstreet.dynamokt.exposed/Column<#A1>).le(#A1): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.le|le@com.steamstreet.dynamokt.exposed.Column<0:0>(0:0){0§<kotlin.Comparable<0:0>>}[0]
     final fun <#A1: kotlin/Comparable<#A1>> (com.steamstreet.dynamokt.exposed/Column<#A1>).lt(#A1): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.lt|lt@com.steamstreet.dynamokt.exposed.Column<0:0>(0:0){0§<kotlin.Comparable<0:0>>}[0]
     final fun keys(kotlin.collections/List<kotlin/Pair<kotlin/Any, kotlin/Any?>>): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.keys|keys(kotlin.collections.List<kotlin.Pair<kotlin.Any,kotlin.Any?>>){}[0]
+    final fun not(com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean>): com.steamstreet.dynamokt.exposed/Op<kotlin/Boolean> // com.steamstreet.dynamokt.exposed/SqlExpressionBuilder.not|not(com.steamstreet.dynamokt.exposed.Op<kotlin.Boolean>){}[0]
 }
 
 sealed class <#A: kotlin/Any?> com.steamstreet.dynamokt.exposed/Op // com.steamstreet.dynamokt.exposed/Op|null[0]
@@ -596,7 +690,9 @@ sealed class com.steamstreet.dynamokt.exposed/Index { // com.steamstreet.dynamok
         final fun <get-table>(): com.steamstreet.dynamokt.exposed/Table // com.steamstreet.dynamokt.exposed/Index.table.<get-table>|<get-table>(){}[0]
 }
 
+final fun (com.steamstreet.dynamokt.exposed/Column<kotlin/Int>).com.steamstreet.dynamokt.exposed/minus(kotlin/Int): com.steamstreet.dynamokt.exposed/IncrementExpr<kotlin/Int> // com.steamstreet.dynamokt.exposed/minus|minus@com.steamstreet.dynamokt.exposed.Column<kotlin.Int>(kotlin.Int){}[0]
 final fun (com.steamstreet.dynamokt.exposed/Column<kotlin/Int>).com.steamstreet.dynamokt.exposed/plus(kotlin/Int): com.steamstreet.dynamokt.exposed/IncrementExpr<kotlin/Int> // com.steamstreet.dynamokt.exposed/plus|plus@com.steamstreet.dynamokt.exposed.Column<kotlin.Int>(kotlin.Int){}[0]
+final fun (com.steamstreet.dynamokt.exposed/Column<kotlin/Long>).com.steamstreet.dynamokt.exposed/minus(kotlin/Long): com.steamstreet.dynamokt.exposed/IncrementExpr<kotlin/Long> // com.steamstreet.dynamokt.exposed/minus|minus@com.steamstreet.dynamokt.exposed.Column<kotlin.Long>(kotlin.Long){}[0]
 final fun (com.steamstreet.dynamokt.exposed/Column<kotlin/Long>).com.steamstreet.dynamokt.exposed/plus(kotlin/Long): com.steamstreet.dynamokt.exposed/IncrementExpr<kotlin/Long> // com.steamstreet.dynamokt.exposed/plus|plus@com.steamstreet.dynamokt.exposed.Column<kotlin.Long>(kotlin.Long){}[0]
 final fun (com.steamstreet.dynamokt.exposed/Table).com.steamstreet.dynamokt.exposed/batchGet(com.steamstreet.dynamokt.exposed/Database, kotlin.collections/List<kotlin/Pair<kotlin/Any, kotlin/Any?>>): kotlinx.coroutines.flow/Flow<com.steamstreet.dynamokt.exposed/ResultRow> // com.steamstreet.dynamokt.exposed/batchGet|batchGet@com.steamstreet.dynamokt.exposed.Table(com.steamstreet.dynamokt.exposed.Database;kotlin.collections.List<kotlin.Pair<kotlin.Any,kotlin.Any?>>){}[0]
 final fun (com.steamstreet.dynamokt.exposed/Table).com.steamstreet.dynamokt.exposed/scan(com.steamstreet.dynamokt.exposed/Database): com.steamstreet.dynamokt.exposed/Query // com.steamstreet.dynamokt.exposed/scan|scan@com.steamstreet.dynamokt.exposed.Table(com.steamstreet.dynamokt.exposed.Database){}[0]

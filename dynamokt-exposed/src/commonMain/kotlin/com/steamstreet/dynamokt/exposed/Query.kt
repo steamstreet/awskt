@@ -48,7 +48,8 @@ internal sealed class IndexMatch {
 }
 
 /**
- * Exception thrown when select() cannot find an appropriate index
+ * Thrown when no table or index partition key is pinned with `eq`, so the query
+ * cannot be served as a GetItem or Query. Use `scan()` instead.
  */
 public class NoIndexMatchException(message: String) : IllegalArgumentException(message)
 
@@ -848,6 +849,11 @@ public fun Table.select(
  * Select all columns from the table.
  * Returns a Query that can be further configured with where(), etc.
  *
+ * The where clause must pin the partition key of the table or one of its
+ * indices with `eq`; the best-matching index is chosen automatically and any
+ * remaining conditions become a server-side filter. Use [scan] when there is no
+ * such key.
+ *
  * Example:
  * ```
  * Users.selectAll(database).where { Users.id eq "123" }
@@ -921,7 +927,8 @@ public fun Table.batchGet(
 
 /**
  * Select items from the table using the best available index.
- * Automatically chooses between GetItem and Query based on the where clause.
+ * Automatically chooses between GetItem and Query based on the where clause;
+ * conditions the chosen index cannot express become a filter.
  *
  * @throws NoIndexMatchException if no index can satisfy the query (would require a Scan)
  * @deprecated Use selectAll(database).where { } instead

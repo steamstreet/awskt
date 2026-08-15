@@ -83,17 +83,6 @@ internal fun combineConditions(first: Op<Boolean>?, second: Op<Boolean>?): Op<Bo
 }
 
 /**
- * True when a `keys(...)` operation appears anywhere in a single-item where clause. `when` is
- * deliberately non-exhaustive so that new [Op] subclasses do not break this walk.
- */
-private fun whereHasKeysOp(op: Op<Boolean>): Boolean = when (op) {
-    is KeysOp -> true
-    is AndOp -> whereHasKeysOp(op.left) || whereHasKeysOp(op.right)
-    is OrOp -> whereHasKeysOp(op.left) || whereHasKeysOp(op.right)
-    else -> false
-}
-
-/**
  * Split a single-item where clause into its primary key and a residual condition.
  *
  * Walks the top-level AND spine only: an `eq` on the partition key (and, for a composite-key
@@ -120,7 +109,7 @@ internal fun Table.decomposeItemWhere(op: Op<Boolean>, operation: String): KeyWh
         )
     val skColumn = sortKey
 
-    if (whereHasKeysOp(op)) {
+    if (containsKeysOp(op)) {
         throw IllegalArgumentException(
             "keys() is not valid in $operation on table '$tableName'. It selects a set of items, " +
                 "while $operation targets exactly one - issue one $operation per key instead."
