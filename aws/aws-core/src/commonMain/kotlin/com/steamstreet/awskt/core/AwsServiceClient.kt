@@ -5,16 +5,20 @@ import com.steamstreet.awskt.signing.PayloadHash
 import com.steamstreet.awskt.signing.SigV4
 import com.steamstreet.awskt.signing.SigV4Config
 import com.steamstreet.awskt.signing.SignedBodyHeader
+import com.steamstreet.awskt.signing.SignedRequest
 import com.steamstreet.awskt.signing.SigningRequest
 import com.steamstreet.awskt.signing.sigV4UriEncode
 import io.ktor.client.HttpClient
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.prepareRequest
 import io.ktor.client.request.request
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.statement.readRawBytes
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.content.OutgoingContent
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.delay
 import kotlin.concurrent.atomics.AtomicLong
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -64,6 +68,52 @@ public class AwsProtocol(
             endpointPrefix: String,
             signingName: String = endpointPrefix,
         ): AwsProtocol = AwsProtocol(endpointPrefix, signingName, null, null, RestXmlErrorParser)
+
+        /**
+         * REST-shaped JSON: a plain `application/json` body addressed by **method and path** rather
+         * than by `X-Amz-Target`.
+         *
+         * The null [targetPrefix] is the whole difference from [awsJson1_0] / [awsJson1_1] and it is
+         * load-bearing: `AwsServiceClient` only emits `X-Amz-Target` when a prefix is present, so a
+         * restJson1 service addressed through this protocol sends no target header at all. Pair it
+         * with [callRestJson] rather than [callJson], which hardcodes `POST /`.
+         *
+         * Errors are [AwsJsonErrorParser]'s, unchanged — restJson1 shares awsJson's error envelope,
+         * including the `x-amzn-errortype` header, which is where a restJson1 service usually puts
+         * the code. EventBridge Scheduler is the consumer in this repo.
+         *
+         * The plan's M2 note called restJson1 "a second codec into `aws-core`" and treated that as
+         * a reason to defer it. It was already stale by M3.5 — S3 forced the protocol seam and the
+         * `AwsErrorParser` strategy that make this factory four lines rather than a codec.
+         */
+        public fun restJson1(
+            endpointPrefix: String,
+            signingName: String = endpointPrefix,
+        ): AwsProtocol = AwsProtocol(endpointPrefix, signingName, "application/json", null, AwsJsonErrorParser)
+
+        /**
+         * The **AWS query protocol**: a form-encoded body naming an `Action`, answered with XML.
+         *
+         * The oldest wire format AWS still serves, and the one SNS speaks. Nothing here parses
+         * either direction — a query service's request is built by flattening a structure into
+         * `Name.member.1.Field` keys and its response is XML, neither of which is a codec
+         * `aws-core` can supply generically. This factory contributes the three things that *are*
+         * protocol-level: the content type, the absence of a target header, and the error parser.
+         * The service module hand-writes the rest, which is proportionate when the module has two
+         * operations and would not be if it had twenty.
+         *
+         * [RestXmlErrorParser] is correct here despite the name. A query-protocol error is
+         * `<ErrorResponse><Error><Code>…</Code><Message>…</Message></Error></ErrorResponse>` and
+         * that parser scans for the first `<Code>` and `<Message>` at any depth, which finds
+         * exactly those. It is named for the protocol it was written for, not for the only one it
+         * fits.
+         */
+        public fun awsQuery(
+            endpointPrefix: String,
+            signingName: String = endpointPrefix,
+        ): AwsProtocol = AwsProtocol(
+            endpointPrefix, signingName, "application/x-www-form-urlencoded", null, RestXmlErrorParser,
+        )
     }
 }
 
@@ -110,6 +160,22 @@ internal const val AWSKT_USER_AGENT: String = "awskt/$AWSKT_VERSION ktor"
  *   can report *which* response was refused. The retry loop itself does not look at it.
  */
 private class InspectionRefusal(val refusal: Throwable, val status: Int) : Throwable(refusal)
+
+/**
+ * Carries whatever a caller's `consume` threw out through [AwsServiceClient.callStreaming]'s send,
+ * so the retry loop can tell it apart from a transport failure.
+ *
+ * Exactly the same problem [InspectionRefusal] solves, and the same shape of answer, because
+ * without a marker both arrive at the same `catch` and [classifyTransportFailure] answers
+ * AMBIGUOUS for anything it does not recognise — which on an IDEMPOTENT operation retries.
+ *
+ * **The bug this prevents is a bad one and it was real**: a modelled failure delivered *inside* a
+ * successful stream — Bedrock reporting `ModelStreamErrorException` half-way through a generation —
+ * propagated out of `consume`, was read as "the network might have eaten this", and replayed the
+ * entire call. The caller saw a partial answer, then a second partial answer, and was billed for
+ * both.
+ */
+private class ConsumerFailure(val failure: Throwable) : Throwable(failure)
 
 /**
  * The retry capacity one [AwsServiceClient.callRaw] invocation has taken from the shared bucket and
@@ -284,47 +350,9 @@ public class AwsServiceClient(
 
             // Resolved per attempt, not once: a call spanning four attempts and a 20-second cap can
             // outlive the credentials it started with.
-            val credentials = credentialsProvider.resolve()
-
-            val requestHeaders = buildList {
-                protocol.contentType?.let { add("Content-Type" to it) }
-                protocol.targetPrefix?.let { prefix ->
-                    operation?.let { add("X-Amz-Target" to "$prefix.$it") }
-                }
-                addAll(headers)
-                // After the caller's headers, and only when they carried none: a request that
-                // arrived with two User-Agents is worse than one that arrived with the wrong one,
-                // and a caller identifying its own application is the case worth deferring to.
-                if (headers.none { it.first.equals("user-agent", ignoreCase = true) }) {
-                    add("user-agent" to AWSKT_USER_AGENT)
-                }
-                add("amz-sdk-invocation-id" to invocationId)
-                add("amz-sdk-request" to "attempt=${attempt + 1}; max=${retryConfig.maxAttempts}")
-                // Signing a compressed body we never see would break the payload hash. Added here
-                // for every call and nowhere else: a service module that adds its own copy sends
-                // (and signs) the header twice, which works only for as long as no engine dedupes.
-                add("accept-encoding" to "identity")
-            }
-
-            val signed = SigV4.sign(
-                request = SigningRequest(
-                    method = method,
-                    path = path,
-                    host = endpoint.authority,
-                    queryParameters = query,
-                    headers = requestHeaders,
-                    body = body,
-                ),
-                credentials = credentials,
-                config = SigV4Config(
-                    region = region,
-                    service = protocol.signingName,
-                    payloadHash = payloadHash,
-                    signedBodyHeader = signedBodyHeader,
-                    doubleUriEncode = doubleUriEncode,
-                    normalizeUriPath = normalizeUriPath,
-                ),
-                signingInstantMillis = clock() + clockSkewOffsetMillis.load(),
+            val signed = signAttempt(
+                method, path, query, headers, body, operation, invocationId, attempt,
+                payloadHash, signedBodyHeader, doubleUriEncode, normalizeUriPath,
             )
 
             val response: AwsHttpResponse
@@ -592,6 +620,300 @@ public class AwsServiceClient(
         )
         sleep(delayMillis)
         return true
+    }
+
+    /**
+     * Issues a signed request and hands the **response body to [consume] as it arrives**, rather
+     * than materializing it.
+     *
+     * ### What this is for, and what it deliberately is not
+     *
+     * The plan defers streaming bodies to v2, and this is a *partial* advance on that item rather
+     * than its delivery. It streams **responses only**: the request body is still a materialized
+     * `ByteArray`, so the signature is an ordinary payload hash over bytes we hold and none of the
+     * chunked-signing machinery a streaming *request* needs exists. That is enough for AWS's
+     * event-stream services — Bedrock's `ConverseStream` sends a small JSON request and answers
+     * with a long stream — and is not enough for S3's `GetObject`, which also wants a ceiling, a
+     * `Range` interaction and a truncation check. `aws-s3` is deliberately left alone.
+     *
+     * ### Retry semantics, which are narrower than [callRaw]'s and have to be
+     *
+     * A stream can be retried right up until the first byte of a **successful** body is handed out,
+     * and not afterwards — once [consume] has seen part of the answer there is no way to un-emit it.
+     * So:
+     *
+     * - transport failures before a response arrives retry exactly as in [callRaw], honouring
+     *   [safety];
+     * - a non-2xx response has its body materialized (an error body is small and bounded) and is
+     *   classified and retried exactly as in [callRaw];
+     * - a 2xx response is handed to [consume], and **whatever happens inside [consume] is never
+     *   retried**. A failure part-way through a stream propagates to the caller with however much
+     *   was already emitted still emitted.
+     *
+     * That last rule is why there is no `validateBody` equivalent here. [callRaw] can offer one
+     * because it holds the whole body before deciding; a stream has no such moment.
+     *
+     * @param consume called once, with a live channel, inside the HTTP client's response scope.
+     *   **The channel is only valid inside this call** — Ktor closes the connection when the block
+     *   returns, so a [consume] that stashes the channel and returns hands its caller a dead one.
+     *   Anything derived from the stream must be fully realized before returning.
+     * @return whatever [consume] returned.
+     */
+    public suspend fun <T> callStreaming(
+        method: String,
+        path: String = "/",
+        query: List<Pair<String, String>> = emptyList(),
+        headers: List<Pair<String, String>> = emptyList(),
+        body: ByteArray = EMPTY_BODY,
+        operation: String? = null,
+        safety: OperationSafety = OperationSafety.IDEMPOTENT,
+        payloadHash: PayloadHash = PayloadHash.Compute,
+        signedBodyHeader: SignedBodyHeader = SignedBodyHeader.NONE,
+        doubleUriEncode: Boolean = true,
+        normalizeUriPath: Boolean = true,
+        consume: suspend (status: Int, headers: Map<String, String>, body: ByteReadChannel) -> T,
+    ): T {
+        val invocationId = newInvocationId()
+        val deadline = clock() + retryConfig.maxTotalRetryDuration.inWholeMilliseconds
+        val budget = RetryBudget()
+        var attempt = 0
+        var skewCorrectionUsed = false
+
+        while (true) {
+            val attemptNumber = attempt + 1
+            val attemptStart = clock()
+
+            val signed = signAttempt(
+                method, path, query, headers, body, operation, invocationId, attempt,
+                payloadHash, signedBodyHeader, doubleUriEncode, normalizeUriPath,
+            )
+
+            val outcome: StreamAttempt<T>
+            try {
+                outcome = sendStreaming(method, path, query, signed.headers, body, consume)
+            } catch (consumerFailure: ConsumerFailure) {
+                // Caught *before* the classifier, deliberately. The response arrived, the status was
+                // 2xx, and part of the body has already been handed to the caller — there is no
+                // honest way to replay that, whatever the failure was. GAVE_UP and no terminal
+                // event: the call is over, but the attempt has no outcome that is AWS's.
+                notify(Outcome.GAVE_UP, operation, attemptNumber, null, null, null, attemptStart)
+                throw consumerFailure.failure
+            } catch (failure: Throwable) {
+                // Cancellation must never reach the classifier — see the matching note in callRaw.
+                val transportFailure = transportFailureOrNull(failure) ?: throw failure
+                notify(Outcome.TRANSPORT_FAILURE, operation, attemptNumber, null, null, null, attemptStart)
+                val mayRetry = when (classifyTransportFailure(transportFailure)) {
+                    TransportFailure.NOT_SENT -> true
+                    TransportFailure.AMBIGUOUS ->
+                        safety == OperationSafety.IDEMPOTENT || retryConfig.retryAmbiguousWrites
+                }
+                if (!mayRetry) {
+                    notify(Outcome.GAVE_UP, operation, attemptNumber, null, null, null, attemptStart)
+                    throw transportFailure
+                }
+                attempt++
+                if (!prepareRetry(
+                        RetryErrorType.TRANSIENT, attempt, deadline, null, budget, operation, attemptStart,
+                    )
+                ) {
+                    notify(Outcome.GAVE_UP, operation, attemptNumber, null, null, null, attemptStart)
+                    throw transportFailure
+                }
+                continue
+            }
+
+            when (outcome) {
+                is StreamAttempt.Delivered -> {
+                    // "Returned by succeeding", exactly as callRaw accounts for it: retries that
+                    // bought a working response give their cost back, and only a call that needed
+                    // none at all earns the +1 credit that refills the bucket past what it lent.
+                    if (attempt == 0) tokenBucket.onCleanSuccess()
+                    else tokenBucket.refundCost(budget.spent)
+                    notify(Outcome.SUCCESS, operation, attemptNumber, outcome.status, null, null, attemptStart)
+                    return outcome.value
+                }
+
+                is StreamAttempt.Failed -> {
+                    val response = outcome.response
+                    val details = protocol.errorParser.parse(response.status, response.headers, response.body)
+                    val exception = toException(details, response)
+                    notify(
+                        Outcome.SERVICE_ERROR, operation, attemptNumber, response.status,
+                        details.code, null, attemptStart,
+                    )
+
+                    // One skew correction per call, as in callRaw: a second would mean the first
+                    // measurement was wrong, and re-measuring against the same wrong clock does not
+                    // improve it. Unlike callRaw this does not take the free immediate retry — the
+                    // ordinary backoff path below covers it, and duplicating the fast path here
+                    // would be a second place for the "only once" flag to be got wrong.
+                    if (!skewCorrectionUsed && shouldCorrectClockSkew(details.code, response)) {
+                        skewCorrectionUsed = true
+                        serverTimeOffset(response)?.let { clockSkewOffsetMillis.store(it) }
+                        notify(
+                            Outcome.CLOCK_SKEW_CORRECTED, operation, attemptNumber, response.status,
+                            details.code, null, attemptStart,
+                        )
+                    }
+
+                    val type = classifyRetry(details.code, response.status)
+                    if (type == null) {
+                        notify(Outcome.GAVE_UP, operation, attemptNumber, response.status, details.code, null, attemptStart)
+                        throw exception
+                    }
+                    attempt++
+                    if (!prepareRetry(
+                            type, attempt, deadline,
+                            response.headers.headerValue("x-amz-retry-after"),
+                            budget, operation, attemptStart,
+                        )
+                    ) {
+                        notify(Outcome.GAVE_UP, operation, attemptNumber, response.status, details.code, null, attemptStart)
+                        throw exception
+                    }
+                }
+            }
+        }
+    }
+
+    /** The two things one streaming attempt can produce: a consumed stream, or an error response. */
+    private sealed interface StreamAttempt<out T> {
+        class Delivered<T>(val value: T, val status: Int) : StreamAttempt<T>
+        class Failed(val response: AwsHttpResponse) : StreamAttempt<Nothing>
+    }
+
+    /**
+     * Sends, and either consumes a 2xx body as a stream or materializes a non-2xx one as an error.
+     *
+     * The whole method body runs inside Ktor's `execute { }` scope, which is what keeps the
+     * connection open for the duration of [consume] and closes it afterwards. Reading the *error*
+     * body inside the same scope is deliberate and not merely convenient: the classifier needs the
+     * parsed code, and a bounded error body is exactly the case where materializing is right.
+     */
+    private suspend fun <T> sendStreaming(
+        method: String,
+        path: String,
+        query: List<Pair<String, String>>,
+        signedHeaders: List<Pair<String, String>>,
+        body: ByteArray,
+        consume: suspend (status: Int, headers: Map<String, String>, body: ByteReadChannel) -> T,
+    ): StreamAttempt<T> {
+        val builder = HttpRequestBuilder()
+        builder.method = HttpMethod.parse(method)
+        builder.url {
+            this.protocol = endpoint.protocol
+            this.host = endpoint.host
+            this.port = endpoint.port
+            encodedPathSegments = path.split('/')
+            for ((name, value) in query) {
+                encodedParameters.append(sigV4UriEncode(name), sigV4UriEncode(value))
+            }
+        }
+
+        val outboundPath = builder.url.encodedPathSegments.joinToString("/")
+        check(outboundPath == path) {
+            "Ktor rewrote the request path after signing: signed '$path', would send " +
+                "'$outboundPath'. The signature would not match."
+        }
+
+        var contentType: String? = null
+        for ((name, value) in signedHeaders) {
+            if (name.equals("Host", ignoreCase = true)) continue
+            if (name.equals("Content-Type", ignoreCase = true)) {
+                contentType = value
+                continue
+            }
+            builder.headers.append(name, value)
+        }
+        builder.setBody(SignedBody(body, contentType?.let { ContentType.parse(it) }))
+
+        return httpClient.prepareRequest(builder).execute { response ->
+            val responseHeaders = buildMap {
+                response.headers.forEach { name, values -> put(name.lowercase(), values.joinToString(",")) }
+            }
+            val status = response.status.value
+            if (status in 200..299) {
+                // Wrapped on the way out so the retry loop can tell a failure *inside* the caller's
+                // stream apart from a socket dying at the same instant. See ConsumerFailure.
+                val value = try {
+                    consume(status, responseHeaders, response.bodyAsChannel())
+                } catch (failure: Throwable) {
+                    throw ConsumerFailure(failure)
+                }
+                StreamAttempt.Delivered(value, status)
+            } else {
+                StreamAttempt.Failed(AwsHttpResponse(status, responseHeaders, response.readRawBytes()))
+            }
+        }
+    }
+
+    /**
+     * Resolves credentials and signs one attempt.
+     *
+     * Extracted from [callRaw]'s loop so [callStreaming] signs identically rather than nearly so.
+     * Every line of it is load-bearing somewhere — the header ordering, the `accept-encoding`, the
+     * skew offset applied to the signing instant — and two copies would drift on the first change
+     * to any of them.
+     *
+     * Credentials are resolved **per attempt** rather than per call: a call spanning four attempts
+     * and a 20-second cap can outlive the credentials it started with.
+     */
+    private suspend fun signAttempt(
+        method: String,
+        path: String,
+        query: List<Pair<String, String>>,
+        headers: List<Pair<String, String>>,
+        body: ByteArray,
+        operation: String?,
+        invocationId: String,
+        attempt: Int,
+        payloadHash: PayloadHash,
+        signedBodyHeader: SignedBodyHeader,
+        doubleUriEncode: Boolean,
+        normalizeUriPath: Boolean,
+    ): SignedRequest {
+        val credentials = credentialsProvider.resolve()
+
+        val requestHeaders = buildList {
+            protocol.contentType?.let { add("Content-Type" to it) }
+            protocol.targetPrefix?.let { prefix ->
+                operation?.let { add("X-Amz-Target" to "$prefix.$it") }
+            }
+            addAll(headers)
+            // After the caller's headers, and only when they carried none: a request that
+            // arrived with two User-Agents is worse than one that arrived with the wrong one,
+            // and a caller identifying its own application is the case worth deferring to.
+            if (headers.none { it.first.equals("user-agent", ignoreCase = true) }) {
+                add("user-agent" to AWSKT_USER_AGENT)
+            }
+            add("amz-sdk-invocation-id" to invocationId)
+            add("amz-sdk-request" to "attempt=${attempt + 1}; max=${retryConfig.maxAttempts}")
+            // Signing a compressed body we never see would break the payload hash. Added here
+            // for every call and nowhere else: a service module that adds its own copy sends
+            // (and signs) the header twice, which works only for as long as no engine dedupes.
+            add("accept-encoding" to "identity")
+        }
+
+        return SigV4.sign(
+            request = SigningRequest(
+                method = method,
+                path = path,
+                host = endpoint.authority,
+                queryParameters = query,
+                headers = requestHeaders,
+                body = body,
+            ),
+            credentials = credentials,
+            config = SigV4Config(
+                region = region,
+                service = protocol.signingName,
+                payloadHash = payloadHash,
+                signedBodyHeader = signedBodyHeader,
+                doubleUriEncode = doubleUriEncode,
+                normalizeUriPath = normalizeUriPath,
+            ),
+            signingInstantMillis = clock() + clockSkewOffsetMillis.load(),
+        )
     }
 
     private suspend fun send(

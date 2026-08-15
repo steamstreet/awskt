@@ -42,7 +42,7 @@ Three things are settled by evidence, not opinion:
 
 ## 1. Module Overview
 
-**Module Name**: `aws/aws-signing`, `aws/aws-core`, `aws/aws-dynamodb`, `aws/aws-eventbridge`, `aws/aws-s3`
+**Module Name**: `aws/aws-signing`, `aws/aws-core`, `aws/aws-dynamodb`, `aws/aws-eventbridge`, `aws/aws-s3`, `aws/aws-secretsmanager`, `aws/aws-kms`, `aws/aws-sqs`, `aws/aws-sns`, `aws/aws-scheduler`, `aws/aws-bedrock-runtime`, `aws/aws-cloudwatch-logs`
 
 **Dependencies**:
 - `aws-signing` → KotlinCrypto only. **No Ktor. No awskt modules.** That constraint is what lets AWS's own fixture corpus drive the signer directly. It carries **both** header and query-string (presign) signing — query signing is pure string/byte work with no S3 knowledge, no HTTP client and no I/O.
@@ -50,6 +50,23 @@ Three things are settled by evidence, not opinion:
 - `aws-dynamodb` → `:dynamo` (for `AttributeValue`), `aws-core`.
 - `aws-eventbridge` → `aws-core`.
 - `aws-s3` → `aws-core`. **NOT `:dynamo`, NOT `:standards`/`:env`/`:logging`** (Decision 6 applies unchanged). Declares `jvm, linuxX64, linuxArm64, macosArm64` from birth, so M7 has no target-addition task for it. `aws-s3/src/jvmTest` additionally carries `aws.sdk.kotlin:s3` as a **test-only** dependency for the presign differential — see §11 criterion 9.
+- `aws-secretsmanager` → `aws-core`. **NOT `:env`**, even though `env`'s `SecretsProvider` is the obvious consumer — the dependency has to run the other way (`env` may depend on this) or a caller who wants to read one secret acquires a logging framework and an AppConfig client. Decision 6 again.
+- `aws-kms` → `aws-core`. Same constraint, same reason.
+- `aws-sqs` → `aws-core`. Different artifact from `:lambda:lambda-sqs`, which handles SQS events
+  *arriving* at a Lambda and contains no client; the two are complementary and neither depends on
+  the other.
+- `aws-sns` → `aws-core`, and **notably not `kotlinx-serialization-json`** — SNS is the query
+  protocol, so there is no JSON in either direction and `Wire.kt` carries the codec instead. A
+  `@Serializable` appearing in that module means somebody has misread the protocol. Same
+  relationship to `:lambda:lambda-sns` as above.
+- `aws-cloudwatch-logs` → `aws-core`. **Not `:logging`**, and the two are unrelated despite the
+  names: `awskt-logging` writes structured entries from an application, this reads them back out
+  of CloudWatch afterwards.
+- `aws-bedrock-runtime` → `aws-core`. The **data plane** only; the `bedrock` control plane is a
+  separate service with a separate endpoint and is not covered.
+- `aws-scheduler` → `aws-core`. **Unrelated to `aws-eventbridge`** despite the shared brand:
+  EventBridge Scheduler is a separate service with its own endpoint (`scheduler`), its own protocol
+  (restJson1, where EventBridge is AWS-JSON 1.1) and no overlapping operations.
 
 **Goal**: Replace `aws.sdk.kotlin` in `dynamo`, `dynamokt`, `dynamokt-exposed` and `events` with a hand-written, Kotlin-Multiplatform-native client that runs on `linuxArm64` inside an AWS Lambda custom runtime, while keeping all 100 existing DynamoDB integration tests green and preserving pagination-token wire compatibility — **and** to provide a native S3 client (GetObject, PutObject, HeadObject, DeleteObject, presigned GET/PUT URLs) which has no `aws.sdk.kotlin` counterpart in this repo today and is therefore purely **additive** to the public API.
 
@@ -121,7 +138,25 @@ There is nothing for a serializer to serialize. The service trait is `aws.protoc
 
 ### Out of scope — for v1, revisit later
 
-- Kinesis (2 ops), Secrets Manager (1 op), AppConfigData (2 ops). All live in JVM-only modules (`lambda-dynamo-streams`, `env/src/jvmMain`) and none blocks a native dynamokt-based Lambda. **The draft's stated reason for AppConfigData — "the only restJson1 consumer, would force a second codec into `aws-core`" — goes stale once `aws-core` carries a protocol seam and an `AwsErrorParser` strategy for S3 (M2).** The honest reason is simply that a native Lambda does not need it. They stay out; the rationale is corrected so it is not later discovered to be false and read as licence to pull them in.
+- ~~Kinesis (2 ops), Secrets Manager (1 op), AppConfigData (2 ops).~~ **Secrets Manager and KMS were moved back into scope on 2026-08-14 (M8). Kinesis and AppConfigData stay out.** The original entry is kept below rather than deleted, because the reasoning it was overturned by is the point.
+
+  The original text: *"All live in JVM-only modules (`lambda-dynamo-streams`, `env/src/jvmMain`) and none blocks a native dynamokt-based Lambda. The draft's stated reason for AppConfigData — 'the only restJson1 consumer, would force a second codec into `aws-core`' — goes stale once `aws-core` carries a protocol seam and an `AwsErrorParser` strategy for S3 (M2). The honest reason is simply that a native Lambda does not need it. They stay out; the rationale is corrected so it is not later discovered to be false and read as licence to pull them in."*
+
+  **Why it was wrong for Secrets Manager, and why that is the same mistake §2 already caught once.** The test applied was "is there code to *port*?" — Secrets Manager has exactly one call site, in a JVM-only module, so porting it buys nothing. That is the identical inference the S3 re-scope note at the top of this document was written to prevent, and it failed the same way: the requirement is not "port the existing call site", it is **"can a Kotlin/Native Lambda call the service?"** A native Lambda that cannot read a secret cannot hold a database password, an API key or a signing secret, which is most of what a Lambda needs configuration for. One JVM call site was never evidence about that. The paragraph above closes with a warning against reading its own rationale as licence to pull these in later; that warning was aimed at scope creep, and it does not apply to a requirement the test never measured.
+
+  **KMS was not on the out-of-scope list at all**, because nothing in this repo calls it — which under the old test made it invisible rather than excluded. It is in scope for the same reason: envelope encryption and `Decrypt` are the other half of what a Lambda does with secret material, and Secrets Manager's own `DecryptionFailure` is a KMS failure surfaced through it.
+
+  **The cost was low precisely because the earlier milestones did their job.** Both services speak AWS-JSON 1.1 — the dialect M6 already proved with EventBridge — so M8 needed no new protocol, no new error parser and no transport change. The one addition to `aws-core` is `Base64BlobSerializer` (`Blobs.kt`), because AWS-JSON blobs are base64 strings and both services carry them.
+
+  **Kinesis and AppConfigData remain out**, and now on the corrected test rather than the stale one: a native Lambda is *invoked with* Kinesis records rather than calling Kinesis, and AppConfigData is a polling configuration client whose one consumer (`env/src/jvmMain/AppConfig.kt`) is JVM-only by construction. Neither is something a native Lambda is blocked on. Revisit if that changes.
+
+  **Update (2026-08-14, M9): SQS, SNS and EventBridge Scheduler were added too.** Same corrected
+  test, applied to three services a native Lambda plainly needs to *call* rather than merely be
+  invoked by: queueing work, publishing notifications, and scheduling future work. Note the
+  AppConfigData rationale above is now doubly stale — M9 shipped `restJson1` support in `aws-core`,
+  so the "second codec" objection is not merely obsolete, it is measurably four lines. AppConfigData
+  stays out on the honest reason only: a polling configuration client is not something a native
+  Lambda is blocked on.
 - **`S3Local` / `S3Mock.kt`.** Recommend deletion, pending Q7. Zero usages repo-wide; a `mockk(relaxed = true)` over an S3 client returns empty objects, which is a worse test double than none. This is a **deletion from a published artifact**, not a no-op — see Q1 row (k).
 - Container (ECS/EKS/CodeBuild) credentials. Real but JVM-only demand.
 - Native targets for `dynamokt-exposed`. It is forced into scope for *compilation* but no Lambda handler uses it.
@@ -377,9 +412,20 @@ awskt/
 | M5b | Implementation flip — 100 tests on the hand-written client | 3 | M5a | **yes** |
 | M6 | EventBridge client + `events` module | 5 | M4, M5b | yes |
 | M7 | Native targets, Lambda runtime, packaging | 10.5 | M6 | yes |
+| **M8** | **`aws-secretsmanager` + `aws-kms` data planes** | **2** | M6 | **yes** |
+| **M9** | **`aws-sqs` + `aws-sns` + `aws-scheduler` data planes** | **3.5** | M6 | **yes** |
+| **M10** | **`aws-bedrock-runtime`: Converse + ConverseStream (response streaming)** | **4** | M9 | **yes** |
+| **M11** | **Live smoke coverage for M8–M10** | **1** | M10 | **yes** |
+| **M12** | **`aws-cloudwatch-logs`: Insights queries** | **1.5** | M6 | **yes** |
 | | **Planned (1 FTE)** | **78.5** | | |
 | | **With 20% contingency** | **~94** | | |
 | | *Critical path with a 2nd developer* | *63 (~76)* | | |
+
+**M8 through M12 are deliberately outside the totals.** All were added on 2026-08-14, after M7
+landed, and folding 12 days into a "78.5 planned" figure that was quoted in a staffing decision
+would rewrite history to make the estimate look better than it was. The v1 plan was 78.5 days for
+seven milestones; everything from M8 on is a scope addition on top of a delivered plan, and is
+counted separately for that reason.
 
 ### Parallelization, stated honestly
 
@@ -1961,6 +2007,664 @@ This is one atomic merge across `dynamo`, `dynamokt`, `dynamokt-exposed` **and `
 >   table `awskt-native-smoke`, role `awskt-native-smoke-role`, layer `awskt-native-libcrypt:1`, and
 >   function `awskt-native-smoke`. They are cheap (PAY_PER_REQUEST, no provisioned concurrency) and
 >   re-used by the script, but they are real and were not there before.
+
+---
+
+### M8 — Secrets Manager and KMS data planes (2 days)
+
+Added 2026-08-14, after M7 landed. See the §2 "Out of scope" entry for why these were excluded and
+why that exclusion was wrong. Both services speak **AWS-JSON 1.1**, the dialect M6 already proved
+with EventBridge, so this milestone adds two modules and one shared serializer and changes nothing
+below them.
+
+**Scope, stated as a test rather than a list**: an operation is in if it reads, writes or uses
+secret *material*. Everything that manages the *existence* of a key or a secret is out.
+
+- `aws-secretsmanager`: `GetSecretValue`, `BatchGetSecretValue`, `PutSecretValue`.
+- `aws-kms`: `Encrypt`, `Decrypt`, `ReEncrypt`, `GenerateDataKey`,
+  `GenerateDataKeyWithoutPlaintext`, `GenerateRandom`, `Sign`, `Verify`.
+- Out: `CreateSecret`/`DeleteSecret`/`DescribeSecret`/`RotateSecret`, `CreateKey`/
+  `ScheduleKeyDeletion`/`CreateAlias`/`CreateGrant`. Infrastructure provisions these; a Lambda
+  consumes them. All reachable through the extension seam (Decision 18).
+- Out: KMS `Recipient`/`CiphertextForRecipient` (Nitro Enclaves — not a target this repo builds
+  for), `GenerateDataKeyPair`, `GenerateMac`/`VerifyMac`, and Secrets Manager's
+  `UpdateSecretVersionStage`. The last one is the closest call: a rotation function needs it, but
+  it needs `DescribeSecret` too, and shipping half a rotation flow is more misleading than shipping
+  none of it.
+
+**Tasks**
+
+- [x] `Base64BlobSerializer` in `aws-core` (`Blobs.kt`). AWS-JSON blobs are base64 strings and both
+      new modules carry them — KMS five of them, Secrets Manager one. In `aws-core` rather than
+      duplicated, because two implementations of the same wire rule drift. Deliberately not shared
+      with `aws-dynamodb`, whose `B`/`BS` base64 lives inside `AttributeValueSerializer`'s
+      polymorphic union and cannot delegate to a primitive serializer.
+- [x] `aws/aws-secretsmanager`: protocol, three operations, typed errors, `getSecretString` /
+      `putSecretString` / `getSecretValues` conveniences.
+- [x] `aws/aws-kms`: protocol, eight operations, typed errors, `verifySignature` /
+      `encrypt` / `decrypt` conveniences.
+- [x] Both declare `jvm, linuxX64, linuxArm64, macosArm64` from birth. No M7-style target-addition
+      task exists for them.
+- [x] JVM ABI dumps (`api/aws-kms.api`, `api/aws-secretsmanager.api`) checked in, and `aws-core.api`
+      updated with the one new public object.
+- [ ] **klib ABI dumps are NOT generated** — see the STATUS note. `checkLegacyAbi` is red until they
+      are, on all three modules.
+
+**Four decisions worth recording, because none of them is obvious from the diff**
+
+1. **Nothing carrying secret material is a `data class`.** `aws-s3`'s rule ("nothing carrying a
+   `ByteArray`") extends to `SecretString`, which is an ordinary `String` and is the *plaintext
+   secret itself*. A generated `toString()` puts it in CloudWatch Logs from any
+   `logger.info("$response")`, where it outlives the incident by the log group's retention period.
+   Every secret-bearing type has a hand-written `toString()` that reports presence or a byte count,
+   asserted by tests that fail if the redaction regresses. Secrets Manager reports **presence
+   only**; KMS reports a byte count, because there the bytes are ciphertext or an opaque payload
+   whose size is the useful diagnostic and a secret's *length* is a free hint to a brute-forcer.
+
+2. **`PutSecretValue` is `IDEMPOTENT`, and the token is what makes it true.** The
+   `ClientRequestToken` is minted **once per call, before the first attempt**, and reused verbatim
+   across retries — the same construction `aws-dynamodb` uses for `TransactWriteItems`. Under a
+   stable token an ambiguous replay of byte-identical content is a defined no-op returning the
+   version the first attempt created. A token minted *inside* the loop would make every retry a
+   fresh write and burn a secret version per attempt. There is a test that fails if that regresses.
+
+3. **KMS's algorithm and key-spec fields are `String`, not `enum class`** — a deliberate departure
+   from `aws-dynamodb`'s `ReturnValue` and `Select`. Those are closed sets this library only ever
+   *sends*; KMS's come back on responses too, and AWS extends them (`SM2PKE`, `SM2DSA` postdate the
+   original set). An enum on a response field turns "AWS added an algorithm" into a
+   `SerializationException` for every caller, including callers not using it, fixable only by a
+   release. Documented values are `const val`s on `EncryptionAlgorithm`, `SigningAlgorithm`,
+   `DataKeySpec` and `MessageType`.
+
+4. **`getSecretValues` exists because `BatchGetSecretValue` reports failures inside an HTTP 200.**
+   The third instance of this trap in the library, after EventBridge's `PutEvents` and DynamoDB's
+   `UnprocessedKeys`, and it is solved the same way: the helper chunks to 20, follows `NextToken`
+   under a page bound, returns entries in **request order**, and raises
+   `BatchGetSecretValuePartialFailureException` rather than returning a list that is silently short.
+   Unlike EventBridge's version this failure is fully recoverable — reading a secret has no side
+   effect — so the partition is carried for the caller to act on rather than merely to explain.
+
+**Two `aws-core` behaviours left deliberately unchanged, and documented at the point of surprise**
+
+- **KMS's `LimitExceededException` is retried as throttling and should not be.** It is in
+  `KNOWN_ERROR_TYPES` from the AWS SDK's shared table, where it means "you are going too fast"; for
+  KMS it means "you have too many keys", a standing condition no backoff clears. Special-casing it
+  means either editing a table every service shares or adding a per-service override that exists
+  for one code — both cost more than the seconds they save on a request that is failing anyway.
+  KMS's actual rate limit is `ThrottlingException`, which the same table paces correctly.
+- **KMS says `NotFoundException`, not `ResourceNotFoundException`**, so `NEVER_RETRY_CODES` does not
+  match it. Harmless — KMS answers 400 and no status rule fires — but a reader comparing the two
+  new modules should know the protection comes from a different place in each.
+
+**Verification**: `./gradlew :aws:aws-kms:jvmTest :aws:aws-secretsmanager:jvmTest` — **22 + 30 = 52
+tests, 0 failures**.
+
+> **STATUS: M8's CODE IS COMPLETE (2026-08-14). TWO VERIFICATION STEPS COULD NOT BE RUN AND ARE
+> OUTSTANDING — this milestone is not finished until they are.**
+>
+> **1. Neither module has been compiled for any native target, and the ABI dumps are half-written.**
+> Not a property of the code: the authoring host could not reach `download.jetbrains.com`, which is
+> blocked by egress policy, so the Kotlin/Native distribution never downloaded and every
+> `compileKotlinLinux*` / `compileKotlinMacos*` task failed before it started. `updateLegacyAbi`
+> fails for the same reason — the klib dump *is* a native compilation — so what is checked in is the
+> **JVM `.api` dumps only**. That leaves `checkLegacyAbi` red on three modules: `aws-kms` and
+> `aws-secretsmanager` have no `.klib.api` at all, and **`aws-core`'s existing one is now stale**,
+> missing `Base64BlobSerializer`.
+>
+> The first thing to run on a host with network access, before anything else in this milestone is
+> believed:
+>
+> ```
+> ./gradlew :aws:aws-core:updateLegacyAbi :aws:aws-kms:updateLegacyAbi \
+>           :aws:aws-secretsmanager:updateLegacyAbi
+> ./gradlew :aws:aws-kms:build :aws:aws-secretsmanager:build
+> ```
+>
+> The risk that native compilation actually fails is low — both modules are pure `commonMain` with
+> no `expect`/`actual` and no platform API beyond `kotlin.io.encoding.Base64`, and their build files
+> are `aws-eventbridge`'s with the names changed — but low is not zero, and M6's own STATUS block
+> records a native source set that was configured, reported green, and compiled nothing for days.
+> Do not mark this line done from a JVM-green build.
+>
+> **2. There is no SDK differential harness for either module, unlike M3, M3.5 and M6 — and this
+> one is a deliberate omission rather than a blocked step.** Those milestones compared our wire
+> bytes against `aws.sdk.kotlin`'s for a protocol we were implementing for the first time.
+> Here the protocol is the one M6 shipped and the differential already proved: same `awsJson1_1`
+> factory, same `AwsJsonErrorParser`, same `callJson`. What is genuinely new is the **base64 blob
+> encoding**, and that is covered directly — `KmsBlobEncodingTest` asserts the exact base64 string
+> on the wire and the exact bytes back — rather than transitively through an SDK comparison.
+>
+> What a differential *would* still catch is a wrong `@SerialName` on a field neither the tests nor
+> a reviewer noticed. Adding one is cheap (`aws.sdk.kotlin:secretsmanager` is already in the version
+> catalog; KMS is not) and is the obvious next increment if either module misbehaves against the
+> real service. **No live or LocalStack suite has been run against either module**: this milestone
+> was verified against `MockEngine` only. That is the honest limit of what "52 tests, 0 failures"
+> means here.
+>
+> **`env`'s `SecretsManagerSecretsProvider` was not rewired**, and that is scope, not oversight. It
+> lives in `env/src/jvmMain`, still uses the AWS SDK, and still works. Pointing it at
+> `aws-secretsmanager` would let `env` drop its `compileOnly(libs.aws.secretsmanager)` and would
+> make the provider available on native — which is the natural follow-on, and a change to a
+> published module's dependency graph that deserves its own commit rather than riding along here.
+
+---
+
+### M9 — SQS, SNS and EventBridge Scheduler data planes (3.5 days)
+
+Added 2026-08-14, immediately after M8. Where M8 was two modules speaking a protocol the library
+already had, **M9's three services speak three different wire formats and only one of them was
+already supported.** That is the whole shape of this milestone, and it is why it costs more than
+M8 despite covering a comparable number of operations.
+
+| Service | Protocol | What it cost |
+|---|---|---|
+| **SQS** | `awsJson1_0`, target `AmazonSQS` | Nothing new. DynamoDB's dialect exactly. |
+| **Scheduler** | `restJson1` | Two typed-call helpers and a protocol factory in `aws-core`. |
+| **SNS** | `awsQuery` — form-encoded in, **XML** out | A hand-written codec in the service module. |
+
+**Protocols were verified against the AWS SDK's own artifacts, not from memory.** `sns-jvm`,
+`sqs-jvm` and `scheduler-jvm` were fetched from Maven Central and their generated serializers read.
+That was not ceremony — it corrected three things this plan would otherwise have got wrong:
+
+- SQS is **no longer** an `awsQuery` service. AWS added a JSON protocol in 2023, so what would have
+  been the second hand-written query codec is instead the cheapest module in the milestone.
+- SNS's error codes are **not** its Smithy shape names. The query protocol renames them, and the
+  renaming is not mechanical: shape `InvalidParameterValueException` arrives as wire code
+  `ParameterValueInvalid`, with the words reversed. All fifteen were read out of
+  `PublishOperationDeserializerKt`.
+- Scheduler spells one concept three ways. `GetSchedule` and `DeleteSchedule` take `groupName`;
+  `ListSchedules` takes **`ScheduleGroup`**. Memory said `GroupName` for the third.
+
+**Scope**
+
+- `aws-sqs`: `SendMessage`, `SendMessageBatch`, `ReceiveMessage`, `DeleteMessage`,
+  `DeleteMessageBatch`, `ChangeMessageVisibility`, `ChangeMessageVisibilityBatch`, `GetQueueUrl`.
+  Queue lifecycle is out.
+- `aws-sns`: `Publish`, `PublishBatch`, plus mobile push endpoints — `CreatePlatformEndpoint`,
+  `GetEndpointAttributes`, `SetEndpointAttributes`, `DeleteEndpoint`,
+  `ListEndpointsByPlatformApplication`. Topic and subscription lifecycle is out, as is *platform
+  application* management. See the mobile push addendum below.
+- `aws-scheduler`: `CreateSchedule`, `GetSchedule`, `UpdateSchedule`, `DeleteSchedule`,
+  `ListSchedules`. Schedule *group* management and tagging are out.
+
+**"Data plane" had to be redefined for Scheduler, and the redefinition is the interesting part.**
+KMS has operations against keys somebody else provisioned; SQS has messages moving through queues
+somebody else created. Scheduler has no such split — **a schedule is the data.** Applications create
+schedules at runtime as a matter of course ("remind this user in three days" is a `CreateSchedule`
+in a request handler). So the line drawn is *per-schedule operations in, schedule-group management
+out*, on the grounds that a group is provisioned infrastructure the way a queue or a topic is. Said
+plainly here because "data plane" was the word in the request and it does not transfer to this
+service unexamined.
+
+**Tasks**
+
+- [x] `aws-core`: `AwsProtocol.restJson1()` and `AwsProtocol.awsQuery()` factories.
+- [x] `aws-core`: `callRestJson` and `callRestJsonNoBody` in `TypedCalls.kt`, with their own tests.
+- [x] `aws/aws-sqs`, `aws/aws-sns`, `aws/aws-scheduler`, each declaring `jvm, linuxX64, linuxArm64,
+      macosArm64` from birth.
+- [x] JVM ABI dumps for all three, and `aws-core.api` updated with its four new declarations.
+- [ ] **klib ABI dumps are NOT generated** — same blocked step as M8. `checkLegacyAbi` is red on all
+      four modules until they are.
+
+**What `aws-core` did and did not have to grow**
+
+`restJson1` needed real additions, and they were small because M2's protocol seam and M3.5's
+`AwsErrorParser` strategy had already done the structural work: a REST-shaped service needs a
+content type, no target header, and a call helper that takes a method and a path. **The plan's own
+M2 note called restJson1 "a second codec into `aws-core`" and used that as a reason to defer
+AppConfigData. That was stale by M3.5** and is now demonstrably so — it is four lines and two
+functions, not a codec.
+
+`awsQuery` needed **nothing** in `aws-core` beyond a three-line factory, and that is the seam
+working as designed: `AwsProtocol`'s constructor is public, and `RestXmlErrorParser` — named for the
+protocol it was written for, not the only one it fits — already parses a query-protocol
+`<ErrorResponse>` correctly. The AWS SDK reaches the same conclusion, calling
+`parseRestXmlErrorResponse` from its own awsQuery deserializers.
+
+**The query codec was deliberately NOT generalized into `aws-core`.** `aws-sns/Wire.kt` hand-writes
+the form encoder and a ~60-line XML scanner, because the module has *two operations*. A general
+query encoder — flattened lists and maps, the `flattened` trait, nested structures, namespaces — is
+a large amount of machinery for one consumer. If a third query-protocol service ever arrives, that
+is the moment to generalize; the file says so, so the decision is not re-litigated from scratch.
+
+**Decisions worth reviewing**
+
+1. **Retry safety is derived from the request in three more places.** `SendMessage`,
+   `ReceiveMessage` and `Publish` are all `NOT_IDEMPOTENT` *unless* the request carries a
+   de-duplication token (`MessageDeduplicationId`, `ReceiveRequestAttemptId`), in which case they
+   are `IDEMPOTENT`. This is `aws-dynamodb`'s `writeSafety` construction applied three more times,
+   and it is the correct reading each time: without a token a replayed publish fans out twice, and
+   there is nothing to delete afterwards.
+   - One case is knowingly treated as unsafe when it is not: a FIFO queue with **content-based
+     deduplication** needs no explicit id, but that is a *queue attribute* and invisible from the
+     client, so this does not guess. Documented at the call site.
+   - `ReceiveMessage`'s reasoning is the subtle one and is written out in its KDoc: a replay is not
+     dangerous, it simply does not return *the same answer*, and the messages from the lost response
+     are invisible for a whole visibility timeout.
+2. **`SqsConfig.httpTimeouts` deliberately defaults higher than the rest of the library** — 90
+   seconds against the usual 30. SQS is the one service here where the client is *supposed* to sit
+   idle on an open socket: `ReceiveMessage` long-polls for up to 20 seconds by design. Against the
+   30-second default a maximum-length poll leaves 10 seconds for connection setup, TLS and the
+   response, and a loaded client spends it. The failure looks like SQS being slow rather than a
+   misconfiguration — the poll dies at 30s, its messages stay queued, and throughput collapses with
+   no service error anywhere.
+3. **The batch partial-failure helper appears for the third and fourth time**, and both new ones are
+   *better* than `putEventsAll`: SQS and SNS both report `SenderFault` per entry, so the
+   retryable/terminal split comes from the service rather than from a hand-maintained list of codes
+   that can drift. `sendMessagesAll`, `deleteMessagesAll` and `publishAll` all chunk to 10, resubmit
+   non-sender-fault entries with backoff, stop the whole call on a sender fault, and raise a typed
+   partial-failure carrying both halves in request order.
+   - All three additionally reject **duplicate batch ids across the whole call** before sending
+     anything. SQS and SNS reject duplicates within one request, but these helpers chunk, so two
+     duplicates in different chunks are two individually-valid requests and a result that cannot be
+     paired back up. Only a whole-list check catches it.
+   - `deleteMessagesAll`'s failure is the one that is easy to under-rate: a delete that silently
+     half-succeeds is a message redelivered when its visibility timeout lapses and processed a
+     second time, hours later, with nothing connecting the two events.
+4. **Two exception names were changed to avoid collisions that would have been silent.** SQS's
+   `UnsupportedOperation` would naturally have become `UnsupportedOperationException`, which
+   **shadows `kotlin.UnsupportedOperationException` inside the package** — so a `catch` in that
+   package would quietly change meaning. It is `UnsupportedQueueOperationException`. Both services'
+   `KMS*` error families collapse onto one type each, named `QueueEncryptionKeyException` and
+   `TopicEncryptionKeyException` rather than `KmsException`, which would have clashed with
+   `aws-kms`'s type for anyone importing both. (Note SNS capitalizes `KMS` where SQS writes `Kms`;
+   the services genuinely disagree and each module matches its own.)
+5. **`UpdateSchedule` is a replace, not a patch**, and that is a data-loss footgun rather than an
+   API quirk: an update meaning to change only the cron expression, and sending only the cron
+   expression, clears the description, timezone, retry policy and dead-letter queue.
+   `GetScheduleResponse.toUpdateRequest()` exists solely so the read-modify-write is one line, and
+   it throws rather than building an update that would clear the target.
+6. **Two Scheduler target blocks are `JsonElement` passthroughs.** `EcsParameters` and
+   `SageMakerPipelineParameters` would mean modelling ECS's entire task-launch surface — VPC
+   config, placement constraints and strategies, capacity providers — some forty types describing a
+   *different service* that this module would then own and track. The other five parameter blocks
+   are typed normally. What is given up is compile-time checking on those two.
+7. **SQS's legacy query error codes are not requested.** SQS still serves them behind an
+   `x-amzn-query-mode: true` header, and every SQS doc and Stack Overflow answer uses that
+   vocabulary (`AWS.SimpleQueueService.NonExistentQueue`). This client sends modern shape names
+   instead (`QueueDoesNotExist`) because query mode exists for SDKs that already shipped the old
+   codes and would break their users — which this client has none of. Each typed exception names its
+   legacy equivalent in its KDoc so the search still lands.
+8. **`PublishRequest.toString()` redacts the phone number and never prints the message.** M8's
+   redaction rule extended: SNS payloads are routinely customer data and a `phoneNumber` is *always*
+   personal data, so a logged request object is a privacy incident rather than a debugging
+   convenience.
+
+**Verification**: `./gradlew :aws:aws-sqs:jvmTest :aws:aws-sns:jvmTest :aws:aws-scheduler:jvmTest
+:aws:aws-core:jvmTest` — **24 + 27 + 20 = 71 new tests, 0 failures**, plus `aws-core` at 146
+including 11 new ones covering the restJson1 and awsQuery seams.
+
+> **STATUS: M9's CODE IS COMPLETE (2026-08-14). THE SAME TWO VERIFICATION GAPS AS M8 APPLY, PLUS
+> ONE THAT IS SPECIFIC TO SNS AND MATTERS MORE HERE.**
+>
+> **1. No native compilation and no klib ABI dumps.** Identical cause to M8: `download.jetbrains.com`
+> is blocked by egress policy on the authoring host, so the Kotlin/Native distribution never
+> downloaded and `updateLegacyAbi` — whose klib half *is* a native compilation — cannot run. JVM
+> `.api` dumps are checked in for all three new modules and `aws-core.api` is updated;
+> `checkLegacyAbi` is red on those four until the klib dumps are generated. Run, on a networked host:
+>
+> ```
+> ./gradlew :aws:aws-core:updateLegacyAbi :aws:aws-sqs:updateLegacyAbi \
+>           :aws:aws-sns:updateLegacyAbi :aws:aws-scheduler:updateLegacyAbi
+> ./gradlew :aws:aws-sqs:build :aws:aws-sns:build :aws:aws-scheduler:build
+> ```
+>
+> **2. No live or LocalStack run.** MockEngine only, as for M8.
+>
+> **3. `aws-sns` is the module in this library that most needs a differential harness, and does not
+> have one.** For every other module the argument against one is that the protocol was already
+> proven by an earlier milestone. That argument does **not** apply here: this is the only
+> hand-written form encoder and the only hand-written XML reader in the repo, and both were built
+> from the wire format rather than inherited from a tested seam. The unit tests are correspondingly
+> specific — they assert `%20` rather than `+` for a space, 1-based `entry.N` and `member.N`
+> indices, `Successful`/`Failed` sibling scoping, self-closing empty lists, and ampersand-last
+> entity unescaping — but every one of them asserts against *what this code was written to
+> produce*, which is exactly the thing a differential would independently check.
+>
+> `aws.sdk.kotlin:sns` is not currently in the version catalog. Adding it as a `jvmTest`-only
+> dependency and comparing our form body against the SDK's, using M3's technique unchanged, is the
+> obvious next increment and the first thing to do if SNS misbehaves against the real service.
+
+#### M9 addendum — SNS mobile push (iOS and Android)
+
+Added 2026-08-14, same day, on request. Extends `aws-sns` rather than adding a module: mobile push
+*is* SNS, and a separate artifact would split one service's client in two.
+
+**In scope: platform endpoints.** A **platform application** registers *your app* with APNs or FCM,
+is created once from a signing key, and holds a secret — provisioning, and out of scope for the same
+reason `CreateTopic` is. A **platform endpoint** registers *one device*, is created at runtime on
+every install and on every token rotation, and is where all the difficulty lives. Five operations:
+`CreatePlatformEndpoint`, `GetEndpointAttributes`, `SetEndpointAttributes`, `DeleteEndpoint`,
+`ListEndpointsByPlatformApplication`.
+
+**Two traps absorbed, and they are the reason this is more than five thin wrappers.**
+
+1. **`registerDevice` — device registration is not one call, and the error path carries data.**
+   `CreatePlatformEndpoint` on a token already registered *with different attributes* does not
+   return the existing endpoint; it raises `InvalidParameter` **with the ARN inside the message
+   text**, and AWS's own documented procedure (the pseudo-code in the SNS developer guide) is to
+   regex it out. Worse, the *success* path is not safe either: a token registered with matching
+   attributes returns the existing ARN **without re-enabling it**, and SNS disables endpoints by
+   itself whenever APNs or FCM rejects a token. So an app that registers once at install and never
+   again silently stops receiving notifications, with nothing erroring anywhere.
+
+   `registerDevice(platformApplicationArn, token)` does create → always-get → repair-if-needed, and
+   returns an ARN guaranteed to hold that token and be enabled. Two API calls steady-state, three
+   when a repair is needed; the second is **not** skippable, because nothing in the create response
+   distinguishes "created new and enabled" from "returned an endpoint APNs disabled last week".
+   Parsing an error message is fragile and there is no alternative — if AWS rewords it, the helper
+   stops recognising the case and rethrows the original exception rather than guessing.
+
+2. **`mobilePushMessage` — a push payload is double-encoded JSON.** The per-platform payloads are
+   JSON documents carried as **strings** inside a JSON envelope:
+   `{"default":"…","APNS":"{\"aps\":{…}}"}`. Writing the natural nested-object form is rejected with
+   an error that does not explain the shape, and building the envelope by string concatenation —
+   the other common approach — breaks the first time a notification body contains a quote or a
+   newline, which for user-generated content is immediately. The builder goes through a real JSON
+   encoder so the escaping is not this library's opinion. `apnsAlert()` and `fcmNotification()`
+   build the two common payloads; both document that the schemas are Apple's and Google's, not
+   AWS's, and that anything beyond a plain alert should be built by the caller.
+
+**Three smaller things worth knowing, all documented at the point of use**
+
+- **`GCM` means FCM.** Google retired GCM in 2018; SNS never renamed it, in ARNs or in envelope
+  keys. There is no `FCM` value on the wire. `PushPlatform.FCM` is an alias with `"GCM"` behind it.
+- **`APNS` and `APNS_SANDBOX` are different platform applications**, not a flag. A development
+  build's token registered against production APNs does not fail at registration — it fails
+  silently at delivery, which is the most common "push doesn't work on my debug build" cause.
+- **`Enabled` is the string `"true"`/`"false"`**, not a JSON boolean.
+  `EndpointAttributes.enabled` parses it; comparing the raw value to a Kotlin `Boolean` is a bug
+  that reads as correct.
+
+**Endpoint attribute maps use `entry.N.key`/`entry.N.value`** — the query protocol's *default* map
+spelling — where `MessageAttributes` uses `entry.N.Name`/`.Value`. The two genuinely differ, and the
+wrong spelling produces a request SNS accepts and silently ignores. Verified against the SDK:
+`PublishOperationSerializer` carries a `FormUrlMapName("Name","Value")` trait and
+`CreatePlatformEndpointOperationSerializer` carries none.
+
+**One earlier decision in this plan was revised, deliberately.** `aws-sns`'s build file previously
+recorded that the module had no `kotlinx-serialization-json` dependency, because SNS's protocol has
+no JSON in it. That reasoning is still right *about the protocol* and was wrong as a rule for the
+module: the push envelope is **application data SNS carries opaquely**, not wire framing, and
+hand-rolling its escaping to preserve a dependency boundary would trade correctness for tidiness.
+The rule is narrowed rather than dropped — **no `@Serializable` and no JSON on the request/response
+path**, `Wire.kt` remains the only protocol codec — and the build file says so.
+
+**Verification**: `aws-sns` is now at **51 tests, 0 failures** (24 new). The registration dance is
+tested through all five of its paths: first registration, ARN recovery from the error message,
+re-enabling a disabled endpoint, updating a rotated token, and leaving a healthy endpoint untouched
+— plus rethrowing an unrelated `InvalidParameter`. The envelope is tested for string-not-object
+values and for quote/newline round-tripping through both layers of encoding.
+
+> **The `fcmNotification` payload shape is the one thing here that could not be settled from the SDK
+> jar**, because it is a *service* behaviour rather than a wire format. It emits the legacy
+> `{"notification":{…}}` shape under the `GCM` key. AWS migrated the transport behind that key to
+> FCM HTTP v1 in 2024 and states that existing payloads continue to work by translation, so this
+> should be correct — but it is documentation rather than something read out of an artifact, and it
+> is the first thing to check if Android notifications arrive empty. The raw
+> `platform(PushPlatform.GCM, json)` path is unaffected either way.
+
+---
+
+### M10 — Bedrock Runtime: Converse and ConverseStream (4 days)
+
+Added 2026-08-14, on request. The first module in this library that needs something `aws-core` did
+not have: **a streaming response**.
+
+**Scope**: `Converse` and `ConverseStream`. `InvokeModel` and `InvokeModelWithResponseStream` are
+out, and the reason is not effort — they take whatever JSON the chosen model's provider defined, so
+a typed client for them would be a typed wrapper around an untyped blob and switching models would
+mean rewriting the request. Converse is the model-independent API and therefore the only one a
+portable typed client can be written against. Both remain reachable through the extension seam.
+
+**This partially advances the "streaming deferred to v2" decision, and says so rather than
+pretending otherwise.** §2 defers streaming request *and* response bodies. M10 delivers
+**responses only**: `AwsServiceClient.callStreaming` hands a `ByteReadChannel` to a caller-supplied
+consumer, while the request body remains a materialized `ByteArray`, so none of the chunked-signing
+machinery a streaming *request* needs exists. That is enough for every AWS event-stream service and
+is deliberately **not** enough for S3's `GetObject`, which additionally wants a memory ceiling, a
+`Range` interaction and a truncation check. `aws-s3` is untouched.
+
+**Tasks**
+
+- [x] `aws-core`: `AwsServiceClient.callStreaming`, with retry semantics narrower than `callRaw`'s.
+- [x] `aws-core`: `EventStream.kt` — `vnd.amazon.eventstream` frame decoding with both CRCs, and a
+      hand-written IEEE CRC-32.
+- [x] `aws-core`: `signAttempt` extracted from `callRaw`'s loop so both paths sign identically.
+- [x] `aws/aws-bedrock-runtime`: Converse, ConverseStream, the `ContentBlock` union, tool calling,
+      `accumulate()`.
+- [x] JVM ABI dumps for both; klib dumps still blocked.
+
+**Where the event-stream decoder lives, and why that is not inconsistent with M9**
+
+In `aws-core`, whereas M9 kept SNS's query codec inside `aws-sns`. The two look like the same call
+and are not. SNS's form encoder is shaped by SNS's *service* model — which structures flatten, which
+map spelling each field wants — so generalizing it means generalizing SNS. Event-stream framing has
+**no service content whatsoever**: the same frames carry Bedrock's `ConverseStream`, Kinesis's
+`SubscribeToShard`, S3's `SelectObjectContent` and Transcribe's streaming, and the decoder cannot
+tell them apart. The deciding argument is smaller still: `callStreaming` hands out a raw
+`ByteReadChannel`, and every AWS service that streams frames it this way, so shipping the transport
+without the decoder ships half a tool.
+
+**Retry semantics for a stream, which are narrower than `callRaw`'s and have to be**
+
+A stream is retryable right up until the first byte of a **successful** body is handed out, and not
+afterwards. Transport failures before a response retry normally; a non-2xx has its (small, bounded)
+body materialized and is classified and retried normally; a 2xx is handed to the consumer and
+**nothing that happens inside the consumer is ever retried**. There is deliberately no `validateBody`
+equivalent — `callRaw` can offer one because it holds the whole body before deciding, and a stream
+has no such moment.
+
+> **A test caught a real bug here, and it is worth recording rather than quietly fixing.** The first
+> implementation let an exception thrown by the consumer propagate into the transport `catch`, where
+> `classifyTransportFailure` answered AMBIGUOUS — as it does for anything unrecognised — and
+> retried. The observable effect: Bedrock reporting `ModelStreamErrorException` half-way through a
+> generation caused the **entire call to be replayed**, so the caller saw a partial answer, then a
+> second different partial answer, and was billed for both. Fixed with a `ConsumerFailure` marker,
+> the same technique `callRaw` already used for `InspectionRefusal` — the precedent existed and the
+> first implementation simply did not apply it. The test that caught it
+> (`eventsBeforeAMidStreamFailureAreStillDelivered`) asserts the event count, which is why it caught
+> it at all: an assertion on the exception type alone would have passed.
+
+**Decisions worth reviewing**
+
+1. **`ContentBlock` is a sealed hierarchy *with* an `Unknown` arm.** A closed sealed union would
+   have the failure mode `aws-kms`'s KDoc argues against for enums — AWS adds variants, and
+   `reasoningContent`, `citationsContent` and `cachePoint` all postdate the API's launch. `Unknown`
+   carries an unrecognised variant as raw JSON, so the exhaustive `when` survives *and* forward
+   compatibility does. The AWS SDK reaches the same conclusion, generating its own `SdkUnknown`.
+2. **Round-tripping is a correctness requirement, not a nicety.** Converse is stateless, so a
+   multi-turn conversation resends the assistant's previous turns — and for reasoning models the
+   reasoning block must be echoed back byte-for-byte, signature included, or the turn is rejected.
+   That is why `ContentBlock.Reasoning` keeps its raw `JsonElement` rather than decomposing into
+   fields, and why `Unknown` exists at all. Tested by asserting that encode→decode→encode is
+   byte-identical for both.
+3. **`accumulate()` accumulates per `contentBlockIndex`, not over concatenated text.** A reply can
+   have several blocks open at once — reasoning alongside text, or two tool calls — and deltas carry
+   the index they belong to. A naive fold produces the right answer for plain text and splices two
+   tool calls into unparseable JSON for the interesting case. Tool input compounds it: Bedrock
+   streams it as **partial JSON text**, so a single delta is usually not valid JSON on its own.
+   There is a test for the interleaved-two-tools case specifically.
+4. **`BedrockRuntimeConfig.httpTimeouts` defaults far higher than the library's** — 120s socket,
+   600s request, against 30s/30s. A long generation legitimately takes minutes, and during a stream
+   the socket sits idle between tokens whenever the model pauses. The socket timeout bounds the gap
+   *between* bytes rather than the whole response, which is why it is set generously rather than
+   disabled: a genuinely hung connection should still fail.
+5. **`retryConfig` is documented as a thing to tune *down*.** Every retry is a second full
+   generation, billed in full; the library's four-attempt default is right for a `GetItem` and is a
+   4× bill ceiling here.
+6. **The signing name is `bedrock`, the endpoint prefix is `bedrock-runtime`.** They differ, and
+   signing against the wrong one is a `SignatureDoesNotMatch` that says nothing about which.
+7. **Model ids are percent-encoded whole**, and here that is not ceremonial as it was in
+   `aws-scheduler`: an inference-profile ARN contains `/` and occupies one path segment, so left raw
+   it would split the path and address an operation that does not exist.
+
+**Verification**: `./gradlew :aws:aws-bedrock-runtime:jvmTest :aws:aws-core:jvmTest` — **33 new
+Bedrock tests and 26 new `aws-core` tests, 0 failures**; `aws-core` now at 172. The event-stream
+decoder is tested against frames built independently from the specification, and the CRC-32 is
+checked against its **published check value** (`123456789` → `0xCBF43926`) rather than against
+itself — without that, a wrong polynomial would produce frames the decoder happily accepts and AWS
+rejects, and every test would still pass.
+
+> **STATUS: M10's CODE IS COMPLETE (2026-08-14). The same two gaps as M8 and M9 apply, plus one
+> specific to streaming.**
+>
+> **1. No native compilation, JVM ABI dumps only.** Identical cause: `download.jetbrains.com` is
+> blocked by egress policy. `checkLegacyAbi` is red on `aws-core` and `aws-bedrock-runtime` until
+> the klib dumps are generated on a networked host.
+>
+> **2. No live or LocalStack run.** MockEngine only — which for this module means **no real model
+> has ever been invoked through this client**. Everything below the wire format is unexercised.
+>
+> **3. `callStreaming` has never run against a real chunked HTTP response.** `MockEngine` serves the
+> whole body at once, so the tests prove the *decoder* handles a stream of frames and do **not**
+> prove the transport handles a body that arrives slowly, in arbitrary chunk boundaries, across many
+> seconds. Frame boundaries falling mid-read is exactly the case a mock cannot produce. That is the
+> single highest-value thing to test next, and a LocalStack or live `ConverseStream` against a real
+> model is the way to do it.
+>
+> Also unverified, and cheap to add later: no SDK differential for Converse. The protocol is
+> restJson1, which M9 established, but the `ContentBlock` union encoding is new and hand-written, and
+> a differential against `aws.sdk.kotlin:bedrockruntime` would check it independently of the tests
+> that were written alongside it.
+
+---
+
+### M11 — Live smoke coverage for M8–M10 (1 day)
+
+Added 2026-08-14. M8, M9 and M10 each shipped with the same recorded gap — "no live or LocalStack
+run, MockEngine only" — and this closes the *ability* to run one. It does not close the gap itself:
+see the status note.
+
+**Two suites, covering different things.**
+
+| | `Live*Test` | `lambda-native-smoke` `services` mode |
+|---|---|---|
+| Runs on | JVM (CIO) and macosArm64 (Curl) | a deployed Lambda, **linuxArm64** |
+| Proves | the wire format against real AWS | the same, *on the architecture that ships* |
+
+The second is not redundant with the first. `linuxArm64` is a **Tier 2 Kotlin/Native target with
+test execution unsupported**, so nothing else in this repository executes one line of code on
+Graviton — the same argument that justified the smoke function at M7, now extended to six more
+clients.
+
+**Tasks**
+
+- [x] `Live*Test` in `aws-kms`, `aws-secretsmanager`, `aws-sqs`, `aws-sns`, `aws-scheduler` and
+      `aws-bedrock-runtime`, each in `commonTest` and each self-skipping without credentials —
+      following `aws-core`'s existing `LiveTransportTest` idiom exactly.
+- [x] Six new probes in the native smoke function's `services` mode, each independently gated.
+- [x] `docs/live-smoke.md` — what to set, what to run, what a fixture needs.
+
+**Two properties that are load-bearing rather than tidy**
+
+1. **Everything cleans up after itself.** SQS messages are received and deleted; Scheduler schedules
+   are deleted in a `finally`. A live suite that leaks a schedule per run eventually trips the
+   per-group account quota — exactly what `ServiceQuotaExceededException`'s KDoc warns about — and
+   would break the account it runs in rather than merely failing.
+2. **Secrets Manager is read-only on purpose.** `PutSecretValue` creates a retained version on every
+   call, so exercising it live would accumulate versions against a quota. Its idempotency-token
+   behaviour is asserted hermetically instead, where the assertion is about *our request* rather
+   than about the service's storage — which is the half worth testing anyway.
+
+**No probe is added to the smoke function's required environment.** An existing deployment has
+`AWS_REGION`, `SMOKE_TABLE_NAME` and `SMOKE_BUCKET_NAME` and must keep working untouched; an unset
+probe reports `skipped`, and `allOk` is false only when a probe *ran and failed*. The same payload
+is therefore meaningful in an account where only some fixtures exist.
+
+> **STATUS: the suites exist and are compile-verified. NOT ONE OF THEM HAS BEEN RUN AGAINST AWS.**
+>
+> The authoring host has no usable AWS credentials — the ones in its environment are placeholders
+> that AWS rejects with `UnrecognizedClientException` — no Docker daemon, so LocalStack is not an
+> option either, and no Kotlin/Native toolchain, so the smoke function cannot even be built here.
+> **Every live suite in this commit has been executed exactly once: in skip mode.** That is the
+> honest state, and the gap M8–M10 recorded is still open — what changed is that closing it is now
+> one `./gradlew` invocation by someone with credentials rather than a piece of work.
+>
+> **The native smoke additions were compile-verified by a throwaway JVM module**, not by the native
+> compiler. The 155 lines of probe code were extracted verbatim into a temporary `jvm()` module
+> depending on the same six clients, compiled, and the module deleted. That checks every API call,
+> named argument and import; it does **not** check native compilation of the module as a whole —
+> the `native-lambda` plugin, target-specific linking, or anything platform-conditional. The probe
+> code contains nothing platform-conditional, which is why the substitution is worth something, but
+> it is a substitution.
+>
+> Run order, when someone has an account:
+> 1. `./gradlew :aws:aws-sns:jvmTest` with `SMOKE_TOPIC_ARN` — the hand-written form encoder and XML
+>    reader have no differential and no independent confirmation at all.
+> 2. `./gradlew :aws:aws-bedrock-runtime:jvmTest` with `SMOKE_BEDROCK_MODEL_ID` —
+>    `converseStreamReceivesFramesAcrossChunkBoundaries` is the only test that puts `callStreaming`
+>    in front of a real chunked response.
+> 3. The rest, then the deployed `services` probe on Graviton.
+
+---
+
+### M12 — CloudWatch Logs Insights (1.5 days)
+
+Added 2026-08-14. `awsJson1_1` with target prefix **`Logs_20140328`** — a dated service name that is
+not derivable from anything — so the protocol was free and all the work is in the shape of the API.
+
+**Scope**: `StartQuery`, `GetQueryResults`, `StopQuery`, plus `query()`, which runs the whole cycle.
+`PutLogEvents` is out on the grounds that a Lambda's stdout already reaches CloudWatch and
+`awskt-logging` is this repository's answer to structured logging — a function calling
+`PutLogEvents` is paying for an API call to do what a `println` does free. `FilterLogEvents` and
+`GetLogEvents` are also out: a different, non-Insights way to read logs.
+
+**Insights is asynchronous, and every design decision here follows from that.**
+
+`StartQuery` returns a query id, not results; the caller polls. `query()` exists because that cycle
+has four properties a caller re-derives, and the first two are silent when wrong:
+
+1. **`GetQueryResults` returns rows before the query has finished.** A `Running` query answers
+   **HTTP 200 with a populated `results` list** that is not the answer — it is however much has
+   matched so far, and it is non-deterministic between runs. This is the fourth appearance in this
+   library of "a failure or a partial result inside a 200", after `PutEvents`,
+   `BatchGetSecretValue` and SQS's `SenderFault`, and it is the least visible of them: nothing about
+   a partial Insights result looks partial.
+2. **`Timeout`, `Failed` and `Cancelled` also carry rows.** Treating "the response parsed" as
+   success turns a query the *service* gave up on into a short answer. `QueryFailedException`
+   carries the partial rows for inspection without pretending they are the result.
+3. **An abandoned query keeps running** and holds one of the account's concurrent-query slots until
+   it times out on its own — see `LimitExceededException`, which for this service means "too many
+   concurrent queries", not "too fast". `query()` stops the query on the timeout path **and on
+   cancellation**, the latter with `NonCancellable`, because the scope is already cancelled at that
+   point and a plain suspending stop would itself be cancelled before it was sent. That is the path
+   that actually leaks: a Lambda hitting its own deadline, every invocation.
+4. **Fixed-interval polling is either slow or wasteful.** Geometric backoff at 1.5× from 250 ms to a
+   2 s ceiling: a query finishing in 300 ms costs two polls, and a minute-long one costs about
+   thirty rather than two hundred and forty.
+
+**`startTime` and `endTime` are epoch SECONDS**, and `FilterLogEvents` on the *same service* takes
+milliseconds. A value carried between the two is wrong by a factor of a thousand and asks for a
+window in the year 56000 — which returns an empty result rather than an error, which is how it
+survives review. `StartQueryRequest.betweenMillis` and `inLastSeconds` exist so the division happens
+in one place rather than at every call site.
+
+**`ResultRow` is the map view of Insights' list-of-name/value-pairs row shape**, with `@ptr` — the
+pointer to the underlying log event, present on every non-`stats` row whether or not the query asked
+for it — reachable through `pointer` and excluded from `selected`.
+
+> **A test failure here produced a real design change rather than a fixed assertion.** The first
+> backoff test counted polls inside a time budget and failed at 48 requests. The backoff was
+> correct: `runTest` makes `delay` virtual while `TimeSource.Monotonic` keeps real time, so the loop
+> spun. Two changes came out of it — `query()` now takes an injectable `timeSource`, the same seam
+> `AwsServiceClient` exposes as `clock` and for exactly the same reason, and the backoff arithmetic
+> moved into `nextPollInterval` where it can be asserted directly instead of inferred from a request
+> count. The timeout test now drives a `TestTimeSource` and is deterministic.
+
+**Verification**: `./gradlew :aws:aws-cloudwatch-logs:jvmTest` — **24 hermetic tests, 0 failures**,
+plus 4 live tests taking their skip path.
+
+> **STATUS: M12's CODE IS COMPLETE (2026-08-14). Same gaps as M8–M11.** No native compilation and
+> JVM-only ABI dumps (`download.jetbrains.com` blocked); no live run, because the authoring host has
+> no usable credentials. `LiveLogsTest` and a `cloudwatch-insights` probe in the smoke function's
+> `services` mode both exist and have run exactly once, in skip mode.
+>
+> The live suite matters more for this module than for most: **every interesting property of
+> Insights is a property of the service's asynchrony.** The hermetic tests prove this client handles
+> a *scripted* sequence of statuses; only a real query proves the scripted sequence is the one AWS
+> produces — in particular that a `Running` status really does arrive with rows attached, which is
+> the assumption the whole `query()` design rests on.
 
 ---
 

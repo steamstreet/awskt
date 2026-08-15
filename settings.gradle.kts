@@ -27,10 +27,17 @@ dependencyResolutionManagement {
     }
 }
 include(":aws:aws-signing")
+include(":aws:aws-bedrock-runtime")
+include(":aws:aws-cloudwatch-logs")
 include(":aws:aws-core")
 include(":aws:aws-dynamodb")
 include(":aws:aws-eventbridge")
+include(":aws:aws-kms")
 include(":aws:aws-s3")
+include(":aws:aws-scheduler")
+include(":aws:aws-secretsmanager")
+include(":aws:aws-sns")
+include(":aws:aws-sqs")
 include(":aws:aws-dynamodb-sdk-adapter")
 include("appsync")
 include("cognito")
