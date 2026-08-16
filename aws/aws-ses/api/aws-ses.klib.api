@@ -1,0 +1,411 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:aws-ses>
+abstract interface com.steamstreet.awskt.ses/Ses : kotlin/AutoCloseable { // com.steamstreet.awskt.ses/Ses|null[0]
+    abstract val client // com.steamstreet.awskt.ses/Ses.client|{}client[0]
+        abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.ses/Ses.client.<get-client>|<get-client>(){}[0]
+
+    abstract suspend fun sendEmail(com.steamstreet.awskt.ses/SendEmailRequest): com.steamstreet.awskt.ses/SendEmailResponse // com.steamstreet.awskt.ses/Ses.sendEmail|sendEmail(com.steamstreet.awskt.ses.SendEmailRequest){}[0]
+}
+
+final class com.steamstreet.awskt.ses/AccountSuspendedException : com.steamstreet.awskt.ses/SesException { // com.steamstreet.awskt.ses/AccountSuspendedException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.ses/AccountSuspendedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.ses/BadRequestException : com.steamstreet.awskt.ses/SesException { // com.steamstreet.awskt.ses/BadRequestException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.ses/BadRequestException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.ses/Body { // com.steamstreet.awskt.ses/Body|null[0]
+    constructor <init>(com.steamstreet.awskt.ses/Content? = ..., com.steamstreet.awskt.ses/Content? = ...) // com.steamstreet.awskt.ses/Body.<init>|<init>(com.steamstreet.awskt.ses.Content?;com.steamstreet.awskt.ses.Content?){}[0]
+
+    final val html // com.steamstreet.awskt.ses/Body.html|{}html[0]
+        final fun <get-html>(): com.steamstreet.awskt.ses/Content? // com.steamstreet.awskt.ses/Body.html.<get-html>|<get-html>(){}[0]
+    final val text // com.steamstreet.awskt.ses/Body.text|{}text[0]
+        final fun <get-text>(): com.steamstreet.awskt.ses/Content? // com.steamstreet.awskt.ses/Body.text.<get-text>|<get-text>(){}[0]
+
+    final fun component1(): com.steamstreet.awskt.ses/Content? // com.steamstreet.awskt.ses/Body.component1|component1(){}[0]
+    final fun component2(): com.steamstreet.awskt.ses/Content? // com.steamstreet.awskt.ses/Body.component2|component2(){}[0]
+    final fun copy(com.steamstreet.awskt.ses/Content? = ..., com.steamstreet.awskt.ses/Content? = ...): com.steamstreet.awskt.ses/Body // com.steamstreet.awskt.ses/Body.copy|copy(com.steamstreet.awskt.ses.Content?;com.steamstreet.awskt.ses.Content?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.ses/Body.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.ses/Body.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.ses/Body.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.ses/Body> { // com.steamstreet.awskt.ses/Body.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.ses/Body.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.ses/Body.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.ses/Body.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.ses/Body // com.steamstreet.awskt.ses/Body.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.ses/Body) // com.steamstreet.awskt.ses/Body.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.ses.Body){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.ses/Body.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.ses/Body> // com.steamstreet.awskt.ses/Body.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.ses/Content { // com.steamstreet.awskt.ses/Content|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ...) // com.steamstreet.awskt.ses/Content.<init>|<init>(kotlin.String;kotlin.String?){}[0]
+
+    final val charset // com.steamstreet.awskt.ses/Content.charset|{}charset[0]
+        final fun <get-charset>(): kotlin/String? // com.steamstreet.awskt.ses/Content.charset.<get-charset>|<get-charset>(){}[0]
+    final val data // com.steamstreet.awskt.ses/Content.data|{}data[0]
+        final fun <get-data>(): kotlin/String // com.steamstreet.awskt.ses/Content.data.<get-data>|<get-data>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.ses/Content.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.ses/Content.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ...): com.steamstreet.awskt.ses/Content // com.steamstreet.awskt.ses/Content.copy|copy(kotlin.String;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.ses/Content.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.ses/Content.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.ses/Content.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.ses/Content> { // com.steamstreet.awskt.ses/Content.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.ses/Content.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.ses/Content.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.ses/Content.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.ses/Content // com.steamstreet.awskt.ses/Content.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.ses/Content) // com.steamstreet.awskt.ses/Content.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.ses.Content){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.ses/Content.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.ses/Content> // com.steamstreet.awskt.ses/Content.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.ses/Destination { // com.steamstreet.awskt.ses/Destination|null[0]
+    constructor <init>(kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ...) // com.steamstreet.awskt.ses/Destination.<init>|<init>(kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?){}[0]
+
+    final val bccAddresses // com.steamstreet.awskt.ses/Destination.bccAddresses|{}bccAddresses[0]
+        final fun <get-bccAddresses>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.ses/Destination.bccAddresses.<get-bccAddresses>|<get-bccAddresses>(){}[0]
+    final val ccAddresses // com.steamstreet.awskt.ses/Destination.ccAddresses|{}ccAddresses[0]
+        final fun <get-ccAddresses>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.ses/Destination.ccAddresses.<get-ccAddresses>|<get-ccAddresses>(){}[0]
+    final val toAddresses // com.steamstreet.awskt.ses/Destination.toAddresses|{}toAddresses[0]
+        final fun <get-toAddresses>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.ses/Destination.toAddresses.<get-toAddresses>|<get-toAddresses>(){}[0]
+
+    final fun component1(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.ses/Destination.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.ses/Destination.component2|component2(){}[0]
+    final fun component3(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.ses/Destination.component3|component3(){}[0]
+    final fun copy(kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ...): com.steamstreet.awskt.ses/Destination // com.steamstreet.awskt.ses/Destination.copy|copy(kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.ses/Destination.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.ses/Destination.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.ses/Destination.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.ses/Destination> { // com.steamstreet.awskt.ses/Destination.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.ses/Destination.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.ses/Destination.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.ses/Destination.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.ses/Destination // com.steamstreet.awskt.ses/Destination.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.ses/Destination) // com.steamstreet.awskt.ses/Destination.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.ses.Destination){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.ses/Destination.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.ses/Destination.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.ses/Destination> // com.steamstreet.awskt.ses/Destination.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.ses/EmailContent { // com.steamstreet.awskt.ses/EmailContent|null[0]
+    constructor <init>(com.steamstreet.awskt.ses/Message? = ...) // com.steamstreet.awskt.ses/EmailContent.<init>|<init>(com.steamstreet.awskt.ses.Message?){}[0]
+
+    final val simple // com.steamstreet.awskt.ses/EmailContent.simple|{}simple[0]
+        final fun <get-simple>(): com.steamstreet.awskt.ses/Message? // com.steamstreet.awskt.ses/EmailContent.simple.<get-simple>|<get-simple>(){}[0]
+
+    final fun component1(): com.steamstreet.awskt.ses/Message? // com.steamstreet.awskt.ses/EmailContent.component1|component1(){}[0]
+    final fun copy(com.steamstreet.awskt.ses/Message? = ...): com.steamstreet.awskt.ses/EmailContent // com.steamstreet.awskt.ses/EmailContent.copy|copy(com.steamstreet.awskt.ses.Message?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.ses/EmailContent.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.ses/EmailContent.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.ses/EmailContent.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.ses/EmailContent> { // com.steamstreet.awskt.ses/EmailContent.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.ses/EmailContent.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.ses/EmailContent.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.ses/EmailContent.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.ses/EmailContent // com.steamstreet.awskt.ses/EmailContent.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.ses/EmailContent) // com.steamstreet.awskt.ses/EmailContent.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.ses.EmailContent){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.ses/EmailContent.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.ses/EmailContent> // com.steamstreet.awskt.ses/EmailContent.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.ses/LimitExceededException : com.steamstreet.awskt.ses/SesException { // com.steamstreet.awskt.ses/LimitExceededException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.ses/LimitExceededException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.ses/ListManagementOptions { // com.steamstreet.awskt.ses/ListManagementOptions|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ...) // com.steamstreet.awskt.ses/ListManagementOptions.<init>|<init>(kotlin.String;kotlin.String?){}[0]
+
+    final val contactListName // com.steamstreet.awskt.ses/ListManagementOptions.contactListName|{}contactListName[0]
+        final fun <get-contactListName>(): kotlin/String // com.steamstreet.awskt.ses/ListManagementOptions.contactListName.<get-contactListName>|<get-contactListName>(){}[0]
+    final val topicName // com.steamstreet.awskt.ses/ListManagementOptions.topicName|{}topicName[0]
+        final fun <get-topicName>(): kotlin/String? // com.steamstreet.awskt.ses/ListManagementOptions.topicName.<get-topicName>|<get-topicName>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.ses/ListManagementOptions.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.ses/ListManagementOptions.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ...): com.steamstreet.awskt.ses/ListManagementOptions // com.steamstreet.awskt.ses/ListManagementOptions.copy|copy(kotlin.String;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.ses/ListManagementOptions.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.ses/ListManagementOptions.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.ses/ListManagementOptions.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.ses/ListManagementOptions> { // com.steamstreet.awskt.ses/ListManagementOptions.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.ses/ListManagementOptions.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.ses/ListManagementOptions.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.ses/ListManagementOptions.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.ses/ListManagementOptions // com.steamstreet.awskt.ses/ListManagementOptions.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.ses/ListManagementOptions) // com.steamstreet.awskt.ses/ListManagementOptions.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.ses.ListManagementOptions){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.ses/ListManagementOptions.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.ses/ListManagementOptions> // com.steamstreet.awskt.ses/ListManagementOptions.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.ses/MailFromDomainNotVerifiedException : com.steamstreet.awskt.ses/SesException { // com.steamstreet.awskt.ses/MailFromDomainNotVerifiedException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.ses/MailFromDomainNotVerifiedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.ses/Message { // com.steamstreet.awskt.ses/Message|null[0]
+    constructor <init>(com.steamstreet.awskt.ses/Content, com.steamstreet.awskt.ses/Body, kotlin.collections/List<com.steamstreet.awskt.ses/MessageHeader>? = ...) // com.steamstreet.awskt.ses/Message.<init>|<init>(com.steamstreet.awskt.ses.Content;com.steamstreet.awskt.ses.Body;kotlin.collections.List<com.steamstreet.awskt.ses.MessageHeader>?){}[0]
+
+    final val body // com.steamstreet.awskt.ses/Message.body|{}body[0]
+        final fun <get-body>(): com.steamstreet.awskt.ses/Body // com.steamstreet.awskt.ses/Message.body.<get-body>|<get-body>(){}[0]
+    final val headers // com.steamstreet.awskt.ses/Message.headers|{}headers[0]
+        final fun <get-headers>(): kotlin.collections/List<com.steamstreet.awskt.ses/MessageHeader>? // com.steamstreet.awskt.ses/Message.headers.<get-headers>|<get-headers>(){}[0]
+    final val subject // com.steamstreet.awskt.ses/Message.subject|{}subject[0]
+        final fun <get-subject>(): com.steamstreet.awskt.ses/Content // com.steamstreet.awskt.ses/Message.subject.<get-subject>|<get-subject>(){}[0]
+
+    final fun component1(): com.steamstreet.awskt.ses/Content // com.steamstreet.awskt.ses/Message.component1|component1(){}[0]
+    final fun component2(): com.steamstreet.awskt.ses/Body // com.steamstreet.awskt.ses/Message.component2|component2(){}[0]
+    final fun component3(): kotlin.collections/List<com.steamstreet.awskt.ses/MessageHeader>? // com.steamstreet.awskt.ses/Message.component3|component3(){}[0]
+    final fun copy(com.steamstreet.awskt.ses/Content = ..., com.steamstreet.awskt.ses/Body = ..., kotlin.collections/List<com.steamstreet.awskt.ses/MessageHeader>? = ...): com.steamstreet.awskt.ses/Message // com.steamstreet.awskt.ses/Message.copy|copy(com.steamstreet.awskt.ses.Content;com.steamstreet.awskt.ses.Body;kotlin.collections.List<com.steamstreet.awskt.ses.MessageHeader>?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.ses/Message.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.ses/Message.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.ses/Message.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.ses/Message> { // com.steamstreet.awskt.ses/Message.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.ses/Message.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.ses/Message.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.ses/Message.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.ses/Message // com.steamstreet.awskt.ses/Message.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.ses/Message) // com.steamstreet.awskt.ses/Message.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.ses.Message){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.ses/Message.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.ses/Message.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.ses/Message> // com.steamstreet.awskt.ses/Message.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.ses/MessageHeader { // com.steamstreet.awskt.ses/MessageHeader|null[0]
+    constructor <init>(kotlin/String, kotlin/String) // com.steamstreet.awskt.ses/MessageHeader.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val name // com.steamstreet.awskt.ses/MessageHeader.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.steamstreet.awskt.ses/MessageHeader.name.<get-name>|<get-name>(){}[0]
+    final val value // com.steamstreet.awskt.ses/MessageHeader.value|{}value[0]
+        final fun <get-value>(): kotlin/String // com.steamstreet.awskt.ses/MessageHeader.value.<get-value>|<get-value>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.ses/MessageHeader.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.ses/MessageHeader.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ...): com.steamstreet.awskt.ses/MessageHeader // com.steamstreet.awskt.ses/MessageHeader.copy|copy(kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.ses/MessageHeader.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.ses/MessageHeader.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.ses/MessageHeader.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.ses/MessageHeader> { // com.steamstreet.awskt.ses/MessageHeader.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.ses/MessageHeader.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.ses/MessageHeader.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.ses/MessageHeader.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.ses/MessageHeader // com.steamstreet.awskt.ses/MessageHeader.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.ses/MessageHeader) // com.steamstreet.awskt.ses/MessageHeader.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.ses.MessageHeader){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.ses/MessageHeader.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.ses/MessageHeader> // com.steamstreet.awskt.ses/MessageHeader.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.ses/MessageRejected : com.steamstreet.awskt.ses/SesException { // com.steamstreet.awskt.ses/MessageRejected|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.ses/MessageRejected.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.ses/MessageTag { // com.steamstreet.awskt.ses/MessageTag|null[0]
+    constructor <init>(kotlin/String, kotlin/String) // com.steamstreet.awskt.ses/MessageTag.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val name // com.steamstreet.awskt.ses/MessageTag.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.steamstreet.awskt.ses/MessageTag.name.<get-name>|<get-name>(){}[0]
+    final val value // com.steamstreet.awskt.ses/MessageTag.value|{}value[0]
+        final fun <get-value>(): kotlin/String // com.steamstreet.awskt.ses/MessageTag.value.<get-value>|<get-value>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.ses/MessageTag.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.ses/MessageTag.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ...): com.steamstreet.awskt.ses/MessageTag // com.steamstreet.awskt.ses/MessageTag.copy|copy(kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.ses/MessageTag.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.ses/MessageTag.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.ses/MessageTag.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.ses/MessageTag> { // com.steamstreet.awskt.ses/MessageTag.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.ses/MessageTag.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.ses/MessageTag.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.ses/MessageTag.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.ses/MessageTag // com.steamstreet.awskt.ses/MessageTag.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.ses/MessageTag) // com.steamstreet.awskt.ses/MessageTag.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.ses.MessageTag){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.ses/MessageTag.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.ses/MessageTag> // com.steamstreet.awskt.ses/MessageTag.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.ses/NotFoundException : com.steamstreet.awskt.ses/SesException { // com.steamstreet.awskt.ses/NotFoundException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.ses/NotFoundException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.ses/SendEmailRequest { // com.steamstreet.awskt.ses/SendEmailRequest|null[0]
+    constructor <init>(com.steamstreet.awskt.ses/EmailContent, kotlin/String? = ..., com.steamstreet.awskt.ses/Destination? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/List<com.steamstreet.awskt.ses/MessageTag>? = ..., com.steamstreet.awskt.ses/ListManagementOptions? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.ses/SendEmailRequest.<init>|<init>(com.steamstreet.awskt.ses.EmailContent;kotlin.String?;com.steamstreet.awskt.ses.Destination?;kotlin.collections.List<kotlin.String>?;kotlin.String?;kotlin.String?;kotlin.collections.List<com.steamstreet.awskt.ses.MessageTag>?;com.steamstreet.awskt.ses.ListManagementOptions?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val configurationSetName // com.steamstreet.awskt.ses/SendEmailRequest.configurationSetName|{}configurationSetName[0]
+        final fun <get-configurationSetName>(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailRequest.configurationSetName.<get-configurationSetName>|<get-configurationSetName>(){}[0]
+    final val content // com.steamstreet.awskt.ses/SendEmailRequest.content|{}content[0]
+        final fun <get-content>(): com.steamstreet.awskt.ses/EmailContent // com.steamstreet.awskt.ses/SendEmailRequest.content.<get-content>|<get-content>(){}[0]
+    final val destination // com.steamstreet.awskt.ses/SendEmailRequest.destination|{}destination[0]
+        final fun <get-destination>(): com.steamstreet.awskt.ses/Destination? // com.steamstreet.awskt.ses/SendEmailRequest.destination.<get-destination>|<get-destination>(){}[0]
+    final val emailTags // com.steamstreet.awskt.ses/SendEmailRequest.emailTags|{}emailTags[0]
+        final fun <get-emailTags>(): kotlin.collections/List<com.steamstreet.awskt.ses/MessageTag>? // com.steamstreet.awskt.ses/SendEmailRequest.emailTags.<get-emailTags>|<get-emailTags>(){}[0]
+    final val endpointId // com.steamstreet.awskt.ses/SendEmailRequest.endpointId|{}endpointId[0]
+        final fun <get-endpointId>(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailRequest.endpointId.<get-endpointId>|<get-endpointId>(){}[0]
+    final val feedbackForwardingEmailAddress // com.steamstreet.awskt.ses/SendEmailRequest.feedbackForwardingEmailAddress|{}feedbackForwardingEmailAddress[0]
+        final fun <get-feedbackForwardingEmailAddress>(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailRequest.feedbackForwardingEmailAddress.<get-feedbackForwardingEmailAddress>|<get-feedbackForwardingEmailAddress>(){}[0]
+    final val feedbackForwardingEmailAddressIdentityArn // com.steamstreet.awskt.ses/SendEmailRequest.feedbackForwardingEmailAddressIdentityArn|{}feedbackForwardingEmailAddressIdentityArn[0]
+        final fun <get-feedbackForwardingEmailAddressIdentityArn>(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailRequest.feedbackForwardingEmailAddressIdentityArn.<get-feedbackForwardingEmailAddressIdentityArn>|<get-feedbackForwardingEmailAddressIdentityArn>(){}[0]
+    final val fromEmailAddress // com.steamstreet.awskt.ses/SendEmailRequest.fromEmailAddress|{}fromEmailAddress[0]
+        final fun <get-fromEmailAddress>(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailRequest.fromEmailAddress.<get-fromEmailAddress>|<get-fromEmailAddress>(){}[0]
+    final val fromEmailAddressIdentityArn // com.steamstreet.awskt.ses/SendEmailRequest.fromEmailAddressIdentityArn|{}fromEmailAddressIdentityArn[0]
+        final fun <get-fromEmailAddressIdentityArn>(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailRequest.fromEmailAddressIdentityArn.<get-fromEmailAddressIdentityArn>|<get-fromEmailAddressIdentityArn>(){}[0]
+    final val listManagementOptions // com.steamstreet.awskt.ses/SendEmailRequest.listManagementOptions|{}listManagementOptions[0]
+        final fun <get-listManagementOptions>(): com.steamstreet.awskt.ses/ListManagementOptions? // com.steamstreet.awskt.ses/SendEmailRequest.listManagementOptions.<get-listManagementOptions>|<get-listManagementOptions>(){}[0]
+    final val replyToAddresses // com.steamstreet.awskt.ses/SendEmailRequest.replyToAddresses|{}replyToAddresses[0]
+        final fun <get-replyToAddresses>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.ses/SendEmailRequest.replyToAddresses.<get-replyToAddresses>|<get-replyToAddresses>(){}[0]
+    final val tenantName // com.steamstreet.awskt.ses/SendEmailRequest.tenantName|{}tenantName[0]
+        final fun <get-tenantName>(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailRequest.tenantName.<get-tenantName>|<get-tenantName>(){}[0]
+
+    final fun component1(): com.steamstreet.awskt.ses/EmailContent // com.steamstreet.awskt.ses/SendEmailRequest.component1|component1(){}[0]
+    final fun component10(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailRequest.component10|component10(){}[0]
+    final fun component11(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailRequest.component11|component11(){}[0]
+    final fun component12(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailRequest.component12|component12(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailRequest.component2|component2(){}[0]
+    final fun component3(): com.steamstreet.awskt.ses/Destination? // com.steamstreet.awskt.ses/SendEmailRequest.component3|component3(){}[0]
+    final fun component4(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.ses/SendEmailRequest.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailRequest.component5|component5(){}[0]
+    final fun component6(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailRequest.component6|component6(){}[0]
+    final fun component7(): kotlin.collections/List<com.steamstreet.awskt.ses/MessageTag>? // com.steamstreet.awskt.ses/SendEmailRequest.component7|component7(){}[0]
+    final fun component8(): com.steamstreet.awskt.ses/ListManagementOptions? // com.steamstreet.awskt.ses/SendEmailRequest.component8|component8(){}[0]
+    final fun component9(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailRequest.component9|component9(){}[0]
+    final fun copy(com.steamstreet.awskt.ses/EmailContent = ..., kotlin/String? = ..., com.steamstreet.awskt.ses/Destination? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/List<com.steamstreet.awskt.ses/MessageTag>? = ..., com.steamstreet.awskt.ses/ListManagementOptions? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.ses/SendEmailRequest // com.steamstreet.awskt.ses/SendEmailRequest.copy|copy(com.steamstreet.awskt.ses.EmailContent;kotlin.String?;com.steamstreet.awskt.ses.Destination?;kotlin.collections.List<kotlin.String>?;kotlin.String?;kotlin.String?;kotlin.collections.List<com.steamstreet.awskt.ses.MessageTag>?;com.steamstreet.awskt.ses.ListManagementOptions?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.ses/SendEmailRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.ses/SendEmailRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.ses/SendEmailRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.ses/SendEmailRequest> { // com.steamstreet.awskt.ses/SendEmailRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.ses/SendEmailRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.ses/SendEmailRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.ses/SendEmailRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.ses/SendEmailRequest // com.steamstreet.awskt.ses/SendEmailRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.ses/SendEmailRequest) // com.steamstreet.awskt.ses/SendEmailRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.ses.SendEmailRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.ses/SendEmailRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.ses/SendEmailRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.ses/SendEmailRequest> // com.steamstreet.awskt.ses/SendEmailRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.ses/SendEmailResponse { // com.steamstreet.awskt.ses/SendEmailResponse|null[0]
+    constructor <init>(kotlin/String? = ...) // com.steamstreet.awskt.ses/SendEmailResponse.<init>|<init>(kotlin.String?){}[0]
+
+    final val messageId // com.steamstreet.awskt.ses/SendEmailResponse.messageId|{}messageId[0]
+        final fun <get-messageId>(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailResponse.messageId.<get-messageId>|<get-messageId>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.ses/SendEmailResponse.component1|component1(){}[0]
+    final fun copy(kotlin/String? = ...): com.steamstreet.awskt.ses/SendEmailResponse // com.steamstreet.awskt.ses/SendEmailResponse.copy|copy(kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.ses/SendEmailResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.ses/SendEmailResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.ses/SendEmailResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.ses/SendEmailResponse> { // com.steamstreet.awskt.ses/SendEmailResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.ses/SendEmailResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.ses/SendEmailResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.ses/SendEmailResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.ses/SendEmailResponse // com.steamstreet.awskt.ses/SendEmailResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.ses/SendEmailResponse) // com.steamstreet.awskt.ses/SendEmailResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.ses.SendEmailResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.ses/SendEmailResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.ses/SendEmailResponse> // com.steamstreet.awskt.ses/SendEmailResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.ses/SendingPausedException : com.steamstreet.awskt.ses/SesException { // com.steamstreet.awskt.ses/SendingPausedException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.ses/SendingPausedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.ses/SesConfig { // com.steamstreet.awskt.ses/SesConfig|null[0]
+    constructor <init>() // com.steamstreet.awskt.ses/SesConfig.<init>|<init>(){}[0]
+
+    final var caInfo // com.steamstreet.awskt.ses/SesConfig.caInfo|{}caInfo[0]
+        final fun <get-caInfo>(): kotlin/String? // com.steamstreet.awskt.ses/SesConfig.caInfo.<get-caInfo>|<get-caInfo>(){}[0]
+        final fun <set-caInfo>(kotlin/String?) // com.steamstreet.awskt.ses/SesConfig.caInfo.<set-caInfo>|<set-caInfo>(kotlin.String?){}[0]
+    final var credentialsProvider // com.steamstreet.awskt.ses/SesConfig.credentialsProvider|{}credentialsProvider[0]
+        final fun <get-credentialsProvider>(): com.steamstreet.awskt.core/AwsCredentialsProvider? // com.steamstreet.awskt.ses/SesConfig.credentialsProvider.<get-credentialsProvider>|<get-credentialsProvider>(){}[0]
+        final fun <set-credentialsProvider>(com.steamstreet.awskt.core/AwsCredentialsProvider?) // com.steamstreet.awskt.ses/SesConfig.credentialsProvider.<set-credentialsProvider>|<set-credentialsProvider>(com.steamstreet.awskt.core.AwsCredentialsProvider?){}[0]
+    final var endpointUrl // com.steamstreet.awskt.ses/SesConfig.endpointUrl|{}endpointUrl[0]
+        final fun <get-endpointUrl>(): kotlin/String? // com.steamstreet.awskt.ses/SesConfig.endpointUrl.<get-endpointUrl>|<get-endpointUrl>(){}[0]
+        final fun <set-endpointUrl>(kotlin/String?) // com.steamstreet.awskt.ses/SesConfig.endpointUrl.<set-endpointUrl>|<set-endpointUrl>(kotlin.String?){}[0]
+    final var httpClient // com.steamstreet.awskt.ses/SesConfig.httpClient|{}httpClient[0]
+        final fun <get-httpClient>(): io.ktor.client/HttpClient? // com.steamstreet.awskt.ses/SesConfig.httpClient.<get-httpClient>|<get-httpClient>(){}[0]
+        final fun <set-httpClient>(io.ktor.client/HttpClient?) // com.steamstreet.awskt.ses/SesConfig.httpClient.<set-httpClient>|<set-httpClient>(io.ktor.client.HttpClient?){}[0]
+    final var httpTimeouts // com.steamstreet.awskt.ses/SesConfig.httpTimeouts|{}httpTimeouts[0]
+        final fun <get-httpTimeouts>(): com.steamstreet.awskt.core/AwsHttpTimeouts // com.steamstreet.awskt.ses/SesConfig.httpTimeouts.<get-httpTimeouts>|<get-httpTimeouts>(){}[0]
+        final fun <set-httpTimeouts>(com.steamstreet.awskt.core/AwsHttpTimeouts) // com.steamstreet.awskt.ses/SesConfig.httpTimeouts.<set-httpTimeouts>|<set-httpTimeouts>(com.steamstreet.awskt.core.AwsHttpTimeouts){}[0]
+    final var observer // com.steamstreet.awskt.ses/SesConfig.observer|{}observer[0]
+        final fun <get-observer>(): com.steamstreet.awskt.core/AwsCallObserver? // com.steamstreet.awskt.ses/SesConfig.observer.<get-observer>|<get-observer>(){}[0]
+        final fun <set-observer>(com.steamstreet.awskt.core/AwsCallObserver?) // com.steamstreet.awskt.ses/SesConfig.observer.<set-observer>|<set-observer>(com.steamstreet.awskt.core.AwsCallObserver?){}[0]
+    final var region // com.steamstreet.awskt.ses/SesConfig.region|{}region[0]
+        final fun <get-region>(): kotlin/String? // com.steamstreet.awskt.ses/SesConfig.region.<get-region>|<get-region>(){}[0]
+        final fun <set-region>(kotlin/String?) // com.steamstreet.awskt.ses/SesConfig.region.<set-region>|<set-region>(kotlin.String?){}[0]
+    final var retryConfig // com.steamstreet.awskt.ses/SesConfig.retryConfig|{}retryConfig[0]
+        final fun <get-retryConfig>(): com.steamstreet.awskt.core/RetryConfig // com.steamstreet.awskt.ses/SesConfig.retryConfig.<get-retryConfig>|<get-retryConfig>(){}[0]
+        final fun <set-retryConfig>(com.steamstreet.awskt.core/RetryConfig) // com.steamstreet.awskt.ses/SesConfig.retryConfig.<set-retryConfig>|<set-retryConfig>(com.steamstreet.awskt.core.RetryConfig){}[0]
+}
+
+final class com.steamstreet.awskt.ses/TooManyRequestsException : com.steamstreet.awskt.ses/SesException { // com.steamstreet.awskt.ses/TooManyRequestsException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.ses/TooManyRequestsException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+open class com.steamstreet.awskt.ses/SesException : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.ses/SesException|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.ses/SesException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final val com.steamstreet.awskt.ses/SES_PROTOCOL // com.steamstreet.awskt.ses/SES_PROTOCOL|{}SES_PROTOCOL[0]
+    final fun <get-SES_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.ses/SES_PROTOCOL.<get-SES_PROTOCOL>|<get-SES_PROTOCOL>(){}[0]
+
+final fun com.steamstreet.awskt.ses/Ses(kotlin/Function1<com.steamstreet.awskt.ses/SesConfig, kotlin/Unit> = ...): com.steamstreet.awskt.ses/Ses // com.steamstreet.awskt.ses/Ses|Ses(kotlin.Function1<com.steamstreet.awskt.ses.SesConfig,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.awskt.ses/Ses).com.steamstreet.awskt.ses/sendSimpleEmail(kotlin/String, kotlin.collections/List<kotlin/String>, kotlin/String, kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.ses/SendEmailResponse // com.steamstreet.awskt.ses/sendSimpleEmail|sendSimpleEmail@com.steamstreet.awskt.ses.Ses(kotlin.String;kotlin.collections.List<kotlin.String>;kotlin.String;kotlin.String?;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlin.String?;kotlin.String?){}[0]

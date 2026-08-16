@@ -34,6 +34,7 @@ export AWS_REGION=us-west-2
 | `aws-secretsmanager` | `SMOKE_SECRET_ID` | any readable secret (read-only; never written) |
 | `aws-sqs` | `SMOKE_QUEUE_URL` | a **standard** (non-FIFO) queue |
 | `aws-sns` | `SMOKE_TOPIC_ARN` | a topic, ideally with no subscriptions |
+| `aws-ses` | `SMOKE_SES_FROM`, `SMOKE_SES_TO` | a verified sending identity, and an address you own — **it really sends mail** |
 | `aws-scheduler` | `SMOKE_SCHEDULER_TARGET_ARN`, `SMOKE_SCHEDULER_ROLE_ARN` | a target and a role trusting `scheduler.amazonaws.com` |
 | `aws-bedrock-runtime` | `SMOKE_BEDROCK_MODEL_ID` | model access granted in the account |
 | `aws-cloudwatch-logs` | `SMOKE_LOG_GROUP` | any existing log group — **it may be empty** |
@@ -46,7 +47,8 @@ export AWS_REGION=us-west-2
 # All of them
 ./gradlew :aws:aws-core:jvmTest :aws:aws-kms:jvmTest :aws:aws-secretsmanager:jvmTest \
           :aws:aws-sqs:jvmTest :aws:aws-sns:jvmTest :aws:aws-scheduler:jvmTest \
-          :aws:aws-bedrock-runtime:jvmTest :aws:aws-cloudwatch-logs:jvmTest
+          :aws:aws-bedrock-runtime:jvmTest :aws:aws-cloudwatch-logs:jvmTest \
+          :aws:aws-ses:jvmTest
 
 # On macOS, the same tests through the Curl engine rather than CIO — worth doing at least once,
 # because the native Lambda uses Curl and CIO is not evidence about it.
@@ -57,6 +59,11 @@ Everything the suites create, they delete: SQS messages are received and deleted
 schedules are deleted in a `finally`. Secrets Manager is read-only by design — `PutSecretValue`
 would accumulate secret versions against an account quota, so its idempotency-token behaviour is
 asserted hermetically instead.
+
+**`aws-ses` is the exception, and it is not a fixable one: an email cannot be un-sent.** It is the
+only suite here that leaves something behind outside AWS, which is why it needs its own
+`SMOKE_SES_TO` rather than riding on credentials alone — it cannot mail anyone by accident, and it
+sends exactly one message per run. Point it at an address you own.
 
 ### The two that are worth running even if you skip the rest
 

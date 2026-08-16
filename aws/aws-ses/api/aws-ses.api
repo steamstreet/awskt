@@ -1,0 +1,400 @@
+public final class com/steamstreet/awskt/ses/AccountSuspendedException : com/steamstreet/awskt/ses/SesException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/ses/BadRequestException : com/steamstreet/awskt/ses/SesException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/ses/Body {
+	public static final field Companion Lcom/steamstreet/awskt/ses/Body$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/ses/Content;Lcom/steamstreet/awskt/ses/Content;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/ses/Content;Lcom/steamstreet/awskt/ses/Content;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/ses/Content;
+	public final fun component2 ()Lcom/steamstreet/awskt/ses/Content;
+	public final fun copy (Lcom/steamstreet/awskt/ses/Content;Lcom/steamstreet/awskt/ses/Content;)Lcom/steamstreet/awskt/ses/Body;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/ses/Body;Lcom/steamstreet/awskt/ses/Content;Lcom/steamstreet/awskt/ses/Content;ILjava/lang/Object;)Lcom/steamstreet/awskt/ses/Body;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHtml ()Lcom/steamstreet/awskt/ses/Content;
+	public final fun getText ()Lcom/steamstreet/awskt/ses/Content;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/ses/Body$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/ses/Body$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/ses/Body;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/ses/Body;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/Body$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/Content {
+	public static final field Companion Lcom/steamstreet/awskt/ses/Content$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/ses/Content;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/ses/Content;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/ses/Content;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCharset ()Ljava/lang/String;
+	public final fun getData ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/ses/Content$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/ses/Content$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/ses/Content;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/ses/Content;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/Content$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/Destination {
+	public static final field Companion Lcom/steamstreet/awskt/ses/Destination$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;Ljava/util/List;Ljava/util/List;)Lcom/steamstreet/awskt/ses/Destination;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/ses/Destination;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/awskt/ses/Destination;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBccAddresses ()Ljava/util/List;
+	public final fun getCcAddresses ()Ljava/util/List;
+	public final fun getToAddresses ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/ses/Destination$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/ses/Destination$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/ses/Destination;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/ses/Destination;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/Destination$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/EmailContent {
+	public static final field Companion Lcom/steamstreet/awskt/ses/EmailContent$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/ses/Message;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/ses/Message;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/ses/Message;
+	public final fun copy (Lcom/steamstreet/awskt/ses/Message;)Lcom/steamstreet/awskt/ses/EmailContent;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/ses/EmailContent;Lcom/steamstreet/awskt/ses/Message;ILjava/lang/Object;)Lcom/steamstreet/awskt/ses/EmailContent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSimple ()Lcom/steamstreet/awskt/ses/Message;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/ses/EmailContent$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/ses/EmailContent$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/ses/EmailContent;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/ses/EmailContent;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/EmailContent$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/LimitExceededException : com/steamstreet/awskt/ses/SesException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/ses/ListManagementOptions {
+	public static final field Companion Lcom/steamstreet/awskt/ses/ListManagementOptions$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/ses/ListManagementOptions;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/ses/ListManagementOptions;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/ses/ListManagementOptions;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContactListName ()Ljava/lang/String;
+	public final fun getTopicName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/ses/ListManagementOptions$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/ses/ListManagementOptions$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/ses/ListManagementOptions;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/ses/ListManagementOptions;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/ListManagementOptions$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/MailFromDomainNotVerifiedException : com/steamstreet/awskt/ses/SesException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/ses/Message {
+	public static final field Companion Lcom/steamstreet/awskt/ses/Message$Companion;
+	public fun <init> (Lcom/steamstreet/awskt/ses/Content;Lcom/steamstreet/awskt/ses/Body;Ljava/util/List;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/ses/Content;Lcom/steamstreet/awskt/ses/Body;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/ses/Content;
+	public final fun component2 ()Lcom/steamstreet/awskt/ses/Body;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Lcom/steamstreet/awskt/ses/Content;Lcom/steamstreet/awskt/ses/Body;Ljava/util/List;)Lcom/steamstreet/awskt/ses/Message;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/ses/Message;Lcom/steamstreet/awskt/ses/Content;Lcom/steamstreet/awskt/ses/Body;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/awskt/ses/Message;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBody ()Lcom/steamstreet/awskt/ses/Body;
+	public final fun getHeaders ()Ljava/util/List;
+	public final fun getSubject ()Lcom/steamstreet/awskt/ses/Content;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/ses/Message$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/ses/Message$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/ses/Message;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/ses/Message;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/Message$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/MessageHeader {
+	public static final field Companion Lcom/steamstreet/awskt/ses/MessageHeader$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/ses/MessageHeader;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/ses/MessageHeader;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/ses/MessageHeader;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/ses/MessageHeader$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/ses/MessageHeader$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/ses/MessageHeader;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/ses/MessageHeader;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/MessageHeader$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/MessageRejected : com/steamstreet/awskt/ses/SesException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/ses/MessageTag {
+	public static final field Companion Lcom/steamstreet/awskt/ses/MessageTag$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/ses/MessageTag;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/ses/MessageTag;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/ses/MessageTag;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/ses/MessageTag$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/ses/MessageTag$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/ses/MessageTag;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/ses/MessageTag;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/MessageTag$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/NotFoundException : com/steamstreet/awskt/ses/SesException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/ses/SendEmailRequest {
+	public static final field Companion Lcom/steamstreet/awskt/ses/SendEmailRequest$Companion;
+	public fun <init> (Lcom/steamstreet/awskt/ses/EmailContent;Ljava/lang/String;Lcom/steamstreet/awskt/ses/Destination;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/ses/ListManagementOptions;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/ses/EmailContent;Ljava/lang/String;Lcom/steamstreet/awskt/ses/Destination;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/ses/ListManagementOptions;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/ses/EmailContent;
+	public final fun component10 ()Ljava/lang/String;
+	public final fun component11 ()Ljava/lang/String;
+	public final fun component12 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lcom/steamstreet/awskt/ses/Destination;
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/util/List;
+	public final fun component8 ()Lcom/steamstreet/awskt/ses/ListManagementOptions;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Lcom/steamstreet/awskt/ses/EmailContent;Ljava/lang/String;Lcom/steamstreet/awskt/ses/Destination;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/ses/ListManagementOptions;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/ses/SendEmailRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/ses/SendEmailRequest;Lcom/steamstreet/awskt/ses/EmailContent;Ljava/lang/String;Lcom/steamstreet/awskt/ses/Destination;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/ses/ListManagementOptions;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/ses/SendEmailRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConfigurationSetName ()Ljava/lang/String;
+	public final fun getContent ()Lcom/steamstreet/awskt/ses/EmailContent;
+	public final fun getDestination ()Lcom/steamstreet/awskt/ses/Destination;
+	public final fun getEmailTags ()Ljava/util/List;
+	public final fun getEndpointId ()Ljava/lang/String;
+	public final fun getFeedbackForwardingEmailAddress ()Ljava/lang/String;
+	public final fun getFeedbackForwardingEmailAddressIdentityArn ()Ljava/lang/String;
+	public final fun getFromEmailAddress ()Ljava/lang/String;
+	public final fun getFromEmailAddressIdentityArn ()Ljava/lang/String;
+	public final fun getListManagementOptions ()Lcom/steamstreet/awskt/ses/ListManagementOptions;
+	public final fun getReplyToAddresses ()Ljava/util/List;
+	public final fun getTenantName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/ses/SendEmailRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/ses/SendEmailRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/ses/SendEmailRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/ses/SendEmailRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/SendEmailRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/SendEmailResponse {
+	public static final field Companion Lcom/steamstreet/awskt/ses/SendEmailResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/ses/SendEmailResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/ses/SendEmailResponse;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/ses/SendEmailResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessageId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/ses/SendEmailResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/ses/SendEmailResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/ses/SendEmailResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/ses/SendEmailResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/SendEmailResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/ses/SendingPausedException : com/steamstreet/awskt/ses/SesException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public abstract interface class com/steamstreet/awskt/ses/Ses : java/lang/AutoCloseable {
+	public abstract fun getClient ()Lcom/steamstreet/awskt/core/AwsServiceClient;
+	public abstract fun sendEmail (Lcom/steamstreet/awskt/ses/SendEmailRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/ses/SesConfig {
+	public fun <init> ()V
+	public final fun getCaInfo ()Ljava/lang/String;
+	public final fun getCredentialsProvider ()Lcom/steamstreet/awskt/core/AwsCredentialsProvider;
+	public final fun getEndpointUrl ()Ljava/lang/String;
+	public final fun getHttpClient ()Lio/ktor/client/HttpClient;
+	public final fun getHttpTimeouts ()Lcom/steamstreet/awskt/core/AwsHttpTimeouts;
+	public final fun getObserver ()Lcom/steamstreet/awskt/core/AwsCallObserver;
+	public final fun getRegion ()Ljava/lang/String;
+	public final fun getRetryConfig ()Lcom/steamstreet/awskt/core/RetryConfig;
+	public final fun setCaInfo (Ljava/lang/String;)V
+	public final fun setCredentialsProvider (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;)V
+	public final fun setEndpointUrl (Ljava/lang/String;)V
+	public final fun setHttpClient (Lio/ktor/client/HttpClient;)V
+	public final fun setHttpTimeouts (Lcom/steamstreet/awskt/core/AwsHttpTimeouts;)V
+	public final fun setObserver (Lcom/steamstreet/awskt/core/AwsCallObserver;)V
+	public final fun setRegion (Ljava/lang/String;)V
+	public final fun setRetryConfig (Lcom/steamstreet/awskt/core/RetryConfig;)V
+}
+
+public class com/steamstreet/awskt/ses/SesException : com/steamstreet/awskt/core/AwsServiceException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/ses/SesKt {
+	public static final fun Ses (Lkotlin/jvm/functions/Function1;)Lcom/steamstreet/awskt/ses/Ses;
+	public static synthetic fun Ses$default (Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/steamstreet/awskt/ses/Ses;
+	public static final fun getSES_PROTOCOL ()Lcom/steamstreet/awskt/core/AwsProtocol;
+	public static final fun sendSimpleEmail (Lcom/steamstreet/awskt/ses/Ses;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun sendSimpleEmail$default (Lcom/steamstreet/awskt/ses/Ses;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/ses/TooManyRequestsException : com/steamstreet/awskt/ses/SesException {
+	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
