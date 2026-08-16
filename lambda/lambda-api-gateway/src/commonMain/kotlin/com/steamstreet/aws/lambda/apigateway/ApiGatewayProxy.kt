@@ -1,10 +1,17 @@
 package com.steamstreet.aws.lambda.apigateway
 
-import com.steamstreet.aws.lambda.IOLambda
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
-import java.util.*
+import kotlin.io.encoding.Base64
 
+/**
+ * The API Gateway proxy integration model.
+ *
+ * These types are the wire contract, and nothing about them is JVM-specific, so they live in
+ * `commonMain`: a Kotlin/Native Lambda deserializes exactly the same payload the JVM one does. The
+ * handler that *receives* them is a different matter — see [ApiGatewayProxyHandler], which stays on
+ * the JVM because it is a `RequestStreamHandler`.
+ */
 @Serializable
 public data class ApiGatewayProxyRequest(
     val resource: String,
@@ -25,9 +32,9 @@ public data class ApiGatewayProxyRequest(
      */
     public fun decodedBody(): ByteArray {
         return if (isBase64Encoded == true && body != null) {
-            Base64.getDecoder().decode(body)
+            Base64.Default.decode(body)
         } else {
-            body?.toByteArray(Charsets.UTF_8) ?: ByteArray(0)
+            body?.encodeToByteArray() ?: ByteArray(0)
         }
     }
 }
@@ -70,11 +77,4 @@ public data class ApiGatewayProxyResponse(
     val multiValueHeaders: Map<String, List<String>>? = null,
     val body: String? = null,
     val isBase64Encoded: Boolean? = null
-)
-
-/**
- * Base class to handle ApiGateway requests.
- */
-public abstract class ApiGatewayProxyHandler : IOLambda<ApiGatewayProxyRequest, ApiGatewayProxyResponse>(
-    ApiGatewayProxyRequest.serializer(), ApiGatewayProxyResponse.serializer()
 )

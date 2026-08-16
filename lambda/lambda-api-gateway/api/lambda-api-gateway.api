@@ -91,6 +91,249 @@ public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayProxyResponse
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
+public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer {
+	public static final field Companion Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer;Ljava/util/Map;Ljava/util/Map;)V
+	public synthetic fun <init> (Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/util/Map;
+	public final fun copy (Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer;Ljava/util/Map;Ljava/util/Map;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIam ()Ljava/util/Map;
+	public final fun getJwt ()Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer;
+	public final fun getLambda ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http {
+	public static final field Companion Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMethod ()Ljava/lang/String;
+	public final fun getPath ()Ljava/lang/String;
+	public final fun getProtocol ()Ljava/lang/String;
+	public final fun getSourceIp ()Ljava/lang/String;
+	public final fun getUserAgent ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public abstract class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpHandler : com/steamstreet/aws/lambda/IOLambda {
+	public fun <init> ()V
+}
+
+public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpRequest {
+	public static final field Companion Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpRequest$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext;Ljava/lang/String;Ljava/lang/Boolean;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext;Ljava/lang/String;Ljava/lang/Boolean;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext;
+	public final fun component11 ()Ljava/lang/String;
+	public final fun component12 ()Ljava/lang/Boolean;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/util/List;
+	public final fun component6 ()Ljava/util/Map;
+	public final fun component7 ()Ljava/util/Map;
+	public final fun component8 ()Ljava/util/Map;
+	public final fun component9 ()Ljava/util/Map;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext;Ljava/lang/String;Ljava/lang/Boolean;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpRequest;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext;Ljava/lang/String;Ljava/lang/Boolean;ILjava/lang/Object;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpRequest;
+	public final fun decodedBody ()[B
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBody ()Ljava/lang/String;
+	public final fun getCookies ()Ljava/util/List;
+	public final fun getHeaders ()Ljava/util/Map;
+	public final fun getPathParameters ()Ljava/util/Map;
+	public final fun getQueryStringParameters ()Ljava/util/Map;
+	public final fun getRawPath ()Ljava/lang/String;
+	public final fun getRawQueryString ()Ljava/lang/String;
+	public final fun getRequestContext ()Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext;
+	public final fun getRouteKey ()Ljava/lang/String;
+	public final fun getStageVariables ()Ljava/util/Map;
+	public final fun getVersion ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isBase64Encoded ()Ljava/lang/Boolean;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpRequest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpRequest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpResponse {
+	public static final field Companion Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Integer;Ljava/util/Map;Ljava/util/List;Ljava/lang/String;Ljava/lang/Boolean;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/util/Map;Ljava/util/List;Ljava/lang/String;Ljava/lang/Boolean;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Integer;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/Boolean;
+	public final fun copy (Ljava/lang/Integer;Ljava/util/Map;Ljava/util/List;Ljava/lang/String;Ljava/lang/Boolean;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpResponse;Ljava/lang/Integer;Ljava/util/Map;Ljava/util/List;Ljava/lang/String;Ljava/lang/Boolean;ILjava/lang/Object;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBody ()Ljava/lang/String;
+	public final fun getCookies ()Ljava/util/List;
+	public final fun getHeaders ()Ljava/util/Map;
+	public final fun getStatusCode ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public final fun isBase64Encoded ()Ljava/lang/Boolean;
+	public final fun setStatusCode (Ljava/lang/Integer;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer {
+	public static final field Companion Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Map;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/Map;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/util/Map;Ljava/util/List;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getClaims ()Ljava/util/Map;
+	public final fun getScopes ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2JwtAuthorizer$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext {
+	public static final field Companion Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http;
+	public final fun component11 ()Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ljava/lang/String;
+	public final fun component9 ()Ljava/lang/Long;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext;
+	public static synthetic fun copy$default (Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer;ILjava/lang/Object;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAccountId ()Ljava/lang/String;
+	public final fun getApiId ()Ljava/lang/String;
+	public final fun getAuthorizer ()Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Authorizer;
+	public final fun getDomainName ()Ljava/lang/String;
+	public final fun getDomainPrefix ()Ljava/lang/String;
+	public final fun getHttp ()Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http;
+	public final fun getRequestId ()Ljava/lang/String;
+	public final fun getRouteKey ()Ljava/lang/String;
+	public final fun getStage ()Ljava/lang/String;
+	public final fun getTime ()Ljava/lang/String;
+	public final fun getTimeEpoch ()Ljava/lang/Long;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2RequestContext$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/steamstreet/aws/lambda/apigateway/ProxyRequestContext {
 	public static final field Companion Lcom/steamstreet/aws/lambda/apigateway/ProxyRequestContext$Companion;
 	public fun <init> ()V

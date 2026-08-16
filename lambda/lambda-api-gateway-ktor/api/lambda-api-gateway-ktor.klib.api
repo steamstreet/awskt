@@ -1,0 +1,70 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:lambda-api-gateway-ktor>
+abstract class com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase : io.ktor.server.application/PipelineCall { // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase|null[0]
+    open val application // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase.application|{}application[0]
+        open fun <get-application>(): io.ktor.server.application/Application // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase.application.<get-application>|<get-application>(){}[0]
+    open val coroutineContext // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase.coroutineContext|{}coroutineContext[0]
+        open fun <get-coroutineContext>(): kotlin.coroutines/CoroutineContext // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase.coroutineContext.<get-coroutineContext>|<get-coroutineContext>(){}[0]
+    open val parameters // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase.parameters|{}parameters[0]
+        open fun <get-parameters>(): io.ktor.http/Parameters // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase.parameters.<get-parameters>|<get-parameters>(){}[0]
+    open val response // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase.response|{}response[0]
+        open fun <get-response>(): io.ktor.server.response/PipelineResponse // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase.response.<get-response>|<get-response>(){}[0]
+
+    open suspend fun respond(kotlin/Any?, io.ktor.util.reflect/TypeInfo?) // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase.respond|respond(kotlin.Any?;io.ktor.util.reflect.TypeInfo?){}[0]
+}
+
+final class com.steamstreet.aws.lambda.apigateway.ktor/APIGatewayKtorServer { // com.steamstreet.aws.lambda.apigateway.ktor/APIGatewayKtorServer|null[0]
+    constructor <init>(kotlin/Function1<io.ktor.server.application/Application, kotlin/Unit>) // com.steamstreet.aws.lambda.apigateway.ktor/APIGatewayKtorServer.<init>|<init>(kotlin.Function1<io.ktor.server.application.Application,kotlin.Unit>){}[0]
+
+    final suspend fun processRequest(com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest): com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse // com.steamstreet.aws.lambda.apigateway.ktor/APIGatewayKtorServer.processRequest|processRequest(com.steamstreet.aws.lambda.apigateway.ApiGatewayProxyRequest){}[0]
+
+    final class InternalEngineConfig : io.ktor.server.engine/ApplicationEngine.Configuration { // com.steamstreet.aws.lambda.apigateway.ktor/APIGatewayKtorServer.InternalEngineConfig|null[0]
+        constructor <init>() // com.steamstreet.aws.lambda.apigateway.ktor/APIGatewayKtorServer.InternalEngineConfig.<init>|<init>(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.lambda.apigateway.ktor/APIGatewayV2KtorServer { // com.steamstreet.aws.lambda.apigateway.ktor/APIGatewayV2KtorServer|null[0]
+    constructor <init>(kotlin/Function1<io.ktor.server.application/Application, kotlin/Unit>) // com.steamstreet.aws.lambda.apigateway.ktor/APIGatewayV2KtorServer.<init>|<init>(kotlin.Function1<io.ktor.server.application.Application,kotlin.Unit>){}[0]
+
+    final suspend fun processRequest(com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse // com.steamstreet.aws.lambda.apigateway.ktor/APIGatewayV2KtorServer.processRequest|processRequest(com.steamstreet.aws.lambda.apigateway.ApiGatewayV2HttpRequest){}[0]
+}
+
+final class com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCall : com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase { // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCall|null[0]
+    constructor <init>(io.ktor.server.application/Application, com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest) // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCall.<init>|<init>(io.ktor.server.application.Application;com.steamstreet.aws.lambda.apigateway.ApiGatewayProxyRequest){}[0]
+
+    final val attributes // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCall.attributes|{}attributes[0]
+        final fun <get-attributes>(): io.ktor.util/Attributes // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCall.attributes.<get-attributes>|<get-attributes>(){}[0]
+    final val request // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCall.request|{}request[0]
+        final fun <get-request>(): io.ktor.server.request/PipelineRequest // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCall.request.<get-request>|<get-request>(){}[0]
+
+    final suspend fun response(): com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCall.response|response(){}[0]
+}
+
+final class com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayV2KtorCall : com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase { // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayV2KtorCall|null[0]
+    constructor <init>(io.ktor.server.application/Application, com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest) // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayV2KtorCall.<init>|<init>(io.ktor.server.application.Application;com.steamstreet.aws.lambda.apigateway.ApiGatewayV2HttpRequest){}[0]
+
+    final val attributes // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayV2KtorCall.attributes|{}attributes[0]
+        final fun <get-attributes>(): io.ktor.util/Attributes // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayV2KtorCall.attributes.<get-attributes>|<get-attributes>(){}[0]
+    final val request // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayV2KtorCall.request|{}request[0]
+        final fun <get-request>(): io.ktor.server.request/PipelineRequest // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayV2KtorCall.request.<get-request>|<get-request>(){}[0]
+
+    final suspend fun response(): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayV2KtorCall.response|response(){}[0]
+}
+
+final val com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayRequest // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayRequest|{}ApiGatewayRequest[0]
+    final fun <get-ApiGatewayRequest>(): io.ktor.util/AttributeKey<com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest> // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayRequest.<get-ApiGatewayRequest>|<get-ApiGatewayRequest>(){}[0]
+final val com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayV2Request // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayV2Request|{}ApiGatewayV2Request[0]
+    final fun <get-ApiGatewayV2Request>(): io.ktor.util/AttributeKey<com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest> // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayV2Request.<get-ApiGatewayV2Request>|<get-ApiGatewayV2Request>(){}[0]
+final val com.steamstreet.aws.lambda.apigateway.ktor/apiGatewayRequest // com.steamstreet.aws.lambda.apigateway.ktor/apiGatewayRequest|@io.ktor.server.application.ApplicationCall{}apiGatewayRequest[0]
+    final fun (io.ktor.server.application/ApplicationCall).<get-apiGatewayRequest>(): com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest // com.steamstreet.aws.lambda.apigateway.ktor/apiGatewayRequest.<get-apiGatewayRequest>|<get-apiGatewayRequest>@io.ktor.server.application.ApplicationCall(){}[0]
+final val com.steamstreet.aws.lambda.apigateway.ktor/apiGatewayV2Request // com.steamstreet.aws.lambda.apigateway.ktor/apiGatewayV2Request|@io.ktor.server.application.ApplicationCall{}apiGatewayV2Request[0]
+    final fun (io.ktor.server.application/ApplicationCall).<get-apiGatewayV2Request>(): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest // com.steamstreet.aws.lambda.apigateway.ktor/apiGatewayV2Request.<get-apiGatewayV2Request>|<get-apiGatewayV2Request>@io.ktor.server.application.ApplicationCall(){}[0]
+
+final fun com.steamstreet.aws.lambda.apigateway.ktor/apiGatewayKtorLambda(kotlin.coroutines/SuspendFunction0<kotlin/Unit> = ..., kotlin/Function1<io.ktor.server.application/Application, kotlin/Unit>) // com.steamstreet.aws.lambda.apigateway.ktor/apiGatewayKtorLambda|apiGatewayKtorLambda(kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.Function1<io.ktor.server.application.Application,kotlin.Unit>){}[0]
+final fun com.steamstreet.aws.lambda.apigateway.ktor/apiGatewayV2KtorLambda(kotlin.coroutines/SuspendFunction0<kotlin/Unit> = ..., kotlin/Function1<io.ktor.server.application/Application, kotlin/Unit>) // com.steamstreet.aws.lambda.apigateway.ktor/apiGatewayV2KtorLambda|apiGatewayV2KtorLambda(kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.Function1<io.ktor.server.application.Application,kotlin.Unit>){}[0]

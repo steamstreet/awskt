@@ -1,0 +1,491 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:lambda-api-gateway>
+final class com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest { // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/String>>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/String>>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., com.steamstreet.aws.lambda.apigateway/ProxyRequestContext, kotlin/String? = ..., kotlin/Boolean? = ...) // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.collections.List<kotlin.String>>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.collections.List<kotlin.String>>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;com.steamstreet.aws.lambda.apigateway.ProxyRequestContext;kotlin.String?;kotlin.Boolean?){}[0]
+
+    final val body // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.body|{}body[0]
+        final fun <get-body>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.body.<get-body>|<get-body>(){}[0]
+    final val headers // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.headers|{}headers[0]
+        final fun <get-headers>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.headers.<get-headers>|<get-headers>(){}[0]
+    final val httpMethod // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.httpMethod|{}httpMethod[0]
+        final fun <get-httpMethod>(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.httpMethod.<get-httpMethod>|<get-httpMethod>(){}[0]
+    final val isBase64Encoded // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.isBase64Encoded|{}isBase64Encoded[0]
+        final fun <get-isBase64Encoded>(): kotlin/Boolean? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.isBase64Encoded.<get-isBase64Encoded>|<get-isBase64Encoded>(){}[0]
+    final val multiValueHeaders // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.multiValueHeaders|{}multiValueHeaders[0]
+        final fun <get-multiValueHeaders>(): kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/String>>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.multiValueHeaders.<get-multiValueHeaders>|<get-multiValueHeaders>(){}[0]
+    final val multiValueQueryStringParameters // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.multiValueQueryStringParameters|{}multiValueQueryStringParameters[0]
+        final fun <get-multiValueQueryStringParameters>(): kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/String>>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.multiValueQueryStringParameters.<get-multiValueQueryStringParameters>|<get-multiValueQueryStringParameters>(){}[0]
+    final val path // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.path|{}path[0]
+        final fun <get-path>(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.path.<get-path>|<get-path>(){}[0]
+    final val pathParameters // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.pathParameters|{}pathParameters[0]
+        final fun <get-pathParameters>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.pathParameters.<get-pathParameters>|<get-pathParameters>(){}[0]
+    final val queryStringParameters // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.queryStringParameters|{}queryStringParameters[0]
+        final fun <get-queryStringParameters>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.queryStringParameters.<get-queryStringParameters>|<get-queryStringParameters>(){}[0]
+    final val requestContext // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.requestContext|{}requestContext[0]
+        final fun <get-requestContext>(): com.steamstreet.aws.lambda.apigateway/ProxyRequestContext // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.requestContext.<get-requestContext>|<get-requestContext>(){}[0]
+    final val resource // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.resource|{}resource[0]
+        final fun <get-resource>(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.resource.<get-resource>|<get-resource>(){}[0]
+    final val stageVariables // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.stageVariables|{}stageVariables[0]
+        final fun <get-stageVariables>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.stageVariables.<get-stageVariables>|<get-stageVariables>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.component1|component1(){}[0]
+    final fun component10(): com.steamstreet.aws.lambda.apigateway/ProxyRequestContext // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.component10|component10(){}[0]
+    final fun component11(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.component11|component11(){}[0]
+    final fun component12(): kotlin/Boolean? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.component12|component12(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.component3|component3(){}[0]
+    final fun component4(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.component4|component4(){}[0]
+    final fun component5(): kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/String>>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.component5|component5(){}[0]
+    final fun component6(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.component6|component6(){}[0]
+    final fun component7(): kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/String>>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.component7|component7(){}[0]
+    final fun component8(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.component8|component8(){}[0]
+    final fun component9(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.component9|component9(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/String>>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/String>>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., com.steamstreet.aws.lambda.apigateway/ProxyRequestContext = ..., kotlin/String? = ..., kotlin/Boolean? = ...): com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.copy|copy(kotlin.String;kotlin.String;kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.collections.List<kotlin.String>>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.collections.List<kotlin.String>>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;com.steamstreet.aws.lambda.apigateway.ProxyRequestContext;kotlin.String?;kotlin.Boolean?){}[0]
+    final fun decodedBody(): kotlin/ByteArray // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.decodedBody|decodedBody(){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest> { // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest) // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.apigateway.ApiGatewayProxyRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest> // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse { // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse|null[0]
+    constructor <init>(kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/String>>? = ..., kotlin/String? = ..., kotlin/Boolean? = ...) // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.<init>|<init>(kotlin.Int?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.collections.List<kotlin.String>>?;kotlin.String?;kotlin.Boolean?){}[0]
+
+    final val body // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.body|{}body[0]
+        final fun <get-body>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.body.<get-body>|<get-body>(){}[0]
+    final val headers // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.headers|{}headers[0]
+        final fun <get-headers>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.headers.<get-headers>|<get-headers>(){}[0]
+    final val isBase64Encoded // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.isBase64Encoded|{}isBase64Encoded[0]
+        final fun <get-isBase64Encoded>(): kotlin/Boolean? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.isBase64Encoded.<get-isBase64Encoded>|<get-isBase64Encoded>(){}[0]
+    final val multiValueHeaders // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.multiValueHeaders|{}multiValueHeaders[0]
+        final fun <get-multiValueHeaders>(): kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/String>>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.multiValueHeaders.<get-multiValueHeaders>|<get-multiValueHeaders>(){}[0]
+
+    final var statusCode // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.statusCode|{}statusCode[0]
+        final fun <get-statusCode>(): kotlin/Int? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.statusCode.<get-statusCode>|<get-statusCode>(){}[0]
+        final fun <set-statusCode>(kotlin/Int?) // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.statusCode.<set-statusCode>|<set-statusCode>(kotlin.Int?){}[0]
+
+    final fun component1(): kotlin/Int? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.component2|component2(){}[0]
+    final fun component3(): kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/String>>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.component4|component4(){}[0]
+    final fun component5(): kotlin/Boolean? // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.component5|component5(){}[0]
+    final fun copy(kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/String>>? = ..., kotlin/String? = ..., kotlin/Boolean? = ...): com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.copy|copy(kotlin.Int?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.collections.List<kotlin.String>>?;kotlin.String?;kotlin.Boolean?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse> { // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse) // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.apigateway.ApiGatewayProxyResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse> // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer|null[0]
+    constructor <init>(com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer? = ..., kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? = ..., kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? = ...) // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.<init>|<init>(com.steamstreet.aws.lambda.apigateway.ApiGatewayV2JwtAuthorizer?;kotlin.collections.Map<kotlin.String,kotlinx.serialization.json.JsonElement>?;kotlin.collections.Map<kotlin.String,kotlinx.serialization.json.JsonElement>?){}[0]
+
+    final val iam // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.iam|{}iam[0]
+        final fun <get-iam>(): kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.iam.<get-iam>|<get-iam>(){}[0]
+    final val jwt // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.jwt|{}jwt[0]
+        final fun <get-jwt>(): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.jwt.<get-jwt>|<get-jwt>(){}[0]
+    final val lambda // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.lambda|{}lambda[0]
+        final fun <get-lambda>(): kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.lambda.<get-lambda>|<get-lambda>(){}[0]
+
+    final fun component1(): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.component2|component2(){}[0]
+    final fun component3(): kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.component3|component3(){}[0]
+    final fun copy(com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer? = ..., kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? = ..., kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? = ...): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.copy|copy(com.steamstreet.aws.lambda.apigateway.ApiGatewayV2JwtAuthorizer?;kotlin.collections.Map<kotlin.String,kotlinx.serialization.json.JsonElement>?;kotlin.collections.Map<kotlin.String,kotlinx.serialization.json.JsonElement>?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer> { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer) // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.apigateway.ApiGatewayV2Authorizer){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.Companion|null[0]
+        final val $childSerializers // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer> // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http|null[0]
+    constructor <init>(kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.<init>|<init>(kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val method // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.method|{}method[0]
+        final fun <get-method>(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.method.<get-method>|<get-method>(){}[0]
+    final val path // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.path|{}path[0]
+        final fun <get-path>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.path.<get-path>|<get-path>(){}[0]
+    final val protocol // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.protocol|{}protocol[0]
+        final fun <get-protocol>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.protocol.<get-protocol>|<get-protocol>(){}[0]
+    final val sourceIp // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.sourceIp|{}sourceIp[0]
+        final fun <get-sourceIp>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.sourceIp.<get-sourceIp>|<get-sourceIp>(){}[0]
+    final val userAgent // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.userAgent|{}userAgent[0]
+        final fun <get-userAgent>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.userAgent.<get-userAgent>|<get-userAgent>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.component5|component5(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.copy|copy(kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http> { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http) // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.apigateway.ApiGatewayV2Http){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http> // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest|null[0]
+    constructor <init>(kotlin/String = ..., kotlin/String? = ..., kotlin/String, kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext = ..., kotlin/String? = ..., kotlin/Boolean? = ...) // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.<init>|<init>(kotlin.String;kotlin.String?;kotlin.String;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;com.steamstreet.aws.lambda.apigateway.ApiGatewayV2RequestContext;kotlin.String?;kotlin.Boolean?){}[0]
+
+    final val body // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.body|{}body[0]
+        final fun <get-body>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.body.<get-body>|<get-body>(){}[0]
+    final val cookies // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.cookies|{}cookies[0]
+        final fun <get-cookies>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.cookies.<get-cookies>|<get-cookies>(){}[0]
+    final val headers // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.headers|{}headers[0]
+        final fun <get-headers>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.headers.<get-headers>|<get-headers>(){}[0]
+    final val isBase64Encoded // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.isBase64Encoded|{}isBase64Encoded[0]
+        final fun <get-isBase64Encoded>(): kotlin/Boolean? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.isBase64Encoded.<get-isBase64Encoded>|<get-isBase64Encoded>(){}[0]
+    final val pathParameters // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.pathParameters|{}pathParameters[0]
+        final fun <get-pathParameters>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.pathParameters.<get-pathParameters>|<get-pathParameters>(){}[0]
+    final val queryStringParameters // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.queryStringParameters|{}queryStringParameters[0]
+        final fun <get-queryStringParameters>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.queryStringParameters.<get-queryStringParameters>|<get-queryStringParameters>(){}[0]
+    final val rawPath // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.rawPath|{}rawPath[0]
+        final fun <get-rawPath>(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.rawPath.<get-rawPath>|<get-rawPath>(){}[0]
+    final val rawQueryString // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.rawQueryString|{}rawQueryString[0]
+        final fun <get-rawQueryString>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.rawQueryString.<get-rawQueryString>|<get-rawQueryString>(){}[0]
+    final val requestContext // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.requestContext|{}requestContext[0]
+        final fun <get-requestContext>(): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.requestContext.<get-requestContext>|<get-requestContext>(){}[0]
+    final val routeKey // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.routeKey|{}routeKey[0]
+        final fun <get-routeKey>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.routeKey.<get-routeKey>|<get-routeKey>(){}[0]
+    final val stageVariables // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.stageVariables|{}stageVariables[0]
+        final fun <get-stageVariables>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.stageVariables.<get-stageVariables>|<get-stageVariables>(){}[0]
+    final val version // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.version|{}version[0]
+        final fun <get-version>(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.version.<get-version>|<get-version>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.component1|component1(){}[0]
+    final fun component10(): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.component10|component10(){}[0]
+    final fun component11(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.component11|component11(){}[0]
+    final fun component12(): kotlin/Boolean? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.component12|component12(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.component4|component4(){}[0]
+    final fun component5(): kotlin.collections/List<kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.component5|component5(){}[0]
+    final fun component6(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.component6|component6(){}[0]
+    final fun component7(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.component7|component7(){}[0]
+    final fun component8(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.component8|component8(){}[0]
+    final fun component9(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.component9|component9(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., kotlin/String = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext = ..., kotlin/String? = ..., kotlin/Boolean? = ...): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.copy|copy(kotlin.String;kotlin.String?;kotlin.String;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;com.steamstreet.aws.lambda.apigateway.ApiGatewayV2RequestContext;kotlin.String?;kotlin.Boolean?){}[0]
+    final fun decodedBody(): kotlin/ByteArray // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.decodedBody|decodedBody(){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest> { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest) // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.apigateway.ApiGatewayV2HttpRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest> // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse|null[0]
+    constructor <init>(kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ..., kotlin/Boolean? = ...) // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.<init>|<init>(kotlin.Int?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.List<kotlin.String>?;kotlin.String?;kotlin.Boolean?){}[0]
+
+    final val body // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.body|{}body[0]
+        final fun <get-body>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.body.<get-body>|<get-body>(){}[0]
+    final val cookies // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.cookies|{}cookies[0]
+        final fun <get-cookies>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.cookies.<get-cookies>|<get-cookies>(){}[0]
+    final val headers // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.headers|{}headers[0]
+        final fun <get-headers>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.headers.<get-headers>|<get-headers>(){}[0]
+    final val isBase64Encoded // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.isBase64Encoded|{}isBase64Encoded[0]
+        final fun <get-isBase64Encoded>(): kotlin/Boolean? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.isBase64Encoded.<get-isBase64Encoded>|<get-isBase64Encoded>(){}[0]
+
+    final var statusCode // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.statusCode|{}statusCode[0]
+        final fun <get-statusCode>(): kotlin/Int? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.statusCode.<get-statusCode>|<get-statusCode>(){}[0]
+        final fun <set-statusCode>(kotlin/Int?) // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.statusCode.<set-statusCode>|<set-statusCode>(kotlin.Int?){}[0]
+
+    final fun component1(): kotlin/Int? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.component2|component2(){}[0]
+    final fun component3(): kotlin.collections/List<kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.component4|component4(){}[0]
+    final fun component5(): kotlin/Boolean? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.component5|component5(){}[0]
+    final fun copy(kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ..., kotlin/Boolean? = ...): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.copy|copy(kotlin.Int?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.List<kotlin.String>?;kotlin.String?;kotlin.Boolean?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse> { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse) // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.apigateway.ApiGatewayV2HttpResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse> // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer|null[0]
+    constructor <init>(kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? = ..., kotlin.collections/List<kotlin/String>? = ...) // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.<init>|<init>(kotlin.collections.Map<kotlin.String,kotlinx.serialization.json.JsonElement>?;kotlin.collections.List<kotlin.String>?){}[0]
+
+    final val claims // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.claims|{}claims[0]
+        final fun <get-claims>(): kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.claims.<get-claims>|<get-claims>(){}[0]
+    final val scopes // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.scopes|{}scopes[0]
+        final fun <get-scopes>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.scopes.<get-scopes>|<get-scopes>(){}[0]
+
+    final fun component1(): kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<kotlin/String>? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.component2|component2(){}[0]
+    final fun copy(kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? = ..., kotlin.collections/List<kotlin/String>? = ...): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.copy|copy(kotlin.collections.Map<kotlin.String,kotlinx.serialization.json.JsonElement>?;kotlin.collections.List<kotlin.String>?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer> { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer) // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.apigateway.ApiGatewayV2JwtAuthorizer){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.Companion|null[0]
+        final val $childSerializers // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer> // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2JwtAuthorizer.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Long? = ..., com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http = ..., com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer? = ...) // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.Long?;com.steamstreet.aws.lambda.apigateway.ApiGatewayV2Http;com.steamstreet.aws.lambda.apigateway.ApiGatewayV2Authorizer?){}[0]
+
+    final val accountId // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.accountId|{}accountId[0]
+        final fun <get-accountId>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.accountId.<get-accountId>|<get-accountId>(){}[0]
+    final val apiId // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.apiId|{}apiId[0]
+        final fun <get-apiId>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.apiId.<get-apiId>|<get-apiId>(){}[0]
+    final val authorizer // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.authorizer|{}authorizer[0]
+        final fun <get-authorizer>(): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.authorizer.<get-authorizer>|<get-authorizer>(){}[0]
+    final val domainName // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.domainName|{}domainName[0]
+        final fun <get-domainName>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.domainName.<get-domainName>|<get-domainName>(){}[0]
+    final val domainPrefix // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.domainPrefix|{}domainPrefix[0]
+        final fun <get-domainPrefix>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.domainPrefix.<get-domainPrefix>|<get-domainPrefix>(){}[0]
+    final val http // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.http|{}http[0]
+        final fun <get-http>(): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.http.<get-http>|<get-http>(){}[0]
+    final val requestId // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.requestId|{}requestId[0]
+        final fun <get-requestId>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.requestId.<get-requestId>|<get-requestId>(){}[0]
+    final val routeKey // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.routeKey|{}routeKey[0]
+        final fun <get-routeKey>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.routeKey.<get-routeKey>|<get-routeKey>(){}[0]
+    final val stage // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.stage|{}stage[0]
+        final fun <get-stage>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.stage.<get-stage>|<get-stage>(){}[0]
+    final val time // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.time|{}time[0]
+        final fun <get-time>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.time.<get-time>|<get-time>(){}[0]
+    final val timeEpoch // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.timeEpoch|{}timeEpoch[0]
+        final fun <get-timeEpoch>(): kotlin/Long? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.timeEpoch.<get-timeEpoch>|<get-timeEpoch>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.component1|component1(){}[0]
+    final fun component10(): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.component10|component10(){}[0]
+    final fun component11(): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.component11|component11(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.component5|component5(){}[0]
+    final fun component6(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.component7|component7(){}[0]
+    final fun component8(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.component8|component8(){}[0]
+    final fun component9(): kotlin/Long? // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.component9|component9(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Long? = ..., com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Http = ..., com.steamstreet.aws.lambda.apigateway/ApiGatewayV2Authorizer? = ...): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.copy|copy(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.Long?;com.steamstreet.aws.lambda.apigateway.ApiGatewayV2Http;com.steamstreet.aws.lambda.apigateway.ApiGatewayV2Authorizer?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext> { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext) // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.apigateway.ApiGatewayV2RequestContext){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext> // com.steamstreet.aws.lambda.apigateway/ApiGatewayV2RequestContext.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.lambda.apigateway/ProxyRequestContext { // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.aws.lambda.apigateway/RequestIdentity? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? = ...) // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;com.steamstreet.aws.lambda.apigateway.RequestIdentity?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlinx.serialization.json.JsonElement>?){}[0]
+
+    final val accountId // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.accountId|{}accountId[0]
+        final fun <get-accountId>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.accountId.<get-accountId>|<get-accountId>(){}[0]
+    final val apiId // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.apiId|{}apiId[0]
+        final fun <get-apiId>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.apiId.<get-apiId>|<get-apiId>(){}[0]
+    final val authorizer // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.authorizer|{}authorizer[0]
+        final fun <get-authorizer>(): kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.authorizer.<get-authorizer>|<get-authorizer>(){}[0]
+    final val httpMethod // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.httpMethod|{}httpMethod[0]
+        final fun <get-httpMethod>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.httpMethod.<get-httpMethod>|<get-httpMethod>(){}[0]
+    final val identity // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.identity|{}identity[0]
+        final fun <get-identity>(): com.steamstreet.aws.lambda.apigateway/RequestIdentity? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.identity.<get-identity>|<get-identity>(){}[0]
+    final val operationName // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.operationName|{}operationName[0]
+        final fun <get-operationName>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.operationName.<get-operationName>|<get-operationName>(){}[0]
+    final val path // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.path|{}path[0]
+        final fun <get-path>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.path.<get-path>|<get-path>(){}[0]
+    final val requestId // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.requestId|{}requestId[0]
+        final fun <get-requestId>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.requestId.<get-requestId>|<get-requestId>(){}[0]
+    final val resourceId // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.resourceId|{}resourceId[0]
+        final fun <get-resourceId>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.resourceId.<get-resourceId>|<get-resourceId>(){}[0]
+    final val resourcePath // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.resourcePath|{}resourcePath[0]
+        final fun <get-resourcePath>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.resourcePath.<get-resourcePath>|<get-resourcePath>(){}[0]
+    final val stage // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.stage|{}stage[0]
+        final fun <get-stage>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.stage.<get-stage>|<get-stage>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.component1|component1(){}[0]
+    final fun component10(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.component10|component10(){}[0]
+    final fun component11(): kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.component11|component11(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.component5|component5(){}[0]
+    final fun component6(): com.steamstreet.aws.lambda.apigateway/RequestIdentity? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.component7|component7(){}[0]
+    final fun component8(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.component8|component8(){}[0]
+    final fun component9(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.component9|component9(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.aws.lambda.apigateway/RequestIdentity? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>? = ...): com.steamstreet.aws.lambda.apigateway/ProxyRequestContext // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.copy|copy(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;com.steamstreet.aws.lambda.apigateway.RequestIdentity?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlinx.serialization.json.JsonElement>?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.apigateway/ProxyRequestContext> { // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.apigateway/ProxyRequestContext // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.apigateway/ProxyRequestContext) // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.apigateway.ProxyRequestContext){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.Companion|null[0]
+        final val $childSerializers // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.apigateway/ProxyRequestContext> // com.steamstreet.aws.lambda.apigateway/ProxyRequestContext.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.lambda.apigateway/RequestIdentity { // com.steamstreet.aws.lambda.apigateway/RequestIdentity|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.aws.lambda.apigateway/RequestIdentity.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val accessKey // com.steamstreet.aws.lambda.apigateway/RequestIdentity.accessKey|{}accessKey[0]
+        final fun <get-accessKey>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.accessKey.<get-accessKey>|<get-accessKey>(){}[0]
+    final val accountId // com.steamstreet.aws.lambda.apigateway/RequestIdentity.accountId|{}accountId[0]
+        final fun <get-accountId>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.accountId.<get-accountId>|<get-accountId>(){}[0]
+    final val apiKey // com.steamstreet.aws.lambda.apigateway/RequestIdentity.apiKey|{}apiKey[0]
+        final fun <get-apiKey>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.apiKey.<get-apiKey>|<get-apiKey>(){}[0]
+    final val caller // com.steamstreet.aws.lambda.apigateway/RequestIdentity.caller|{}caller[0]
+        final fun <get-caller>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.caller.<get-caller>|<get-caller>(){}[0]
+    final val cognitoAuthenticationProvider // com.steamstreet.aws.lambda.apigateway/RequestIdentity.cognitoAuthenticationProvider|{}cognitoAuthenticationProvider[0]
+        final fun <get-cognitoAuthenticationProvider>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.cognitoAuthenticationProvider.<get-cognitoAuthenticationProvider>|<get-cognitoAuthenticationProvider>(){}[0]
+    final val cognitoAuthenticationType // com.steamstreet.aws.lambda.apigateway/RequestIdentity.cognitoAuthenticationType|{}cognitoAuthenticationType[0]
+        final fun <get-cognitoAuthenticationType>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.cognitoAuthenticationType.<get-cognitoAuthenticationType>|<get-cognitoAuthenticationType>(){}[0]
+    final val cognitoIdentityId // com.steamstreet.aws.lambda.apigateway/RequestIdentity.cognitoIdentityId|{}cognitoIdentityId[0]
+        final fun <get-cognitoIdentityId>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.cognitoIdentityId.<get-cognitoIdentityId>|<get-cognitoIdentityId>(){}[0]
+    final val cognitoIdentityPoolId // com.steamstreet.aws.lambda.apigateway/RequestIdentity.cognitoIdentityPoolId|{}cognitoIdentityPoolId[0]
+        final fun <get-cognitoIdentityPoolId>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.cognitoIdentityPoolId.<get-cognitoIdentityPoolId>|<get-cognitoIdentityPoolId>(){}[0]
+    final val sourceIp // com.steamstreet.aws.lambda.apigateway/RequestIdentity.sourceIp|{}sourceIp[0]
+        final fun <get-sourceIp>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.sourceIp.<get-sourceIp>|<get-sourceIp>(){}[0]
+    final val user // com.steamstreet.aws.lambda.apigateway/RequestIdentity.user|{}user[0]
+        final fun <get-user>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.user.<get-user>|<get-user>(){}[0]
+    final val userAgent // com.steamstreet.aws.lambda.apigateway/RequestIdentity.userAgent|{}userAgent[0]
+        final fun <get-userAgent>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.userAgent.<get-userAgent>|<get-userAgent>(){}[0]
+    final val userArn // com.steamstreet.aws.lambda.apigateway/RequestIdentity.userArn|{}userArn[0]
+        final fun <get-userArn>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.userArn.<get-userArn>|<get-userArn>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.component1|component1(){}[0]
+    final fun component10(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.component10|component10(){}[0]
+    final fun component11(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.component11|component11(){}[0]
+    final fun component12(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.component12|component12(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.component5|component5(){}[0]
+    final fun component6(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.component7|component7(){}[0]
+    final fun component8(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.component8|component8(){}[0]
+    final fun component9(): kotlin/String? // com.steamstreet.aws.lambda.apigateway/RequestIdentity.component9|component9(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.aws.lambda.apigateway/RequestIdentity // com.steamstreet.aws.lambda.apigateway/RequestIdentity.copy|copy(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.apigateway/RequestIdentity.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.apigateway/RequestIdentity.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.apigateway/RequestIdentity.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.apigateway/RequestIdentity> { // com.steamstreet.aws.lambda.apigateway/RequestIdentity.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.apigateway/RequestIdentity.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.apigateway/RequestIdentity.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.apigateway/RequestIdentity.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.apigateway/RequestIdentity // com.steamstreet.aws.lambda.apigateway/RequestIdentity.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.apigateway/RequestIdentity) // com.steamstreet.aws.lambda.apigateway/RequestIdentity.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.apigateway.RequestIdentity){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.apigateway/RequestIdentity.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.apigateway/RequestIdentity> // com.steamstreet.aws.lambda.apigateway/RequestIdentity.Companion.serializer|serializer(){}[0]
+    }
+}
