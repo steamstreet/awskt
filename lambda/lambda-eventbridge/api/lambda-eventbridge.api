@@ -105,6 +105,11 @@ public final class com/steamstreet/aws/lambda/eventbridge/EventBridgeKt {
 	public static final fun typeWithContext (Lcom/steamstreet/aws/lambda/eventbridge/EventBridgeHandlerConfig;Lcom/steamstreet/events/EventSchema;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public final class com/steamstreet/aws/lambda/eventbridge/EventBridgeProcessingKt {
+	public static final fun processEventBridgePayload (Lkotlinx/serialization/json/JsonElement;ZZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun processEventBridgePayload$default (Lkotlinx/serialization/json/JsonElement;ZZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
 public final class com/steamstreet/aws/lambda/eventbridge/EventBridge_jvmKt {
 	public static final fun eventBridge (Ljava/io/InputStream;Lcom/amazonaws/services/lambda/runtime/Context;Ljava/io/OutputStream;ZZZLkotlin/jvm/functions/Function2;)V
 	public static synthetic fun eventBridge$default (Ljava/io/InputStream;Lcom/amazonaws/services/lambda/runtime/Context;Ljava/io/OutputStream;ZZZLkotlin/jvm/functions/Function2;ILjava/lang/Object;)V

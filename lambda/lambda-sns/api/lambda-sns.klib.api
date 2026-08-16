@@ -1,0 +1,94 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:lambda-sns>
+final class com.steamstreet.aws.sns/SnsData { // com.steamstreet.aws.sns/SnsData|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String, kotlin/String? = ..., kotlin/String, kotlin/String, kotlin/String, kotlin/String? = ...) // com.steamstreet.aws.sns/SnsData.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.String?;kotlin.String;kotlin.String;kotlin.String;kotlin.String?){}[0]
+
+    final val Message // com.steamstreet.aws.sns/SnsData.Message|{}Message[0]
+        final fun <get-Message>(): kotlin/String // com.steamstreet.aws.sns/SnsData.Message.<get-Message>|<get-Message>(){}[0]
+    final val MessageId // com.steamstreet.aws.sns/SnsData.MessageId|{}MessageId[0]
+        final fun <get-MessageId>(): kotlin/String // com.steamstreet.aws.sns/SnsData.MessageId.<get-MessageId>|<get-MessageId>(){}[0]
+    final val Signature // com.steamstreet.aws.sns/SnsData.Signature|{}Signature[0]
+        final fun <get-Signature>(): kotlin/String // com.steamstreet.aws.sns/SnsData.Signature.<get-Signature>|<get-Signature>(){}[0]
+    final val SignatureVersion // com.steamstreet.aws.sns/SnsData.SignatureVersion|{}SignatureVersion[0]
+        final fun <get-SignatureVersion>(): kotlin/String // com.steamstreet.aws.sns/SnsData.SignatureVersion.<get-SignatureVersion>|<get-SignatureVersion>(){}[0]
+    final val SigningCertUrl // com.steamstreet.aws.sns/SnsData.SigningCertUrl|{}SigningCertUrl[0]
+        final fun <get-SigningCertUrl>(): kotlin/String? // com.steamstreet.aws.sns/SnsData.SigningCertUrl.<get-SigningCertUrl>|<get-SigningCertUrl>(){}[0]
+    final val Subject // com.steamstreet.aws.sns/SnsData.Subject|{}Subject[0]
+        final fun <get-Subject>(): kotlin/String? // com.steamstreet.aws.sns/SnsData.Subject.<get-Subject>|<get-Subject>(){}[0]
+    final val Timestamp // com.steamstreet.aws.sns/SnsData.Timestamp|{}Timestamp[0]
+        final fun <get-Timestamp>(): kotlin/String // com.steamstreet.aws.sns/SnsData.Timestamp.<get-Timestamp>|<get-Timestamp>(){}[0]
+    final val TopicArn // com.steamstreet.aws.sns/SnsData.TopicArn|{}TopicArn[0]
+        final fun <get-TopicArn>(): kotlin/String // com.steamstreet.aws.sns/SnsData.TopicArn.<get-TopicArn>|<get-TopicArn>(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.sns/SnsData> { // com.steamstreet.aws.sns/SnsData.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.sns/SnsData.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.sns/SnsData.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.sns/SnsData.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.sns/SnsData // com.steamstreet.aws.sns/SnsData.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.sns/SnsData) // com.steamstreet.aws.sns/SnsData.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.sns.SnsData){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.sns/SnsData.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.sns/SnsData> // com.steamstreet.aws.sns/SnsData.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.sns/SnsPayload { // com.steamstreet.aws.sns/SnsPayload|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.aws.sns/SnsRecord> = ...) // com.steamstreet.aws.sns/SnsPayload.<init>|<init>(kotlin.collections.List<com.steamstreet.aws.sns.SnsRecord>){}[0]
+
+    final val Records // com.steamstreet.aws.sns/SnsPayload.Records|{}Records[0]
+        final fun <get-Records>(): kotlin.collections/List<com.steamstreet.aws.sns/SnsRecord> // com.steamstreet.aws.sns/SnsPayload.Records.<get-Records>|<get-Records>(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.sns/SnsPayload> { // com.steamstreet.aws.sns/SnsPayload.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.sns/SnsPayload.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.sns/SnsPayload.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.sns/SnsPayload.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.sns/SnsPayload // com.steamstreet.aws.sns/SnsPayload.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.sns/SnsPayload) // com.steamstreet.aws.sns/SnsPayload.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.sns.SnsPayload){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.sns/SnsPayload.Companion|null[0]
+        final val $childSerializers // com.steamstreet.aws.sns/SnsPayload.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.sns/SnsPayload> // com.steamstreet.aws.sns/SnsPayload.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.sns/SnsRecord { // com.steamstreet.aws.sns/SnsRecord|null[0]
+    constructor <init>(com.steamstreet.aws.sns/SnsData, kotlin/String, kotlin/String? = ..., kotlin/String) // com.steamstreet.aws.sns/SnsRecord.<init>|<init>(com.steamstreet.aws.sns.SnsData;kotlin.String;kotlin.String?;kotlin.String){}[0]
+
+    final val EventSource // com.steamstreet.aws.sns/SnsRecord.EventSource|{}EventSource[0]
+        final fun <get-EventSource>(): kotlin/String // com.steamstreet.aws.sns/SnsRecord.EventSource.<get-EventSource>|<get-EventSource>(){}[0]
+    final val EventSubscriptionArn // com.steamstreet.aws.sns/SnsRecord.EventSubscriptionArn|{}EventSubscriptionArn[0]
+        final fun <get-EventSubscriptionArn>(): kotlin/String? // com.steamstreet.aws.sns/SnsRecord.EventSubscriptionArn.<get-EventSubscriptionArn>|<get-EventSubscriptionArn>(){}[0]
+    final val EventVersion // com.steamstreet.aws.sns/SnsRecord.EventVersion|{}EventVersion[0]
+        final fun <get-EventVersion>(): kotlin/String // com.steamstreet.aws.sns/SnsRecord.EventVersion.<get-EventVersion>|<get-EventVersion>(){}[0]
+    final val Sns // com.steamstreet.aws.sns/SnsRecord.Sns|{}Sns[0]
+        final fun <get-Sns>(): com.steamstreet.aws.sns/SnsData // com.steamstreet.aws.sns/SnsRecord.Sns.<get-Sns>|<get-Sns>(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.sns/SnsRecord> { // com.steamstreet.aws.sns/SnsRecord.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.sns/SnsRecord.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.sns/SnsRecord.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.sns/SnsRecord.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.sns/SnsRecord // com.steamstreet.aws.sns/SnsRecord.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.sns/SnsRecord) // com.steamstreet.aws.sns/SnsRecord.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.sns.SnsRecord){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.sns/SnsRecord.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.sns/SnsRecord> // com.steamstreet.aws.sns/SnsRecord.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final fun <#A: kotlin/Any?> com.steamstreet.aws.sns/snsLambda(kotlinx.serialization/KSerializer<#A>, kotlin.coroutines/SuspendFunction0<kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction2<com.steamstreet.aws.sns/SnsRecord, #A, kotlin/Unit>) // com.steamstreet.aws.sns/snsLambda|snsLambda(kotlinx.serialization.KSerializer<0:0>;kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.coroutines.SuspendFunction2<com.steamstreet.aws.sns.SnsRecord,0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun com.steamstreet.aws.sns/snsRawLambda(kotlin.coroutines/SuspendFunction0<kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction2<com.steamstreet.aws.sns/SnsRecord, kotlin/String, kotlin/Unit>) // com.steamstreet.aws.sns/snsRawLambda|snsRawLambda(kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.coroutines.SuspendFunction2<com.steamstreet.aws.sns.SnsRecord,kotlin.String,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.aws.sns/SnsPayload).com.steamstreet.aws.sns/processRawMessages(kotlin.coroutines/SuspendFunction2<com.steamstreet.aws.sns/SnsRecord, kotlin/String, kotlin/Unit>) // com.steamstreet.aws.sns/processRawMessages|processRawMessages@com.steamstreet.aws.sns.SnsPayload(kotlin.coroutines.SuspendFunction2<com.steamstreet.aws.sns.SnsRecord,kotlin.String,kotlin.Unit>){}[0]
+final suspend fun <#A: kotlin/Any?> (com.steamstreet.aws.sns/SnsPayload).com.steamstreet.aws.sns/processMessages(kotlinx.serialization/KSerializer<#A>, kotlin.coroutines/SuspendFunction2<com.steamstreet.aws.sns/SnsRecord, #A, kotlin/Unit>) // com.steamstreet.aws.sns/processMessages|processMessages@com.steamstreet.aws.sns.SnsPayload(kotlinx.serialization.KSerializer<0:0>;kotlin.coroutines.SuspendFunction2<com.steamstreet.aws.sns.SnsRecord,0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]

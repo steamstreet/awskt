@@ -5,6 +5,11 @@ public abstract class com/steamstreet/aws/sns/SNSHandler : com/steamstreet/aws/l
 	public abstract fun handleMessage (Lcom/steamstreet/aws/sns/SnsRecord;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public final class com/steamstreet/aws/sns/SNSModelKt {
+	public static final fun processMessages (Lcom/steamstreet/aws/sns/SnsPayload;Lkotlinx/serialization/KSerializer;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun processRawMessages (Lcom/steamstreet/aws/sns/SnsPayload;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public final class com/steamstreet/aws/sns/SnsData {
 	public static final field Companion Lcom/steamstreet/aws/sns/SnsData$Companion;
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V

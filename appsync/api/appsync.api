@@ -128,7 +128,6 @@ public final class com/steamstreet/aws/appsync/AppSyncInfo$Companion {
 }
 
 public final class com/steamstreet/aws/appsync/AppSyncKt {
-	public static final fun appSyncContext (Ljava/io/InputStream;)Lcom/steamstreet/aws/appsync/AppSyncContext;
 	public static final fun appSyncContext (Ljava/lang/String;)Lcom/steamstreet/aws/appsync/AppSyncContext;
 }
 
@@ -159,5 +158,9 @@ public final synthetic class com/steamstreet/aws/appsync/AppSyncRequest$$seriali
 
 public final class com/steamstreet/aws/appsync/AppSyncRequest$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/aws/appsync/AppSync_jvmKt {
+	public static final fun appSyncContext (Ljava/io/InputStream;)Lcom/steamstreet/aws/appsync/AppSyncContext;
 }
 

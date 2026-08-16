@@ -1,0 +1,651 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:aws-kinesis>
+final enum class com.steamstreet.awskt.kinesis/ShardIteratorType : kotlin/Enum<com.steamstreet.awskt.kinesis/ShardIteratorType> { // com.steamstreet.awskt.kinesis/ShardIteratorType|null[0]
+    enum entry AFTER_SEQUENCE_NUMBER // com.steamstreet.awskt.kinesis/ShardIteratorType.AFTER_SEQUENCE_NUMBER|null[0]
+    enum entry AT_SEQUENCE_NUMBER // com.steamstreet.awskt.kinesis/ShardIteratorType.AT_SEQUENCE_NUMBER|null[0]
+    enum entry AT_TIMESTAMP // com.steamstreet.awskt.kinesis/ShardIteratorType.AT_TIMESTAMP|null[0]
+    enum entry LATEST // com.steamstreet.awskt.kinesis/ShardIteratorType.LATEST|null[0]
+    enum entry TRIM_HORIZON // com.steamstreet.awskt.kinesis/ShardIteratorType.TRIM_HORIZON|null[0]
+
+    final val entries // com.steamstreet.awskt.kinesis/ShardIteratorType.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.steamstreet.awskt.kinesis/ShardIteratorType> // com.steamstreet.awskt.kinesis/ShardIteratorType.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.steamstreet.awskt.kinesis/ShardIteratorType // com.steamstreet.awskt.kinesis/ShardIteratorType.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.steamstreet.awskt.kinesis/ShardIteratorType> // com.steamstreet.awskt.kinesis/ShardIteratorType.values|values#static(){}[0]
+
+    final object Companion : kotlinx.serialization.internal/SerializerFactory { // com.steamstreet.awskt.kinesis/ShardIteratorType.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/ShardIteratorType> // com.steamstreet.awskt.kinesis/ShardIteratorType.Companion.serializer|serializer(){}[0]
+        final fun serializer(kotlin/Array<out kotlinx.serialization/KSerializer<*>>...): kotlinx.serialization/KSerializer<*> // com.steamstreet.awskt.kinesis/ShardIteratorType.Companion.serializer|serializer(kotlin.Array<out|kotlinx.serialization.KSerializer<*>>...){}[0]
+    }
+}
+
+abstract interface com.steamstreet.awskt.kinesis/Kinesis : kotlin/AutoCloseable { // com.steamstreet.awskt.kinesis/Kinesis|null[0]
+    abstract val client // com.steamstreet.awskt.kinesis/Kinesis.client|{}client[0]
+        abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.kinesis/Kinesis.client.<get-client>|<get-client>(){}[0]
+
+    abstract suspend fun getRecords(com.steamstreet.awskt.kinesis/GetRecordsRequest): com.steamstreet.awskt.kinesis/GetRecordsResponse // com.steamstreet.awskt.kinesis/Kinesis.getRecords|getRecords(com.steamstreet.awskt.kinesis.GetRecordsRequest){}[0]
+    abstract suspend fun getShardIterator(com.steamstreet.awskt.kinesis/GetShardIteratorRequest): com.steamstreet.awskt.kinesis/GetShardIteratorResponse // com.steamstreet.awskt.kinesis/Kinesis.getShardIterator|getShardIterator(com.steamstreet.awskt.kinesis.GetShardIteratorRequest){}[0]
+    abstract suspend fun listShards(com.steamstreet.awskt.kinesis/ListShardsRequest): com.steamstreet.awskt.kinesis/ListShardsResponse // com.steamstreet.awskt.kinesis/Kinesis.listShards|listShards(com.steamstreet.awskt.kinesis.ListShardsRequest){}[0]
+    abstract suspend fun putRecord(com.steamstreet.awskt.kinesis/PutRecordRequest): com.steamstreet.awskt.kinesis/PutRecordResponse // com.steamstreet.awskt.kinesis/Kinesis.putRecord|putRecord(com.steamstreet.awskt.kinesis.PutRecordRequest){}[0]
+    abstract suspend fun putRecords(com.steamstreet.awskt.kinesis/PutRecordsRequest): com.steamstreet.awskt.kinesis/PutRecordsResponse // com.steamstreet.awskt.kinesis/Kinesis.putRecords|putRecords(com.steamstreet.awskt.kinesis.PutRecordsRequest){}[0]
+}
+
+final class com.steamstreet.awskt.kinesis/ExpiredIteratorException : com.steamstreet.awskt.kinesis/KinesisException { // com.steamstreet.awskt.kinesis/ExpiredIteratorException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kinesis/ExpiredIteratorException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kinesis/GetRecordsRequest { // com.steamstreet.awskt.kinesis/GetRecordsRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., kotlin/Int? = ...) // com.steamstreet.awskt.kinesis/GetRecordsRequest.<init>|<init>(kotlin.String;kotlin.String?;kotlin.Int?){}[0]
+
+    final val limit // com.steamstreet.awskt.kinesis/GetRecordsRequest.limit|{}limit[0]
+        final fun <get-limit>(): kotlin/Int? // com.steamstreet.awskt.kinesis/GetRecordsRequest.limit.<get-limit>|<get-limit>(){}[0]
+    final val shardIterator // com.steamstreet.awskt.kinesis/GetRecordsRequest.shardIterator|{}shardIterator[0]
+        final fun <get-shardIterator>(): kotlin/String // com.steamstreet.awskt.kinesis/GetRecordsRequest.shardIterator.<get-shardIterator>|<get-shardIterator>(){}[0]
+    final val streamArn // com.steamstreet.awskt.kinesis/GetRecordsRequest.streamArn|{}streamArn[0]
+        final fun <get-streamArn>(): kotlin/String? // com.steamstreet.awskt.kinesis/GetRecordsRequest.streamArn.<get-streamArn>|<get-streamArn>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.kinesis/GetRecordsRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.kinesis/GetRecordsRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/Int? // com.steamstreet.awskt.kinesis/GetRecordsRequest.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., kotlin/Int? = ...): com.steamstreet.awskt.kinesis/GetRecordsRequest // com.steamstreet.awskt.kinesis/GetRecordsRequest.copy|copy(kotlin.String;kotlin.String?;kotlin.Int?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/GetRecordsRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/GetRecordsRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/GetRecordsRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/GetRecordsRequest> { // com.steamstreet.awskt.kinesis/GetRecordsRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/GetRecordsRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/GetRecordsRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/GetRecordsRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/GetRecordsRequest // com.steamstreet.awskt.kinesis/GetRecordsRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/GetRecordsRequest) // com.steamstreet.awskt.kinesis/GetRecordsRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.GetRecordsRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/GetRecordsRequest.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/GetRecordsRequest> // com.steamstreet.awskt.kinesis/GetRecordsRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kinesis/GetRecordsResponse { // com.steamstreet.awskt.kinesis/GetRecordsResponse|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.kinesis/Record> = ..., kotlin/String? = ..., kotlin/Long? = ...) // com.steamstreet.awskt.kinesis/GetRecordsResponse.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.kinesis.Record>;kotlin.String?;kotlin.Long?){}[0]
+
+    final val millisBehindLatest // com.steamstreet.awskt.kinesis/GetRecordsResponse.millisBehindLatest|{}millisBehindLatest[0]
+        final fun <get-millisBehindLatest>(): kotlin/Long? // com.steamstreet.awskt.kinesis/GetRecordsResponse.millisBehindLatest.<get-millisBehindLatest>|<get-millisBehindLatest>(){}[0]
+    final val nextShardIterator // com.steamstreet.awskt.kinesis/GetRecordsResponse.nextShardIterator|{}nextShardIterator[0]
+        final fun <get-nextShardIterator>(): kotlin/String? // com.steamstreet.awskt.kinesis/GetRecordsResponse.nextShardIterator.<get-nextShardIterator>|<get-nextShardIterator>(){}[0]
+    final val records // com.steamstreet.awskt.kinesis/GetRecordsResponse.records|{}records[0]
+        final fun <get-records>(): kotlin.collections/List<com.steamstreet.awskt.kinesis/Record> // com.steamstreet.awskt.kinesis/GetRecordsResponse.records.<get-records>|<get-records>(){}[0]
+
+    final fun component1(): kotlin.collections/List<com.steamstreet.awskt.kinesis/Record> // com.steamstreet.awskt.kinesis/GetRecordsResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.kinesis/GetRecordsResponse.component2|component2(){}[0]
+    final fun component3(): kotlin/Long? // com.steamstreet.awskt.kinesis/GetRecordsResponse.component3|component3(){}[0]
+    final fun copy(kotlin.collections/List<com.steamstreet.awskt.kinesis/Record> = ..., kotlin/String? = ..., kotlin/Long? = ...): com.steamstreet.awskt.kinesis/GetRecordsResponse // com.steamstreet.awskt.kinesis/GetRecordsResponse.copy|copy(kotlin.collections.List<com.steamstreet.awskt.kinesis.Record>;kotlin.String?;kotlin.Long?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/GetRecordsResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/GetRecordsResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/GetRecordsResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/GetRecordsResponse> { // com.steamstreet.awskt.kinesis/GetRecordsResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/GetRecordsResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/GetRecordsResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/GetRecordsResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/GetRecordsResponse // com.steamstreet.awskt.kinesis/GetRecordsResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/GetRecordsResponse) // com.steamstreet.awskt.kinesis/GetRecordsResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.GetRecordsResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/GetRecordsResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.kinesis/GetRecordsResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/GetRecordsResponse> // com.steamstreet.awskt.kinesis/GetRecordsResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kinesis/GetShardIteratorRequest { // com.steamstreet.awskt.kinesis/GetShardIteratorRequest|null[0]
+    constructor <init>(kotlin/String, com.steamstreet.awskt.kinesis/ShardIteratorType, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Double? = ...) // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.<init>|<init>(kotlin.String;com.steamstreet.awskt.kinesis.ShardIteratorType;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.Double?){}[0]
+
+    final val shardId // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.shardId|{}shardId[0]
+        final fun <get-shardId>(): kotlin/String // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.shardId.<get-shardId>|<get-shardId>(){}[0]
+    final val shardIteratorType // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.shardIteratorType|{}shardIteratorType[0]
+        final fun <get-shardIteratorType>(): com.steamstreet.awskt.kinesis/ShardIteratorType // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.shardIteratorType.<get-shardIteratorType>|<get-shardIteratorType>(){}[0]
+    final val startingSequenceNumber // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.startingSequenceNumber|{}startingSequenceNumber[0]
+        final fun <get-startingSequenceNumber>(): kotlin/String? // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.startingSequenceNumber.<get-startingSequenceNumber>|<get-startingSequenceNumber>(){}[0]
+    final val streamArn // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.streamArn|{}streamArn[0]
+        final fun <get-streamArn>(): kotlin/String? // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.streamArn.<get-streamArn>|<get-streamArn>(){}[0]
+    final val streamName // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.streamName|{}streamName[0]
+        final fun <get-streamName>(): kotlin/String? // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.streamName.<get-streamName>|<get-streamName>(){}[0]
+    final val timestamp // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.timestamp|{}timestamp[0]
+        final fun <get-timestamp>(): kotlin/Double? // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.timestamp.<get-timestamp>|<get-timestamp>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.component1|component1(){}[0]
+    final fun component2(): com.steamstreet.awskt.kinesis/ShardIteratorType // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.component5|component5(){}[0]
+    final fun component6(): kotlin/Double? // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.component6|component6(){}[0]
+    final fun copy(kotlin/String = ..., com.steamstreet.awskt.kinesis/ShardIteratorType = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Double? = ...): com.steamstreet.awskt.kinesis/GetShardIteratorRequest // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.copy|copy(kotlin.String;com.steamstreet.awskt.kinesis.ShardIteratorType;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.Double?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/GetShardIteratorRequest> { // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/GetShardIteratorRequest // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/GetShardIteratorRequest) // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.GetShardIteratorRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/GetShardIteratorRequest> // com.steamstreet.awskt.kinesis/GetShardIteratorRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kinesis/GetShardIteratorResponse { // com.steamstreet.awskt.kinesis/GetShardIteratorResponse|null[0]
+    constructor <init>(kotlin/String? = ...) // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.<init>|<init>(kotlin.String?){}[0]
+
+    final val shardIterator // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.shardIterator|{}shardIterator[0]
+        final fun <get-shardIterator>(): kotlin/String? // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.shardIterator.<get-shardIterator>|<get-shardIterator>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.component1|component1(){}[0]
+    final fun copy(kotlin/String? = ...): com.steamstreet.awskt.kinesis/GetShardIteratorResponse // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.copy|copy(kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/GetShardIteratorResponse> { // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/GetShardIteratorResponse // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/GetShardIteratorResponse) // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.GetShardIteratorResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/GetShardIteratorResponse> // com.steamstreet.awskt.kinesis/GetShardIteratorResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kinesis/HashKeyRange { // com.steamstreet.awskt.kinesis/HashKeyRange|null[0]
+    constructor <init>(kotlin/String, kotlin/String) // com.steamstreet.awskt.kinesis/HashKeyRange.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val endingHashKey // com.steamstreet.awskt.kinesis/HashKeyRange.endingHashKey|{}endingHashKey[0]
+        final fun <get-endingHashKey>(): kotlin/String // com.steamstreet.awskt.kinesis/HashKeyRange.endingHashKey.<get-endingHashKey>|<get-endingHashKey>(){}[0]
+    final val startingHashKey // com.steamstreet.awskt.kinesis/HashKeyRange.startingHashKey|{}startingHashKey[0]
+        final fun <get-startingHashKey>(): kotlin/String // com.steamstreet.awskt.kinesis/HashKeyRange.startingHashKey.<get-startingHashKey>|<get-startingHashKey>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.kinesis/HashKeyRange.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.kinesis/HashKeyRange.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ...): com.steamstreet.awskt.kinesis/HashKeyRange // com.steamstreet.awskt.kinesis/HashKeyRange.copy|copy(kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/HashKeyRange.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/HashKeyRange.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/HashKeyRange.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/HashKeyRange> { // com.steamstreet.awskt.kinesis/HashKeyRange.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/HashKeyRange.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/HashKeyRange.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/HashKeyRange.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/HashKeyRange // com.steamstreet.awskt.kinesis/HashKeyRange.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/HashKeyRange) // com.steamstreet.awskt.kinesis/HashKeyRange.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.HashKeyRange){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/HashKeyRange.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/HashKeyRange> // com.steamstreet.awskt.kinesis/HashKeyRange.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kinesis/InvalidArgumentException : com.steamstreet.awskt.kinesis/KinesisException { // com.steamstreet.awskt.kinesis/InvalidArgumentException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kinesis/InvalidArgumentException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kinesis/KinesisConfig { // com.steamstreet.awskt.kinesis/KinesisConfig|null[0]
+    constructor <init>() // com.steamstreet.awskt.kinesis/KinesisConfig.<init>|<init>(){}[0]
+
+    final var caInfo // com.steamstreet.awskt.kinesis/KinesisConfig.caInfo|{}caInfo[0]
+        final fun <get-caInfo>(): kotlin/String? // com.steamstreet.awskt.kinesis/KinesisConfig.caInfo.<get-caInfo>|<get-caInfo>(){}[0]
+        final fun <set-caInfo>(kotlin/String?) // com.steamstreet.awskt.kinesis/KinesisConfig.caInfo.<set-caInfo>|<set-caInfo>(kotlin.String?){}[0]
+    final var credentialsProvider // com.steamstreet.awskt.kinesis/KinesisConfig.credentialsProvider|{}credentialsProvider[0]
+        final fun <get-credentialsProvider>(): com.steamstreet.awskt.core/AwsCredentialsProvider? // com.steamstreet.awskt.kinesis/KinesisConfig.credentialsProvider.<get-credentialsProvider>|<get-credentialsProvider>(){}[0]
+        final fun <set-credentialsProvider>(com.steamstreet.awskt.core/AwsCredentialsProvider?) // com.steamstreet.awskt.kinesis/KinesisConfig.credentialsProvider.<set-credentialsProvider>|<set-credentialsProvider>(com.steamstreet.awskt.core.AwsCredentialsProvider?){}[0]
+    final var endpointUrl // com.steamstreet.awskt.kinesis/KinesisConfig.endpointUrl|{}endpointUrl[0]
+        final fun <get-endpointUrl>(): kotlin/String? // com.steamstreet.awskt.kinesis/KinesisConfig.endpointUrl.<get-endpointUrl>|<get-endpointUrl>(){}[0]
+        final fun <set-endpointUrl>(kotlin/String?) // com.steamstreet.awskt.kinesis/KinesisConfig.endpointUrl.<set-endpointUrl>|<set-endpointUrl>(kotlin.String?){}[0]
+    final var httpClient // com.steamstreet.awskt.kinesis/KinesisConfig.httpClient|{}httpClient[0]
+        final fun <get-httpClient>(): io.ktor.client/HttpClient? // com.steamstreet.awskt.kinesis/KinesisConfig.httpClient.<get-httpClient>|<get-httpClient>(){}[0]
+        final fun <set-httpClient>(io.ktor.client/HttpClient?) // com.steamstreet.awskt.kinesis/KinesisConfig.httpClient.<set-httpClient>|<set-httpClient>(io.ktor.client.HttpClient?){}[0]
+    final var httpTimeouts // com.steamstreet.awskt.kinesis/KinesisConfig.httpTimeouts|{}httpTimeouts[0]
+        final fun <get-httpTimeouts>(): com.steamstreet.awskt.core/AwsHttpTimeouts // com.steamstreet.awskt.kinesis/KinesisConfig.httpTimeouts.<get-httpTimeouts>|<get-httpTimeouts>(){}[0]
+        final fun <set-httpTimeouts>(com.steamstreet.awskt.core/AwsHttpTimeouts) // com.steamstreet.awskt.kinesis/KinesisConfig.httpTimeouts.<set-httpTimeouts>|<set-httpTimeouts>(com.steamstreet.awskt.core.AwsHttpTimeouts){}[0]
+    final var observer // com.steamstreet.awskt.kinesis/KinesisConfig.observer|{}observer[0]
+        final fun <get-observer>(): com.steamstreet.awskt.core/AwsCallObserver? // com.steamstreet.awskt.kinesis/KinesisConfig.observer.<get-observer>|<get-observer>(){}[0]
+        final fun <set-observer>(com.steamstreet.awskt.core/AwsCallObserver?) // com.steamstreet.awskt.kinesis/KinesisConfig.observer.<set-observer>|<set-observer>(com.steamstreet.awskt.core.AwsCallObserver?){}[0]
+    final var region // com.steamstreet.awskt.kinesis/KinesisConfig.region|{}region[0]
+        final fun <get-region>(): kotlin/String? // com.steamstreet.awskt.kinesis/KinesisConfig.region.<get-region>|<get-region>(){}[0]
+        final fun <set-region>(kotlin/String?) // com.steamstreet.awskt.kinesis/KinesisConfig.region.<set-region>|<set-region>(kotlin.String?){}[0]
+    final var retryConfig // com.steamstreet.awskt.kinesis/KinesisConfig.retryConfig|{}retryConfig[0]
+        final fun <get-retryConfig>(): com.steamstreet.awskt.core/RetryConfig // com.steamstreet.awskt.kinesis/KinesisConfig.retryConfig.<get-retryConfig>|<get-retryConfig>(){}[0]
+        final fun <set-retryConfig>(com.steamstreet.awskt.core/RetryConfig) // com.steamstreet.awskt.kinesis/KinesisConfig.retryConfig.<set-retryConfig>|<set-retryConfig>(com.steamstreet.awskt.core.RetryConfig){}[0]
+}
+
+final class com.steamstreet.awskt.kinesis/KmsAccessDeniedException : com.steamstreet.awskt.kinesis/KinesisException { // com.steamstreet.awskt.kinesis/KmsAccessDeniedException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kinesis/KmsAccessDeniedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kinesis/LimitExceededException : com.steamstreet.awskt.kinesis/KinesisException { // com.steamstreet.awskt.kinesis/LimitExceededException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kinesis/LimitExceededException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kinesis/ListShardsRequest { // com.steamstreet.awskt.kinesis/ListShardsRequest|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Int? = ...) // com.steamstreet.awskt.kinesis/ListShardsRequest.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.Int?){}[0]
+
+    final val maxResults // com.steamstreet.awskt.kinesis/ListShardsRequest.maxResults|{}maxResults[0]
+        final fun <get-maxResults>(): kotlin/Int? // com.steamstreet.awskt.kinesis/ListShardsRequest.maxResults.<get-maxResults>|<get-maxResults>(){}[0]
+    final val nextToken // com.steamstreet.awskt.kinesis/ListShardsRequest.nextToken|{}nextToken[0]
+        final fun <get-nextToken>(): kotlin/String? // com.steamstreet.awskt.kinesis/ListShardsRequest.nextToken.<get-nextToken>|<get-nextToken>(){}[0]
+    final val streamArn // com.steamstreet.awskt.kinesis/ListShardsRequest.streamArn|{}streamArn[0]
+        final fun <get-streamArn>(): kotlin/String? // com.steamstreet.awskt.kinesis/ListShardsRequest.streamArn.<get-streamArn>|<get-streamArn>(){}[0]
+    final val streamName // com.steamstreet.awskt.kinesis/ListShardsRequest.streamName|{}streamName[0]
+        final fun <get-streamName>(): kotlin/String? // com.steamstreet.awskt.kinesis/ListShardsRequest.streamName.<get-streamName>|<get-streamName>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.kinesis/ListShardsRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.kinesis/ListShardsRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.kinesis/ListShardsRequest.component3|component3(){}[0]
+    final fun component4(): kotlin/Int? // com.steamstreet.awskt.kinesis/ListShardsRequest.component4|component4(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Int? = ...): com.steamstreet.awskt.kinesis/ListShardsRequest // com.steamstreet.awskt.kinesis/ListShardsRequest.copy|copy(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.Int?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/ListShardsRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/ListShardsRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/ListShardsRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/ListShardsRequest> { // com.steamstreet.awskt.kinesis/ListShardsRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/ListShardsRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/ListShardsRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/ListShardsRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/ListShardsRequest // com.steamstreet.awskt.kinesis/ListShardsRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/ListShardsRequest) // com.steamstreet.awskt.kinesis/ListShardsRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.ListShardsRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/ListShardsRequest.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/ListShardsRequest> // com.steamstreet.awskt.kinesis/ListShardsRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kinesis/ListShardsResponse { // com.steamstreet.awskt.kinesis/ListShardsResponse|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.kinesis/Shard> = ..., kotlin/String? = ...) // com.steamstreet.awskt.kinesis/ListShardsResponse.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.kinesis.Shard>;kotlin.String?){}[0]
+
+    final val nextToken // com.steamstreet.awskt.kinesis/ListShardsResponse.nextToken|{}nextToken[0]
+        final fun <get-nextToken>(): kotlin/String? // com.steamstreet.awskt.kinesis/ListShardsResponse.nextToken.<get-nextToken>|<get-nextToken>(){}[0]
+    final val shards // com.steamstreet.awskt.kinesis/ListShardsResponse.shards|{}shards[0]
+        final fun <get-shards>(): kotlin.collections/List<com.steamstreet.awskt.kinesis/Shard> // com.steamstreet.awskt.kinesis/ListShardsResponse.shards.<get-shards>|<get-shards>(){}[0]
+
+    final fun component1(): kotlin.collections/List<com.steamstreet.awskt.kinesis/Shard> // com.steamstreet.awskt.kinesis/ListShardsResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.kinesis/ListShardsResponse.component2|component2(){}[0]
+    final fun copy(kotlin.collections/List<com.steamstreet.awskt.kinesis/Shard> = ..., kotlin/String? = ...): com.steamstreet.awskt.kinesis/ListShardsResponse // com.steamstreet.awskt.kinesis/ListShardsResponse.copy|copy(kotlin.collections.List<com.steamstreet.awskt.kinesis.Shard>;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/ListShardsResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/ListShardsResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/ListShardsResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/ListShardsResponse> { // com.steamstreet.awskt.kinesis/ListShardsResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/ListShardsResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/ListShardsResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/ListShardsResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/ListShardsResponse // com.steamstreet.awskt.kinesis/ListShardsResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/ListShardsResponse) // com.steamstreet.awskt.kinesis/ListShardsResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.ListShardsResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/ListShardsResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.kinesis/ListShardsResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/ListShardsResponse> // com.steamstreet.awskt.kinesis/ListShardsResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kinesis/ProvisionedThroughputExceededException : com.steamstreet.awskt.kinesis/KinesisException { // com.steamstreet.awskt.kinesis/ProvisionedThroughputExceededException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kinesis/ProvisionedThroughputExceededException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kinesis/PutRecordRequest { // com.steamstreet.awskt.kinesis/PutRecordRequest|null[0]
+    constructor <init>(kotlin/ByteArray, kotlin/String, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.kinesis/PutRecordRequest.<init>|<init>(kotlin.ByteArray;kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val data // com.steamstreet.awskt.kinesis/PutRecordRequest.data|{}data[0]
+        final fun <get-data>(): kotlin/ByteArray // com.steamstreet.awskt.kinesis/PutRecordRequest.data.<get-data>|<get-data>(){}[0]
+    final val explicitHashKey // com.steamstreet.awskt.kinesis/PutRecordRequest.explicitHashKey|{}explicitHashKey[0]
+        final fun <get-explicitHashKey>(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordRequest.explicitHashKey.<get-explicitHashKey>|<get-explicitHashKey>(){}[0]
+    final val partitionKey // com.steamstreet.awskt.kinesis/PutRecordRequest.partitionKey|{}partitionKey[0]
+        final fun <get-partitionKey>(): kotlin/String // com.steamstreet.awskt.kinesis/PutRecordRequest.partitionKey.<get-partitionKey>|<get-partitionKey>(){}[0]
+    final val sequenceNumberForOrdering // com.steamstreet.awskt.kinesis/PutRecordRequest.sequenceNumberForOrdering|{}sequenceNumberForOrdering[0]
+        final fun <get-sequenceNumberForOrdering>(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordRequest.sequenceNumberForOrdering.<get-sequenceNumberForOrdering>|<get-sequenceNumberForOrdering>(){}[0]
+    final val streamArn // com.steamstreet.awskt.kinesis/PutRecordRequest.streamArn|{}streamArn[0]
+        final fun <get-streamArn>(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordRequest.streamArn.<get-streamArn>|<get-streamArn>(){}[0]
+    final val streamName // com.steamstreet.awskt.kinesis/PutRecordRequest.streamName|{}streamName[0]
+        final fun <get-streamName>(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordRequest.streamName.<get-streamName>|<get-streamName>(){}[0]
+
+    final fun component1(): kotlin/ByteArray // com.steamstreet.awskt.kinesis/PutRecordRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.kinesis/PutRecordRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordRequest.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordRequest.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordRequest.component5|component5(){}[0]
+    final fun component6(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordRequest.component6|component6(){}[0]
+    final fun copy(kotlin/ByteArray = ..., kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.kinesis/PutRecordRequest // com.steamstreet.awskt.kinesis/PutRecordRequest.copy|copy(kotlin.ByteArray;kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/PutRecordRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/PutRecordRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/PutRecordRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/PutRecordRequest> { // com.steamstreet.awskt.kinesis/PutRecordRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/PutRecordRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/PutRecordRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/PutRecordRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/PutRecordRequest // com.steamstreet.awskt.kinesis/PutRecordRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/PutRecordRequest) // com.steamstreet.awskt.kinesis/PutRecordRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.PutRecordRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/PutRecordRequest.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/PutRecordRequest> // com.steamstreet.awskt.kinesis/PutRecordRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kinesis/PutRecordResponse { // com.steamstreet.awskt.kinesis/PutRecordResponse|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String? = ...) // com.steamstreet.awskt.kinesis/PutRecordResponse.<init>|<init>(kotlin.String;kotlin.String;kotlin.String?){}[0]
+
+    final val encryptionType // com.steamstreet.awskt.kinesis/PutRecordResponse.encryptionType|{}encryptionType[0]
+        final fun <get-encryptionType>(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordResponse.encryptionType.<get-encryptionType>|<get-encryptionType>(){}[0]
+    final val sequenceNumber // com.steamstreet.awskt.kinesis/PutRecordResponse.sequenceNumber|{}sequenceNumber[0]
+        final fun <get-sequenceNumber>(): kotlin/String // com.steamstreet.awskt.kinesis/PutRecordResponse.sequenceNumber.<get-sequenceNumber>|<get-sequenceNumber>(){}[0]
+    final val shardId // com.steamstreet.awskt.kinesis/PutRecordResponse.shardId|{}shardId[0]
+        final fun <get-shardId>(): kotlin/String // com.steamstreet.awskt.kinesis/PutRecordResponse.shardId.<get-shardId>|<get-shardId>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.kinesis/PutRecordResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.kinesis/PutRecordResponse.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordResponse.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String? = ...): com.steamstreet.awskt.kinesis/PutRecordResponse // com.steamstreet.awskt.kinesis/PutRecordResponse.copy|copy(kotlin.String;kotlin.String;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/PutRecordResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/PutRecordResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/PutRecordResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/PutRecordResponse> { // com.steamstreet.awskt.kinesis/PutRecordResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/PutRecordResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/PutRecordResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/PutRecordResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/PutRecordResponse // com.steamstreet.awskt.kinesis/PutRecordResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/PutRecordResponse) // com.steamstreet.awskt.kinesis/PutRecordResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.PutRecordResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/PutRecordResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/PutRecordResponse> // com.steamstreet.awskt.kinesis/PutRecordResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kinesis/PutRecordsRequest { // com.steamstreet.awskt.kinesis/PutRecordsRequest|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.kinesis/PutRecordsRequestEntry>, kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.kinesis/PutRecordsRequest.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.kinesis.PutRecordsRequestEntry>;kotlin.String?;kotlin.String?){}[0]
+
+    final val records // com.steamstreet.awskt.kinesis/PutRecordsRequest.records|{}records[0]
+        final fun <get-records>(): kotlin.collections/List<com.steamstreet.awskt.kinesis/PutRecordsRequestEntry> // com.steamstreet.awskt.kinesis/PutRecordsRequest.records.<get-records>|<get-records>(){}[0]
+    final val streamArn // com.steamstreet.awskt.kinesis/PutRecordsRequest.streamArn|{}streamArn[0]
+        final fun <get-streamArn>(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsRequest.streamArn.<get-streamArn>|<get-streamArn>(){}[0]
+    final val streamName // com.steamstreet.awskt.kinesis/PutRecordsRequest.streamName|{}streamName[0]
+        final fun <get-streamName>(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsRequest.streamName.<get-streamName>|<get-streamName>(){}[0]
+
+    final fun component1(): kotlin.collections/List<com.steamstreet.awskt.kinesis/PutRecordsRequestEntry> // com.steamstreet.awskt.kinesis/PutRecordsRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsRequest.component3|component3(){}[0]
+    final fun copy(kotlin.collections/List<com.steamstreet.awskt.kinesis/PutRecordsRequestEntry> = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.kinesis/PutRecordsRequest // com.steamstreet.awskt.kinesis/PutRecordsRequest.copy|copy(kotlin.collections.List<com.steamstreet.awskt.kinesis.PutRecordsRequestEntry>;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/PutRecordsRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/PutRecordsRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/PutRecordsRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/PutRecordsRequest> { // com.steamstreet.awskt.kinesis/PutRecordsRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/PutRecordsRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/PutRecordsRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/PutRecordsRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/PutRecordsRequest // com.steamstreet.awskt.kinesis/PutRecordsRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/PutRecordsRequest) // com.steamstreet.awskt.kinesis/PutRecordsRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.PutRecordsRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/PutRecordsRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.kinesis/PutRecordsRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/PutRecordsRequest> // com.steamstreet.awskt.kinesis/PutRecordsRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kinesis/PutRecordsRequestEntry { // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry|null[0]
+    constructor <init>(kotlin/ByteArray, kotlin/String, kotlin/String? = ...) // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.<init>|<init>(kotlin.ByteArray;kotlin.String;kotlin.String?){}[0]
+
+    final val data // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.data|{}data[0]
+        final fun <get-data>(): kotlin/ByteArray // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.data.<get-data>|<get-data>(){}[0]
+    final val explicitHashKey // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.explicitHashKey|{}explicitHashKey[0]
+        final fun <get-explicitHashKey>(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.explicitHashKey.<get-explicitHashKey>|<get-explicitHashKey>(){}[0]
+    final val partitionKey // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.partitionKey|{}partitionKey[0]
+        final fun <get-partitionKey>(): kotlin/String // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.partitionKey.<get-partitionKey>|<get-partitionKey>(){}[0]
+
+    final fun component1(): kotlin/ByteArray // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.component3|component3(){}[0]
+    final fun copy(kotlin/ByteArray = ..., kotlin/String = ..., kotlin/String? = ...): com.steamstreet.awskt.kinesis/PutRecordsRequestEntry // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.copy|copy(kotlin.ByteArray;kotlin.String;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/PutRecordsRequestEntry> { // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/PutRecordsRequestEntry // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/PutRecordsRequestEntry) // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.PutRecordsRequestEntry){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/PutRecordsRequestEntry> // com.steamstreet.awskt.kinesis/PutRecordsRequestEntry.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kinesis/PutRecordsResponse { // com.steamstreet.awskt.kinesis/PutRecordsResponse|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.kinesis/PutRecordsResultEntry> = ..., kotlin/Int = ..., kotlin/String? = ...) // com.steamstreet.awskt.kinesis/PutRecordsResponse.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.kinesis.PutRecordsResultEntry>;kotlin.Int;kotlin.String?){}[0]
+
+    final val encryptionType // com.steamstreet.awskt.kinesis/PutRecordsResponse.encryptionType|{}encryptionType[0]
+        final fun <get-encryptionType>(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsResponse.encryptionType.<get-encryptionType>|<get-encryptionType>(){}[0]
+    final val failedRecordCount // com.steamstreet.awskt.kinesis/PutRecordsResponse.failedRecordCount|{}failedRecordCount[0]
+        final fun <get-failedRecordCount>(): kotlin/Int // com.steamstreet.awskt.kinesis/PutRecordsResponse.failedRecordCount.<get-failedRecordCount>|<get-failedRecordCount>(){}[0]
+    final val records // com.steamstreet.awskt.kinesis/PutRecordsResponse.records|{}records[0]
+        final fun <get-records>(): kotlin.collections/List<com.steamstreet.awskt.kinesis/PutRecordsResultEntry> // com.steamstreet.awskt.kinesis/PutRecordsResponse.records.<get-records>|<get-records>(){}[0]
+
+    final fun component1(): kotlin.collections/List<com.steamstreet.awskt.kinesis/PutRecordsResultEntry> // com.steamstreet.awskt.kinesis/PutRecordsResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // com.steamstreet.awskt.kinesis/PutRecordsResponse.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsResponse.component3|component3(){}[0]
+    final fun copy(kotlin.collections/List<com.steamstreet.awskt.kinesis/PutRecordsResultEntry> = ..., kotlin/Int = ..., kotlin/String? = ...): com.steamstreet.awskt.kinesis/PutRecordsResponse // com.steamstreet.awskt.kinesis/PutRecordsResponse.copy|copy(kotlin.collections.List<com.steamstreet.awskt.kinesis.PutRecordsResultEntry>;kotlin.Int;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/PutRecordsResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/PutRecordsResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/PutRecordsResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/PutRecordsResponse> { // com.steamstreet.awskt.kinesis/PutRecordsResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/PutRecordsResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/PutRecordsResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/PutRecordsResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/PutRecordsResponse // com.steamstreet.awskt.kinesis/PutRecordsResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/PutRecordsResponse) // com.steamstreet.awskt.kinesis/PutRecordsResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.PutRecordsResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/PutRecordsResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.kinesis/PutRecordsResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/PutRecordsResponse> // com.steamstreet.awskt.kinesis/PutRecordsResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kinesis/PutRecordsResultEntry { // com.steamstreet.awskt.kinesis/PutRecordsResultEntry|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val errorCode // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.errorCode|{}errorCode[0]
+        final fun <get-errorCode>(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.errorCode.<get-errorCode>|<get-errorCode>(){}[0]
+    final val errorMessage // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.errorMessage|{}errorMessage[0]
+        final fun <get-errorMessage>(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.errorMessage.<get-errorMessage>|<get-errorMessage>(){}[0]
+    final val failed // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.failed|{}failed[0]
+        final fun <get-failed>(): kotlin/Boolean // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.failed.<get-failed>|<get-failed>(){}[0]
+    final val sequenceNumber // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.sequenceNumber|{}sequenceNumber[0]
+        final fun <get-sequenceNumber>(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.sequenceNumber.<get-sequenceNumber>|<get-sequenceNumber>(){}[0]
+    final val shardId // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.shardId|{}shardId[0]
+        final fun <get-shardId>(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.shardId.<get-shardId>|<get-shardId>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.component4|component4(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.kinesis/PutRecordsResultEntry // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.copy|copy(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/PutRecordsResultEntry> { // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/PutRecordsResultEntry // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/PutRecordsResultEntry) // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.PutRecordsResultEntry){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/PutRecordsResultEntry> // com.steamstreet.awskt.kinesis/PutRecordsResultEntry.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kinesis/Record { // com.steamstreet.awskt.kinesis/Record|null[0]
+    constructor <init>(kotlin/String, kotlin/ByteArray, kotlin/String, kotlin/Double? = ..., kotlin/String? = ...) // com.steamstreet.awskt.kinesis/Record.<init>|<init>(kotlin.String;kotlin.ByteArray;kotlin.String;kotlin.Double?;kotlin.String?){}[0]
+
+    final val approximateArrivalTimestamp // com.steamstreet.awskt.kinesis/Record.approximateArrivalTimestamp|{}approximateArrivalTimestamp[0]
+        final fun <get-approximateArrivalTimestamp>(): kotlin/Double? // com.steamstreet.awskt.kinesis/Record.approximateArrivalTimestamp.<get-approximateArrivalTimestamp>|<get-approximateArrivalTimestamp>(){}[0]
+    final val data // com.steamstreet.awskt.kinesis/Record.data|{}data[0]
+        final fun <get-data>(): kotlin/ByteArray // com.steamstreet.awskt.kinesis/Record.data.<get-data>|<get-data>(){}[0]
+    final val encryptionType // com.steamstreet.awskt.kinesis/Record.encryptionType|{}encryptionType[0]
+        final fun <get-encryptionType>(): kotlin/String? // com.steamstreet.awskt.kinesis/Record.encryptionType.<get-encryptionType>|<get-encryptionType>(){}[0]
+    final val partitionKey // com.steamstreet.awskt.kinesis/Record.partitionKey|{}partitionKey[0]
+        final fun <get-partitionKey>(): kotlin/String // com.steamstreet.awskt.kinesis/Record.partitionKey.<get-partitionKey>|<get-partitionKey>(){}[0]
+    final val sequenceNumber // com.steamstreet.awskt.kinesis/Record.sequenceNumber|{}sequenceNumber[0]
+        final fun <get-sequenceNumber>(): kotlin/String // com.steamstreet.awskt.kinesis/Record.sequenceNumber.<get-sequenceNumber>|<get-sequenceNumber>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.kinesis/Record.component1|component1(){}[0]
+    final fun component2(): kotlin/ByteArray // com.steamstreet.awskt.kinesis/Record.component2|component2(){}[0]
+    final fun component3(): kotlin/String // com.steamstreet.awskt.kinesis/Record.component3|component3(){}[0]
+    final fun component4(): kotlin/Double? // com.steamstreet.awskt.kinesis/Record.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.awskt.kinesis/Record.component5|component5(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/ByteArray = ..., kotlin/String = ..., kotlin/Double? = ..., kotlin/String? = ...): com.steamstreet.awskt.kinesis/Record // com.steamstreet.awskt.kinesis/Record.copy|copy(kotlin.String;kotlin.ByteArray;kotlin.String;kotlin.Double?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/Record.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/Record.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/Record.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/Record> { // com.steamstreet.awskt.kinesis/Record.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/Record.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/Record.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/Record.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/Record // com.steamstreet.awskt.kinesis/Record.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/Record) // com.steamstreet.awskt.kinesis/Record.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.Record){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/Record.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/Record> // com.steamstreet.awskt.kinesis/Record.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kinesis/ResourceInUseException : com.steamstreet.awskt.kinesis/KinesisException { // com.steamstreet.awskt.kinesis/ResourceInUseException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kinesis/ResourceInUseException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kinesis/ResourceNotFoundException : com.steamstreet.awskt.kinesis/KinesisException { // com.steamstreet.awskt.kinesis/ResourceNotFoundException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kinesis/ResourceNotFoundException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.kinesis/SequenceNumberRange { // com.steamstreet.awskt.kinesis/SequenceNumberRange|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ...) // com.steamstreet.awskt.kinesis/SequenceNumberRange.<init>|<init>(kotlin.String;kotlin.String?){}[0]
+
+    final val endingSequenceNumber // com.steamstreet.awskt.kinesis/SequenceNumberRange.endingSequenceNumber|{}endingSequenceNumber[0]
+        final fun <get-endingSequenceNumber>(): kotlin/String? // com.steamstreet.awskt.kinesis/SequenceNumberRange.endingSequenceNumber.<get-endingSequenceNumber>|<get-endingSequenceNumber>(){}[0]
+    final val startingSequenceNumber // com.steamstreet.awskt.kinesis/SequenceNumberRange.startingSequenceNumber|{}startingSequenceNumber[0]
+        final fun <get-startingSequenceNumber>(): kotlin/String // com.steamstreet.awskt.kinesis/SequenceNumberRange.startingSequenceNumber.<get-startingSequenceNumber>|<get-startingSequenceNumber>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.kinesis/SequenceNumberRange.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.kinesis/SequenceNumberRange.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ...): com.steamstreet.awskt.kinesis/SequenceNumberRange // com.steamstreet.awskt.kinesis/SequenceNumberRange.copy|copy(kotlin.String;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/SequenceNumberRange.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/SequenceNumberRange.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/SequenceNumberRange.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/SequenceNumberRange> { // com.steamstreet.awskt.kinesis/SequenceNumberRange.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/SequenceNumberRange.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/SequenceNumberRange.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/SequenceNumberRange.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/SequenceNumberRange // com.steamstreet.awskt.kinesis/SequenceNumberRange.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/SequenceNumberRange) // com.steamstreet.awskt.kinesis/SequenceNumberRange.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.SequenceNumberRange){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/SequenceNumberRange.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/SequenceNumberRange> // com.steamstreet.awskt.kinesis/SequenceNumberRange.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.kinesis/Shard { // com.steamstreet.awskt.kinesis/Shard|null[0]
+    constructor <init>(kotlin/String, com.steamstreet.awskt.kinesis/SequenceNumberRange, kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.kinesis/HashKeyRange? = ...) // com.steamstreet.awskt.kinesis/Shard.<init>|<init>(kotlin.String;com.steamstreet.awskt.kinesis.SequenceNumberRange;kotlin.String?;kotlin.String?;com.steamstreet.awskt.kinesis.HashKeyRange?){}[0]
+
+    final val adjacentParentShardId // com.steamstreet.awskt.kinesis/Shard.adjacentParentShardId|{}adjacentParentShardId[0]
+        final fun <get-adjacentParentShardId>(): kotlin/String? // com.steamstreet.awskt.kinesis/Shard.adjacentParentShardId.<get-adjacentParentShardId>|<get-adjacentParentShardId>(){}[0]
+    final val hashKeyRange // com.steamstreet.awskt.kinesis/Shard.hashKeyRange|{}hashKeyRange[0]
+        final fun <get-hashKeyRange>(): com.steamstreet.awskt.kinesis/HashKeyRange? // com.steamstreet.awskt.kinesis/Shard.hashKeyRange.<get-hashKeyRange>|<get-hashKeyRange>(){}[0]
+    final val parentShardId // com.steamstreet.awskt.kinesis/Shard.parentShardId|{}parentShardId[0]
+        final fun <get-parentShardId>(): kotlin/String? // com.steamstreet.awskt.kinesis/Shard.parentShardId.<get-parentShardId>|<get-parentShardId>(){}[0]
+    final val sequenceNumberRange // com.steamstreet.awskt.kinesis/Shard.sequenceNumberRange|{}sequenceNumberRange[0]
+        final fun <get-sequenceNumberRange>(): com.steamstreet.awskt.kinesis/SequenceNumberRange // com.steamstreet.awskt.kinesis/Shard.sequenceNumberRange.<get-sequenceNumberRange>|<get-sequenceNumberRange>(){}[0]
+    final val shardId // com.steamstreet.awskt.kinesis/Shard.shardId|{}shardId[0]
+        final fun <get-shardId>(): kotlin/String // com.steamstreet.awskt.kinesis/Shard.shardId.<get-shardId>|<get-shardId>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.kinesis/Shard.component1|component1(){}[0]
+    final fun component2(): com.steamstreet.awskt.kinesis/SequenceNumberRange // com.steamstreet.awskt.kinesis/Shard.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.kinesis/Shard.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.kinesis/Shard.component4|component4(){}[0]
+    final fun component5(): com.steamstreet.awskt.kinesis/HashKeyRange? // com.steamstreet.awskt.kinesis/Shard.component5|component5(){}[0]
+    final fun copy(kotlin/String = ..., com.steamstreet.awskt.kinesis/SequenceNumberRange = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.kinesis/HashKeyRange? = ...): com.steamstreet.awskt.kinesis/Shard // com.steamstreet.awskt.kinesis/Shard.copy|copy(kotlin.String;com.steamstreet.awskt.kinesis.SequenceNumberRange;kotlin.String?;kotlin.String?;com.steamstreet.awskt.kinesis.HashKeyRange?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.kinesis/Shard.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.kinesis/Shard.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.kinesis/Shard.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.kinesis/Shard> { // com.steamstreet.awskt.kinesis/Shard.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.kinesis/Shard.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.kinesis/Shard.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.kinesis/Shard.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.kinesis/Shard // com.steamstreet.awskt.kinesis/Shard.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.kinesis/Shard) // com.steamstreet.awskt.kinesis/Shard.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.kinesis.Shard){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.kinesis/Shard.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.kinesis/Shard> // com.steamstreet.awskt.kinesis/Shard.Companion.serializer|serializer(){}[0]
+    }
+}
+
+open class com.steamstreet.awskt.kinesis/KinesisException : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.kinesis/KinesisException|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.kinesis/KinesisException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final val com.steamstreet.awskt.kinesis/KINESIS_PROTOCOL // com.steamstreet.awskt.kinesis/KINESIS_PROTOCOL|{}KINESIS_PROTOCOL[0]
+    final fun <get-KINESIS_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.kinesis/KINESIS_PROTOCOL.<get-KINESIS_PROTOCOL>|<get-KINESIS_PROTOCOL>(){}[0]
+
+final fun com.steamstreet.awskt.kinesis/Kinesis(kotlin/Function1<com.steamstreet.awskt.kinesis/KinesisConfig, kotlin/Unit> = ...): com.steamstreet.awskt.kinesis/Kinesis // com.steamstreet.awskt.kinesis/Kinesis|Kinesis(kotlin.Function1<com.steamstreet.awskt.kinesis.KinesisConfig,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.awskt.kinesis/Kinesis).com.steamstreet.awskt.kinesis/putRecord(kotlin/String, kotlin/String, kotlin/String): com.steamstreet.awskt.kinesis/PutRecordResponse // com.steamstreet.awskt.kinesis/putRecord|putRecord@com.steamstreet.awskt.kinesis.Kinesis(kotlin.String;kotlin.String;kotlin.String){}[0]
+final suspend fun (com.steamstreet.awskt.kinesis/Kinesis).com.steamstreet.awskt.kinesis/putRecordsAll(kotlin.collections/List<com.steamstreet.awskt.kinesis/PutRecordsRequestEntry>, kotlin/String? = ..., kotlin/String? = ..., kotlin/Int = ...): kotlin.collections/List<com.steamstreet.awskt.kinesis/PutRecordsResultEntry> // com.steamstreet.awskt.kinesis/putRecordsAll|putRecordsAll@com.steamstreet.awskt.kinesis.Kinesis(kotlin.collections.List<com.steamstreet.awskt.kinesis.PutRecordsRequestEntry>;kotlin.String?;kotlin.String?;kotlin.Int){}[0]
+final suspend fun (com.steamstreet.awskt.kinesis/Kinesis).com.steamstreet.awskt.kinesis/readRecords(kotlin/String, kotlin/Int? = ..., kotlin/String? = ...): kotlin.collections/List<com.steamstreet.awskt.kinesis/Record> // com.steamstreet.awskt.kinesis/readRecords|readRecords@com.steamstreet.awskt.kinesis.Kinesis(kotlin.String;kotlin.Int?;kotlin.String?){}[0]

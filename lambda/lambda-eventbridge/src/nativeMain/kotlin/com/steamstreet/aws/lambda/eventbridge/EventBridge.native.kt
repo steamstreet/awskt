@@ -1,5 +1,6 @@
 package com.steamstreet.aws.lambda.eventbridge
 
+import com.steamstreet.awskt.logging.`is`
 import com.steamstreet.awskt.logging.log
 import com.steamstreet.awskt.logging.put
 import kotlinx.coroutines.runBlocking
@@ -19,3 +20,20 @@ internal actual fun logProcessingEvent(message: String, key: String, json: Strin
         }
     }
 }
+
+internal actual suspend fun logEventError(message: String, t: Throwable?, metadata: Map<String, String?>) {
+    log.error(message, t) {
+        metadata.forEach { (key, value) -> key `is` value }
+    }
+}
+
+internal actual suspend fun logEventInfo(message: String, metadata: Map<String, String?>) {
+    log.info(message) {
+        metadata.forEach { (key, value) -> key `is` value }
+    }
+}
+
+internal actual suspend fun <T> withEventContext(detailType: String, block: suspend () -> T): T =
+    log.ctx({ "event-detail-type" `is` detailType }) {
+        block()
+    }

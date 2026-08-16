@@ -1,0 +1,183 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:appsync>
+final class com.steamstreet.aws.appsync/AppSyncContext { // com.steamstreet.aws.appsync/AppSyncContext|null[0]
+    constructor <init>(kotlinx.serialization.json/JsonObject, kotlinx.serialization.json/JsonObject? = ..., com.steamstreet.aws.appsync/AppSyncIdentity? = ..., com.steamstreet.aws.appsync/AppSyncInfo, com.steamstreet.aws.appsync/AppSyncRequest? = ..., kotlinx.serialization.json/JsonObject? = ...) // com.steamstreet.aws.appsync/AppSyncContext.<init>|<init>(kotlinx.serialization.json.JsonObject;kotlinx.serialization.json.JsonObject?;com.steamstreet.aws.appsync.AppSyncIdentity?;com.steamstreet.aws.appsync.AppSyncInfo;com.steamstreet.aws.appsync.AppSyncRequest?;kotlinx.serialization.json.JsonObject?){}[0]
+
+    final val arguments // com.steamstreet.aws.appsync/AppSyncContext.arguments|{}arguments[0]
+        final fun <get-arguments>(): kotlinx.serialization.json/JsonObject // com.steamstreet.aws.appsync/AppSyncContext.arguments.<get-arguments>|<get-arguments>(){}[0]
+    final val identity // com.steamstreet.aws.appsync/AppSyncContext.identity|{}identity[0]
+        final fun <get-identity>(): com.steamstreet.aws.appsync/AppSyncIdentity? // com.steamstreet.aws.appsync/AppSyncContext.identity.<get-identity>|<get-identity>(){}[0]
+    final val info // com.steamstreet.aws.appsync/AppSyncContext.info|{}info[0]
+        final fun <get-info>(): com.steamstreet.aws.appsync/AppSyncInfo // com.steamstreet.aws.appsync/AppSyncContext.info.<get-info>|<get-info>(){}[0]
+    final val request // com.steamstreet.aws.appsync/AppSyncContext.request|{}request[0]
+        final fun <get-request>(): com.steamstreet.aws.appsync/AppSyncRequest? // com.steamstreet.aws.appsync/AppSyncContext.request.<get-request>|<get-request>(){}[0]
+    final val source // com.steamstreet.aws.appsync/AppSyncContext.source|{}source[0]
+        final fun <get-source>(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.appsync/AppSyncContext.source.<get-source>|<get-source>(){}[0]
+    final val stash // com.steamstreet.aws.appsync/AppSyncContext.stash|{}stash[0]
+        final fun <get-stash>(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.appsync/AppSyncContext.stash.<get-stash>|<get-stash>(){}[0]
+
+    final fun component1(): kotlinx.serialization.json/JsonObject // com.steamstreet.aws.appsync/AppSyncContext.component1|component1(){}[0]
+    final fun component2(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.appsync/AppSyncContext.component2|component2(){}[0]
+    final fun component3(): com.steamstreet.aws.appsync/AppSyncIdentity? // com.steamstreet.aws.appsync/AppSyncContext.component3|component3(){}[0]
+    final fun component4(): com.steamstreet.aws.appsync/AppSyncInfo // com.steamstreet.aws.appsync/AppSyncContext.component4|component4(){}[0]
+    final fun component5(): com.steamstreet.aws.appsync/AppSyncRequest? // com.steamstreet.aws.appsync/AppSyncContext.component5|component5(){}[0]
+    final fun component6(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.appsync/AppSyncContext.component6|component6(){}[0]
+    final fun copy(kotlinx.serialization.json/JsonObject = ..., kotlinx.serialization.json/JsonObject? = ..., com.steamstreet.aws.appsync/AppSyncIdentity? = ..., com.steamstreet.aws.appsync/AppSyncInfo = ..., com.steamstreet.aws.appsync/AppSyncRequest? = ..., kotlinx.serialization.json/JsonObject? = ...): com.steamstreet.aws.appsync/AppSyncContext // com.steamstreet.aws.appsync/AppSyncContext.copy|copy(kotlinx.serialization.json.JsonObject;kotlinx.serialization.json.JsonObject?;com.steamstreet.aws.appsync.AppSyncIdentity?;com.steamstreet.aws.appsync.AppSyncInfo;com.steamstreet.aws.appsync.AppSyncRequest?;kotlinx.serialization.json.JsonObject?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.appsync/AppSyncContext.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.appsync/AppSyncContext.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.appsync/AppSyncContext.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.appsync/AppSyncContext> { // com.steamstreet.aws.appsync/AppSyncContext.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.appsync/AppSyncContext.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.appsync/AppSyncContext.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.appsync/AppSyncContext.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.appsync/AppSyncContext // com.steamstreet.aws.appsync/AppSyncContext.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.appsync/AppSyncContext) // com.steamstreet.aws.appsync/AppSyncContext.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.appsync.AppSyncContext){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.appsync/AppSyncContext.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.appsync/AppSyncContext> // com.steamstreet.aws.appsync/AppSyncContext.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.appsync/AppSyncIdentity { // com.steamstreet.aws.appsync/AppSyncIdentity|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlinx.serialization.json/JsonObject? = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlinx.serialization.json/JsonObject? = ...) // com.steamstreet.aws.appsync/AppSyncIdentity.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlin.String?;kotlin.String?;kotlinx.serialization.json.JsonObject?;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlinx.serialization.json.JsonObject?){}[0]
+
+    final val accountId // com.steamstreet.aws.appsync/AppSyncIdentity.accountId|{}accountId[0]
+        final fun <get-accountId>(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.accountId.<get-accountId>|<get-accountId>(){}[0]
+    final val claims // com.steamstreet.aws.appsync/AppSyncIdentity.claims|{}claims[0]
+        final fun <get-claims>(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.appsync/AppSyncIdentity.claims.<get-claims>|<get-claims>(){}[0]
+    final val cognitoIdentityAuthProvider // com.steamstreet.aws.appsync/AppSyncIdentity.cognitoIdentityAuthProvider|{}cognitoIdentityAuthProvider[0]
+        final fun <get-cognitoIdentityAuthProvider>(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.cognitoIdentityAuthProvider.<get-cognitoIdentityAuthProvider>|<get-cognitoIdentityAuthProvider>(){}[0]
+    final val cognitoIdentityAuthType // com.steamstreet.aws.appsync/AppSyncIdentity.cognitoIdentityAuthType|{}cognitoIdentityAuthType[0]
+        final fun <get-cognitoIdentityAuthType>(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.cognitoIdentityAuthType.<get-cognitoIdentityAuthType>|<get-cognitoIdentityAuthType>(){}[0]
+    final val cognitoIdentityId // com.steamstreet.aws.appsync/AppSyncIdentity.cognitoIdentityId|{}cognitoIdentityId[0]
+        final fun <get-cognitoIdentityId>(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.cognitoIdentityId.<get-cognitoIdentityId>|<get-cognitoIdentityId>(){}[0]
+    final val cognitoIdentityPoolId // com.steamstreet.aws.appsync/AppSyncIdentity.cognitoIdentityPoolId|{}cognitoIdentityPoolId[0]
+        final fun <get-cognitoIdentityPoolId>(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.cognitoIdentityPoolId.<get-cognitoIdentityPoolId>|<get-cognitoIdentityPoolId>(){}[0]
+    final val defaultAuthStrategy // com.steamstreet.aws.appsync/AppSyncIdentity.defaultAuthStrategy|{}defaultAuthStrategy[0]
+        final fun <get-defaultAuthStrategy>(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.defaultAuthStrategy.<get-defaultAuthStrategy>|<get-defaultAuthStrategy>(){}[0]
+    final val groups // com.steamstreet.aws.appsync/AppSyncIdentity.groups|{}groups[0]
+        final fun <get-groups>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.aws.appsync/AppSyncIdentity.groups.<get-groups>|<get-groups>(){}[0]
+    final val issuer // com.steamstreet.aws.appsync/AppSyncIdentity.issuer|{}issuer[0]
+        final fun <get-issuer>(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.issuer.<get-issuer>|<get-issuer>(){}[0]
+    final val resolverContext // com.steamstreet.aws.appsync/AppSyncIdentity.resolverContext|{}resolverContext[0]
+        final fun <get-resolverContext>(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.appsync/AppSyncIdentity.resolverContext.<get-resolverContext>|<get-resolverContext>(){}[0]
+    final val sourceIp // com.steamstreet.aws.appsync/AppSyncIdentity.sourceIp|{}sourceIp[0]
+        final fun <get-sourceIp>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.aws.appsync/AppSyncIdentity.sourceIp.<get-sourceIp>|<get-sourceIp>(){}[0]
+    final val sub // com.steamstreet.aws.appsync/AppSyncIdentity.sub|{}sub[0]
+        final fun <get-sub>(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.sub.<get-sub>|<get-sub>(){}[0]
+    final val userArn // com.steamstreet.aws.appsync/AppSyncIdentity.userArn|{}userArn[0]
+        final fun <get-userArn>(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.userArn.<get-userArn>|<get-userArn>(){}[0]
+    final val username // com.steamstreet.aws.appsync/AppSyncIdentity.username|{}username[0]
+        final fun <get-username>(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.username.<get-username>|<get-username>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.component1|component1(){}[0]
+    final fun component10(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.component10|component10(){}[0]
+    final fun component11(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.appsync/AppSyncIdentity.component11|component11(){}[0]
+    final fun component12(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.component12|component12(){}[0]
+    final fun component13(): kotlin.collections/List<kotlin/String>? // com.steamstreet.aws.appsync/AppSyncIdentity.component13|component13(){}[0]
+    final fun component14(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.appsync/AppSyncIdentity.component14|component14(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.component5|component5(){}[0]
+    final fun component6(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.component7|component7(){}[0]
+    final fun component8(): kotlin.collections/List<kotlin/String>? // com.steamstreet.aws.appsync/AppSyncIdentity.component8|component8(){}[0]
+    final fun component9(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncIdentity.component9|component9(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlinx.serialization.json/JsonObject? = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlinx.serialization.json/JsonObject? = ...): com.steamstreet.aws.appsync/AppSyncIdentity // com.steamstreet.aws.appsync/AppSyncIdentity.copy|copy(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlin.String?;kotlin.String?;kotlinx.serialization.json.JsonObject?;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlinx.serialization.json.JsonObject?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.appsync/AppSyncIdentity.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.appsync/AppSyncIdentity.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.appsync/AppSyncIdentity.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.appsync/AppSyncIdentity> { // com.steamstreet.aws.appsync/AppSyncIdentity.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.appsync/AppSyncIdentity.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.appsync/AppSyncIdentity.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.appsync/AppSyncIdentity.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.appsync/AppSyncIdentity // com.steamstreet.aws.appsync/AppSyncIdentity.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.appsync/AppSyncIdentity) // com.steamstreet.aws.appsync/AppSyncIdentity.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.appsync.AppSyncIdentity){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.appsync/AppSyncIdentity.Companion|null[0]
+        final val $childSerializers // com.steamstreet.aws.appsync/AppSyncIdentity.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.appsync/AppSyncIdentity> // com.steamstreet.aws.appsync/AppSyncIdentity.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.appsync/AppSyncInfo { // com.steamstreet.aws.appsync/AppSyncInfo|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., kotlinx.serialization.json/JsonObject? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ...) // com.steamstreet.aws.appsync/AppSyncInfo.<init>|<init>(kotlin.String;kotlin.String?;kotlinx.serialization.json.JsonObject?;kotlin.collections.List<kotlin.String>?;kotlin.String?){}[0]
+
+    final val fieldName // com.steamstreet.aws.appsync/AppSyncInfo.fieldName|{}fieldName[0]
+        final fun <get-fieldName>(): kotlin/String // com.steamstreet.aws.appsync/AppSyncInfo.fieldName.<get-fieldName>|<get-fieldName>(){}[0]
+    final val parentTypeName // com.steamstreet.aws.appsync/AppSyncInfo.parentTypeName|{}parentTypeName[0]
+        final fun <get-parentTypeName>(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncInfo.parentTypeName.<get-parentTypeName>|<get-parentTypeName>(){}[0]
+    final val selectionSetGraphQL // com.steamstreet.aws.appsync/AppSyncInfo.selectionSetGraphQL|{}selectionSetGraphQL[0]
+        final fun <get-selectionSetGraphQL>(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncInfo.selectionSetGraphQL.<get-selectionSetGraphQL>|<get-selectionSetGraphQL>(){}[0]
+    final val selectionSetList // com.steamstreet.aws.appsync/AppSyncInfo.selectionSetList|{}selectionSetList[0]
+        final fun <get-selectionSetList>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.aws.appsync/AppSyncInfo.selectionSetList.<get-selectionSetList>|<get-selectionSetList>(){}[0]
+    final val variables // com.steamstreet.aws.appsync/AppSyncInfo.variables|{}variables[0]
+        final fun <get-variables>(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.appsync/AppSyncInfo.variables.<get-variables>|<get-variables>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.aws.appsync/AppSyncInfo.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncInfo.component2|component2(){}[0]
+    final fun component3(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.appsync/AppSyncInfo.component3|component3(){}[0]
+    final fun component4(): kotlin.collections/List<kotlin/String>? // com.steamstreet.aws.appsync/AppSyncInfo.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.aws.appsync/AppSyncInfo.component5|component5(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., kotlinx.serialization.json/JsonObject? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ...): com.steamstreet.aws.appsync/AppSyncInfo // com.steamstreet.aws.appsync/AppSyncInfo.copy|copy(kotlin.String;kotlin.String?;kotlinx.serialization.json.JsonObject?;kotlin.collections.List<kotlin.String>?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.appsync/AppSyncInfo.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.appsync/AppSyncInfo.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.appsync/AppSyncInfo.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.appsync/AppSyncInfo> { // com.steamstreet.aws.appsync/AppSyncInfo.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.appsync/AppSyncInfo.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.appsync/AppSyncInfo.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.appsync/AppSyncInfo.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.appsync/AppSyncInfo // com.steamstreet.aws.appsync/AppSyncInfo.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.appsync/AppSyncInfo) // com.steamstreet.aws.appsync/AppSyncInfo.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.appsync.AppSyncInfo){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.appsync/AppSyncInfo.Companion|null[0]
+        final val $childSerializers // com.steamstreet.aws.appsync/AppSyncInfo.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.appsync/AppSyncInfo> // com.steamstreet.aws.appsync/AppSyncInfo.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.appsync/AppSyncRequest { // com.steamstreet.aws.appsync/AppSyncRequest|null[0]
+    constructor <init>(kotlinx.serialization.json/JsonObject? = ...) // com.steamstreet.aws.appsync/AppSyncRequest.<init>|<init>(kotlinx.serialization.json.JsonObject?){}[0]
+
+    final val headers // com.steamstreet.aws.appsync/AppSyncRequest.headers|{}headers[0]
+        final fun <get-headers>(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.appsync/AppSyncRequest.headers.<get-headers>|<get-headers>(){}[0]
+
+    final fun component1(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.appsync/AppSyncRequest.component1|component1(){}[0]
+    final fun copy(kotlinx.serialization.json/JsonObject? = ...): com.steamstreet.aws.appsync/AppSyncRequest // com.steamstreet.aws.appsync/AppSyncRequest.copy|copy(kotlinx.serialization.json.JsonObject?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.appsync/AppSyncRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.appsync/AppSyncRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.appsync/AppSyncRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.appsync/AppSyncRequest> { // com.steamstreet.aws.appsync/AppSyncRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.appsync/AppSyncRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.appsync/AppSyncRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.appsync/AppSyncRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.appsync/AppSyncRequest // com.steamstreet.aws.appsync/AppSyncRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.appsync/AppSyncRequest) // com.steamstreet.aws.appsync/AppSyncRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.appsync.AppSyncRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.appsync/AppSyncRequest.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.appsync/AppSyncRequest> // com.steamstreet.aws.appsync/AppSyncRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final fun (kotlin/String).com.steamstreet.aws.appsync/appSyncContext(): com.steamstreet.aws.appsync/AppSyncContext // com.steamstreet.aws.appsync/appSyncContext|appSyncContext@kotlin.String(){}[0]

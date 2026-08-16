@@ -79,6 +79,16 @@ public abstract class com/steamstreet/aws/sqs/SQSHandler : com/steamstreet/aws/s
 	public abstract fun handleMessage (Lcom/steamstreet/aws/sqs/SQSRecord;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public final class com/steamstreet/aws/sqs/SQSProcessingKt {
+	public static final fun batchResponse (Lcom/steamstreet/aws/sqs/SQSEvent;Ljava/util/List;)Lcom/steamstreet/aws/sqs/BatchResponse;
+	public static final fun processBatch (Lcom/steamstreet/aws/sqs/SQSEvent;Lkotlinx/serialization/KSerializer;ZZLkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun processBatch$default (Lcom/steamstreet/aws/sqs/SQSEvent;Lkotlinx/serialization/KSerializer;ZZLkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun processMessages (Lcom/steamstreet/aws/sqs/SQSEvent;Lkotlinx/serialization/KSerializer;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun processRawMessages (Lcom/steamstreet/aws/sqs/SQSEvent;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun runMessages (Lcom/steamstreet/aws/sqs/SQSEvent;Ljava/util/List;ZZLkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun runMessages$default (Lcom/steamstreet/aws/sqs/SQSEvent;Ljava/util/List;ZZLkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
 public abstract class com/steamstreet/aws/sqs/SQSRawHandler : com/steamstreet/aws/lambda/InputLambda {
 	public fun <init> ()V
 	public fun handle (Lcom/steamstreet/aws/sqs/SQSEvent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

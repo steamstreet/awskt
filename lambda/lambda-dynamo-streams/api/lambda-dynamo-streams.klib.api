@@ -1,0 +1,50 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:lambda-dynamo-streams>
+final enum class com.steamstreet.aws.lambda/StreamFailureLogLevel : kotlin/Enum<com.steamstreet.aws.lambda/StreamFailureLogLevel> { // com.steamstreet.aws.lambda/StreamFailureLogLevel|null[0]
+    enum entry INFO // com.steamstreet.aws.lambda/StreamFailureLogLevel.INFO|null[0]
+    enum entry SEVERE // com.steamstreet.aws.lambda/StreamFailureLogLevel.SEVERE|null[0]
+    enum entry WARNING // com.steamstreet.aws.lambda/StreamFailureLogLevel.WARNING|null[0]
+
+    final val entries // com.steamstreet.aws.lambda/StreamFailureLogLevel.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.steamstreet.aws.lambda/StreamFailureLogLevel> // com.steamstreet.aws.lambda/StreamFailureLogLevel.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.steamstreet.aws.lambda/StreamFailureLogLevel // com.steamstreet.aws.lambda/StreamFailureLogLevel.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.steamstreet.aws.lambda/StreamFailureLogLevel> // com.steamstreet.aws.lambda/StreamFailureLogLevel.values|values#static(){}[0]
+}
+
+final class com.steamstreet.aws.lambda/RecordInfo { // com.steamstreet.aws.lambda/RecordInfo|null[0]
+    constructor <init>(com.steamstreet.dynamokt/DynamoStreamEvent, kotlin/String) // com.steamstreet.aws.lambda/RecordInfo.<init>|<init>(com.steamstreet.dynamokt.DynamoStreamEvent;kotlin.String){}[0]
+
+    final val dynamoEvent // com.steamstreet.aws.lambda/RecordInfo.dynamoEvent|{}dynamoEvent[0]
+        final fun <get-dynamoEvent>(): com.steamstreet.dynamokt/DynamoStreamEvent // com.steamstreet.aws.lambda/RecordInfo.dynamoEvent.<get-dynamoEvent>|<get-dynamoEvent>(){}[0]
+    final val identifier // com.steamstreet.aws.lambda/RecordInfo.identifier|{}identifier[0]
+        final fun <get-identifier>(): kotlin/String // com.steamstreet.aws.lambda/RecordInfo.identifier.<get-identifier>|<get-identifier>(){}[0]
+
+    final fun component1(): com.steamstreet.dynamokt/DynamoStreamEvent // com.steamstreet.aws.lambda/RecordInfo.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.aws.lambda/RecordInfo.component2|component2(){}[0]
+    final fun copy(com.steamstreet.dynamokt/DynamoStreamEvent = ..., kotlin/String = ...): com.steamstreet.aws.lambda/RecordInfo // com.steamstreet.aws.lambda/RecordInfo.copy|copy(com.steamstreet.dynamokt.DynamoStreamEvent;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda/RecordInfo.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda/RecordInfo.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda/RecordInfo.toString|toString(){}[0]
+}
+
+final class com.steamstreet.aws.lambda/StreamHandlingException : com.steamstreet.exceptions/StatefulException { // com.steamstreet.aws.lambda/StreamHandlingException|null[0]
+    constructor <init>(kotlin/String, kotlin/Throwable? = ..., kotlin.collections/Map<kotlin/String, kotlinx.serialization.json/JsonElement>) // com.steamstreet.aws.lambda/StreamHandlingException.<init>|<init>(kotlin.String;kotlin.Throwable?;kotlin.collections.Map<kotlin.String,kotlinx.serialization.json.JsonElement>){}[0]
+}
+
+final fun com.steamstreet.aws.lambda/dynamoKtStreamLambda(com.steamstreet.dynamokt/DynamoKt, kotlin/Boolean = ..., kotlin/Boolean = ..., com.steamstreet.aws.lambda/StreamFailureLogLevel? = ..., com.steamstreet.awskt.kinesis/Kinesis? = ..., kotlin.coroutines/SuspendFunction0<kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction3<com.steamstreet.dynamokt/Item?, com.steamstreet.dynamokt/Item?, com.steamstreet.dynamokt/DynamoStreamEvent, kotlin/Unit>) // com.steamstreet.aws.lambda/dynamoKtStreamLambda|dynamoKtStreamLambda(com.steamstreet.dynamokt.DynamoKt;kotlin.Boolean;kotlin.Boolean;com.steamstreet.aws.lambda.StreamFailureLogLevel?;com.steamstreet.awskt.kinesis.Kinesis?;kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.coroutines.SuspendFunction3<com.steamstreet.dynamokt.Item?,com.steamstreet.dynamokt.Item?,com.steamstreet.dynamokt.DynamoStreamEvent,kotlin.Unit>){}[0]
+final fun com.steamstreet.aws.lambda/dynamoStreamBatchLambda(kotlin/Boolean = ..., kotlin/Boolean = ..., com.steamstreet.aws.lambda/StreamFailureLogLevel? = ..., com.steamstreet.awskt.kinesis/Kinesis? = ..., kotlin.coroutines/SuspendFunction1<com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo, kotlin.collections/List<com.steamstreet.aws.lambda/RecordInfo>> = ..., kotlin.coroutines/SuspendFunction0<kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/DynamoStreamEvent, kotlin/Unit>) // com.steamstreet.aws.lambda/dynamoStreamBatchLambda|dynamoStreamBatchLambda(kotlin.Boolean;kotlin.Boolean;com.steamstreet.aws.lambda.StreamFailureLogLevel?;com.steamstreet.awskt.kinesis.Kinesis?;kotlin.coroutines.SuspendFunction1<com.steamstreet.aws.lambda.kinesis.KinesisBatchInfo,kotlin.collections.List<com.steamstreet.aws.lambda.RecordInfo>>;kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.DynamoStreamEvent,kotlin.Unit>){}[0]
+final fun com.steamstreet.aws.lambda/dynamoStreamLambda(kotlin/Boolean = ..., kotlin.coroutines/SuspendFunction0<kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/DynamoStreamEvent, kotlin/Unit>) // com.steamstreet.aws.lambda/dynamoStreamLambda|dynamoStreamLambda(kotlin.Boolean;kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.DynamoStreamEvent,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.awskt.kinesis/Kinesis).com.steamstreet.aws.lambda/resolveRedrive(com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo): kotlin.collections/List<com.steamstreet.aws.lambda/RecordInfo> // com.steamstreet.aws.lambda/resolveRedrive|resolveRedrive@com.steamstreet.awskt.kinesis.Kinesis(com.steamstreet.aws.lambda.kinesis.KinesisBatchInfo){}[0]
+final suspend fun (com.steamstreet.dynamokt/DynamoStreamRecords).com.steamstreet.aws.lambda/processStreamRecords(kotlin/Boolean = ..., kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/DynamoStreamEvent, kotlin/Unit>): kotlin.collections/List<kotlin/Exception?> // com.steamstreet.aws.lambda/processStreamRecords|processStreamRecords@com.steamstreet.dynamokt.DynamoStreamRecords(kotlin.Boolean;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.DynamoStreamEvent,kotlin.Unit>){}[0]
+final suspend fun (kotlin.collections/List<com.steamstreet.aws.lambda/RecordInfo>).com.steamstreet.aws.lambda/batchFailureResponse(kotlin.collections/List<kotlin/Exception?>, kotlin/Boolean = ..., com.steamstreet.aws.lambda/StreamFailureLogLevel? = ...): com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse // com.steamstreet.aws.lambda/batchFailureResponse|batchFailureResponse@kotlin.collections.List<com.steamstreet.aws.lambda.RecordInfo>(kotlin.collections.List<kotlin.Exception?>;kotlin.Boolean;com.steamstreet.aws.lambda.StreamFailureLogLevel?){}[0]
+final suspend fun (kotlin.collections/List<com.steamstreet.aws.lambda/RecordInfo>).com.steamstreet.aws.lambda/processWithFailures(kotlin/Boolean = ..., kotlin/Boolean = ..., com.steamstreet.aws.lambda/StreamFailureLogLevel? = ..., kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/DynamoStreamEvent, kotlin/Unit>): com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse // com.steamstreet.aws.lambda/processWithFailures|processWithFailures@kotlin.collections.List<com.steamstreet.aws.lambda.RecordInfo>(kotlin.Boolean;kotlin.Boolean;com.steamstreet.aws.lambda.StreamFailureLogLevel?;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.DynamoStreamEvent,kotlin.Unit>){}[0]
+final suspend fun (kotlin.collections/List<com.steamstreet.dynamokt/DynamoStreamEvent>).com.steamstreet.aws.lambda/processStreamRecords(kotlin/Boolean = ..., kotlin.coroutines/SuspendFunction1<com.steamstreet.dynamokt/DynamoStreamEvent, kotlin/Unit>): kotlin.collections/List<kotlin/Exception?> // com.steamstreet.aws.lambda/processStreamRecords|processStreamRecords@kotlin.collections.List<com.steamstreet.dynamokt.DynamoStreamEvent>(kotlin.Boolean;kotlin.coroutines.SuspendFunction1<com.steamstreet.dynamokt.DynamoStreamEvent,kotlin.Unit>){}[0]
+final suspend fun com.steamstreet.aws.lambda/StreamHandlingException(kotlin/String, kotlin/Throwable? = ...): com.steamstreet.aws.lambda/StreamHandlingException // com.steamstreet.aws.lambda/StreamHandlingException|StreamHandlingException(kotlin.String;kotlin.Throwable?){}[0]
+final suspend fun com.steamstreet.aws.lambda/parseDynamoStreamPayload(kotlinx.serialization.json/JsonElement, kotlin/Function1<kotlin/Function0<kotlin/String>, kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction1<com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo, kotlin.collections/List<com.steamstreet.aws.lambda/RecordInfo>> = ...): kotlin.collections/List<com.steamstreet.aws.lambda/RecordInfo> // com.steamstreet.aws.lambda/parseDynamoStreamPayload|parseDynamoStreamPayload(kotlinx.serialization.json.JsonElement;kotlin.Function1<kotlin.Function0<kotlin.String>,kotlin.Unit>;kotlin.coroutines.SuspendFunction1<com.steamstreet.aws.lambda.kinesis.KinesisBatchInfo,kotlin.collections.List<com.steamstreet.aws.lambda.RecordInfo>>){}[0]

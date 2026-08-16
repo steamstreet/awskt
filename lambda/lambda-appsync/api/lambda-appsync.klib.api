@@ -1,0 +1,40 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:lambda-appsync>
+abstract interface com.steamstreet.aws.appsync/AppSyncTypeHandler { // com.steamstreet.aws.appsync/AppSyncTypeHandler|null[0]
+    abstract val context // com.steamstreet.aws.appsync/AppSyncTypeHandler.context|{}context[0]
+        abstract fun <get-context>(): com.steamstreet.aws.appsync/AppSyncContext // com.steamstreet.aws.appsync/AppSyncTypeHandler.context.<get-context>|<get-context>(){}[0]
+
+    abstract suspend fun write(kotlin/String) // com.steamstreet.aws.appsync/AppSyncTypeHandler.write|write(kotlin.String){}[0]
+}
+
+final class com.steamstreet.aws.appsync/AppSyncFieldHandler { // com.steamstreet.aws.appsync/AppSyncFieldHandler|null[0]
+    constructor <init>(kotlin/String, com.steamstreet.aws.appsync/AppSyncTypeHandler) // com.steamstreet.aws.appsync/AppSyncFieldHandler.<init>|<init>(kotlin.String;com.steamstreet.aws.appsync.AppSyncTypeHandler){}[0]
+
+    final val typeHandler // com.steamstreet.aws.appsync/AppSyncFieldHandler.typeHandler|{}typeHandler[0]
+        final fun <get-typeHandler>(): com.steamstreet.aws.appsync/AppSyncTypeHandler // com.steamstreet.aws.appsync/AppSyncFieldHandler.typeHandler.<get-typeHandler>|<get-typeHandler>(){}[0]
+}
+
+final class com.steamstreet.aws.appsync/BufferedAppSyncTypeHandler : com.steamstreet.aws.appsync/AppSyncTypeHandler { // com.steamstreet.aws.appsync/BufferedAppSyncTypeHandler|null[0]
+    constructor <init>(com.steamstreet.aws.appsync/AppSyncContext) // com.steamstreet.aws.appsync/BufferedAppSyncTypeHandler.<init>|<init>(com.steamstreet.aws.appsync.AppSyncContext){}[0]
+
+    final val context // com.steamstreet.aws.appsync/BufferedAppSyncTypeHandler.context|{}context[0]
+        final fun <get-context>(): com.steamstreet.aws.appsync/AppSyncContext // com.steamstreet.aws.appsync/BufferedAppSyncTypeHandler.context.<get-context>|<get-context>(){}[0]
+
+    final var response // com.steamstreet.aws.appsync/BufferedAppSyncTypeHandler.response|{}response[0]
+        final fun <get-response>(): kotlin/String? // com.steamstreet.aws.appsync/BufferedAppSyncTypeHandler.response.<get-response>|<get-response>(){}[0]
+
+    final suspend fun write(kotlin/String) // com.steamstreet.aws.appsync/BufferedAppSyncTypeHandler.write|write(kotlin.String){}[0]
+}
+
+final fun com.steamstreet.aws.appsync/appSyncLambda(kotlin.coroutines/SuspendFunction0<kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction1<com.steamstreet.aws.appsync/AppSyncTypeHandler, kotlin/Unit>) // com.steamstreet.aws.appsync/appSyncLambda|appSyncLambda(kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.coroutines.SuspendFunction1<com.steamstreet.aws.appsync.AppSyncTypeHandler,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.aws.appsync/AppSyncTypeHandler).com.steamstreet.aws.appsync/type(kotlin/String, kotlin.coroutines/SuspendFunction1<com.steamstreet.aws.appsync/AppSyncFieldHandler, kotlin/Unit>) // com.steamstreet.aws.appsync/type|type@com.steamstreet.aws.appsync.AppSyncTypeHandler(kotlin.String;kotlin.coroutines.SuspendFunction1<com.steamstreet.aws.appsync.AppSyncFieldHandler,kotlin.Unit>){}[0]
+final suspend fun <#A: kotlin/Any?, #B: kotlin/Any?> (com.steamstreet.aws.appsync/AppSyncFieldHandler).com.steamstreet.aws.appsync/field(kotlin/String, kotlinx.serialization/KSerializer<#A>, kotlinx.serialization/KSerializer<#B>, kotlin.coroutines/SuspendFunction2<com.steamstreet.aws.appsync/AppSyncContext, #A, #B>) // com.steamstreet.aws.appsync/field|field@com.steamstreet.aws.appsync.AppSyncFieldHandler(kotlin.String;kotlinx.serialization.KSerializer<0:0>;kotlinx.serialization.KSerializer<0:1>;kotlin.coroutines.SuspendFunction2<com.steamstreet.aws.appsync.AppSyncContext,0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final suspend fun <#A: kotlin/Any?, #B: kotlin/Any?> (com.steamstreet.aws.appsync/AppSyncTypeHandler).com.steamstreet.aws.appsync/typeAndField(kotlin/String, kotlin/String, kotlinx.serialization/KSerializer<#A>?, kotlinx.serialization/KSerializer<#B>, kotlin.coroutines/SuspendFunction2<com.steamstreet.aws.appsync/AppSyncContext, #A, #B?>) // com.steamstreet.aws.appsync/typeAndField|typeAndField@com.steamstreet.aws.appsync.AppSyncTypeHandler(kotlin.String;kotlin.String;kotlinx.serialization.KSerializer<0:0>?;kotlinx.serialization.KSerializer<0:1>;kotlin.coroutines.SuspendFunction2<com.steamstreet.aws.appsync.AppSyncContext,0:0,0:1?>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final suspend fun <#A: kotlin/Any?> (com.steamstreet.aws.appsync/AppSyncFieldHandler).com.steamstreet.aws.appsync/field(kotlin/String, kotlinx.serialization/KSerializer<#A>, kotlin.coroutines/SuspendFunction1<com.steamstreet.aws.appsync/AppSyncContext, #A?>) // com.steamstreet.aws.appsync/field|field@com.steamstreet.aws.appsync.AppSyncFieldHandler(kotlin.String;kotlinx.serialization.KSerializer<0:0>;kotlin.coroutines.SuspendFunction1<com.steamstreet.aws.appsync.AppSyncContext,0:0?>){0§<kotlin.Any?>}[0]
+final suspend fun com.steamstreet.aws.appsync/processAppSync(com.steamstreet.aws.appsync/AppSyncContext, kotlin.coroutines/SuspendFunction1<com.steamstreet.aws.appsync/AppSyncTypeHandler, kotlin/Unit>): kotlin/String? // com.steamstreet.aws.appsync/processAppSync|processAppSync(com.steamstreet.aws.appsync.AppSyncContext;kotlin.coroutines.SuspendFunction1<com.steamstreet.aws.appsync.AppSyncTypeHandler,kotlin.Unit>){}[0]

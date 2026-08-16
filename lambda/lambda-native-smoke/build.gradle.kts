@@ -35,6 +35,7 @@ kotlin {
                 // compiles for Graviton and faults on it would otherwise ship unnoticed.
                 implementation(projects.aws.awsSecretsmanager)
                 implementation(projects.aws.awsKms)
+                implementation(projects.aws.awsKinesis)
                 implementation(projects.aws.awsSqs)
                 implementation(projects.aws.awsSns)
                 implementation(projects.aws.awsScheduler)

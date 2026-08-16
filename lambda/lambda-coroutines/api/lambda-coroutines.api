@@ -16,6 +16,10 @@ public final class com/steamstreet/aws/lambda/Coroutines_jvmKt {
 	public static synthetic fun readIncoming$default (Ljava/io/InputStream;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
+public final class com/steamstreet/aws/lambda/Dispatchers_jvmKt {
+	public static final fun getLambdaIODispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
+}
+
 public abstract class com/steamstreet/aws/lambda/IOLambda : com/steamstreet/aws/lambda/SuspendingLambda {
 	public fun <init> (Lkotlinx/serialization/KSerializer;Lkotlinx/serialization/KSerializer;)V
 	public fun execute (Ljava/io/InputStream;Ljava/io/OutputStream;Lcom/amazonaws/services/lambda/runtime/Context;)V

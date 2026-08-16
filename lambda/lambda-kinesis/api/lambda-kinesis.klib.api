@@ -1,0 +1,224 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:lambda-kinesis>
+final class com.steamstreet.aws.lambda.kinesis/BatchItemFailure { // com.steamstreet.aws.lambda.kinesis/BatchItemFailure|null[0]
+    constructor <init>(kotlin/String) // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.<init>|<init>(kotlin.String){}[0]
+
+    final val itemIdentifier // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.itemIdentifier|{}itemIdentifier[0]
+        final fun <get-itemIdentifier>(): kotlin/String // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.itemIdentifier.<get-itemIdentifier>|<get-itemIdentifier>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.component1|component1(){}[0]
+    final fun copy(kotlin/String = ...): com.steamstreet.aws.lambda.kinesis/BatchItemFailure // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.copy|copy(kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.kinesis/BatchItemFailure> { // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.kinesis/BatchItemFailure // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.kinesis/BatchItemFailure) // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.kinesis.BatchItemFailure){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.kinesis/BatchItemFailure> // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse { // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.aws.lambda.kinesis/BatchItemFailure>) // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.<init>|<init>(kotlin.collections.List<com.steamstreet.aws.lambda.kinesis.BatchItemFailure>){}[0]
+
+    final val batchItemFailures // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.batchItemFailures|{}batchItemFailures[0]
+        final fun <get-batchItemFailures>(): kotlin.collections/List<com.steamstreet.aws.lambda.kinesis/BatchItemFailure> // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.batchItemFailures.<get-batchItemFailures>|<get-batchItemFailures>(){}[0]
+
+    final fun component1(): kotlin.collections/List<com.steamstreet.aws.lambda.kinesis/BatchItemFailure> // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.component1|component1(){}[0]
+    final fun copy(kotlin.collections/List<com.steamstreet.aws.lambda.kinesis/BatchItemFailure> = ...): com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.copy|copy(kotlin.collections.List<com.steamstreet.aws.lambda.kinesis.BatchItemFailure>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse> { // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse) // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.kinesis.BatchItemFailuresResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse> // com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo { // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String, kotlin.time/Instant? = ..., kotlin.time/Instant? = ..., kotlin/Int, kotlin/String) // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.time.Instant?;kotlin.time.Instant?;kotlin.Int;kotlin.String){}[0]
+
+    final val approximateArrivalOfFirstRecord // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.approximateArrivalOfFirstRecord|{}approximateArrivalOfFirstRecord[0]
+        final fun <get-approximateArrivalOfFirstRecord>(): kotlin.time/Instant? // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.approximateArrivalOfFirstRecord.<get-approximateArrivalOfFirstRecord>|<get-approximateArrivalOfFirstRecord>(){}[0]
+    final val approximateArrivalOfLastRecord // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.approximateArrivalOfLastRecord|{}approximateArrivalOfLastRecord[0]
+        final fun <get-approximateArrivalOfLastRecord>(): kotlin.time/Instant? // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.approximateArrivalOfLastRecord.<get-approximateArrivalOfLastRecord>|<get-approximateArrivalOfLastRecord>(){}[0]
+    final val batchSize // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.batchSize|{}batchSize[0]
+        final fun <get-batchSize>(): kotlin/Int // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.batchSize.<get-batchSize>|<get-batchSize>(){}[0]
+    final val endSequenceNumber // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.endSequenceNumber|{}endSequenceNumber[0]
+        final fun <get-endSequenceNumber>(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.endSequenceNumber.<get-endSequenceNumber>|<get-endSequenceNumber>(){}[0]
+    final val shardId // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.shardId|{}shardId[0]
+        final fun <get-shardId>(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.shardId.<get-shardId>|<get-shardId>(){}[0]
+    final val startSequenceNumber // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.startSequenceNumber|{}startSequenceNumber[0]
+        final fun <get-startSequenceNumber>(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.startSequenceNumber.<get-startSequenceNumber>|<get-startSequenceNumber>(){}[0]
+    final val streamArn // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.streamArn|{}streamArn[0]
+        final fun <get-streamArn>(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.streamArn.<get-streamArn>|<get-streamArn>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.component2|component2(){}[0]
+    final fun component3(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.component3|component3(){}[0]
+    final fun component4(): kotlin.time/Instant? // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.component4|component4(){}[0]
+    final fun component5(): kotlin.time/Instant? // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.component5|component5(){}[0]
+    final fun component6(): kotlin/Int // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.component6|component6(){}[0]
+    final fun component7(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.component7|component7(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin.time/Instant? = ..., kotlin.time/Instant? = ..., kotlin/Int = ..., kotlin/String = ...): com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.copy|copy(kotlin.String;kotlin.String;kotlin.String;kotlin.time.Instant?;kotlin.time.Instant?;kotlin.Int;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo> { // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo) // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.kinesis.KinesisBatchInfo){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo> // com.steamstreet.aws.lambda.kinesis/KinesisBatchInfo.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.lambda.kinesis/KinesisDetails { // com.steamstreet.aws.lambda.kinesis/KinesisDetails|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/Double) // com.steamstreet.aws.lambda.kinesis/KinesisDetails.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.Double){}[0]
+
+    final val approximateArrivalTimestamp // com.steamstreet.aws.lambda.kinesis/KinesisDetails.approximateArrivalTimestamp|{}approximateArrivalTimestamp[0]
+        final fun <get-approximateArrivalTimestamp>(): kotlin/Double // com.steamstreet.aws.lambda.kinesis/KinesisDetails.approximateArrivalTimestamp.<get-approximateArrivalTimestamp>|<get-approximateArrivalTimestamp>(){}[0]
+    final val data // com.steamstreet.aws.lambda.kinesis/KinesisDetails.data|{}data[0]
+        final fun <get-data>(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisDetails.data.<get-data>|<get-data>(){}[0]
+    final val kinesisSchemaVersion // com.steamstreet.aws.lambda.kinesis/KinesisDetails.kinesisSchemaVersion|{}kinesisSchemaVersion[0]
+        final fun <get-kinesisSchemaVersion>(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisDetails.kinesisSchemaVersion.<get-kinesisSchemaVersion>|<get-kinesisSchemaVersion>(){}[0]
+    final val partitionKey // com.steamstreet.aws.lambda.kinesis/KinesisDetails.partitionKey|{}partitionKey[0]
+        final fun <get-partitionKey>(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisDetails.partitionKey.<get-partitionKey>|<get-partitionKey>(){}[0]
+    final val sequenceNumber // com.steamstreet.aws.lambda.kinesis/KinesisDetails.sequenceNumber|{}sequenceNumber[0]
+        final fun <get-sequenceNumber>(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisDetails.sequenceNumber.<get-sequenceNumber>|<get-sequenceNumber>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisDetails.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisDetails.component2|component2(){}[0]
+    final fun component3(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisDetails.component3|component3(){}[0]
+    final fun component4(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisDetails.component4|component4(){}[0]
+    final fun component5(): kotlin/Double // com.steamstreet.aws.lambda.kinesis/KinesisDetails.component5|component5(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/Double = ...): com.steamstreet.aws.lambda.kinesis/KinesisDetails // com.steamstreet.aws.lambda.kinesis/KinesisDetails.copy|copy(kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.Double){}[0]
+    final fun decodedData(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisDetails.decodedData|decodedData(){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.kinesis/KinesisDetails.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.kinesis/KinesisDetails.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisDetails.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.kinesis/KinesisDetails> { // com.steamstreet.aws.lambda.kinesis/KinesisDetails.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.kinesis/KinesisDetails.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.kinesis/KinesisDetails.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.kinesis/KinesisDetails.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.kinesis/KinesisDetails // com.steamstreet.aws.lambda.kinesis/KinesisDetails.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.kinesis/KinesisDetails) // com.steamstreet.aws.lambda.kinesis/KinesisDetails.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.kinesis.KinesisDetails){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.kinesis/KinesisDetails.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.kinesis/KinesisDetails> // com.steamstreet.aws.lambda.kinesis/KinesisDetails.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.lambda.kinesis/KinesisRecord { // com.steamstreet.aws.lambda.kinesis/KinesisRecord|null[0]
+    constructor <init>(com.steamstreet.aws.lambda.kinesis/KinesisDetails, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.aws.lambda.kinesis/KinesisRecord.<init>|<init>(com.steamstreet.aws.lambda.kinesis.KinesisDetails;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val awsRegion // com.steamstreet.aws.lambda.kinesis/KinesisRecord.awsRegion|{}awsRegion[0]
+        final fun <get-awsRegion>(): kotlin/String? // com.steamstreet.aws.lambda.kinesis/KinesisRecord.awsRegion.<get-awsRegion>|<get-awsRegion>(){}[0]
+    final val eventID // com.steamstreet.aws.lambda.kinesis/KinesisRecord.eventID|{}eventID[0]
+        final fun <get-eventID>(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisRecord.eventID.<get-eventID>|<get-eventID>(){}[0]
+    final val eventName // com.steamstreet.aws.lambda.kinesis/KinesisRecord.eventName|{}eventName[0]
+        final fun <get-eventName>(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisRecord.eventName.<get-eventName>|<get-eventName>(){}[0]
+    final val eventSource // com.steamstreet.aws.lambda.kinesis/KinesisRecord.eventSource|{}eventSource[0]
+        final fun <get-eventSource>(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisRecord.eventSource.<get-eventSource>|<get-eventSource>(){}[0]
+    final val eventSourceARN // com.steamstreet.aws.lambda.kinesis/KinesisRecord.eventSourceARN|{}eventSourceARN[0]
+        final fun <get-eventSourceARN>(): kotlin/String? // com.steamstreet.aws.lambda.kinesis/KinesisRecord.eventSourceARN.<get-eventSourceARN>|<get-eventSourceARN>(){}[0]
+    final val eventVersion // com.steamstreet.aws.lambda.kinesis/KinesisRecord.eventVersion|{}eventVersion[0]
+        final fun <get-eventVersion>(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisRecord.eventVersion.<get-eventVersion>|<get-eventVersion>(){}[0]
+    final val invokeIdentityArn // com.steamstreet.aws.lambda.kinesis/KinesisRecord.invokeIdentityArn|{}invokeIdentityArn[0]
+        final fun <get-invokeIdentityArn>(): kotlin/String? // com.steamstreet.aws.lambda.kinesis/KinesisRecord.invokeIdentityArn.<get-invokeIdentityArn>|<get-invokeIdentityArn>(){}[0]
+    final val kinesis // com.steamstreet.aws.lambda.kinesis/KinesisRecord.kinesis|{}kinesis[0]
+        final fun <get-kinesis>(): com.steamstreet.aws.lambda.kinesis/KinesisDetails // com.steamstreet.aws.lambda.kinesis/KinesisRecord.kinesis.<get-kinesis>|<get-kinesis>(){}[0]
+
+    final fun component1(): com.steamstreet.aws.lambda.kinesis/KinesisDetails // com.steamstreet.aws.lambda.kinesis/KinesisRecord.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisRecord.component2|component2(){}[0]
+    final fun component3(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisRecord.component3|component3(){}[0]
+    final fun component4(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisRecord.component4|component4(){}[0]
+    final fun component5(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisRecord.component5|component5(){}[0]
+    final fun component6(): kotlin/String? // com.steamstreet.aws.lambda.kinesis/KinesisRecord.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // com.steamstreet.aws.lambda.kinesis/KinesisRecord.component7|component7(){}[0]
+    final fun component8(): kotlin/String? // com.steamstreet.aws.lambda.kinesis/KinesisRecord.component8|component8(){}[0]
+    final fun copy(com.steamstreet.aws.lambda.kinesis/KinesisDetails = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.aws.lambda.kinesis/KinesisRecord // com.steamstreet.aws.lambda.kinesis/KinesisRecord.copy|copy(com.steamstreet.aws.lambda.kinesis.KinesisDetails;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.kinesis/KinesisRecord.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.kinesis/KinesisRecord.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisRecord.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.kinesis/KinesisRecord> { // com.steamstreet.aws.lambda.kinesis/KinesisRecord.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.kinesis/KinesisRecord.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.kinesis/KinesisRecord.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.kinesis/KinesisRecord.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.kinesis/KinesisRecord // com.steamstreet.aws.lambda.kinesis/KinesisRecord.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.kinesis/KinesisRecord) // com.steamstreet.aws.lambda.kinesis/KinesisRecord.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.kinesis.KinesisRecord){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.kinesis/KinesisRecord.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.kinesis/KinesisRecord> // com.steamstreet.aws.lambda.kinesis/KinesisRecord.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.aws.lambda.kinesis/KinesisRecords { // com.steamstreet.aws.lambda.kinesis/KinesisRecords|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.aws.lambda.kinesis/KinesisRecord>) // com.steamstreet.aws.lambda.kinesis/KinesisRecords.<init>|<init>(kotlin.collections.List<com.steamstreet.aws.lambda.kinesis.KinesisRecord>){}[0]
+
+    final val Records // com.steamstreet.aws.lambda.kinesis/KinesisRecords.Records|{}Records[0]
+        final fun <get-Records>(): kotlin.collections/List<com.steamstreet.aws.lambda.kinesis/KinesisRecord> // com.steamstreet.aws.lambda.kinesis/KinesisRecords.Records.<get-Records>|<get-Records>(){}[0]
+
+    final fun component1(): kotlin.collections/List<com.steamstreet.aws.lambda.kinesis/KinesisRecord> // com.steamstreet.aws.lambda.kinesis/KinesisRecords.component1|component1(){}[0]
+    final fun copy(kotlin.collections/List<com.steamstreet.aws.lambda.kinesis/KinesisRecord> = ...): com.steamstreet.aws.lambda.kinesis/KinesisRecords // com.steamstreet.aws.lambda.kinesis/KinesisRecords.copy|copy(kotlin.collections.List<com.steamstreet.aws.lambda.kinesis.KinesisRecord>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.aws.lambda.kinesis/KinesisRecords.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.aws.lambda.kinesis/KinesisRecords.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.aws.lambda.kinesis/KinesisRecords.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.aws.lambda.kinesis/KinesisRecords> { // com.steamstreet.aws.lambda.kinesis/KinesisRecords.$serializer|null[0]
+        final val descriptor // com.steamstreet.aws.lambda.kinesis/KinesisRecords.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.aws.lambda.kinesis/KinesisRecords.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.aws.lambda.kinesis/KinesisRecords.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.aws.lambda.kinesis/KinesisRecords // com.steamstreet.aws.lambda.kinesis/KinesisRecords.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.aws.lambda.kinesis/KinesisRecords) // com.steamstreet.aws.lambda.kinesis/KinesisRecords.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.aws.lambda.kinesis.KinesisRecords){}[0]
+    }
+
+    final object Companion { // com.steamstreet.aws.lambda.kinesis/KinesisRecords.Companion|null[0]
+        final val $childSerializers // com.steamstreet.aws.lambda.kinesis/KinesisRecords.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.aws.lambda.kinesis/KinesisRecords> // com.steamstreet.aws.lambda.kinesis/KinesisRecords.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final fun com.steamstreet.aws.lambda.kinesis/kinesisBatchLambda(kotlin/Boolean = ..., kotlin.coroutines/SuspendFunction0<kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction1<com.steamstreet.aws.lambda.kinesis/KinesisRecord, kotlin/Unit>) // com.steamstreet.aws.lambda.kinesis/kinesisBatchLambda|kinesisBatchLambda(kotlin.Boolean;kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.coroutines.SuspendFunction1<com.steamstreet.aws.lambda.kinesis.KinesisRecord,kotlin.Unit>){}[0]
+final fun com.steamstreet.aws.lambda.kinesis/kinesisLambda(kotlin/Boolean = ..., kotlin.coroutines/SuspendFunction0<kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction1<com.steamstreet.aws.lambda.kinesis/KinesisRecord, kotlin/Unit>) // com.steamstreet.aws.lambda.kinesis/kinesisLambda|kinesisLambda(kotlin.Boolean;kotlin.coroutines.SuspendFunction0<kotlin.Unit>;kotlin.coroutines.SuspendFunction1<com.steamstreet.aws.lambda.kinesis.KinesisRecord,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.aws.lambda.kinesis/KinesisRecords).com.steamstreet.aws.lambda.kinesis/processRecords(kotlin/Boolean = ..., kotlin.coroutines/SuspendFunction1<com.steamstreet.aws.lambda.kinesis/KinesisRecord, kotlin/Unit>) // com.steamstreet.aws.lambda.kinesis/processRecords|processRecords@com.steamstreet.aws.lambda.kinesis.KinesisRecords(kotlin.Boolean;kotlin.coroutines.SuspendFunction1<com.steamstreet.aws.lambda.kinesis.KinesisRecord,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.aws.lambda.kinesis/KinesisRecords).com.steamstreet.aws.lambda.kinesis/processRecordsWithFailures(kotlin/Boolean = ..., kotlin.coroutines/SuspendFunction1<com.steamstreet.aws.lambda.kinesis/KinesisRecord, kotlin/Unit>): com.steamstreet.aws.lambda.kinesis/BatchItemFailuresResponse // com.steamstreet.aws.lambda.kinesis/processRecordsWithFailures|processRecordsWithFailures@com.steamstreet.aws.lambda.kinesis.KinesisRecords(kotlin.Boolean;kotlin.coroutines.SuspendFunction1<com.steamstreet.aws.lambda.kinesis.KinesisRecord,kotlin.Unit>){}[0]

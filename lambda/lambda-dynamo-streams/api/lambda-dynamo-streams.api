@@ -6,12 +6,12 @@ public class com/steamstreet/aws/lambda/DynamoKinesisStreamHandler : com/steamst
 	public fun <init> (ZZ)V
 	public synthetic fun <init> (ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getEnableBatchItemFailures ()Z
-	public final fun getLogFailures ()Ljava/util/logging/Level;
+	public final fun getLogFailures ()Lcom/steamstreet/aws/lambda/StreamFailureLogLevel;
 	public fun handle (Lcom/steamstreet/aws/lambda/kinesis/KinesisRecords;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	protected fun handle (Lcom/steamstreet/dynamokt/DynamoStreamRecords;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun handle (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun handleRecord (Lcom/steamstreet/dynamokt/DynamoStreamEvent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun setLogFailures (Ljava/util/logging/Level;)V
+	public final fun setLogFailures (Lcom/steamstreet/aws/lambda/StreamFailureLogLevel;)V
 }
 
 public abstract class com/steamstreet/aws/lambda/DynamoKtStreamHandler : com/steamstreet/aws/lambda/IOLambda {
@@ -19,7 +19,7 @@ public abstract class com/steamstreet/aws/lambda/DynamoKtStreamHandler : com/ste
 	public synthetic fun <init> (Lcom/steamstreet/dynamokt/DynamoKt;ZZLaws/sdk/kotlin/services/kinesis/KinesisClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	protected final fun getDynamoKtSession ()Lcom/steamstreet/dynamokt/DynamoKtSession;
 	public final fun getEnableBatchItemFailures ()Z
-	public final fun getLogFailures ()Ljava/util/logging/Level;
+	public final fun getLogFailures ()Lcom/steamstreet/aws/lambda/StreamFailureLogLevel;
 	public fun getLogIncoming ()Z
 	public fun getLogOutgoing ()Z
 	public final fun getLogRecords ()Z
@@ -30,15 +30,10 @@ public abstract class com/steamstreet/aws/lambda/DynamoKtStreamHandler : com/ste
 	protected fun logRecord (Lkotlin/jvm/functions/Function0;)V
 	protected fun onItemUpdate (Lcom/steamstreet/dynamokt/Item;Lcom/steamstreet/dynamokt/Item;Lcom/steamstreet/dynamokt/DynamoStreamEvent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	protected fun processKinesisBatchRecord (Lcom/steamstreet/aws/lambda/kinesis/KinesisBatchInfo;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun setLogFailures (Ljava/util/logging/Level;)V
+	public final fun setLogFailures (Lcom/steamstreet/aws/lambda/StreamFailureLogLevel;)V
 	public fun setLogIncoming (Z)V
 	public fun setLogOutgoing (Z)V
 	public final fun setLogRecords (Z)V
-}
-
-public final class com/steamstreet/aws/lambda/DynamoKtStreamHandlerKt {
-	public static final fun StreamHandlingException (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun StreamHandlingException$default (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public abstract class com/steamstreet/aws/lambda/DynamoStreamHandler : com/steamstreet/aws/lambda/InputLambda, com/steamstreet/aws/lambda/DynamoEventHandler {
@@ -47,6 +42,25 @@ public abstract class com/steamstreet/aws/lambda/DynamoStreamHandler : com/steam
 	public fun handle (Lcom/steamstreet/dynamokt/DynamoStreamRecords;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun handle (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	protected final fun setAsync (Z)V
+}
+
+public final class com/steamstreet/aws/lambda/DynamoStreamProcessingKt {
+	public static final fun StreamHandlingException (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun StreamHandlingException$default (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun batchFailureResponse (Ljava/util/List;Ljava/util/List;ZLcom/steamstreet/aws/lambda/StreamFailureLogLevel;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun batchFailureResponse$default (Ljava/util/List;Ljava/util/List;ZLcom/steamstreet/aws/lambda/StreamFailureLogLevel;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun parseDynamoStreamPayload (Lkotlinx/serialization/json/JsonElement;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun parseDynamoStreamPayload$default (Lkotlinx/serialization/json/JsonElement;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun processStreamRecords (Lcom/steamstreet/dynamokt/DynamoStreamRecords;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun processStreamRecords (Ljava/util/List;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun processStreamRecords$default (Lcom/steamstreet/dynamokt/DynamoStreamRecords;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun processStreamRecords$default (Ljava/util/List;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun processWithFailures (Ljava/util/List;ZZLcom/steamstreet/aws/lambda/StreamFailureLogLevel;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun processWithFailures$default (Ljava/util/List;ZZLcom/steamstreet/aws/lambda/StreamFailureLogLevel;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/aws/lambda/KinesisRedriveKt {
+	public static final fun resolveRedrive (Lcom/steamstreet/awskt/kinesis/Kinesis;Lcom/steamstreet/aws/lambda/kinesis/KinesisBatchInfo;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class com/steamstreet/aws/lambda/RecordInfo {
@@ -60,6 +74,15 @@ public final class com/steamstreet/aws/lambda/RecordInfo {
 	public final fun getIdentifier ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/aws/lambda/StreamFailureLogLevel : java/lang/Enum {
+	public static final field INFO Lcom/steamstreet/aws/lambda/StreamFailureLogLevel;
+	public static final field SEVERE Lcom/steamstreet/aws/lambda/StreamFailureLogLevel;
+	public static final field WARNING Lcom/steamstreet/aws/lambda/StreamFailureLogLevel;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/aws/lambda/StreamFailureLogLevel;
+	public static fun values ()[Lcom/steamstreet/aws/lambda/StreamFailureLogLevel;
 }
 
 public final class com/steamstreet/aws/lambda/StreamHandlingException : com/steamstreet/exceptions/StatefulException {

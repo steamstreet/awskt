@@ -14,6 +14,11 @@ import com.steamstreet.awskt.bedrock.InferenceConfiguration
 import com.steamstreet.awskt.bedrock.Message as BedrockMessage
 import com.steamstreet.awskt.bedrock.ask
 import com.steamstreet.awskt.bedrock.textDeltas
+import com.steamstreet.awskt.kinesis.Kinesis
+import com.steamstreet.awskt.kinesis.GetShardIteratorRequest
+import com.steamstreet.awskt.kinesis.ShardIteratorType
+import com.steamstreet.awskt.kinesis.putRecord
+import com.steamstreet.awskt.kinesis.readRecords
 import com.steamstreet.awskt.kms.Kms
 import com.steamstreet.awskt.logs.Logs
 import com.steamstreet.awskt.logs.StartQueryRequest
@@ -163,6 +168,10 @@ private val secretsClient by lazy {
     SecretsManager { region = Env["AWS_REGION"]; credentialsProvider = credentials; caInfo = CA_BUNDLE }
 }
 
+private val kinesisClient by lazy {
+    Kinesis { region = Env["AWS_REGION"]; credentialsProvider = credentials; caInfo = CA_BUNDLE }
+}
+
 private val kmsClient by lazy {
     Kms { region = Env["AWS_REGION"]; credentialsProvider = credentials; caInfo = CA_BUNDLE }
 }
@@ -255,6 +264,28 @@ private suspend fun runServiceProbes(requestId: String): List<ProbeResult> = lis
         val ours = received.filter { it.body == marker }
         ours.forEach { sqsClient.deleteMessage(queue, it) }
         "sent 1, received ${ours.size} of ${received.size}, deleted ${ours.size}"
+    },
+
+    // Put a record, then read it back from the shard it landed on. This exercises the whole
+    // GetShardIterator -> GetRecords path that `lambda-dynamo-streams` uses for a DLQ redrive,
+    // and — like the KMS probe — a client that mishandles base64 blobs cannot recover its own bytes.
+    probe("kinesis", "SMOKE_STREAM_ARN") { streamArn ->
+        val marker = "awskt-smoke-$requestId"
+        val put = kinesisClient.putRecord(streamArn, partitionKey = marker, data = marker)
+
+        val iterator = kinesisClient.getShardIterator(
+            GetShardIteratorRequest(
+                shardId = put.shardId,
+                shardIteratorType = ShardIteratorType.AT_SEQUENCE_NUMBER,
+                streamArn = streamArn,
+                startingSequenceNumber = put.sequenceNumber,
+            )
+        ).shardIterator ?: error("Kinesis returned no shard iterator")
+
+        val ours = kinesisClient.readRecords(iterator, limit = 100, streamArn = streamArn)
+            .filter { it.data.decodeToString() == marker }
+        require(ours.isNotEmpty()) { "put record did not come back from its own shard" }
+        "put ${put.sequenceNumber} on ${put.shardId}, read it back"
     },
 
     probe("sns", "SMOKE_TOPIC_ARN") { topic ->

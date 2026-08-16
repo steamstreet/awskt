@@ -15,6 +15,8 @@ abstract interface com.steamstreet.aws.lambda/LambdaContext { // com.steamstreet
         abstract fun <get-requestId>(): kotlin/String // com.steamstreet.aws.lambda/LambdaContext.requestId.<get-requestId>|<get-requestId>(){}[0]
 }
 
+final val com.steamstreet.aws.lambda/lambdaIODispatcher // com.steamstreet.aws.lambda/lambdaIODispatcher|{}lambdaIODispatcher[0]
+    final fun <get-lambdaIODispatcher>(): kotlinx.coroutines/CoroutineDispatcher // com.steamstreet.aws.lambda/lambdaIODispatcher.<get-lambdaIODispatcher>|<get-lambdaIODispatcher>(){}[0]
 final val com.steamstreet.aws.lambda/lambdaJson // com.steamstreet.aws.lambda/lambdaJson|{}lambdaJson[0]
     final fun <get-lambdaJson>(): kotlinx.serialization.json/Json // com.steamstreet.aws.lambda/lambdaJson.<get-lambdaJson>|<get-lambdaJson>(){}[0]
 

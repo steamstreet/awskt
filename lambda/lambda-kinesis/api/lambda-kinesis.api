@@ -137,6 +137,13 @@ public abstract class com/steamstreet/aws/lambda/kinesis/KinesisHandler : com/st
 	protected final fun setAsync (Z)V
 }
 
+public final class com/steamstreet/aws/lambda/kinesis/KinesisModelKt {
+	public static final fun processRecords (Lcom/steamstreet/aws/lambda/kinesis/KinesisRecords;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun processRecords$default (Lcom/steamstreet/aws/lambda/kinesis/KinesisRecords;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun processRecordsWithFailures (Lcom/steamstreet/aws/lambda/kinesis/KinesisRecords;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun processRecordsWithFailures$default (Lcom/steamstreet/aws/lambda/kinesis/KinesisRecords;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
 public final class com/steamstreet/aws/lambda/kinesis/KinesisRecord {
 	public static final field Companion Lcom/steamstreet/aws/lambda/kinesis/KinesisRecord$Companion;
 	public fun <init> (Lcom/steamstreet/aws/lambda/kinesis/KinesisDetails;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
