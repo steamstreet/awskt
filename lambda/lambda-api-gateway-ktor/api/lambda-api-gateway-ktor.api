@@ -36,12 +36,6 @@ public abstract class com/steamstreet/aws/lambda/apigateway/ktor/APIGatewayV2Lam
 	protected abstract fun module (Lio/ktor/server/application/Application;)V
 }
 
-public final class com/steamstreet/aws/lambda/apigateway/ktor/ApiGatewayJWTConfig {
-	public fun <init> ()V
-	public final fun getMockPrinciple ()Lkotlin/jvm/functions/Function0;
-	public final fun setMockPrinciple (Lkotlin/jvm/functions/Function0;)V
-}
-
 public final class com/steamstreet/aws/lambda/apigateway/ktor/ApiGatewayKtorCall : com/steamstreet/aws/lambda/apigateway/ktor/ApiGatewayKtorCallBase {
 	public fun <init> (Lio/ktor/server/application/Application;Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayProxyRequest;)V
 	public fun getAttributes ()Lio/ktor/util/Attributes;
@@ -66,10 +60,5 @@ public final class com/steamstreet/aws/lambda/apigateway/ktor/ApiGatewayV2KtorCa
 	public synthetic fun getRequest ()Lio/ktor/server/request/ApplicationRequest;
 	public fun getRequest ()Lio/ktor/server/request/PipelineRequest;
 	public final fun response (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class com/steamstreet/aws/lambda/apigateway/ktor/JWTKt {
-	public static final fun JWTPrincipal (Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayProxyRequest;)Lio/ktor/server/auth/jwt/JWTPrincipal;
-	public static final fun getApiGatewayJWT ()Lio/ktor/server/application/ApplicationPlugin;
 }
 

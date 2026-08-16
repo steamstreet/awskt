@@ -1,0 +1,11 @@
+public final class com/steamstreet/aws/lambda/apigateway/ktor/ApiGatewayJWTConfig {
+	public fun <init> ()V
+	public final fun getMockPrinciple ()Lkotlin/jvm/functions/Function0;
+	public final fun setMockPrinciple (Lkotlin/jvm/functions/Function0;)V
+}
+
+public final class com/steamstreet/aws/lambda/apigateway/ktor/JWTKt {
+	public static final fun JWTPrincipal (Lcom/steamstreet/aws/lambda/apigateway/ApiGatewayProxyRequest;)Lio/ktor/server/auth/jwt/JWTPrincipal;
+	public static final fun getApiGatewayJWT ()Lio/ktor/server/application/ApplicationPlugin;
+}
+

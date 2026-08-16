@@ -154,6 +154,36 @@ class KtorHandler : ApiGatewayKtorHandler() {
 }
 ```
 
+### lambda-api-gateway-ktor-jwt
+`JWTPrincipal` and the `ApiGatewayJWT` authentication plugin, for reading Cognito claims off an API
+Gateway request. JVM only — `ktor-server-auth-jwt` wraps `com.auth0:java-jwt` and publishes no klibs.
+
+**Usage:**
+```kotlin
+class KtorHandler : APIGatewayLambdaServer() {
+    override fun Application.module() {
+        install(ApiGatewayJWT)
+        routing {
+            authenticate("api-gateway-jwt") {
+                get("/me") {
+                    val principal = call.principal<JWTPrincipal>()
+                    call.respond(principal!!.subject)
+                }
+            }
+        }
+    }
+}
+```
+
+> **Breaking change in 3.0.** These declarations used to ship inside `lambda-api-gateway-ktor`, which
+> made every consumer of that adapter resolve `ktor-server-auth-jwt`, `com.auth0:java-jwt` and
+> `com.auth0:jwks-rsa` whether or not it used them. They now live in this separate artifact, in the
+> **same package**, so no imports change — but a build that uses `JWTPrincipal` or `ApiGatewayJWT`
+> and does not already declare `ktor-server-auth-jwt` itself must add:
+> ```kotlin
+> implementation("com.steamstreet:awskt-lambda-api-gateway-ktor-jwt:VERSION")
+> ```
+
 ### lambda-appsync
 AppSync resolver support for GraphQL APIs. Build GraphQL resolvers with type safety.
 
