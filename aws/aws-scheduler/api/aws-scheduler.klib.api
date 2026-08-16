@@ -1,0 +1,711 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:aws-scheduler>
+abstract interface com.steamstreet.awskt.scheduler/Scheduler : kotlin/AutoCloseable { // com.steamstreet.awskt.scheduler/Scheduler|null[0]
+    abstract val client // com.steamstreet.awskt.scheduler/Scheduler.client|{}client[0]
+        abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.scheduler/Scheduler.client.<get-client>|<get-client>(){}[0]
+
+    abstract suspend fun createSchedule(com.steamstreet.awskt.scheduler/CreateScheduleRequest): com.steamstreet.awskt.scheduler/CreateScheduleResponse // com.steamstreet.awskt.scheduler/Scheduler.createSchedule|createSchedule(com.steamstreet.awskt.scheduler.CreateScheduleRequest){}[0]
+    abstract suspend fun deleteSchedule(com.steamstreet.awskt.scheduler/DeleteScheduleRequest) // com.steamstreet.awskt.scheduler/Scheduler.deleteSchedule|deleteSchedule(com.steamstreet.awskt.scheduler.DeleteScheduleRequest){}[0]
+    abstract suspend fun getSchedule(com.steamstreet.awskt.scheduler/GetScheduleRequest): com.steamstreet.awskt.scheduler/GetScheduleResponse // com.steamstreet.awskt.scheduler/Scheduler.getSchedule|getSchedule(com.steamstreet.awskt.scheduler.GetScheduleRequest){}[0]
+    abstract suspend fun listSchedules(com.steamstreet.awskt.scheduler/ListSchedulesRequest): com.steamstreet.awskt.scheduler/ListSchedulesResponse // com.steamstreet.awskt.scheduler/Scheduler.listSchedules|listSchedules(com.steamstreet.awskt.scheduler.ListSchedulesRequest){}[0]
+    abstract suspend fun updateSchedule(com.steamstreet.awskt.scheduler/UpdateScheduleRequest): com.steamstreet.awskt.scheduler/UpdateScheduleResponse // com.steamstreet.awskt.scheduler/Scheduler.updateSchedule|updateSchedule(com.steamstreet.awskt.scheduler.UpdateScheduleRequest){}[0]
+}
+
+final class com.steamstreet.awskt.scheduler/ConflictException : com.steamstreet.awskt.scheduler/SchedulerException { // com.steamstreet.awskt.scheduler/ConflictException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.scheduler/ConflictException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.scheduler/CreateScheduleRequest { // com.steamstreet.awskt.scheduler/CreateScheduleRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String, com.steamstreet.awskt.scheduler/Target, com.steamstreet.awskt.scheduler/FlexibleTimeWindow = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Double? = ..., kotlin/Double? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.scheduler/CreateScheduleRequest.<init>|<init>(kotlin.String;kotlin.String;com.steamstreet.awskt.scheduler.Target;com.steamstreet.awskt.scheduler.FlexibleTimeWindow;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.Double?;kotlin.Double?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val actionAfterCompletion // com.steamstreet.awskt.scheduler/CreateScheduleRequest.actionAfterCompletion|{}actionAfterCompletion[0]
+        final fun <get-actionAfterCompletion>(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.actionAfterCompletion.<get-actionAfterCompletion>|<get-actionAfterCompletion>(){}[0]
+    final val clientToken // com.steamstreet.awskt.scheduler/CreateScheduleRequest.clientToken|{}clientToken[0]
+        final fun <get-clientToken>(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.clientToken.<get-clientToken>|<get-clientToken>(){}[0]
+    final val description // com.steamstreet.awskt.scheduler/CreateScheduleRequest.description|{}description[0]
+        final fun <get-description>(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.description.<get-description>|<get-description>(){}[0]
+    final val endDate // com.steamstreet.awskt.scheduler/CreateScheduleRequest.endDate|{}endDate[0]
+        final fun <get-endDate>(): kotlin/Double? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.endDate.<get-endDate>|<get-endDate>(){}[0]
+    final val flexibleTimeWindow // com.steamstreet.awskt.scheduler/CreateScheduleRequest.flexibleTimeWindow|{}flexibleTimeWindow[0]
+        final fun <get-flexibleTimeWindow>(): com.steamstreet.awskt.scheduler/FlexibleTimeWindow // com.steamstreet.awskt.scheduler/CreateScheduleRequest.flexibleTimeWindow.<get-flexibleTimeWindow>|<get-flexibleTimeWindow>(){}[0]
+    final val groupName // com.steamstreet.awskt.scheduler/CreateScheduleRequest.groupName|{}groupName[0]
+        final fun <get-groupName>(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.groupName.<get-groupName>|<get-groupName>(){}[0]
+    final val kmsKeyArn // com.steamstreet.awskt.scheduler/CreateScheduleRequest.kmsKeyArn|{}kmsKeyArn[0]
+        final fun <get-kmsKeyArn>(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.kmsKeyArn.<get-kmsKeyArn>|<get-kmsKeyArn>(){}[0]
+    final val name // com.steamstreet.awskt.scheduler/CreateScheduleRequest.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.steamstreet.awskt.scheduler/CreateScheduleRequest.name.<get-name>|<get-name>(){}[0]
+    final val scheduleExpression // com.steamstreet.awskt.scheduler/CreateScheduleRequest.scheduleExpression|{}scheduleExpression[0]
+        final fun <get-scheduleExpression>(): kotlin/String // com.steamstreet.awskt.scheduler/CreateScheduleRequest.scheduleExpression.<get-scheduleExpression>|<get-scheduleExpression>(){}[0]
+    final val scheduleExpressionTimezone // com.steamstreet.awskt.scheduler/CreateScheduleRequest.scheduleExpressionTimezone|{}scheduleExpressionTimezone[0]
+        final fun <get-scheduleExpressionTimezone>(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.scheduleExpressionTimezone.<get-scheduleExpressionTimezone>|<get-scheduleExpressionTimezone>(){}[0]
+    final val startDate // com.steamstreet.awskt.scheduler/CreateScheduleRequest.startDate|{}startDate[0]
+        final fun <get-startDate>(): kotlin/Double? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.startDate.<get-startDate>|<get-startDate>(){}[0]
+    final val state // com.steamstreet.awskt.scheduler/CreateScheduleRequest.state|{}state[0]
+        final fun <get-state>(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.state.<get-state>|<get-state>(){}[0]
+    final val target // com.steamstreet.awskt.scheduler/CreateScheduleRequest.target|{}target[0]
+        final fun <get-target>(): com.steamstreet.awskt.scheduler/Target // com.steamstreet.awskt.scheduler/CreateScheduleRequest.target.<get-target>|<get-target>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.scheduler/CreateScheduleRequest.component1|component1(){}[0]
+    final fun component10(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.component10|component10(){}[0]
+    final fun component11(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.component11|component11(){}[0]
+    final fun component12(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.component12|component12(){}[0]
+    final fun component13(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.component13|component13(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.scheduler/CreateScheduleRequest.component2|component2(){}[0]
+    final fun component3(): com.steamstreet.awskt.scheduler/Target // com.steamstreet.awskt.scheduler/CreateScheduleRequest.component3|component3(){}[0]
+    final fun component4(): com.steamstreet.awskt.scheduler/FlexibleTimeWindow // com.steamstreet.awskt.scheduler/CreateScheduleRequest.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.component5|component5(){}[0]
+    final fun component6(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.component7|component7(){}[0]
+    final fun component8(): kotlin/Double? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.component8|component8(){}[0]
+    final fun component9(): kotlin/Double? // com.steamstreet.awskt.scheduler/CreateScheduleRequest.component9|component9(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., com.steamstreet.awskt.scheduler/Target = ..., com.steamstreet.awskt.scheduler/FlexibleTimeWindow = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Double? = ..., kotlin/Double? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.scheduler/CreateScheduleRequest // com.steamstreet.awskt.scheduler/CreateScheduleRequest.copy|copy(kotlin.String;kotlin.String;com.steamstreet.awskt.scheduler.Target;com.steamstreet.awskt.scheduler.FlexibleTimeWindow;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.Double?;kotlin.Double?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/CreateScheduleRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/CreateScheduleRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/CreateScheduleRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.scheduler/CreateScheduleResponse { // com.steamstreet.awskt.scheduler/CreateScheduleResponse|null[0]
+    constructor <init>(kotlin/String? = ...) // com.steamstreet.awskt.scheduler/CreateScheduleResponse.<init>|<init>(kotlin.String?){}[0]
+
+    final val scheduleArn // com.steamstreet.awskt.scheduler/CreateScheduleResponse.scheduleArn|{}scheduleArn[0]
+        final fun <get-scheduleArn>(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleResponse.scheduleArn.<get-scheduleArn>|<get-scheduleArn>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.scheduler/CreateScheduleResponse.component1|component1(){}[0]
+    final fun copy(kotlin/String? = ...): com.steamstreet.awskt.scheduler/CreateScheduleResponse // com.steamstreet.awskt.scheduler/CreateScheduleResponse.copy|copy(kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/CreateScheduleResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/CreateScheduleResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/CreateScheduleResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.scheduler/CreateScheduleResponse> { // com.steamstreet.awskt.scheduler/CreateScheduleResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.scheduler/CreateScheduleResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.scheduler/CreateScheduleResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.scheduler/CreateScheduleResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.scheduler/CreateScheduleResponse // com.steamstreet.awskt.scheduler/CreateScheduleResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.scheduler/CreateScheduleResponse) // com.steamstreet.awskt.scheduler/CreateScheduleResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.scheduler.CreateScheduleResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.scheduler/CreateScheduleResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.scheduler/CreateScheduleResponse> // com.steamstreet.awskt.scheduler/CreateScheduleResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.scheduler/DeadLetterConfig { // com.steamstreet.awskt.scheduler/DeadLetterConfig|null[0]
+    constructor <init>(kotlin/String? = ...) // com.steamstreet.awskt.scheduler/DeadLetterConfig.<init>|<init>(kotlin.String?){}[0]
+
+    final val arn // com.steamstreet.awskt.scheduler/DeadLetterConfig.arn|{}arn[0]
+        final fun <get-arn>(): kotlin/String? // com.steamstreet.awskt.scheduler/DeadLetterConfig.arn.<get-arn>|<get-arn>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.scheduler/DeadLetterConfig.component1|component1(){}[0]
+    final fun copy(kotlin/String? = ...): com.steamstreet.awskt.scheduler/DeadLetterConfig // com.steamstreet.awskt.scheduler/DeadLetterConfig.copy|copy(kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/DeadLetterConfig.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/DeadLetterConfig.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/DeadLetterConfig.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.scheduler/DeadLetterConfig> { // com.steamstreet.awskt.scheduler/DeadLetterConfig.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.scheduler/DeadLetterConfig.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.scheduler/DeadLetterConfig.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.scheduler/DeadLetterConfig.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.scheduler/DeadLetterConfig // com.steamstreet.awskt.scheduler/DeadLetterConfig.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.scheduler/DeadLetterConfig) // com.steamstreet.awskt.scheduler/DeadLetterConfig.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.scheduler.DeadLetterConfig){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.scheduler/DeadLetterConfig.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.scheduler/DeadLetterConfig> // com.steamstreet.awskt.scheduler/DeadLetterConfig.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.scheduler/DeleteScheduleRequest { // com.steamstreet.awskt.scheduler/DeleteScheduleRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.scheduler/DeleteScheduleRequest.<init>|<init>(kotlin.String;kotlin.String?;kotlin.String?){}[0]
+
+    final val clientToken // com.steamstreet.awskt.scheduler/DeleteScheduleRequest.clientToken|{}clientToken[0]
+        final fun <get-clientToken>(): kotlin/String? // com.steamstreet.awskt.scheduler/DeleteScheduleRequest.clientToken.<get-clientToken>|<get-clientToken>(){}[0]
+    final val groupName // com.steamstreet.awskt.scheduler/DeleteScheduleRequest.groupName|{}groupName[0]
+        final fun <get-groupName>(): kotlin/String? // com.steamstreet.awskt.scheduler/DeleteScheduleRequest.groupName.<get-groupName>|<get-groupName>(){}[0]
+    final val name // com.steamstreet.awskt.scheduler/DeleteScheduleRequest.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.steamstreet.awskt.scheduler/DeleteScheduleRequest.name.<get-name>|<get-name>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.scheduler/DeleteScheduleRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.scheduler/DeleteScheduleRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.scheduler/DeleteScheduleRequest.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.scheduler/DeleteScheduleRequest // com.steamstreet.awskt.scheduler/DeleteScheduleRequest.copy|copy(kotlin.String;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/DeleteScheduleRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/DeleteScheduleRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/DeleteScheduleRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.scheduler/EventBridgeParameters { // com.steamstreet.awskt.scheduler/EventBridgeParameters|null[0]
+    constructor <init>(kotlin/String, kotlin/String) // com.steamstreet.awskt.scheduler/EventBridgeParameters.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val detailType // com.steamstreet.awskt.scheduler/EventBridgeParameters.detailType|{}detailType[0]
+        final fun <get-detailType>(): kotlin/String // com.steamstreet.awskt.scheduler/EventBridgeParameters.detailType.<get-detailType>|<get-detailType>(){}[0]
+    final val source // com.steamstreet.awskt.scheduler/EventBridgeParameters.source|{}source[0]
+        final fun <get-source>(): kotlin/String // com.steamstreet.awskt.scheduler/EventBridgeParameters.source.<get-source>|<get-source>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.scheduler/EventBridgeParameters.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.scheduler/EventBridgeParameters.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ...): com.steamstreet.awskt.scheduler/EventBridgeParameters // com.steamstreet.awskt.scheduler/EventBridgeParameters.copy|copy(kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/EventBridgeParameters.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/EventBridgeParameters.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/EventBridgeParameters.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.scheduler/EventBridgeParameters> { // com.steamstreet.awskt.scheduler/EventBridgeParameters.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.scheduler/EventBridgeParameters.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.scheduler/EventBridgeParameters.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.scheduler/EventBridgeParameters.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.scheduler/EventBridgeParameters // com.steamstreet.awskt.scheduler/EventBridgeParameters.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.scheduler/EventBridgeParameters) // com.steamstreet.awskt.scheduler/EventBridgeParameters.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.scheduler.EventBridgeParameters){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.scheduler/EventBridgeParameters.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.scheduler/EventBridgeParameters> // com.steamstreet.awskt.scheduler/EventBridgeParameters.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.scheduler/FlexibleTimeWindow { // com.steamstreet.awskt.scheduler/FlexibleTimeWindow|null[0]
+    constructor <init>(kotlin/String, kotlin/Int? = ...) // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.<init>|<init>(kotlin.String;kotlin.Int?){}[0]
+
+    final val maximumWindowInMinutes // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.maximumWindowInMinutes|{}maximumWindowInMinutes[0]
+        final fun <get-maximumWindowInMinutes>(): kotlin/Int? // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.maximumWindowInMinutes.<get-maximumWindowInMinutes>|<get-maximumWindowInMinutes>(){}[0]
+    final val mode // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.mode|{}mode[0]
+        final fun <get-mode>(): kotlin/String // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.mode.<get-mode>|<get-mode>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.component1|component1(){}[0]
+    final fun component2(): kotlin/Int? // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/Int? = ...): com.steamstreet.awskt.scheduler/FlexibleTimeWindow // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.copy|copy(kotlin.String;kotlin.Int?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.scheduler/FlexibleTimeWindow> { // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.scheduler/FlexibleTimeWindow // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.scheduler/FlexibleTimeWindow) // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.scheduler.FlexibleTimeWindow){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.Companion|null[0]
+        final fun flexible(kotlin/Int): com.steamstreet.awskt.scheduler/FlexibleTimeWindow // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.Companion.flexible|flexible(kotlin.Int){}[0]
+        final fun off(): com.steamstreet.awskt.scheduler/FlexibleTimeWindow // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.Companion.off|off(){}[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.scheduler/FlexibleTimeWindow> // com.steamstreet.awskt.scheduler/FlexibleTimeWindow.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.scheduler/GetScheduleRequest { // com.steamstreet.awskt.scheduler/GetScheduleRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ...) // com.steamstreet.awskt.scheduler/GetScheduleRequest.<init>|<init>(kotlin.String;kotlin.String?){}[0]
+
+    final val groupName // com.steamstreet.awskt.scheduler/GetScheduleRequest.groupName|{}groupName[0]
+        final fun <get-groupName>(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleRequest.groupName.<get-groupName>|<get-groupName>(){}[0]
+    final val name // com.steamstreet.awskt.scheduler/GetScheduleRequest.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.steamstreet.awskt.scheduler/GetScheduleRequest.name.<get-name>|<get-name>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.scheduler/GetScheduleRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleRequest.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ...): com.steamstreet.awskt.scheduler/GetScheduleRequest // com.steamstreet.awskt.scheduler/GetScheduleRequest.copy|copy(kotlin.String;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/GetScheduleRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/GetScheduleRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/GetScheduleRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.scheduler/GetScheduleResponse { // com.steamstreet.awskt.scheduler/GetScheduleResponse|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.scheduler/Target? = ..., com.steamstreet.awskt.scheduler/FlexibleTimeWindow? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Double? = ..., kotlin/Double? = ..., kotlin/Double? = ..., kotlin/Double? = ...) // com.steamstreet.awskt.scheduler/GetScheduleResponse.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;com.steamstreet.awskt.scheduler.Target?;com.steamstreet.awskt.scheduler.FlexibleTimeWindow?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.Double?;kotlin.Double?;kotlin.Double?;kotlin.Double?){}[0]
+
+    final val actionAfterCompletion // com.steamstreet.awskt.scheduler/GetScheduleResponse.actionAfterCompletion|{}actionAfterCompletion[0]
+        final fun <get-actionAfterCompletion>(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.actionAfterCompletion.<get-actionAfterCompletion>|<get-actionAfterCompletion>(){}[0]
+    final val arn // com.steamstreet.awskt.scheduler/GetScheduleResponse.arn|{}arn[0]
+        final fun <get-arn>(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.arn.<get-arn>|<get-arn>(){}[0]
+    final val creationDate // com.steamstreet.awskt.scheduler/GetScheduleResponse.creationDate|{}creationDate[0]
+        final fun <get-creationDate>(): kotlin/Double? // com.steamstreet.awskt.scheduler/GetScheduleResponse.creationDate.<get-creationDate>|<get-creationDate>(){}[0]
+    final val creationDateEpochMillis // com.steamstreet.awskt.scheduler/GetScheduleResponse.creationDateEpochMillis|{}creationDateEpochMillis[0]
+        final fun <get-creationDateEpochMillis>(): kotlin/Long? // com.steamstreet.awskt.scheduler/GetScheduleResponse.creationDateEpochMillis.<get-creationDateEpochMillis>|<get-creationDateEpochMillis>(){}[0]
+    final val description // com.steamstreet.awskt.scheduler/GetScheduleResponse.description|{}description[0]
+        final fun <get-description>(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.description.<get-description>|<get-description>(){}[0]
+    final val endDate // com.steamstreet.awskt.scheduler/GetScheduleResponse.endDate|{}endDate[0]
+        final fun <get-endDate>(): kotlin/Double? // com.steamstreet.awskt.scheduler/GetScheduleResponse.endDate.<get-endDate>|<get-endDate>(){}[0]
+    final val endDateEpochMillis // com.steamstreet.awskt.scheduler/GetScheduleResponse.endDateEpochMillis|{}endDateEpochMillis[0]
+        final fun <get-endDateEpochMillis>(): kotlin/Long? // com.steamstreet.awskt.scheduler/GetScheduleResponse.endDateEpochMillis.<get-endDateEpochMillis>|<get-endDateEpochMillis>(){}[0]
+    final val flexibleTimeWindow // com.steamstreet.awskt.scheduler/GetScheduleResponse.flexibleTimeWindow|{}flexibleTimeWindow[0]
+        final fun <get-flexibleTimeWindow>(): com.steamstreet.awskt.scheduler/FlexibleTimeWindow? // com.steamstreet.awskt.scheduler/GetScheduleResponse.flexibleTimeWindow.<get-flexibleTimeWindow>|<get-flexibleTimeWindow>(){}[0]
+    final val groupName // com.steamstreet.awskt.scheduler/GetScheduleResponse.groupName|{}groupName[0]
+        final fun <get-groupName>(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.groupName.<get-groupName>|<get-groupName>(){}[0]
+    final val kmsKeyArn // com.steamstreet.awskt.scheduler/GetScheduleResponse.kmsKeyArn|{}kmsKeyArn[0]
+        final fun <get-kmsKeyArn>(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.kmsKeyArn.<get-kmsKeyArn>|<get-kmsKeyArn>(){}[0]
+    final val lastModificationDate // com.steamstreet.awskt.scheduler/GetScheduleResponse.lastModificationDate|{}lastModificationDate[0]
+        final fun <get-lastModificationDate>(): kotlin/Double? // com.steamstreet.awskt.scheduler/GetScheduleResponse.lastModificationDate.<get-lastModificationDate>|<get-lastModificationDate>(){}[0]
+    final val lastModificationDateEpochMillis // com.steamstreet.awskt.scheduler/GetScheduleResponse.lastModificationDateEpochMillis|{}lastModificationDateEpochMillis[0]
+        final fun <get-lastModificationDateEpochMillis>(): kotlin/Long? // com.steamstreet.awskt.scheduler/GetScheduleResponse.lastModificationDateEpochMillis.<get-lastModificationDateEpochMillis>|<get-lastModificationDateEpochMillis>(){}[0]
+    final val name // com.steamstreet.awskt.scheduler/GetScheduleResponse.name|{}name[0]
+        final fun <get-name>(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.name.<get-name>|<get-name>(){}[0]
+    final val scheduleExpression // com.steamstreet.awskt.scheduler/GetScheduleResponse.scheduleExpression|{}scheduleExpression[0]
+        final fun <get-scheduleExpression>(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.scheduleExpression.<get-scheduleExpression>|<get-scheduleExpression>(){}[0]
+    final val scheduleExpressionTimezone // com.steamstreet.awskt.scheduler/GetScheduleResponse.scheduleExpressionTimezone|{}scheduleExpressionTimezone[0]
+        final fun <get-scheduleExpressionTimezone>(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.scheduleExpressionTimezone.<get-scheduleExpressionTimezone>|<get-scheduleExpressionTimezone>(){}[0]
+    final val startDate // com.steamstreet.awskt.scheduler/GetScheduleResponse.startDate|{}startDate[0]
+        final fun <get-startDate>(): kotlin/Double? // com.steamstreet.awskt.scheduler/GetScheduleResponse.startDate.<get-startDate>|<get-startDate>(){}[0]
+    final val startDateEpochMillis // com.steamstreet.awskt.scheduler/GetScheduleResponse.startDateEpochMillis|{}startDateEpochMillis[0]
+        final fun <get-startDateEpochMillis>(): kotlin/Long? // com.steamstreet.awskt.scheduler/GetScheduleResponse.startDateEpochMillis.<get-startDateEpochMillis>|<get-startDateEpochMillis>(){}[0]
+    final val state // com.steamstreet.awskt.scheduler/GetScheduleResponse.state|{}state[0]
+        final fun <get-state>(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.state.<get-state>|<get-state>(){}[0]
+    final val target // com.steamstreet.awskt.scheduler/GetScheduleResponse.target|{}target[0]
+        final fun <get-target>(): com.steamstreet.awskt.scheduler/Target? // com.steamstreet.awskt.scheduler/GetScheduleResponse.target.<get-target>|<get-target>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.component1|component1(){}[0]
+    final fun component10(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.component10|component10(){}[0]
+    final fun component11(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.component11|component11(){}[0]
+    final fun component12(): kotlin/Double? // com.steamstreet.awskt.scheduler/GetScheduleResponse.component12|component12(){}[0]
+    final fun component13(): kotlin/Double? // com.steamstreet.awskt.scheduler/GetScheduleResponse.component13|component13(){}[0]
+    final fun component14(): kotlin/Double? // com.steamstreet.awskt.scheduler/GetScheduleResponse.component14|component14(){}[0]
+    final fun component15(): kotlin/Double? // com.steamstreet.awskt.scheduler/GetScheduleResponse.component15|component15(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.component5|component5(){}[0]
+    final fun component6(): com.steamstreet.awskt.scheduler/Target? // com.steamstreet.awskt.scheduler/GetScheduleResponse.component6|component6(){}[0]
+    final fun component7(): com.steamstreet.awskt.scheduler/FlexibleTimeWindow? // com.steamstreet.awskt.scheduler/GetScheduleResponse.component7|component7(){}[0]
+    final fun component8(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.component8|component8(){}[0]
+    final fun component9(): kotlin/String? // com.steamstreet.awskt.scheduler/GetScheduleResponse.component9|component9(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.scheduler/Target? = ..., com.steamstreet.awskt.scheduler/FlexibleTimeWindow? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Double? = ..., kotlin/Double? = ..., kotlin/Double? = ..., kotlin/Double? = ...): com.steamstreet.awskt.scheduler/GetScheduleResponse // com.steamstreet.awskt.scheduler/GetScheduleResponse.copy|copy(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;com.steamstreet.awskt.scheduler.Target?;com.steamstreet.awskt.scheduler.FlexibleTimeWindow?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.Double?;kotlin.Double?;kotlin.Double?;kotlin.Double?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/GetScheduleResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/GetScheduleResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/GetScheduleResponse.toString|toString(){}[0]
+    final fun toUpdateRequest(): com.steamstreet.awskt.scheduler/UpdateScheduleRequest // com.steamstreet.awskt.scheduler/GetScheduleResponse.toUpdateRequest|toUpdateRequest(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.scheduler/GetScheduleResponse> { // com.steamstreet.awskt.scheduler/GetScheduleResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.scheduler/GetScheduleResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.scheduler/GetScheduleResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.scheduler/GetScheduleResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.scheduler/GetScheduleResponse // com.steamstreet.awskt.scheduler/GetScheduleResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.scheduler/GetScheduleResponse) // com.steamstreet.awskt.scheduler/GetScheduleResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.scheduler.GetScheduleResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.scheduler/GetScheduleResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.scheduler/GetScheduleResponse> // com.steamstreet.awskt.scheduler/GetScheduleResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.scheduler/InternalServerException : com.steamstreet.awskt.scheduler/SchedulerException { // com.steamstreet.awskt.scheduler/InternalServerException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.scheduler/InternalServerException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.scheduler/KinesisParameters { // com.steamstreet.awskt.scheduler/KinesisParameters|null[0]
+    constructor <init>(kotlin/String) // com.steamstreet.awskt.scheduler/KinesisParameters.<init>|<init>(kotlin.String){}[0]
+
+    final val partitionKey // com.steamstreet.awskt.scheduler/KinesisParameters.partitionKey|{}partitionKey[0]
+        final fun <get-partitionKey>(): kotlin/String // com.steamstreet.awskt.scheduler/KinesisParameters.partitionKey.<get-partitionKey>|<get-partitionKey>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.scheduler/KinesisParameters.component1|component1(){}[0]
+    final fun copy(kotlin/String = ...): com.steamstreet.awskt.scheduler/KinesisParameters // com.steamstreet.awskt.scheduler/KinesisParameters.copy|copy(kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/KinesisParameters.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/KinesisParameters.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/KinesisParameters.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.scheduler/KinesisParameters> { // com.steamstreet.awskt.scheduler/KinesisParameters.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.scheduler/KinesisParameters.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.scheduler/KinesisParameters.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.scheduler/KinesisParameters.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.scheduler/KinesisParameters // com.steamstreet.awskt.scheduler/KinesisParameters.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.scheduler/KinesisParameters) // com.steamstreet.awskt.scheduler/KinesisParameters.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.scheduler.KinesisParameters){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.scheduler/KinesisParameters.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.scheduler/KinesisParameters> // com.steamstreet.awskt.scheduler/KinesisParameters.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.scheduler/ListSchedulesRequest { // com.steamstreet.awskt.scheduler/ListSchedulesRequest|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Int? = ..., kotlin/String? = ...) // com.steamstreet.awskt.scheduler/ListSchedulesRequest.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.Int?;kotlin.String?){}[0]
+
+    final val groupName // com.steamstreet.awskt.scheduler/ListSchedulesRequest.groupName|{}groupName[0]
+        final fun <get-groupName>(): kotlin/String? // com.steamstreet.awskt.scheduler/ListSchedulesRequest.groupName.<get-groupName>|<get-groupName>(){}[0]
+    final val maxResults // com.steamstreet.awskt.scheduler/ListSchedulesRequest.maxResults|{}maxResults[0]
+        final fun <get-maxResults>(): kotlin/Int? // com.steamstreet.awskt.scheduler/ListSchedulesRequest.maxResults.<get-maxResults>|<get-maxResults>(){}[0]
+    final val namePrefix // com.steamstreet.awskt.scheduler/ListSchedulesRequest.namePrefix|{}namePrefix[0]
+        final fun <get-namePrefix>(): kotlin/String? // com.steamstreet.awskt.scheduler/ListSchedulesRequest.namePrefix.<get-namePrefix>|<get-namePrefix>(){}[0]
+    final val nextToken // com.steamstreet.awskt.scheduler/ListSchedulesRequest.nextToken|{}nextToken[0]
+        final fun <get-nextToken>(): kotlin/String? // com.steamstreet.awskt.scheduler/ListSchedulesRequest.nextToken.<get-nextToken>|<get-nextToken>(){}[0]
+    final val state // com.steamstreet.awskt.scheduler/ListSchedulesRequest.state|{}state[0]
+        final fun <get-state>(): kotlin/String? // com.steamstreet.awskt.scheduler/ListSchedulesRequest.state.<get-state>|<get-state>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.scheduler/ListSchedulesRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.scheduler/ListSchedulesRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.scheduler/ListSchedulesRequest.component3|component3(){}[0]
+    final fun component4(): kotlin/Int? // com.steamstreet.awskt.scheduler/ListSchedulesRequest.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.awskt.scheduler/ListSchedulesRequest.component5|component5(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Int? = ..., kotlin/String? = ...): com.steamstreet.awskt.scheduler/ListSchedulesRequest // com.steamstreet.awskt.scheduler/ListSchedulesRequest.copy|copy(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.Int?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/ListSchedulesRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/ListSchedulesRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/ListSchedulesRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.scheduler/ListSchedulesResponse { // com.steamstreet.awskt.scheduler/ListSchedulesResponse|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.scheduler/ScheduleSummary> = ..., kotlin/String? = ...) // com.steamstreet.awskt.scheduler/ListSchedulesResponse.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.scheduler.ScheduleSummary>;kotlin.String?){}[0]
+
+    final val nextToken // com.steamstreet.awskt.scheduler/ListSchedulesResponse.nextToken|{}nextToken[0]
+        final fun <get-nextToken>(): kotlin/String? // com.steamstreet.awskt.scheduler/ListSchedulesResponse.nextToken.<get-nextToken>|<get-nextToken>(){}[0]
+    final val schedules // com.steamstreet.awskt.scheduler/ListSchedulesResponse.schedules|{}schedules[0]
+        final fun <get-schedules>(): kotlin.collections/List<com.steamstreet.awskt.scheduler/ScheduleSummary> // com.steamstreet.awskt.scheduler/ListSchedulesResponse.schedules.<get-schedules>|<get-schedules>(){}[0]
+
+    final fun component1(): kotlin.collections/List<com.steamstreet.awskt.scheduler/ScheduleSummary> // com.steamstreet.awskt.scheduler/ListSchedulesResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.scheduler/ListSchedulesResponse.component2|component2(){}[0]
+    final fun copy(kotlin.collections/List<com.steamstreet.awskt.scheduler/ScheduleSummary> = ..., kotlin/String? = ...): com.steamstreet.awskt.scheduler/ListSchedulesResponse // com.steamstreet.awskt.scheduler/ListSchedulesResponse.copy|copy(kotlin.collections.List<com.steamstreet.awskt.scheduler.ScheduleSummary>;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/ListSchedulesResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/ListSchedulesResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/ListSchedulesResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.scheduler/ListSchedulesResponse> { // com.steamstreet.awskt.scheduler/ListSchedulesResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.scheduler/ListSchedulesResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.scheduler/ListSchedulesResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.scheduler/ListSchedulesResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.scheduler/ListSchedulesResponse // com.steamstreet.awskt.scheduler/ListSchedulesResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.scheduler/ListSchedulesResponse) // com.steamstreet.awskt.scheduler/ListSchedulesResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.scheduler.ListSchedulesResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.scheduler/ListSchedulesResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.scheduler/ListSchedulesResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.scheduler/ListSchedulesResponse> // com.steamstreet.awskt.scheduler/ListSchedulesResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.scheduler/ResourceNotFoundException : com.steamstreet.awskt.scheduler/SchedulerException { // com.steamstreet.awskt.scheduler/ResourceNotFoundException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.scheduler/ResourceNotFoundException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.scheduler/RetryPolicy { // com.steamstreet.awskt.scheduler/RetryPolicy|null[0]
+    constructor <init>(kotlin/Int? = ..., kotlin/Int? = ...) // com.steamstreet.awskt.scheduler/RetryPolicy.<init>|<init>(kotlin.Int?;kotlin.Int?){}[0]
+
+    final val maximumEventAgeInSeconds // com.steamstreet.awskt.scheduler/RetryPolicy.maximumEventAgeInSeconds|{}maximumEventAgeInSeconds[0]
+        final fun <get-maximumEventAgeInSeconds>(): kotlin/Int? // com.steamstreet.awskt.scheduler/RetryPolicy.maximumEventAgeInSeconds.<get-maximumEventAgeInSeconds>|<get-maximumEventAgeInSeconds>(){}[0]
+    final val maximumRetryAttempts // com.steamstreet.awskt.scheduler/RetryPolicy.maximumRetryAttempts|{}maximumRetryAttempts[0]
+        final fun <get-maximumRetryAttempts>(): kotlin/Int? // com.steamstreet.awskt.scheduler/RetryPolicy.maximumRetryAttempts.<get-maximumRetryAttempts>|<get-maximumRetryAttempts>(){}[0]
+
+    final fun component1(): kotlin/Int? // com.steamstreet.awskt.scheduler/RetryPolicy.component1|component1(){}[0]
+    final fun component2(): kotlin/Int? // com.steamstreet.awskt.scheduler/RetryPolicy.component2|component2(){}[0]
+    final fun copy(kotlin/Int? = ..., kotlin/Int? = ...): com.steamstreet.awskt.scheduler/RetryPolicy // com.steamstreet.awskt.scheduler/RetryPolicy.copy|copy(kotlin.Int?;kotlin.Int?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/RetryPolicy.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/RetryPolicy.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/RetryPolicy.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.scheduler/RetryPolicy> { // com.steamstreet.awskt.scheduler/RetryPolicy.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.scheduler/RetryPolicy.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.scheduler/RetryPolicy.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.scheduler/RetryPolicy.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.scheduler/RetryPolicy // com.steamstreet.awskt.scheduler/RetryPolicy.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.scheduler/RetryPolicy) // com.steamstreet.awskt.scheduler/RetryPolicy.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.scheduler.RetryPolicy){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.scheduler/RetryPolicy.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.scheduler/RetryPolicy> // com.steamstreet.awskt.scheduler/RetryPolicy.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.scheduler/ScheduleSummary { // com.steamstreet.awskt.scheduler/ScheduleSummary|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.scheduler/TargetSummary? = ..., kotlin/Double? = ..., kotlin/Double? = ...) // com.steamstreet.awskt.scheduler/ScheduleSummary.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;com.steamstreet.awskt.scheduler.TargetSummary?;kotlin.Double?;kotlin.Double?){}[0]
+
+    final val arn // com.steamstreet.awskt.scheduler/ScheduleSummary.arn|{}arn[0]
+        final fun <get-arn>(): kotlin/String? // com.steamstreet.awskt.scheduler/ScheduleSummary.arn.<get-arn>|<get-arn>(){}[0]
+    final val creationDate // com.steamstreet.awskt.scheduler/ScheduleSummary.creationDate|{}creationDate[0]
+        final fun <get-creationDate>(): kotlin/Double? // com.steamstreet.awskt.scheduler/ScheduleSummary.creationDate.<get-creationDate>|<get-creationDate>(){}[0]
+    final val groupName // com.steamstreet.awskt.scheduler/ScheduleSummary.groupName|{}groupName[0]
+        final fun <get-groupName>(): kotlin/String? // com.steamstreet.awskt.scheduler/ScheduleSummary.groupName.<get-groupName>|<get-groupName>(){}[0]
+    final val lastModificationDate // com.steamstreet.awskt.scheduler/ScheduleSummary.lastModificationDate|{}lastModificationDate[0]
+        final fun <get-lastModificationDate>(): kotlin/Double? // com.steamstreet.awskt.scheduler/ScheduleSummary.lastModificationDate.<get-lastModificationDate>|<get-lastModificationDate>(){}[0]
+    final val name // com.steamstreet.awskt.scheduler/ScheduleSummary.name|{}name[0]
+        final fun <get-name>(): kotlin/String? // com.steamstreet.awskt.scheduler/ScheduleSummary.name.<get-name>|<get-name>(){}[0]
+    final val state // com.steamstreet.awskt.scheduler/ScheduleSummary.state|{}state[0]
+        final fun <get-state>(): kotlin/String? // com.steamstreet.awskt.scheduler/ScheduleSummary.state.<get-state>|<get-state>(){}[0]
+    final val target // com.steamstreet.awskt.scheduler/ScheduleSummary.target|{}target[0]
+        final fun <get-target>(): com.steamstreet.awskt.scheduler/TargetSummary? // com.steamstreet.awskt.scheduler/ScheduleSummary.target.<get-target>|<get-target>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.scheduler/ScheduleSummary.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.scheduler/ScheduleSummary.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.scheduler/ScheduleSummary.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.scheduler/ScheduleSummary.component4|component4(){}[0]
+    final fun component5(): com.steamstreet.awskt.scheduler/TargetSummary? // com.steamstreet.awskt.scheduler/ScheduleSummary.component5|component5(){}[0]
+    final fun component6(): kotlin/Double? // com.steamstreet.awskt.scheduler/ScheduleSummary.component6|component6(){}[0]
+    final fun component7(): kotlin/Double? // com.steamstreet.awskt.scheduler/ScheduleSummary.component7|component7(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.scheduler/TargetSummary? = ..., kotlin/Double? = ..., kotlin/Double? = ...): com.steamstreet.awskt.scheduler/ScheduleSummary // com.steamstreet.awskt.scheduler/ScheduleSummary.copy|copy(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;com.steamstreet.awskt.scheduler.TargetSummary?;kotlin.Double?;kotlin.Double?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/ScheduleSummary.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/ScheduleSummary.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/ScheduleSummary.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.scheduler/ScheduleSummary> { // com.steamstreet.awskt.scheduler/ScheduleSummary.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.scheduler/ScheduleSummary.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.scheduler/ScheduleSummary.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.scheduler/ScheduleSummary.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.scheduler/ScheduleSummary // com.steamstreet.awskt.scheduler/ScheduleSummary.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.scheduler/ScheduleSummary) // com.steamstreet.awskt.scheduler/ScheduleSummary.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.scheduler.ScheduleSummary){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.scheduler/ScheduleSummary.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.scheduler/ScheduleSummary> // com.steamstreet.awskt.scheduler/ScheduleSummary.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.scheduler/SchedulerConfig { // com.steamstreet.awskt.scheduler/SchedulerConfig|null[0]
+    constructor <init>() // com.steamstreet.awskt.scheduler/SchedulerConfig.<init>|<init>(){}[0]
+
+    final var caInfo // com.steamstreet.awskt.scheduler/SchedulerConfig.caInfo|{}caInfo[0]
+        final fun <get-caInfo>(): kotlin/String? // com.steamstreet.awskt.scheduler/SchedulerConfig.caInfo.<get-caInfo>|<get-caInfo>(){}[0]
+        final fun <set-caInfo>(kotlin/String?) // com.steamstreet.awskt.scheduler/SchedulerConfig.caInfo.<set-caInfo>|<set-caInfo>(kotlin.String?){}[0]
+    final var credentialsProvider // com.steamstreet.awskt.scheduler/SchedulerConfig.credentialsProvider|{}credentialsProvider[0]
+        final fun <get-credentialsProvider>(): com.steamstreet.awskt.core/AwsCredentialsProvider? // com.steamstreet.awskt.scheduler/SchedulerConfig.credentialsProvider.<get-credentialsProvider>|<get-credentialsProvider>(){}[0]
+        final fun <set-credentialsProvider>(com.steamstreet.awskt.core/AwsCredentialsProvider?) // com.steamstreet.awskt.scheduler/SchedulerConfig.credentialsProvider.<set-credentialsProvider>|<set-credentialsProvider>(com.steamstreet.awskt.core.AwsCredentialsProvider?){}[0]
+    final var endpointUrl // com.steamstreet.awskt.scheduler/SchedulerConfig.endpointUrl|{}endpointUrl[0]
+        final fun <get-endpointUrl>(): kotlin/String? // com.steamstreet.awskt.scheduler/SchedulerConfig.endpointUrl.<get-endpointUrl>|<get-endpointUrl>(){}[0]
+        final fun <set-endpointUrl>(kotlin/String?) // com.steamstreet.awskt.scheduler/SchedulerConfig.endpointUrl.<set-endpointUrl>|<set-endpointUrl>(kotlin.String?){}[0]
+    final var httpClient // com.steamstreet.awskt.scheduler/SchedulerConfig.httpClient|{}httpClient[0]
+        final fun <get-httpClient>(): io.ktor.client/HttpClient? // com.steamstreet.awskt.scheduler/SchedulerConfig.httpClient.<get-httpClient>|<get-httpClient>(){}[0]
+        final fun <set-httpClient>(io.ktor.client/HttpClient?) // com.steamstreet.awskt.scheduler/SchedulerConfig.httpClient.<set-httpClient>|<set-httpClient>(io.ktor.client.HttpClient?){}[0]
+    final var httpTimeouts // com.steamstreet.awskt.scheduler/SchedulerConfig.httpTimeouts|{}httpTimeouts[0]
+        final fun <get-httpTimeouts>(): com.steamstreet.awskt.core/AwsHttpTimeouts // com.steamstreet.awskt.scheduler/SchedulerConfig.httpTimeouts.<get-httpTimeouts>|<get-httpTimeouts>(){}[0]
+        final fun <set-httpTimeouts>(com.steamstreet.awskt.core/AwsHttpTimeouts) // com.steamstreet.awskt.scheduler/SchedulerConfig.httpTimeouts.<set-httpTimeouts>|<set-httpTimeouts>(com.steamstreet.awskt.core.AwsHttpTimeouts){}[0]
+    final var observer // com.steamstreet.awskt.scheduler/SchedulerConfig.observer|{}observer[0]
+        final fun <get-observer>(): com.steamstreet.awskt.core/AwsCallObserver? // com.steamstreet.awskt.scheduler/SchedulerConfig.observer.<get-observer>|<get-observer>(){}[0]
+        final fun <set-observer>(com.steamstreet.awskt.core/AwsCallObserver?) // com.steamstreet.awskt.scheduler/SchedulerConfig.observer.<set-observer>|<set-observer>(com.steamstreet.awskt.core.AwsCallObserver?){}[0]
+    final var region // com.steamstreet.awskt.scheduler/SchedulerConfig.region|{}region[0]
+        final fun <get-region>(): kotlin/String? // com.steamstreet.awskt.scheduler/SchedulerConfig.region.<get-region>|<get-region>(){}[0]
+        final fun <set-region>(kotlin/String?) // com.steamstreet.awskt.scheduler/SchedulerConfig.region.<set-region>|<set-region>(kotlin.String?){}[0]
+    final var retryConfig // com.steamstreet.awskt.scheduler/SchedulerConfig.retryConfig|{}retryConfig[0]
+        final fun <get-retryConfig>(): com.steamstreet.awskt.core/RetryConfig // com.steamstreet.awskt.scheduler/SchedulerConfig.retryConfig.<get-retryConfig>|<get-retryConfig>(){}[0]
+        final fun <set-retryConfig>(com.steamstreet.awskt.core/RetryConfig) // com.steamstreet.awskt.scheduler/SchedulerConfig.retryConfig.<set-retryConfig>|<set-retryConfig>(com.steamstreet.awskt.core.RetryConfig){}[0]
+}
+
+final class com.steamstreet.awskt.scheduler/ServiceQuotaExceededException : com.steamstreet.awskt.scheduler/SchedulerException { // com.steamstreet.awskt.scheduler/ServiceQuotaExceededException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.scheduler/ServiceQuotaExceededException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.scheduler/SqsParameters { // com.steamstreet.awskt.scheduler/SqsParameters|null[0]
+    constructor <init>(kotlin/String? = ...) // com.steamstreet.awskt.scheduler/SqsParameters.<init>|<init>(kotlin.String?){}[0]
+
+    final val messageGroupId // com.steamstreet.awskt.scheduler/SqsParameters.messageGroupId|{}messageGroupId[0]
+        final fun <get-messageGroupId>(): kotlin/String? // com.steamstreet.awskt.scheduler/SqsParameters.messageGroupId.<get-messageGroupId>|<get-messageGroupId>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.scheduler/SqsParameters.component1|component1(){}[0]
+    final fun copy(kotlin/String? = ...): com.steamstreet.awskt.scheduler/SqsParameters // com.steamstreet.awskt.scheduler/SqsParameters.copy|copy(kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/SqsParameters.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/SqsParameters.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/SqsParameters.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.scheduler/SqsParameters> { // com.steamstreet.awskt.scheduler/SqsParameters.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.scheduler/SqsParameters.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.scheduler/SqsParameters.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.scheduler/SqsParameters.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.scheduler/SqsParameters // com.steamstreet.awskt.scheduler/SqsParameters.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.scheduler/SqsParameters) // com.steamstreet.awskt.scheduler/SqsParameters.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.scheduler.SqsParameters){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.scheduler/SqsParameters.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.scheduler/SqsParameters> // com.steamstreet.awskt.scheduler/SqsParameters.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.scheduler/Target { // com.steamstreet.awskt.scheduler/Target|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String? = ..., com.steamstreet.awskt.scheduler/RetryPolicy? = ..., com.steamstreet.awskt.scheduler/DeadLetterConfig? = ..., com.steamstreet.awskt.scheduler/EventBridgeParameters? = ..., com.steamstreet.awskt.scheduler/SqsParameters? = ..., com.steamstreet.awskt.scheduler/KinesisParameters? = ..., kotlinx.serialization.json/JsonElement? = ..., kotlinx.serialization.json/JsonElement? = ...) // com.steamstreet.awskt.scheduler/Target.<init>|<init>(kotlin.String;kotlin.String;kotlin.String?;com.steamstreet.awskt.scheduler.RetryPolicy?;com.steamstreet.awskt.scheduler.DeadLetterConfig?;com.steamstreet.awskt.scheduler.EventBridgeParameters?;com.steamstreet.awskt.scheduler.SqsParameters?;com.steamstreet.awskt.scheduler.KinesisParameters?;kotlinx.serialization.json.JsonElement?;kotlinx.serialization.json.JsonElement?){}[0]
+
+    final val arn // com.steamstreet.awskt.scheduler/Target.arn|{}arn[0]
+        final fun <get-arn>(): kotlin/String // com.steamstreet.awskt.scheduler/Target.arn.<get-arn>|<get-arn>(){}[0]
+    final val deadLetterConfig // com.steamstreet.awskt.scheduler/Target.deadLetterConfig|{}deadLetterConfig[0]
+        final fun <get-deadLetterConfig>(): com.steamstreet.awskt.scheduler/DeadLetterConfig? // com.steamstreet.awskt.scheduler/Target.deadLetterConfig.<get-deadLetterConfig>|<get-deadLetterConfig>(){}[0]
+    final val ecsParameters // com.steamstreet.awskt.scheduler/Target.ecsParameters|{}ecsParameters[0]
+        final fun <get-ecsParameters>(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.scheduler/Target.ecsParameters.<get-ecsParameters>|<get-ecsParameters>(){}[0]
+    final val eventBridgeParameters // com.steamstreet.awskt.scheduler/Target.eventBridgeParameters|{}eventBridgeParameters[0]
+        final fun <get-eventBridgeParameters>(): com.steamstreet.awskt.scheduler/EventBridgeParameters? // com.steamstreet.awskt.scheduler/Target.eventBridgeParameters.<get-eventBridgeParameters>|<get-eventBridgeParameters>(){}[0]
+    final val input // com.steamstreet.awskt.scheduler/Target.input|{}input[0]
+        final fun <get-input>(): kotlin/String? // com.steamstreet.awskt.scheduler/Target.input.<get-input>|<get-input>(){}[0]
+    final val kinesisParameters // com.steamstreet.awskt.scheduler/Target.kinesisParameters|{}kinesisParameters[0]
+        final fun <get-kinesisParameters>(): com.steamstreet.awskt.scheduler/KinesisParameters? // com.steamstreet.awskt.scheduler/Target.kinesisParameters.<get-kinesisParameters>|<get-kinesisParameters>(){}[0]
+    final val retryPolicy // com.steamstreet.awskt.scheduler/Target.retryPolicy|{}retryPolicy[0]
+        final fun <get-retryPolicy>(): com.steamstreet.awskt.scheduler/RetryPolicy? // com.steamstreet.awskt.scheduler/Target.retryPolicy.<get-retryPolicy>|<get-retryPolicy>(){}[0]
+    final val roleArn // com.steamstreet.awskt.scheduler/Target.roleArn|{}roleArn[0]
+        final fun <get-roleArn>(): kotlin/String // com.steamstreet.awskt.scheduler/Target.roleArn.<get-roleArn>|<get-roleArn>(){}[0]
+    final val sageMakerPipelineParameters // com.steamstreet.awskt.scheduler/Target.sageMakerPipelineParameters|{}sageMakerPipelineParameters[0]
+        final fun <get-sageMakerPipelineParameters>(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.scheduler/Target.sageMakerPipelineParameters.<get-sageMakerPipelineParameters>|<get-sageMakerPipelineParameters>(){}[0]
+    final val sqsParameters // com.steamstreet.awskt.scheduler/Target.sqsParameters|{}sqsParameters[0]
+        final fun <get-sqsParameters>(): com.steamstreet.awskt.scheduler/SqsParameters? // com.steamstreet.awskt.scheduler/Target.sqsParameters.<get-sqsParameters>|<get-sqsParameters>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.scheduler/Target.component1|component1(){}[0]
+    final fun component10(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.scheduler/Target.component10|component10(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.scheduler/Target.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.scheduler/Target.component3|component3(){}[0]
+    final fun component4(): com.steamstreet.awskt.scheduler/RetryPolicy? // com.steamstreet.awskt.scheduler/Target.component4|component4(){}[0]
+    final fun component5(): com.steamstreet.awskt.scheduler/DeadLetterConfig? // com.steamstreet.awskt.scheduler/Target.component5|component5(){}[0]
+    final fun component6(): com.steamstreet.awskt.scheduler/EventBridgeParameters? // com.steamstreet.awskt.scheduler/Target.component6|component6(){}[0]
+    final fun component7(): com.steamstreet.awskt.scheduler/SqsParameters? // com.steamstreet.awskt.scheduler/Target.component7|component7(){}[0]
+    final fun component8(): com.steamstreet.awskt.scheduler/KinesisParameters? // com.steamstreet.awskt.scheduler/Target.component8|component8(){}[0]
+    final fun component9(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.scheduler/Target.component9|component9(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String? = ..., com.steamstreet.awskt.scheduler/RetryPolicy? = ..., com.steamstreet.awskt.scheduler/DeadLetterConfig? = ..., com.steamstreet.awskt.scheduler/EventBridgeParameters? = ..., com.steamstreet.awskt.scheduler/SqsParameters? = ..., com.steamstreet.awskt.scheduler/KinesisParameters? = ..., kotlinx.serialization.json/JsonElement? = ..., kotlinx.serialization.json/JsonElement? = ...): com.steamstreet.awskt.scheduler/Target // com.steamstreet.awskt.scheduler/Target.copy|copy(kotlin.String;kotlin.String;kotlin.String?;com.steamstreet.awskt.scheduler.RetryPolicy?;com.steamstreet.awskt.scheduler.DeadLetterConfig?;com.steamstreet.awskt.scheduler.EventBridgeParameters?;com.steamstreet.awskt.scheduler.SqsParameters?;com.steamstreet.awskt.scheduler.KinesisParameters?;kotlinx.serialization.json.JsonElement?;kotlinx.serialization.json.JsonElement?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/Target.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/Target.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/Target.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.scheduler/Target> { // com.steamstreet.awskt.scheduler/Target.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.scheduler/Target.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.scheduler/Target.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.scheduler/Target.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.scheduler/Target // com.steamstreet.awskt.scheduler/Target.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.scheduler/Target) // com.steamstreet.awskt.scheduler/Target.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.scheduler.Target){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.scheduler/Target.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.scheduler/Target> // com.steamstreet.awskt.scheduler/Target.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.scheduler/TargetSummary { // com.steamstreet.awskt.scheduler/TargetSummary|null[0]
+    constructor <init>(kotlin/String? = ...) // com.steamstreet.awskt.scheduler/TargetSummary.<init>|<init>(kotlin.String?){}[0]
+
+    final val arn // com.steamstreet.awskt.scheduler/TargetSummary.arn|{}arn[0]
+        final fun <get-arn>(): kotlin/String? // com.steamstreet.awskt.scheduler/TargetSummary.arn.<get-arn>|<get-arn>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.scheduler/TargetSummary.component1|component1(){}[0]
+    final fun copy(kotlin/String? = ...): com.steamstreet.awskt.scheduler/TargetSummary // com.steamstreet.awskt.scheduler/TargetSummary.copy|copy(kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/TargetSummary.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/TargetSummary.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/TargetSummary.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.scheduler/TargetSummary> { // com.steamstreet.awskt.scheduler/TargetSummary.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.scheduler/TargetSummary.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.scheduler/TargetSummary.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.scheduler/TargetSummary.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.scheduler/TargetSummary // com.steamstreet.awskt.scheduler/TargetSummary.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.scheduler/TargetSummary) // com.steamstreet.awskt.scheduler/TargetSummary.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.scheduler.TargetSummary){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.scheduler/TargetSummary.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.scheduler/TargetSummary> // com.steamstreet.awskt.scheduler/TargetSummary.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.scheduler/ThrottlingException : com.steamstreet.awskt.scheduler/SchedulerException { // com.steamstreet.awskt.scheduler/ThrottlingException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.scheduler/ThrottlingException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.scheduler/UpdateScheduleRequest { // com.steamstreet.awskt.scheduler/UpdateScheduleRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String, com.steamstreet.awskt.scheduler/Target, com.steamstreet.awskt.scheduler/FlexibleTimeWindow = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Double? = ..., kotlin/Double? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.<init>|<init>(kotlin.String;kotlin.String;com.steamstreet.awskt.scheduler.Target;com.steamstreet.awskt.scheduler.FlexibleTimeWindow;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.Double?;kotlin.Double?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val actionAfterCompletion // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.actionAfterCompletion|{}actionAfterCompletion[0]
+        final fun <get-actionAfterCompletion>(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.actionAfterCompletion.<get-actionAfterCompletion>|<get-actionAfterCompletion>(){}[0]
+    final val clientToken // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.clientToken|{}clientToken[0]
+        final fun <get-clientToken>(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.clientToken.<get-clientToken>|<get-clientToken>(){}[0]
+    final val description // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.description|{}description[0]
+        final fun <get-description>(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.description.<get-description>|<get-description>(){}[0]
+    final val endDate // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.endDate|{}endDate[0]
+        final fun <get-endDate>(): kotlin/Double? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.endDate.<get-endDate>|<get-endDate>(){}[0]
+    final val flexibleTimeWindow // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.flexibleTimeWindow|{}flexibleTimeWindow[0]
+        final fun <get-flexibleTimeWindow>(): com.steamstreet.awskt.scheduler/FlexibleTimeWindow // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.flexibleTimeWindow.<get-flexibleTimeWindow>|<get-flexibleTimeWindow>(){}[0]
+    final val groupName // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.groupName|{}groupName[0]
+        final fun <get-groupName>(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.groupName.<get-groupName>|<get-groupName>(){}[0]
+    final val kmsKeyArn // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.kmsKeyArn|{}kmsKeyArn[0]
+        final fun <get-kmsKeyArn>(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.kmsKeyArn.<get-kmsKeyArn>|<get-kmsKeyArn>(){}[0]
+    final val name // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.name.<get-name>|<get-name>(){}[0]
+    final val scheduleExpression // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.scheduleExpression|{}scheduleExpression[0]
+        final fun <get-scheduleExpression>(): kotlin/String // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.scheduleExpression.<get-scheduleExpression>|<get-scheduleExpression>(){}[0]
+    final val scheduleExpressionTimezone // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.scheduleExpressionTimezone|{}scheduleExpressionTimezone[0]
+        final fun <get-scheduleExpressionTimezone>(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.scheduleExpressionTimezone.<get-scheduleExpressionTimezone>|<get-scheduleExpressionTimezone>(){}[0]
+    final val startDate // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.startDate|{}startDate[0]
+        final fun <get-startDate>(): kotlin/Double? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.startDate.<get-startDate>|<get-startDate>(){}[0]
+    final val state // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.state|{}state[0]
+        final fun <get-state>(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.state.<get-state>|<get-state>(){}[0]
+    final val target // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.target|{}target[0]
+        final fun <get-target>(): com.steamstreet.awskt.scheduler/Target // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.target.<get-target>|<get-target>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.component1|component1(){}[0]
+    final fun component10(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.component10|component10(){}[0]
+    final fun component11(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.component11|component11(){}[0]
+    final fun component12(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.component12|component12(){}[0]
+    final fun component13(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.component13|component13(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.component2|component2(){}[0]
+    final fun component3(): com.steamstreet.awskt.scheduler/Target // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.component3|component3(){}[0]
+    final fun component4(): com.steamstreet.awskt.scheduler/FlexibleTimeWindow // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.component5|component5(){}[0]
+    final fun component6(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.component7|component7(){}[0]
+    final fun component8(): kotlin/Double? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.component8|component8(){}[0]
+    final fun component9(): kotlin/Double? // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.component9|component9(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., com.steamstreet.awskt.scheduler/Target = ..., com.steamstreet.awskt.scheduler/FlexibleTimeWindow = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Double? = ..., kotlin/Double? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.scheduler/UpdateScheduleRequest // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.copy|copy(kotlin.String;kotlin.String;com.steamstreet.awskt.scheduler.Target;com.steamstreet.awskt.scheduler.FlexibleTimeWindow;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.Double?;kotlin.Double?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/UpdateScheduleRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.scheduler/UpdateScheduleResponse { // com.steamstreet.awskt.scheduler/UpdateScheduleResponse|null[0]
+    constructor <init>(kotlin/String? = ...) // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.<init>|<init>(kotlin.String?){}[0]
+
+    final val scheduleArn // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.scheduleArn|{}scheduleArn[0]
+        final fun <get-scheduleArn>(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.scheduleArn.<get-scheduleArn>|<get-scheduleArn>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.component1|component1(){}[0]
+    final fun copy(kotlin/String? = ...): com.steamstreet.awskt.scheduler/UpdateScheduleResponse // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.copy|copy(kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.scheduler/UpdateScheduleResponse> { // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.scheduler/UpdateScheduleResponse // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.scheduler/UpdateScheduleResponse) // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.scheduler.UpdateScheduleResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.scheduler/UpdateScheduleResponse> // com.steamstreet.awskt.scheduler/UpdateScheduleResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.scheduler/ValidationException : com.steamstreet.awskt.scheduler/SchedulerException { // com.steamstreet.awskt.scheduler/ValidationException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.scheduler/ValidationException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+open class com.steamstreet.awskt.scheduler/SchedulerException : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.scheduler/SchedulerException|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.scheduler/SchedulerException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final object com.steamstreet.awskt.scheduler/ActionAfterCompletion { // com.steamstreet.awskt.scheduler/ActionAfterCompletion|null[0]
+    final const val DELETE // com.steamstreet.awskt.scheduler/ActionAfterCompletion.DELETE|{}DELETE[0]
+        final fun <get-DELETE>(): kotlin/String // com.steamstreet.awskt.scheduler/ActionAfterCompletion.DELETE.<get-DELETE>|<get-DELETE>(){}[0]
+    final const val NONE // com.steamstreet.awskt.scheduler/ActionAfterCompletion.NONE|{}NONE[0]
+        final fun <get-NONE>(): kotlin/String // com.steamstreet.awskt.scheduler/ActionAfterCompletion.NONE.<get-NONE>|<get-NONE>(){}[0]
+}
+
+final object com.steamstreet.awskt.scheduler/FlexibleTimeWindowMode { // com.steamstreet.awskt.scheduler/FlexibleTimeWindowMode|null[0]
+    final const val FLEXIBLE // com.steamstreet.awskt.scheduler/FlexibleTimeWindowMode.FLEXIBLE|{}FLEXIBLE[0]
+        final fun <get-FLEXIBLE>(): kotlin/String // com.steamstreet.awskt.scheduler/FlexibleTimeWindowMode.FLEXIBLE.<get-FLEXIBLE>|<get-FLEXIBLE>(){}[0]
+    final const val OFF // com.steamstreet.awskt.scheduler/FlexibleTimeWindowMode.OFF|{}OFF[0]
+        final fun <get-OFF>(): kotlin/String // com.steamstreet.awskt.scheduler/FlexibleTimeWindowMode.OFF.<get-OFF>|<get-OFF>(){}[0]
+}
+
+final object com.steamstreet.awskt.scheduler/ScheduleState { // com.steamstreet.awskt.scheduler/ScheduleState|null[0]
+    final const val DISABLED // com.steamstreet.awskt.scheduler/ScheduleState.DISABLED|{}DISABLED[0]
+        final fun <get-DISABLED>(): kotlin/String // com.steamstreet.awskt.scheduler/ScheduleState.DISABLED.<get-DISABLED>|<get-DISABLED>(){}[0]
+    final const val ENABLED // com.steamstreet.awskt.scheduler/ScheduleState.ENABLED|{}ENABLED[0]
+        final fun <get-ENABLED>(): kotlin/String // com.steamstreet.awskt.scheduler/ScheduleState.ENABLED.<get-ENABLED>|<get-ENABLED>(){}[0]
+}
+
+final val com.steamstreet.awskt.scheduler/SCHEDULER_PROTOCOL // com.steamstreet.awskt.scheduler/SCHEDULER_PROTOCOL|{}SCHEDULER_PROTOCOL[0]
+    final fun <get-SCHEDULER_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.scheduler/SCHEDULER_PROTOCOL.<get-SCHEDULER_PROTOCOL>|<get-SCHEDULER_PROTOCOL>(){}[0]
+
+final fun com.steamstreet.awskt.scheduler/Scheduler(kotlin/Function1<com.steamstreet.awskt.scheduler/SchedulerConfig, kotlin/Unit> = ...): com.steamstreet.awskt.scheduler/Scheduler // com.steamstreet.awskt.scheduler/Scheduler|Scheduler(kotlin.Function1<com.steamstreet.awskt.scheduler.SchedulerConfig,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.awskt.scheduler/Scheduler).com.steamstreet.awskt.scheduler/listAllSchedules(com.steamstreet.awskt.scheduler/ListSchedulesRequest = ..., kotlin/Int = ...): kotlin.collections/List<com.steamstreet.awskt.scheduler/ScheduleSummary> // com.steamstreet.awskt.scheduler/listAllSchedules|listAllSchedules@com.steamstreet.awskt.scheduler.Scheduler(com.steamstreet.awskt.scheduler.ListSchedulesRequest;kotlin.Int){}[0]
+final suspend fun (com.steamstreet.awskt.scheduler/Scheduler).com.steamstreet.awskt.scheduler/scheduleOnce(kotlin/String, kotlin/String, com.steamstreet.awskt.scheduler/Target, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.scheduler/CreateScheduleResponse // com.steamstreet.awskt.scheduler/scheduleOnce|scheduleOnce@com.steamstreet.awskt.scheduler.Scheduler(kotlin.String;kotlin.String;com.steamstreet.awskt.scheduler.Target;kotlin.String?;kotlin.String?;kotlin.String?){}[0]

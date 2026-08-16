@@ -1,0 +1,391 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:aws-cloudwatch-logs>
+abstract interface com.steamstreet.awskt.logs/Logs : kotlin/AutoCloseable { // com.steamstreet.awskt.logs/Logs|null[0]
+    abstract val client // com.steamstreet.awskt.logs/Logs.client|{}client[0]
+        abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.logs/Logs.client.<get-client>|<get-client>(){}[0]
+
+    abstract suspend fun getQueryResults(com.steamstreet.awskt.logs/GetQueryResultsRequest): com.steamstreet.awskt.logs/GetQueryResultsResponse // com.steamstreet.awskt.logs/Logs.getQueryResults|getQueryResults(com.steamstreet.awskt.logs.GetQueryResultsRequest){}[0]
+    abstract suspend fun startQuery(com.steamstreet.awskt.logs/StartQueryRequest): com.steamstreet.awskt.logs/StartQueryResponse // com.steamstreet.awskt.logs/Logs.startQuery|startQuery(com.steamstreet.awskt.logs.StartQueryRequest){}[0]
+    abstract suspend fun stopQuery(com.steamstreet.awskt.logs/StopQueryRequest): com.steamstreet.awskt.logs/StopQueryResponse // com.steamstreet.awskt.logs/Logs.stopQuery|stopQuery(com.steamstreet.awskt.logs.StopQueryRequest){}[0]
+}
+
+final class com.steamstreet.awskt.logs/AccessDeniedException : com.steamstreet.awskt.logs/LogsException { // com.steamstreet.awskt.logs/AccessDeniedException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.logs/AccessDeniedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.logs/GetQueryResultsRequest { // com.steamstreet.awskt.logs/GetQueryResultsRequest|null[0]
+    constructor <init>(kotlin/String) // com.steamstreet.awskt.logs/GetQueryResultsRequest.<init>|<init>(kotlin.String){}[0]
+
+    final val queryId // com.steamstreet.awskt.logs/GetQueryResultsRequest.queryId|{}queryId[0]
+        final fun <get-queryId>(): kotlin/String // com.steamstreet.awskt.logs/GetQueryResultsRequest.queryId.<get-queryId>|<get-queryId>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.logs/GetQueryResultsRequest.component1|component1(){}[0]
+    final fun copy(kotlin/String = ...): com.steamstreet.awskt.logs/GetQueryResultsRequest // com.steamstreet.awskt.logs/GetQueryResultsRequest.copy|copy(kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.logs/GetQueryResultsRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.logs/GetQueryResultsRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.logs/GetQueryResultsRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.logs/GetQueryResultsRequest> { // com.steamstreet.awskt.logs/GetQueryResultsRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.logs/GetQueryResultsRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.logs/GetQueryResultsRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.logs/GetQueryResultsRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.logs/GetQueryResultsRequest // com.steamstreet.awskt.logs/GetQueryResultsRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.logs/GetQueryResultsRequest) // com.steamstreet.awskt.logs/GetQueryResultsRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.logs.GetQueryResultsRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.logs/GetQueryResultsRequest.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.logs/GetQueryResultsRequest> // com.steamstreet.awskt.logs/GetQueryResultsRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.logs/GetQueryResultsResponse { // com.steamstreet.awskt.logs/GetQueryResultsResponse|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin.collections/List<kotlin.collections/List<com.steamstreet.awskt.logs/ResultField>> = ..., com.steamstreet.awskt.logs/QueryStatistics? = ...) // com.steamstreet.awskt.logs/GetQueryResultsResponse.<init>|<init>(kotlin.String?;kotlin.collections.List<kotlin.collections.List<com.steamstreet.awskt.logs.ResultField>>;com.steamstreet.awskt.logs.QueryStatistics?){}[0]
+
+    final val isComplete // com.steamstreet.awskt.logs/GetQueryResultsResponse.isComplete|{}isComplete[0]
+        final fun <get-isComplete>(): kotlin/Boolean // com.steamstreet.awskt.logs/GetQueryResultsResponse.isComplete.<get-isComplete>|<get-isComplete>(){}[0]
+    final val isTerminal // com.steamstreet.awskt.logs/GetQueryResultsResponse.isTerminal|{}isTerminal[0]
+        final fun <get-isTerminal>(): kotlin/Boolean // com.steamstreet.awskt.logs/GetQueryResultsResponse.isTerminal.<get-isTerminal>|<get-isTerminal>(){}[0]
+    final val results // com.steamstreet.awskt.logs/GetQueryResultsResponse.results|{}results[0]
+        final fun <get-results>(): kotlin.collections/List<kotlin.collections/List<com.steamstreet.awskt.logs/ResultField>> // com.steamstreet.awskt.logs/GetQueryResultsResponse.results.<get-results>|<get-results>(){}[0]
+    final val rows // com.steamstreet.awskt.logs/GetQueryResultsResponse.rows|{}rows[0]
+        final fun <get-rows>(): kotlin.collections/List<com.steamstreet.awskt.logs/ResultRow> // com.steamstreet.awskt.logs/GetQueryResultsResponse.rows.<get-rows>|<get-rows>(){}[0]
+    final val statistics // com.steamstreet.awskt.logs/GetQueryResultsResponse.statistics|{}statistics[0]
+        final fun <get-statistics>(): com.steamstreet.awskt.logs/QueryStatistics? // com.steamstreet.awskt.logs/GetQueryResultsResponse.statistics.<get-statistics>|<get-statistics>(){}[0]
+    final val status // com.steamstreet.awskt.logs/GetQueryResultsResponse.status|{}status[0]
+        final fun <get-status>(): kotlin/String? // com.steamstreet.awskt.logs/GetQueryResultsResponse.status.<get-status>|<get-status>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.logs/GetQueryResultsResponse.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<kotlin.collections/List<com.steamstreet.awskt.logs/ResultField>> // com.steamstreet.awskt.logs/GetQueryResultsResponse.component2|component2(){}[0]
+    final fun component3(): com.steamstreet.awskt.logs/QueryStatistics? // com.steamstreet.awskt.logs/GetQueryResultsResponse.component3|component3(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin.collections/List<kotlin.collections/List<com.steamstreet.awskt.logs/ResultField>> = ..., com.steamstreet.awskt.logs/QueryStatistics? = ...): com.steamstreet.awskt.logs/GetQueryResultsResponse // com.steamstreet.awskt.logs/GetQueryResultsResponse.copy|copy(kotlin.String?;kotlin.collections.List<kotlin.collections.List<com.steamstreet.awskt.logs.ResultField>>;com.steamstreet.awskt.logs.QueryStatistics?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.logs/GetQueryResultsResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.logs/GetQueryResultsResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.logs/GetQueryResultsResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.logs/GetQueryResultsResponse> { // com.steamstreet.awskt.logs/GetQueryResultsResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.logs/GetQueryResultsResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.logs/GetQueryResultsResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.logs/GetQueryResultsResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.logs/GetQueryResultsResponse // com.steamstreet.awskt.logs/GetQueryResultsResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.logs/GetQueryResultsResponse) // com.steamstreet.awskt.logs/GetQueryResultsResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.logs.GetQueryResultsResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.logs/GetQueryResultsResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.logs/GetQueryResultsResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.logs/GetQueryResultsResponse> // com.steamstreet.awskt.logs/GetQueryResultsResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.logs/InvalidParameterException : com.steamstreet.awskt.logs/LogsException { // com.steamstreet.awskt.logs/InvalidParameterException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.logs/InvalidParameterException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.logs/LimitExceededException : com.steamstreet.awskt.logs/LogsException { // com.steamstreet.awskt.logs/LimitExceededException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.logs/LimitExceededException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.logs/LogsConfig { // com.steamstreet.awskt.logs/LogsConfig|null[0]
+    constructor <init>() // com.steamstreet.awskt.logs/LogsConfig.<init>|<init>(){}[0]
+
+    final var caInfo // com.steamstreet.awskt.logs/LogsConfig.caInfo|{}caInfo[0]
+        final fun <get-caInfo>(): kotlin/String? // com.steamstreet.awskt.logs/LogsConfig.caInfo.<get-caInfo>|<get-caInfo>(){}[0]
+        final fun <set-caInfo>(kotlin/String?) // com.steamstreet.awskt.logs/LogsConfig.caInfo.<set-caInfo>|<set-caInfo>(kotlin.String?){}[0]
+    final var credentialsProvider // com.steamstreet.awskt.logs/LogsConfig.credentialsProvider|{}credentialsProvider[0]
+        final fun <get-credentialsProvider>(): com.steamstreet.awskt.core/AwsCredentialsProvider? // com.steamstreet.awskt.logs/LogsConfig.credentialsProvider.<get-credentialsProvider>|<get-credentialsProvider>(){}[0]
+        final fun <set-credentialsProvider>(com.steamstreet.awskt.core/AwsCredentialsProvider?) // com.steamstreet.awskt.logs/LogsConfig.credentialsProvider.<set-credentialsProvider>|<set-credentialsProvider>(com.steamstreet.awskt.core.AwsCredentialsProvider?){}[0]
+    final var endpointUrl // com.steamstreet.awskt.logs/LogsConfig.endpointUrl|{}endpointUrl[0]
+        final fun <get-endpointUrl>(): kotlin/String? // com.steamstreet.awskt.logs/LogsConfig.endpointUrl.<get-endpointUrl>|<get-endpointUrl>(){}[0]
+        final fun <set-endpointUrl>(kotlin/String?) // com.steamstreet.awskt.logs/LogsConfig.endpointUrl.<set-endpointUrl>|<set-endpointUrl>(kotlin.String?){}[0]
+    final var httpClient // com.steamstreet.awskt.logs/LogsConfig.httpClient|{}httpClient[0]
+        final fun <get-httpClient>(): io.ktor.client/HttpClient? // com.steamstreet.awskt.logs/LogsConfig.httpClient.<get-httpClient>|<get-httpClient>(){}[0]
+        final fun <set-httpClient>(io.ktor.client/HttpClient?) // com.steamstreet.awskt.logs/LogsConfig.httpClient.<set-httpClient>|<set-httpClient>(io.ktor.client.HttpClient?){}[0]
+    final var httpTimeouts // com.steamstreet.awskt.logs/LogsConfig.httpTimeouts|{}httpTimeouts[0]
+        final fun <get-httpTimeouts>(): com.steamstreet.awskt.core/AwsHttpTimeouts // com.steamstreet.awskt.logs/LogsConfig.httpTimeouts.<get-httpTimeouts>|<get-httpTimeouts>(){}[0]
+        final fun <set-httpTimeouts>(com.steamstreet.awskt.core/AwsHttpTimeouts) // com.steamstreet.awskt.logs/LogsConfig.httpTimeouts.<set-httpTimeouts>|<set-httpTimeouts>(com.steamstreet.awskt.core.AwsHttpTimeouts){}[0]
+    final var observer // com.steamstreet.awskt.logs/LogsConfig.observer|{}observer[0]
+        final fun <get-observer>(): com.steamstreet.awskt.core/AwsCallObserver? // com.steamstreet.awskt.logs/LogsConfig.observer.<get-observer>|<get-observer>(){}[0]
+        final fun <set-observer>(com.steamstreet.awskt.core/AwsCallObserver?) // com.steamstreet.awskt.logs/LogsConfig.observer.<set-observer>|<set-observer>(com.steamstreet.awskt.core.AwsCallObserver?){}[0]
+    final var region // com.steamstreet.awskt.logs/LogsConfig.region|{}region[0]
+        final fun <get-region>(): kotlin/String? // com.steamstreet.awskt.logs/LogsConfig.region.<get-region>|<get-region>(){}[0]
+        final fun <set-region>(kotlin/String?) // com.steamstreet.awskt.logs/LogsConfig.region.<set-region>|<set-region>(kotlin.String?){}[0]
+    final var retryConfig // com.steamstreet.awskt.logs/LogsConfig.retryConfig|{}retryConfig[0]
+        final fun <get-retryConfig>(): com.steamstreet.awskt.core/RetryConfig // com.steamstreet.awskt.logs/LogsConfig.retryConfig.<get-retryConfig>|<get-retryConfig>(){}[0]
+        final fun <set-retryConfig>(com.steamstreet.awskt.core/RetryConfig) // com.steamstreet.awskt.logs/LogsConfig.retryConfig.<set-retryConfig>|<set-retryConfig>(com.steamstreet.awskt.core.RetryConfig){}[0]
+}
+
+final class com.steamstreet.awskt.logs/MalformedQueryException : com.steamstreet.awskt.logs/LogsException { // com.steamstreet.awskt.logs/MalformedQueryException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.logs/MalformedQueryException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.logs/QueryFailedException : com.steamstreet.awskt.logs/LogsException { // com.steamstreet.awskt.logs/QueryFailedException|null[0]
+    constructor <init>(kotlin/String, kotlin/String?, kotlin.collections/List<com.steamstreet.awskt.logs/ResultRow>, kotlin/String?) // com.steamstreet.awskt.logs/QueryFailedException.<init>|<init>(kotlin.String;kotlin.String?;kotlin.collections.List<com.steamstreet.awskt.logs.ResultRow>;kotlin.String?){}[0]
+
+    final val partialResults // com.steamstreet.awskt.logs/QueryFailedException.partialResults|{}partialResults[0]
+        final fun <get-partialResults>(): kotlin.collections/List<com.steamstreet.awskt.logs/ResultRow> // com.steamstreet.awskt.logs/QueryFailedException.partialResults.<get-partialResults>|<get-partialResults>(){}[0]
+    final val queryId // com.steamstreet.awskt.logs/QueryFailedException.queryId|{}queryId[0]
+        final fun <get-queryId>(): kotlin/String // com.steamstreet.awskt.logs/QueryFailedException.queryId.<get-queryId>|<get-queryId>(){}[0]
+    final val status // com.steamstreet.awskt.logs/QueryFailedException.status|{}status[0]
+        final fun <get-status>(): kotlin/String? // com.steamstreet.awskt.logs/QueryFailedException.status.<get-status>|<get-status>(){}[0]
+}
+
+final class com.steamstreet.awskt.logs/QueryStatistics { // com.steamstreet.awskt.logs/QueryStatistics|null[0]
+    constructor <init>(kotlin/Double = ..., kotlin/Double = ..., kotlin/Double = ...) // com.steamstreet.awskt.logs/QueryStatistics.<init>|<init>(kotlin.Double;kotlin.Double;kotlin.Double){}[0]
+
+    final val bytesScanned // com.steamstreet.awskt.logs/QueryStatistics.bytesScanned|{}bytesScanned[0]
+        final fun <get-bytesScanned>(): kotlin/Double // com.steamstreet.awskt.logs/QueryStatistics.bytesScanned.<get-bytesScanned>|<get-bytesScanned>(){}[0]
+    final val recordsMatched // com.steamstreet.awskt.logs/QueryStatistics.recordsMatched|{}recordsMatched[0]
+        final fun <get-recordsMatched>(): kotlin/Double // com.steamstreet.awskt.logs/QueryStatistics.recordsMatched.<get-recordsMatched>|<get-recordsMatched>(){}[0]
+    final val recordsScanned // com.steamstreet.awskt.logs/QueryStatistics.recordsScanned|{}recordsScanned[0]
+        final fun <get-recordsScanned>(): kotlin/Double // com.steamstreet.awskt.logs/QueryStatistics.recordsScanned.<get-recordsScanned>|<get-recordsScanned>(){}[0]
+
+    final fun component1(): kotlin/Double // com.steamstreet.awskt.logs/QueryStatistics.component1|component1(){}[0]
+    final fun component2(): kotlin/Double // com.steamstreet.awskt.logs/QueryStatistics.component2|component2(){}[0]
+    final fun component3(): kotlin/Double // com.steamstreet.awskt.logs/QueryStatistics.component3|component3(){}[0]
+    final fun copy(kotlin/Double = ..., kotlin/Double = ..., kotlin/Double = ...): com.steamstreet.awskt.logs/QueryStatistics // com.steamstreet.awskt.logs/QueryStatistics.copy|copy(kotlin.Double;kotlin.Double;kotlin.Double){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.logs/QueryStatistics.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.logs/QueryStatistics.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.logs/QueryStatistics.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.logs/QueryStatistics> { // com.steamstreet.awskt.logs/QueryStatistics.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.logs/QueryStatistics.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.logs/QueryStatistics.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.logs/QueryStatistics.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.logs/QueryStatistics // com.steamstreet.awskt.logs/QueryStatistics.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.logs/QueryStatistics) // com.steamstreet.awskt.logs/QueryStatistics.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.logs.QueryStatistics){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.logs/QueryStatistics.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.logs/QueryStatistics> // com.steamstreet.awskt.logs/QueryStatistics.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.logs/QueryTimedOutException : com.steamstreet.awskt.logs/LogsException { // com.steamstreet.awskt.logs/QueryTimedOutException|null[0]
+    constructor <init>(kotlin/String, kotlin/String?, kotlin/String?) // com.steamstreet.awskt.logs/QueryTimedOutException.<init>|<init>(kotlin.String;kotlin.String?;kotlin.String?){}[0]
+
+    final val lastStatus // com.steamstreet.awskt.logs/QueryTimedOutException.lastStatus|{}lastStatus[0]
+        final fun <get-lastStatus>(): kotlin/String? // com.steamstreet.awskt.logs/QueryTimedOutException.lastStatus.<get-lastStatus>|<get-lastStatus>(){}[0]
+    final val queryId // com.steamstreet.awskt.logs/QueryTimedOutException.queryId|{}queryId[0]
+        final fun <get-queryId>(): kotlin/String // com.steamstreet.awskt.logs/QueryTimedOutException.queryId.<get-queryId>|<get-queryId>(){}[0]
+}
+
+final class com.steamstreet.awskt.logs/ResourceNotFoundException : com.steamstreet.awskt.logs/LogsException { // com.steamstreet.awskt.logs/ResourceNotFoundException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.logs/ResourceNotFoundException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.logs/ResultField { // com.steamstreet.awskt.logs/ResultField|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.logs/ResultField.<init>|<init>(kotlin.String?;kotlin.String?){}[0]
+
+    final val field // com.steamstreet.awskt.logs/ResultField.field|{}field[0]
+        final fun <get-field>(): kotlin/String? // com.steamstreet.awskt.logs/ResultField.field.<get-field>|<get-field>(){}[0]
+    final val value // com.steamstreet.awskt.logs/ResultField.value|{}value[0]
+        final fun <get-value>(): kotlin/String? // com.steamstreet.awskt.logs/ResultField.value.<get-value>|<get-value>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.logs/ResultField.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.logs/ResultField.component2|component2(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.logs/ResultField // com.steamstreet.awskt.logs/ResultField.copy|copy(kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.logs/ResultField.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.logs/ResultField.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.logs/ResultField.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.logs/ResultField> { // com.steamstreet.awskt.logs/ResultField.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.logs/ResultField.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.logs/ResultField.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.logs/ResultField.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.logs/ResultField // com.steamstreet.awskt.logs/ResultField.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.logs/ResultField) // com.steamstreet.awskt.logs/ResultField.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.logs.ResultField){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.logs/ResultField.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.logs/ResultField> // com.steamstreet.awskt.logs/ResultField.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.logs/ResultRow { // com.steamstreet.awskt.logs/ResultRow|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.logs/ResultField>) // com.steamstreet.awskt.logs/ResultRow.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.logs.ResultField>){}[0]
+
+    final val fields // com.steamstreet.awskt.logs/ResultRow.fields|{}fields[0]
+        final fun <get-fields>(): kotlin.collections/List<com.steamstreet.awskt.logs/ResultField> // com.steamstreet.awskt.logs/ResultRow.fields.<get-fields>|<get-fields>(){}[0]
+    final val pointer // com.steamstreet.awskt.logs/ResultRow.pointer|{}pointer[0]
+        final fun <get-pointer>(): kotlin/String? // com.steamstreet.awskt.logs/ResultRow.pointer.<get-pointer>|<get-pointer>(){}[0]
+    final val selected // com.steamstreet.awskt.logs/ResultRow.selected|{}selected[0]
+        final fun <get-selected>(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.awskt.logs/ResultRow.selected.<get-selected>|<get-selected>(){}[0]
+    final val values // com.steamstreet.awskt.logs/ResultRow.values|{}values[0]
+        final fun <get-values>(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.awskt.logs/ResultRow.values.<get-values>|<get-values>(){}[0]
+
+    final fun get(kotlin/String): kotlin/String? // com.steamstreet.awskt.logs/ResultRow.get|get(kotlin.String){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.logs/ResultRow.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.logs/ServiceUnavailableException : com.steamstreet.awskt.logs/LogsException { // com.steamstreet.awskt.logs/ServiceUnavailableException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.logs/ServiceUnavailableException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.logs/StartQueryRequest { // com.steamstreet.awskt.logs/StartQueryRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/Long, kotlin/Long, kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/Int? = ...) // com.steamstreet.awskt.logs/StartQueryRequest.<init>|<init>(kotlin.String;kotlin.Long;kotlin.Long;kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?;kotlin.Int?){}[0]
+
+    final val endTime // com.steamstreet.awskt.logs/StartQueryRequest.endTime|{}endTime[0]
+        final fun <get-endTime>(): kotlin/Long // com.steamstreet.awskt.logs/StartQueryRequest.endTime.<get-endTime>|<get-endTime>(){}[0]
+    final val limit // com.steamstreet.awskt.logs/StartQueryRequest.limit|{}limit[0]
+        final fun <get-limit>(): kotlin/Int? // com.steamstreet.awskt.logs/StartQueryRequest.limit.<get-limit>|<get-limit>(){}[0]
+    final val logGroupIdentifiers // com.steamstreet.awskt.logs/StartQueryRequest.logGroupIdentifiers|{}logGroupIdentifiers[0]
+        final fun <get-logGroupIdentifiers>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.logs/StartQueryRequest.logGroupIdentifiers.<get-logGroupIdentifiers>|<get-logGroupIdentifiers>(){}[0]
+    final val logGroupNames // com.steamstreet.awskt.logs/StartQueryRequest.logGroupNames|{}logGroupNames[0]
+        final fun <get-logGroupNames>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.logs/StartQueryRequest.logGroupNames.<get-logGroupNames>|<get-logGroupNames>(){}[0]
+    final val queryString // com.steamstreet.awskt.logs/StartQueryRequest.queryString|{}queryString[0]
+        final fun <get-queryString>(): kotlin/String // com.steamstreet.awskt.logs/StartQueryRequest.queryString.<get-queryString>|<get-queryString>(){}[0]
+    final val startTime // com.steamstreet.awskt.logs/StartQueryRequest.startTime|{}startTime[0]
+        final fun <get-startTime>(): kotlin/Long // com.steamstreet.awskt.logs/StartQueryRequest.startTime.<get-startTime>|<get-startTime>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.logs/StartQueryRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/Long // com.steamstreet.awskt.logs/StartQueryRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/Long // com.steamstreet.awskt.logs/StartQueryRequest.component3|component3(){}[0]
+    final fun component4(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.logs/StartQueryRequest.component4|component4(){}[0]
+    final fun component5(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.logs/StartQueryRequest.component5|component5(){}[0]
+    final fun component6(): kotlin/Int? // com.steamstreet.awskt.logs/StartQueryRequest.component6|component6(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/Long = ..., kotlin/Long = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/Int? = ...): com.steamstreet.awskt.logs/StartQueryRequest // com.steamstreet.awskt.logs/StartQueryRequest.copy|copy(kotlin.String;kotlin.Long;kotlin.Long;kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?;kotlin.Int?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.logs/StartQueryRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.logs/StartQueryRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.logs/StartQueryRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.logs/StartQueryRequest> { // com.steamstreet.awskt.logs/StartQueryRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.logs/StartQueryRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.logs/StartQueryRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.logs/StartQueryRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.logs/StartQueryRequest // com.steamstreet.awskt.logs/StartQueryRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.logs/StartQueryRequest) // com.steamstreet.awskt.logs/StartQueryRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.logs.StartQueryRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.logs/StartQueryRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.logs/StartQueryRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun betweenMillis(kotlin/String, kotlin/Long, kotlin/Long, kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/Int? = ...): com.steamstreet.awskt.logs/StartQueryRequest // com.steamstreet.awskt.logs/StartQueryRequest.Companion.betweenMillis|betweenMillis(kotlin.String;kotlin.Long;kotlin.Long;kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?;kotlin.Int?){}[0]
+        final fun inLastSeconds(kotlin/String, kotlin/Long, kotlin/Long, kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/Int? = ...): com.steamstreet.awskt.logs/StartQueryRequest // com.steamstreet.awskt.logs/StartQueryRequest.Companion.inLastSeconds|inLastSeconds(kotlin.String;kotlin.Long;kotlin.Long;kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?;kotlin.Int?){}[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.logs/StartQueryRequest> // com.steamstreet.awskt.logs/StartQueryRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.logs/StartQueryResponse { // com.steamstreet.awskt.logs/StartQueryResponse|null[0]
+    constructor <init>(kotlin/String? = ...) // com.steamstreet.awskt.logs/StartQueryResponse.<init>|<init>(kotlin.String?){}[0]
+
+    final val queryId // com.steamstreet.awskt.logs/StartQueryResponse.queryId|{}queryId[0]
+        final fun <get-queryId>(): kotlin/String? // com.steamstreet.awskt.logs/StartQueryResponse.queryId.<get-queryId>|<get-queryId>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.logs/StartQueryResponse.component1|component1(){}[0]
+    final fun copy(kotlin/String? = ...): com.steamstreet.awskt.logs/StartQueryResponse // com.steamstreet.awskt.logs/StartQueryResponse.copy|copy(kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.logs/StartQueryResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.logs/StartQueryResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.logs/StartQueryResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.logs/StartQueryResponse> { // com.steamstreet.awskt.logs/StartQueryResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.logs/StartQueryResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.logs/StartQueryResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.logs/StartQueryResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.logs/StartQueryResponse // com.steamstreet.awskt.logs/StartQueryResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.logs/StartQueryResponse) // com.steamstreet.awskt.logs/StartQueryResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.logs.StartQueryResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.logs/StartQueryResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.logs/StartQueryResponse> // com.steamstreet.awskt.logs/StartQueryResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.logs/StopQueryRequest { // com.steamstreet.awskt.logs/StopQueryRequest|null[0]
+    constructor <init>(kotlin/String) // com.steamstreet.awskt.logs/StopQueryRequest.<init>|<init>(kotlin.String){}[0]
+
+    final val queryId // com.steamstreet.awskt.logs/StopQueryRequest.queryId|{}queryId[0]
+        final fun <get-queryId>(): kotlin/String // com.steamstreet.awskt.logs/StopQueryRequest.queryId.<get-queryId>|<get-queryId>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.logs/StopQueryRequest.component1|component1(){}[0]
+    final fun copy(kotlin/String = ...): com.steamstreet.awskt.logs/StopQueryRequest // com.steamstreet.awskt.logs/StopQueryRequest.copy|copy(kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.logs/StopQueryRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.logs/StopQueryRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.logs/StopQueryRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.logs/StopQueryRequest> { // com.steamstreet.awskt.logs/StopQueryRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.logs/StopQueryRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.logs/StopQueryRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.logs/StopQueryRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.logs/StopQueryRequest // com.steamstreet.awskt.logs/StopQueryRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.logs/StopQueryRequest) // com.steamstreet.awskt.logs/StopQueryRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.logs.StopQueryRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.logs/StopQueryRequest.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.logs/StopQueryRequest> // com.steamstreet.awskt.logs/StopQueryRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.logs/StopQueryResponse { // com.steamstreet.awskt.logs/StopQueryResponse|null[0]
+    constructor <init>(kotlin/Boolean = ...) // com.steamstreet.awskt.logs/StopQueryResponse.<init>|<init>(kotlin.Boolean){}[0]
+
+    final val success // com.steamstreet.awskt.logs/StopQueryResponse.success|{}success[0]
+        final fun <get-success>(): kotlin/Boolean // com.steamstreet.awskt.logs/StopQueryResponse.success.<get-success>|<get-success>(){}[0]
+
+    final fun component1(): kotlin/Boolean // com.steamstreet.awskt.logs/StopQueryResponse.component1|component1(){}[0]
+    final fun copy(kotlin/Boolean = ...): com.steamstreet.awskt.logs/StopQueryResponse // com.steamstreet.awskt.logs/StopQueryResponse.copy|copy(kotlin.Boolean){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.logs/StopQueryResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.logs/StopQueryResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.logs/StopQueryResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.logs/StopQueryResponse> { // com.steamstreet.awskt.logs/StopQueryResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.logs/StopQueryResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.logs/StopQueryResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.logs/StopQueryResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.logs/StopQueryResponse // com.steamstreet.awskt.logs/StopQueryResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.logs/StopQueryResponse) // com.steamstreet.awskt.logs/StopQueryResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.logs.StopQueryResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.logs/StopQueryResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.logs/StopQueryResponse> // com.steamstreet.awskt.logs/StopQueryResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.logs/ThrottlingException : com.steamstreet.awskt.logs/LogsException { // com.steamstreet.awskt.logs/ThrottlingException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.logs/ThrottlingException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+open class com.steamstreet.awskt.logs/LogsException : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.logs/LogsException|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.logs/LogsException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final object com.steamstreet.awskt.logs/QueryStatus { // com.steamstreet.awskt.logs/QueryStatus|null[0]
+    final const val CANCELLED // com.steamstreet.awskt.logs/QueryStatus.CANCELLED|{}CANCELLED[0]
+        final fun <get-CANCELLED>(): kotlin/String // com.steamstreet.awskt.logs/QueryStatus.CANCELLED.<get-CANCELLED>|<get-CANCELLED>(){}[0]
+    final const val COMPLETE // com.steamstreet.awskt.logs/QueryStatus.COMPLETE|{}COMPLETE[0]
+        final fun <get-COMPLETE>(): kotlin/String // com.steamstreet.awskt.logs/QueryStatus.COMPLETE.<get-COMPLETE>|<get-COMPLETE>(){}[0]
+    final const val FAILED // com.steamstreet.awskt.logs/QueryStatus.FAILED|{}FAILED[0]
+        final fun <get-FAILED>(): kotlin/String // com.steamstreet.awskt.logs/QueryStatus.FAILED.<get-FAILED>|<get-FAILED>(){}[0]
+    final const val RUNNING // com.steamstreet.awskt.logs/QueryStatus.RUNNING|{}RUNNING[0]
+        final fun <get-RUNNING>(): kotlin/String // com.steamstreet.awskt.logs/QueryStatus.RUNNING.<get-RUNNING>|<get-RUNNING>(){}[0]
+    final const val SCHEDULED // com.steamstreet.awskt.logs/QueryStatus.SCHEDULED|{}SCHEDULED[0]
+        final fun <get-SCHEDULED>(): kotlin/String // com.steamstreet.awskt.logs/QueryStatus.SCHEDULED.<get-SCHEDULED>|<get-SCHEDULED>(){}[0]
+    final const val TIMEOUT // com.steamstreet.awskt.logs/QueryStatus.TIMEOUT|{}TIMEOUT[0]
+        final fun <get-TIMEOUT>(): kotlin/String // com.steamstreet.awskt.logs/QueryStatus.TIMEOUT.<get-TIMEOUT>|<get-TIMEOUT>(){}[0]
+    final const val UNKNOWN // com.steamstreet.awskt.logs/QueryStatus.UNKNOWN|{}UNKNOWN[0]
+        final fun <get-UNKNOWN>(): kotlin/String // com.steamstreet.awskt.logs/QueryStatus.UNKNOWN.<get-UNKNOWN>|<get-UNKNOWN>(){}[0]
+
+    final val TERMINAL // com.steamstreet.awskt.logs/QueryStatus.TERMINAL|{}TERMINAL[0]
+        final fun <get-TERMINAL>(): kotlin.collections/Set<kotlin/String> // com.steamstreet.awskt.logs/QueryStatus.TERMINAL.<get-TERMINAL>|<get-TERMINAL>(){}[0]
+}
+
+final val com.steamstreet.awskt.logs/LOGS_PROTOCOL // com.steamstreet.awskt.logs/LOGS_PROTOCOL|{}LOGS_PROTOCOL[0]
+    final fun <get-LOGS_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.logs/LOGS_PROTOCOL.<get-LOGS_PROTOCOL>|<get-LOGS_PROTOCOL>(){}[0]
+
+final fun com.steamstreet.awskt.logs/Logs(kotlin/Function1<com.steamstreet.awskt.logs/LogsConfig, kotlin/Unit> = ...): com.steamstreet.awskt.logs/Logs // com.steamstreet.awskt.logs/Logs|Logs(kotlin.Function1<com.steamstreet.awskt.logs.LogsConfig,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.awskt.logs/Logs).com.steamstreet.awskt.logs/query(com.steamstreet.awskt.logs/StartQueryRequest, kotlin.time/Duration = ..., kotlin.time/Duration = ..., kotlin.time/Duration = ..., kotlin.time/TimeSource = ...): com.steamstreet.awskt.logs/GetQueryResultsResponse // com.steamstreet.awskt.logs/query|query@com.steamstreet.awskt.logs.Logs(com.steamstreet.awskt.logs.StartQueryRequest;kotlin.time.Duration;kotlin.time.Duration;kotlin.time.Duration;kotlin.time.TimeSource){}[0]
+final suspend fun (com.steamstreet.awskt.logs/Logs).com.steamstreet.awskt.logs/queryRows(com.steamstreet.awskt.logs/StartQueryRequest, kotlin.time/Duration = ...): kotlin.collections/List<com.steamstreet.awskt.logs/ResultRow> // com.steamstreet.awskt.logs/queryRows|queryRows@com.steamstreet.awskt.logs.Logs(com.steamstreet.awskt.logs.StartQueryRequest;kotlin.time.Duration){}[0]
+final suspend fun (com.steamstreet.awskt.logs/Logs).com.steamstreet.awskt.logs/stopQuery(kotlin/String): kotlin/Boolean // com.steamstreet.awskt.logs/stopQuery|stopQuery@com.steamstreet.awskt.logs.Logs(kotlin.String){}[0]

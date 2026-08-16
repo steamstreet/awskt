@@ -1,0 +1,968 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:aws-bedrock-runtime>
+abstract interface com.steamstreet.awskt.bedrock/BedrockRuntime : kotlin/AutoCloseable { // com.steamstreet.awskt.bedrock/BedrockRuntime|null[0]
+    abstract val client // com.steamstreet.awskt.bedrock/BedrockRuntime.client|{}client[0]
+        abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.bedrock/BedrockRuntime.client.<get-client>|<get-client>(){}[0]
+
+    abstract fun converseStream(com.steamstreet.awskt.bedrock/ConverseRequest): kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.bedrock/ConverseStreamEvent> // com.steamstreet.awskt.bedrock/BedrockRuntime.converseStream|converseStream(com.steamstreet.awskt.bedrock.ConverseRequest){}[0]
+    abstract suspend fun converse(com.steamstreet.awskt.bedrock/ConverseRequest): com.steamstreet.awskt.bedrock/ConverseResponse // com.steamstreet.awskt.bedrock/BedrockRuntime.converse|converse(com.steamstreet.awskt.bedrock.ConverseRequest){}[0]
+}
+
+sealed interface com.steamstreet.awskt.bedrock/ContentBlock { // com.steamstreet.awskt.bedrock/ContentBlock|null[0]
+    final class CachePoint : com.steamstreet.awskt.bedrock/ContentBlock { // com.steamstreet.awskt.bedrock/ContentBlock.CachePoint|null[0]
+        constructor <init>(kotlin/String = ...) // com.steamstreet.awskt.bedrock/ContentBlock.CachePoint.<init>|<init>(kotlin.String){}[0]
+
+        final val type // com.steamstreet.awskt.bedrock/ContentBlock.CachePoint.type|{}type[0]
+            final fun <get-type>(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.CachePoint.type.<get-type>|<get-type>(){}[0]
+
+        final fun component1(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.CachePoint.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): com.steamstreet.awskt.bedrock/ContentBlock.CachePoint // com.steamstreet.awskt.bedrock/ContentBlock.CachePoint.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ContentBlock.CachePoint.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ContentBlock.CachePoint.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.CachePoint.toString|toString(){}[0]
+    }
+
+    final class Document : com.steamstreet.awskt.bedrock/ContentBlock { // com.steamstreet.awskt.bedrock/ContentBlock.Document|null[0]
+        constructor <init>(kotlin/String, kotlin/String, com.steamstreet.awskt.bedrock/BinarySource) // com.steamstreet.awskt.bedrock/ContentBlock.Document.<init>|<init>(kotlin.String;kotlin.String;com.steamstreet.awskt.bedrock.BinarySource){}[0]
+
+        final val format // com.steamstreet.awskt.bedrock/ContentBlock.Document.format|{}format[0]
+            final fun <get-format>(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.Document.format.<get-format>|<get-format>(){}[0]
+        final val name // com.steamstreet.awskt.bedrock/ContentBlock.Document.name|{}name[0]
+            final fun <get-name>(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.Document.name.<get-name>|<get-name>(){}[0]
+        final val source // com.steamstreet.awskt.bedrock/ContentBlock.Document.source|{}source[0]
+            final fun <get-source>(): com.steamstreet.awskt.bedrock/BinarySource // com.steamstreet.awskt.bedrock/ContentBlock.Document.source.<get-source>|<get-source>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ContentBlock.Document.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ContentBlock.Document.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.Document.toString|toString(){}[0]
+    }
+
+    final class Image : com.steamstreet.awskt.bedrock/ContentBlock { // com.steamstreet.awskt.bedrock/ContentBlock.Image|null[0]
+        constructor <init>(kotlin/String, com.steamstreet.awskt.bedrock/BinarySource) // com.steamstreet.awskt.bedrock/ContentBlock.Image.<init>|<init>(kotlin.String;com.steamstreet.awskt.bedrock.BinarySource){}[0]
+
+        final val format // com.steamstreet.awskt.bedrock/ContentBlock.Image.format|{}format[0]
+            final fun <get-format>(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.Image.format.<get-format>|<get-format>(){}[0]
+        final val source // com.steamstreet.awskt.bedrock/ContentBlock.Image.source|{}source[0]
+            final fun <get-source>(): com.steamstreet.awskt.bedrock/BinarySource // com.steamstreet.awskt.bedrock/ContentBlock.Image.source.<get-source>|<get-source>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ContentBlock.Image.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ContentBlock.Image.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.Image.toString|toString(){}[0]
+    }
+
+    final class Reasoning : com.steamstreet.awskt.bedrock/ContentBlock { // com.steamstreet.awskt.bedrock/ContentBlock.Reasoning|null[0]
+        constructor <init>(kotlinx.serialization.json/JsonElement) // com.steamstreet.awskt.bedrock/ContentBlock.Reasoning.<init>|<init>(kotlinx.serialization.json.JsonElement){}[0]
+
+        final val raw // com.steamstreet.awskt.bedrock/ContentBlock.Reasoning.raw|{}raw[0]
+            final fun <get-raw>(): kotlinx.serialization.json/JsonElement // com.steamstreet.awskt.bedrock/ContentBlock.Reasoning.raw.<get-raw>|<get-raw>(){}[0]
+        final val text // com.steamstreet.awskt.bedrock/ContentBlock.Reasoning.text|{}text[0]
+            final fun <get-text>(): kotlin/String? // com.steamstreet.awskt.bedrock/ContentBlock.Reasoning.text.<get-text>|<get-text>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ContentBlock.Reasoning.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ContentBlock.Reasoning.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.Reasoning.toString|toString(){}[0]
+    }
+
+    final class Text : com.steamstreet.awskt.bedrock/ContentBlock { // com.steamstreet.awskt.bedrock/ContentBlock.Text|null[0]
+        constructor <init>(kotlin/String) // com.steamstreet.awskt.bedrock/ContentBlock.Text.<init>|<init>(kotlin.String){}[0]
+
+        final val text // com.steamstreet.awskt.bedrock/ContentBlock.Text.text|{}text[0]
+            final fun <get-text>(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.Text.text.<get-text>|<get-text>(){}[0]
+
+        final fun component1(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.Text.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): com.steamstreet.awskt.bedrock/ContentBlock.Text // com.steamstreet.awskt.bedrock/ContentBlock.Text.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ContentBlock.Text.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ContentBlock.Text.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.Text.toString|toString(){}[0]
+    }
+
+    final class ToolResult : com.steamstreet.awskt.bedrock/ContentBlock { // com.steamstreet.awskt.bedrock/ContentBlock.ToolResult|null[0]
+        constructor <init>(kotlin/String, kotlin.collections/List<com.steamstreet.awskt.bedrock/ToolResultContent>, kotlin/String? = ...) // com.steamstreet.awskt.bedrock/ContentBlock.ToolResult.<init>|<init>(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.bedrock.ToolResultContent>;kotlin.String?){}[0]
+
+        final val content // com.steamstreet.awskt.bedrock/ContentBlock.ToolResult.content|{}content[0]
+            final fun <get-content>(): kotlin.collections/List<com.steamstreet.awskt.bedrock/ToolResultContent> // com.steamstreet.awskt.bedrock/ContentBlock.ToolResult.content.<get-content>|<get-content>(){}[0]
+        final val status // com.steamstreet.awskt.bedrock/ContentBlock.ToolResult.status|{}status[0]
+            final fun <get-status>(): kotlin/String? // com.steamstreet.awskt.bedrock/ContentBlock.ToolResult.status.<get-status>|<get-status>(){}[0]
+        final val toolUseId // com.steamstreet.awskt.bedrock/ContentBlock.ToolResult.toolUseId|{}toolUseId[0]
+            final fun <get-toolUseId>(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.ToolResult.toolUseId.<get-toolUseId>|<get-toolUseId>(){}[0]
+
+        final fun component1(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.ToolResult.component1|component1(){}[0]
+        final fun component2(): kotlin.collections/List<com.steamstreet.awskt.bedrock/ToolResultContent> // com.steamstreet.awskt.bedrock/ContentBlock.ToolResult.component2|component2(){}[0]
+        final fun component3(): kotlin/String? // com.steamstreet.awskt.bedrock/ContentBlock.ToolResult.component3|component3(){}[0]
+        final fun copy(kotlin/String = ..., kotlin.collections/List<com.steamstreet.awskt.bedrock/ToolResultContent> = ..., kotlin/String? = ...): com.steamstreet.awskt.bedrock/ContentBlock.ToolResult // com.steamstreet.awskt.bedrock/ContentBlock.ToolResult.copy|copy(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.bedrock.ToolResultContent>;kotlin.String?){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ContentBlock.ToolResult.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ContentBlock.ToolResult.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.ToolResult.toString|toString(){}[0]
+    }
+
+    final class ToolUse : com.steamstreet.awskt.bedrock/ContentBlock { // com.steamstreet.awskt.bedrock/ContentBlock.ToolUse|null[0]
+        constructor <init>(kotlin/String, kotlin/String, kotlinx.serialization.json/JsonElement) // com.steamstreet.awskt.bedrock/ContentBlock.ToolUse.<init>|<init>(kotlin.String;kotlin.String;kotlinx.serialization.json.JsonElement){}[0]
+
+        final val input // com.steamstreet.awskt.bedrock/ContentBlock.ToolUse.input|{}input[0]
+            final fun <get-input>(): kotlinx.serialization.json/JsonElement // com.steamstreet.awskt.bedrock/ContentBlock.ToolUse.input.<get-input>|<get-input>(){}[0]
+        final val name // com.steamstreet.awskt.bedrock/ContentBlock.ToolUse.name|{}name[0]
+            final fun <get-name>(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.ToolUse.name.<get-name>|<get-name>(){}[0]
+        final val toolUseId // com.steamstreet.awskt.bedrock/ContentBlock.ToolUse.toolUseId|{}toolUseId[0]
+            final fun <get-toolUseId>(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.ToolUse.toolUseId.<get-toolUseId>|<get-toolUseId>(){}[0]
+
+        final fun component1(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.ToolUse.component1|component1(){}[0]
+        final fun component2(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.ToolUse.component2|component2(){}[0]
+        final fun component3(): kotlinx.serialization.json/JsonElement // com.steamstreet.awskt.bedrock/ContentBlock.ToolUse.component3|component3(){}[0]
+        final fun copy(kotlin/String = ..., kotlin/String = ..., kotlinx.serialization.json/JsonElement = ...): com.steamstreet.awskt.bedrock/ContentBlock.ToolUse // com.steamstreet.awskt.bedrock/ContentBlock.ToolUse.copy|copy(kotlin.String;kotlin.String;kotlinx.serialization.json.JsonElement){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ContentBlock.ToolUse.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ContentBlock.ToolUse.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.ToolUse.toString|toString(){}[0]
+    }
+
+    final class Unknown : com.steamstreet.awskt.bedrock/ContentBlock { // com.steamstreet.awskt.bedrock/ContentBlock.Unknown|null[0]
+        constructor <init>(kotlin/String, kotlinx.serialization.json/JsonElement) // com.steamstreet.awskt.bedrock/ContentBlock.Unknown.<init>|<init>(kotlin.String;kotlinx.serialization.json.JsonElement){}[0]
+
+        final val key // com.steamstreet.awskt.bedrock/ContentBlock.Unknown.key|{}key[0]
+            final fun <get-key>(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.Unknown.key.<get-key>|<get-key>(){}[0]
+        final val value // com.steamstreet.awskt.bedrock/ContentBlock.Unknown.value|{}value[0]
+            final fun <get-value>(): kotlinx.serialization.json/JsonElement // com.steamstreet.awskt.bedrock/ContentBlock.Unknown.value.<get-value>|<get-value>(){}[0]
+
+        final fun component1(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.Unknown.component1|component1(){}[0]
+        final fun component2(): kotlinx.serialization.json/JsonElement // com.steamstreet.awskt.bedrock/ContentBlock.Unknown.component2|component2(){}[0]
+        final fun copy(kotlin/String = ..., kotlinx.serialization.json/JsonElement = ...): com.steamstreet.awskt.bedrock/ContentBlock.Unknown // com.steamstreet.awskt.bedrock/ContentBlock.Unknown.copy|copy(kotlin.String;kotlinx.serialization.json.JsonElement){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ContentBlock.Unknown.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ContentBlock.Unknown.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ContentBlock.Unknown.toString|toString(){}[0]
+    }
+
+    final object Companion : kotlinx.serialization.internal/SerializerFactory { // com.steamstreet.awskt.bedrock/ContentBlock.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/ContentBlock> // com.steamstreet.awskt.bedrock/ContentBlock.Companion.serializer|serializer(){}[0]
+        final fun serializer(kotlin/Array<out kotlinx.serialization/KSerializer<*>>...): kotlinx.serialization/KSerializer<*> // com.steamstreet.awskt.bedrock/ContentBlock.Companion.serializer|serializer(kotlin.Array<out|kotlinx.serialization.KSerializer<*>>...){}[0]
+    }
+}
+
+sealed interface com.steamstreet.awskt.bedrock/ConverseStreamEvent { // com.steamstreet.awskt.bedrock/ConverseStreamEvent|null[0]
+    final class ContentBlockDelta : com.steamstreet.awskt.bedrock/ConverseStreamEvent { // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta|null[0]
+        constructor <init>(kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlinx.serialization.json/JsonElement? = ...) // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.<init>|<init>(kotlin.Int;kotlin.String?;kotlin.String?;kotlin.String?;kotlinx.serialization.json.JsonElement?){}[0]
+
+        final val contentBlockIndex // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.contentBlockIndex|{}contentBlockIndex[0]
+            final fun <get-contentBlockIndex>(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.contentBlockIndex.<get-contentBlockIndex>|<get-contentBlockIndex>(){}[0]
+        final val raw // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.raw|{}raw[0]
+            final fun <get-raw>(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.raw.<get-raw>|<get-raw>(){}[0]
+        final val reasoningText // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.reasoningText|{}reasoningText[0]
+            final fun <get-reasoningText>(): kotlin/String? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.reasoningText.<get-reasoningText>|<get-reasoningText>(){}[0]
+        final val text // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.text|{}text[0]
+            final fun <get-text>(): kotlin/String? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.text.<get-text>|<get-text>(){}[0]
+        final val toolUseInput // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.toolUseInput|{}toolUseInput[0]
+            final fun <get-toolUseInput>(): kotlin/String? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.toolUseInput.<get-toolUseInput>|<get-toolUseInput>(){}[0]
+
+        final fun component1(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.component1|component1(){}[0]
+        final fun component2(): kotlin/String? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.component2|component2(){}[0]
+        final fun component3(): kotlin/String? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.component3|component3(){}[0]
+        final fun component4(): kotlin/String? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.component4|component4(){}[0]
+        final fun component5(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.component5|component5(){}[0]
+        final fun copy(kotlin/Int = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlinx.serialization.json/JsonElement? = ...): com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.copy|copy(kotlin.Int;kotlin.String?;kotlin.String?;kotlin.String?;kotlinx.serialization.json.JsonElement?){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockDelta.toString|toString(){}[0]
+    }
+
+    final class ContentBlockStart : com.steamstreet.awskt.bedrock/ConverseStreamEvent { // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStart|null[0]
+        constructor <init>(kotlin/Int, com.steamstreet.awskt.bedrock/ToolUseStart? = ...) // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStart.<init>|<init>(kotlin.Int;com.steamstreet.awskt.bedrock.ToolUseStart?){}[0]
+
+        final val contentBlockIndex // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStart.contentBlockIndex|{}contentBlockIndex[0]
+            final fun <get-contentBlockIndex>(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStart.contentBlockIndex.<get-contentBlockIndex>|<get-contentBlockIndex>(){}[0]
+        final val toolUse // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStart.toolUse|{}toolUse[0]
+            final fun <get-toolUse>(): com.steamstreet.awskt.bedrock/ToolUseStart? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStart.toolUse.<get-toolUse>|<get-toolUse>(){}[0]
+
+        final fun component1(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStart.component1|component1(){}[0]
+        final fun component2(): com.steamstreet.awskt.bedrock/ToolUseStart? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStart.component2|component2(){}[0]
+        final fun copy(kotlin/Int = ..., com.steamstreet.awskt.bedrock/ToolUseStart? = ...): com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStart // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStart.copy|copy(kotlin.Int;com.steamstreet.awskt.bedrock.ToolUseStart?){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStart.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStart.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStart.toString|toString(){}[0]
+    }
+
+    final class ContentBlockStop : com.steamstreet.awskt.bedrock/ConverseStreamEvent { // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStop|null[0]
+        constructor <init>(kotlin/Int) // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStop.<init>|<init>(kotlin.Int){}[0]
+
+        final val contentBlockIndex // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStop.contentBlockIndex|{}contentBlockIndex[0]
+            final fun <get-contentBlockIndex>(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStop.contentBlockIndex.<get-contentBlockIndex>|<get-contentBlockIndex>(){}[0]
+
+        final fun component1(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStop.component1|component1(){}[0]
+        final fun copy(kotlin/Int = ...): com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStop // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStop.copy|copy(kotlin.Int){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStop.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStop.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseStreamEvent.ContentBlockStop.toString|toString(){}[0]
+    }
+
+    final class MessageStart : com.steamstreet.awskt.bedrock/ConverseStreamEvent { // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStart|null[0]
+        constructor <init>(kotlin/String) // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStart.<init>|<init>(kotlin.String){}[0]
+
+        final val role // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStart.role|{}role[0]
+            final fun <get-role>(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStart.role.<get-role>|<get-role>(){}[0]
+
+        final fun component1(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStart.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStart // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStart.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStart.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStart.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStart.toString|toString(){}[0]
+    }
+
+    final class MessageStop : com.steamstreet.awskt.bedrock/ConverseStreamEvent { // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStop|null[0]
+        constructor <init>(kotlin/String? = ..., kotlinx.serialization.json/JsonElement? = ...) // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStop.<init>|<init>(kotlin.String?;kotlinx.serialization.json.JsonElement?){}[0]
+
+        final val additionalModelResponseFields // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStop.additionalModelResponseFields|{}additionalModelResponseFields[0]
+            final fun <get-additionalModelResponseFields>(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStop.additionalModelResponseFields.<get-additionalModelResponseFields>|<get-additionalModelResponseFields>(){}[0]
+        final val stopReason // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStop.stopReason|{}stopReason[0]
+            final fun <get-stopReason>(): kotlin/String? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStop.stopReason.<get-stopReason>|<get-stopReason>(){}[0]
+
+        final fun component1(): kotlin/String? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStop.component1|component1(){}[0]
+        final fun component2(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStop.component2|component2(){}[0]
+        final fun copy(kotlin/String? = ..., kotlinx.serialization.json/JsonElement? = ...): com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStop // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStop.copy|copy(kotlin.String?;kotlinx.serialization.json.JsonElement?){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStop.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStop.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseStreamEvent.MessageStop.toString|toString(){}[0]
+    }
+
+    final class Metadata : com.steamstreet.awskt.bedrock/ConverseStreamEvent { // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata|null[0]
+        constructor <init>(com.steamstreet.awskt.bedrock/TokenUsage? = ..., com.steamstreet.awskt.bedrock/ConverseMetrics? = ..., kotlinx.serialization.json/JsonElement? = ...) // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata.<init>|<init>(com.steamstreet.awskt.bedrock.TokenUsage?;com.steamstreet.awskt.bedrock.ConverseMetrics?;kotlinx.serialization.json.JsonElement?){}[0]
+
+        final val metrics // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata.metrics|{}metrics[0]
+            final fun <get-metrics>(): com.steamstreet.awskt.bedrock/ConverseMetrics? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata.metrics.<get-metrics>|<get-metrics>(){}[0]
+        final val trace // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata.trace|{}trace[0]
+            final fun <get-trace>(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata.trace.<get-trace>|<get-trace>(){}[0]
+        final val usage // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata.usage|{}usage[0]
+            final fun <get-usage>(): com.steamstreet.awskt.bedrock/TokenUsage? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata.usage.<get-usage>|<get-usage>(){}[0]
+
+        final fun component1(): com.steamstreet.awskt.bedrock/TokenUsage? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata.component1|component1(){}[0]
+        final fun component2(): com.steamstreet.awskt.bedrock/ConverseMetrics? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata.component2|component2(){}[0]
+        final fun component3(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata.component3|component3(){}[0]
+        final fun copy(com.steamstreet.awskt.bedrock/TokenUsage? = ..., com.steamstreet.awskt.bedrock/ConverseMetrics? = ..., kotlinx.serialization.json/JsonElement? = ...): com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata.copy|copy(com.steamstreet.awskt.bedrock.TokenUsage?;com.steamstreet.awskt.bedrock.ConverseMetrics?;kotlinx.serialization.json.JsonElement?){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Metadata.toString|toString(){}[0]
+    }
+
+    final class Unknown : com.steamstreet.awskt.bedrock/ConverseStreamEvent { // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Unknown|null[0]
+        constructor <init>(kotlin/String?, kotlinx.serialization.json/JsonElement) // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Unknown.<init>|<init>(kotlin.String?;kotlinx.serialization.json.JsonElement){}[0]
+
+        final val eventType // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Unknown.eventType|{}eventType[0]
+            final fun <get-eventType>(): kotlin/String? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Unknown.eventType.<get-eventType>|<get-eventType>(){}[0]
+        final val payload // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Unknown.payload|{}payload[0]
+            final fun <get-payload>(): kotlinx.serialization.json/JsonElement // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Unknown.payload.<get-payload>|<get-payload>(){}[0]
+
+        final fun component1(): kotlin/String? // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Unknown.component1|component1(){}[0]
+        final fun component2(): kotlinx.serialization.json/JsonElement // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Unknown.component2|component2(){}[0]
+        final fun copy(kotlin/String? = ..., kotlinx.serialization.json/JsonElement = ...): com.steamstreet.awskt.bedrock/ConverseStreamEvent.Unknown // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Unknown.copy|copy(kotlin.String?;kotlinx.serialization.json.JsonElement){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Unknown.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Unknown.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseStreamEvent.Unknown.toString|toString(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/AccessDeniedException : com.steamstreet.awskt.bedrock/BedrockException { // com.steamstreet.awskt.bedrock/AccessDeniedException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.bedrock/AccessDeniedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.bedrock/BedrockRuntimeConfig { // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig|null[0]
+    constructor <init>() // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.<init>|<init>(){}[0]
+
+    final var caInfo // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.caInfo|{}caInfo[0]
+        final fun <get-caInfo>(): kotlin/String? // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.caInfo.<get-caInfo>|<get-caInfo>(){}[0]
+        final fun <set-caInfo>(kotlin/String?) // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.caInfo.<set-caInfo>|<set-caInfo>(kotlin.String?){}[0]
+    final var credentialsProvider // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.credentialsProvider|{}credentialsProvider[0]
+        final fun <get-credentialsProvider>(): com.steamstreet.awskt.core/AwsCredentialsProvider? // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.credentialsProvider.<get-credentialsProvider>|<get-credentialsProvider>(){}[0]
+        final fun <set-credentialsProvider>(com.steamstreet.awskt.core/AwsCredentialsProvider?) // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.credentialsProvider.<set-credentialsProvider>|<set-credentialsProvider>(com.steamstreet.awskt.core.AwsCredentialsProvider?){}[0]
+    final var endpointUrl // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.endpointUrl|{}endpointUrl[0]
+        final fun <get-endpointUrl>(): kotlin/String? // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.endpointUrl.<get-endpointUrl>|<get-endpointUrl>(){}[0]
+        final fun <set-endpointUrl>(kotlin/String?) // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.endpointUrl.<set-endpointUrl>|<set-endpointUrl>(kotlin.String?){}[0]
+    final var httpClient // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.httpClient|{}httpClient[0]
+        final fun <get-httpClient>(): io.ktor.client/HttpClient? // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.httpClient.<get-httpClient>|<get-httpClient>(){}[0]
+        final fun <set-httpClient>(io.ktor.client/HttpClient?) // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.httpClient.<set-httpClient>|<set-httpClient>(io.ktor.client.HttpClient?){}[0]
+    final var httpTimeouts // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.httpTimeouts|{}httpTimeouts[0]
+        final fun <get-httpTimeouts>(): com.steamstreet.awskt.core/AwsHttpTimeouts // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.httpTimeouts.<get-httpTimeouts>|<get-httpTimeouts>(){}[0]
+        final fun <set-httpTimeouts>(com.steamstreet.awskt.core/AwsHttpTimeouts) // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.httpTimeouts.<set-httpTimeouts>|<set-httpTimeouts>(com.steamstreet.awskt.core.AwsHttpTimeouts){}[0]
+    final var observer // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.observer|{}observer[0]
+        final fun <get-observer>(): com.steamstreet.awskt.core/AwsCallObserver? // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.observer.<get-observer>|<get-observer>(){}[0]
+        final fun <set-observer>(com.steamstreet.awskt.core/AwsCallObserver?) // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.observer.<set-observer>|<set-observer>(com.steamstreet.awskt.core.AwsCallObserver?){}[0]
+    final var region // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.region|{}region[0]
+        final fun <get-region>(): kotlin/String? // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.region.<get-region>|<get-region>(){}[0]
+        final fun <set-region>(kotlin/String?) // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.region.<set-region>|<set-region>(kotlin.String?){}[0]
+    final var retryConfig // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.retryConfig|{}retryConfig[0]
+        final fun <get-retryConfig>(): com.steamstreet.awskt.core/RetryConfig // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.retryConfig.<get-retryConfig>|<get-retryConfig>(){}[0]
+        final fun <set-retryConfig>(com.steamstreet.awskt.core/RetryConfig) // com.steamstreet.awskt.bedrock/BedrockRuntimeConfig.retryConfig.<set-retryConfig>|<set-retryConfig>(com.steamstreet.awskt.core.RetryConfig){}[0]
+}
+
+final class com.steamstreet.awskt.bedrock/BinarySource { // com.steamstreet.awskt.bedrock/BinarySource|null[0]
+    constructor <init>(kotlin/ByteArray? = ..., com.steamstreet.awskt.bedrock/S3Location? = ...) // com.steamstreet.awskt.bedrock/BinarySource.<init>|<init>(kotlin.ByteArray?;com.steamstreet.awskt.bedrock.S3Location?){}[0]
+
+    final val bytes // com.steamstreet.awskt.bedrock/BinarySource.bytes|{}bytes[0]
+        final fun <get-bytes>(): kotlin/ByteArray? // com.steamstreet.awskt.bedrock/BinarySource.bytes.<get-bytes>|<get-bytes>(){}[0]
+    final val s3Location // com.steamstreet.awskt.bedrock/BinarySource.s3Location|{}s3Location[0]
+        final fun <get-s3Location>(): com.steamstreet.awskt.bedrock/S3Location? // com.steamstreet.awskt.bedrock/BinarySource.s3Location.<get-s3Location>|<get-s3Location>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/BinarySource.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/BinarySource.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/BinarySource.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/BinarySource> { // com.steamstreet.awskt.bedrock/BinarySource.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/BinarySource.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/BinarySource.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/BinarySource.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/BinarySource // com.steamstreet.awskt.bedrock/BinarySource.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/BinarySource) // com.steamstreet.awskt.bedrock/BinarySource.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.BinarySource){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/BinarySource.Companion|null[0]
+        final fun bytes(kotlin/ByteArray): com.steamstreet.awskt.bedrock/BinarySource // com.steamstreet.awskt.bedrock/BinarySource.Companion.bytes|bytes(kotlin.ByteArray){}[0]
+        final fun s3(kotlin/String, kotlin/String? = ...): com.steamstreet.awskt.bedrock/BinarySource // com.steamstreet.awskt.bedrock/BinarySource.Companion.s3|s3(kotlin.String;kotlin.String?){}[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/BinarySource> // com.steamstreet.awskt.bedrock/BinarySource.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/CachePointSpec { // com.steamstreet.awskt.bedrock/CachePointSpec|null[0]
+    constructor <init>(kotlin/String = ...) // com.steamstreet.awskt.bedrock/CachePointSpec.<init>|<init>(kotlin.String){}[0]
+
+    final val type // com.steamstreet.awskt.bedrock/CachePointSpec.type|{}type[0]
+        final fun <get-type>(): kotlin/String // com.steamstreet.awskt.bedrock/CachePointSpec.type.<get-type>|<get-type>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.bedrock/CachePointSpec.component1|component1(){}[0]
+    final fun copy(kotlin/String = ...): com.steamstreet.awskt.bedrock/CachePointSpec // com.steamstreet.awskt.bedrock/CachePointSpec.copy|copy(kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/CachePointSpec.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/CachePointSpec.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/CachePointSpec.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/CachePointSpec> { // com.steamstreet.awskt.bedrock/CachePointSpec.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/CachePointSpec.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/CachePointSpec.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/CachePointSpec.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/CachePointSpec // com.steamstreet.awskt.bedrock/CachePointSpec.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/CachePointSpec) // com.steamstreet.awskt.bedrock/CachePointSpec.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.CachePointSpec){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/CachePointSpec.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/CachePointSpec> // com.steamstreet.awskt.bedrock/CachePointSpec.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/ConverseMetrics { // com.steamstreet.awskt.bedrock/ConverseMetrics|null[0]
+    constructor <init>(kotlin/Long = ...) // com.steamstreet.awskt.bedrock/ConverseMetrics.<init>|<init>(kotlin.Long){}[0]
+
+    final val latencyMs // com.steamstreet.awskt.bedrock/ConverseMetrics.latencyMs|{}latencyMs[0]
+        final fun <get-latencyMs>(): kotlin/Long // com.steamstreet.awskt.bedrock/ConverseMetrics.latencyMs.<get-latencyMs>|<get-latencyMs>(){}[0]
+
+    final fun component1(): kotlin/Long // com.steamstreet.awskt.bedrock/ConverseMetrics.component1|component1(){}[0]
+    final fun copy(kotlin/Long = ...): com.steamstreet.awskt.bedrock/ConverseMetrics // com.steamstreet.awskt.bedrock/ConverseMetrics.copy|copy(kotlin.Long){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ConverseMetrics.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseMetrics.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseMetrics.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/ConverseMetrics> { // com.steamstreet.awskt.bedrock/ConverseMetrics.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/ConverseMetrics.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/ConverseMetrics.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/ConverseMetrics.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/ConverseMetrics // com.steamstreet.awskt.bedrock/ConverseMetrics.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/ConverseMetrics) // com.steamstreet.awskt.bedrock/ConverseMetrics.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.ConverseMetrics){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/ConverseMetrics.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/ConverseMetrics> // com.steamstreet.awskt.bedrock/ConverseMetrics.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/ConverseOutput { // com.steamstreet.awskt.bedrock/ConverseOutput|null[0]
+    constructor <init>(com.steamstreet.awskt.bedrock/Message? = ...) // com.steamstreet.awskt.bedrock/ConverseOutput.<init>|<init>(com.steamstreet.awskt.bedrock.Message?){}[0]
+
+    final val message // com.steamstreet.awskt.bedrock/ConverseOutput.message|{}message[0]
+        final fun <get-message>(): com.steamstreet.awskt.bedrock/Message? // com.steamstreet.awskt.bedrock/ConverseOutput.message.<get-message>|<get-message>(){}[0]
+
+    final fun component1(): com.steamstreet.awskt.bedrock/Message? // com.steamstreet.awskt.bedrock/ConverseOutput.component1|component1(){}[0]
+    final fun copy(com.steamstreet.awskt.bedrock/Message? = ...): com.steamstreet.awskt.bedrock/ConverseOutput // com.steamstreet.awskt.bedrock/ConverseOutput.copy|copy(com.steamstreet.awskt.bedrock.Message?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ConverseOutput.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseOutput.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseOutput.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/ConverseOutput> { // com.steamstreet.awskt.bedrock/ConverseOutput.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/ConverseOutput.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/ConverseOutput.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/ConverseOutput.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/ConverseOutput // com.steamstreet.awskt.bedrock/ConverseOutput.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/ConverseOutput) // com.steamstreet.awskt.bedrock/ConverseOutput.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.ConverseOutput){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/ConverseOutput.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/ConverseOutput> // com.steamstreet.awskt.bedrock/ConverseOutput.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/ConverseRequest { // com.steamstreet.awskt.bedrock/ConverseRequest|null[0]
+    constructor <init>(kotlin/String, kotlin.collections/List<com.steamstreet.awskt.bedrock/Message>, kotlin.collections/List<com.steamstreet.awskt.bedrock/SystemContentBlock>? = ..., com.steamstreet.awskt.bedrock/InferenceConfiguration? = ..., com.steamstreet.awskt.bedrock/ToolConfiguration? = ..., kotlinx.serialization.json/JsonElement? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlinx.serialization.json/JsonElement? = ...) // com.steamstreet.awskt.bedrock/ConverseRequest.<init>|<init>(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.bedrock.Message>;kotlin.collections.List<com.steamstreet.awskt.bedrock.SystemContentBlock>?;com.steamstreet.awskt.bedrock.InferenceConfiguration?;com.steamstreet.awskt.bedrock.ToolConfiguration?;kotlinx.serialization.json.JsonElement?;kotlin.collections.List<kotlin.String>?;kotlinx.serialization.json.JsonElement?){}[0]
+
+    final val additionalModelRequestFields // com.steamstreet.awskt.bedrock/ConverseRequest.additionalModelRequestFields|{}additionalModelRequestFields[0]
+        final fun <get-additionalModelRequestFields>(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ConverseRequest.additionalModelRequestFields.<get-additionalModelRequestFields>|<get-additionalModelRequestFields>(){}[0]
+    final val additionalModelResponseFieldPaths // com.steamstreet.awskt.bedrock/ConverseRequest.additionalModelResponseFieldPaths|{}additionalModelResponseFieldPaths[0]
+        final fun <get-additionalModelResponseFieldPaths>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.bedrock/ConverseRequest.additionalModelResponseFieldPaths.<get-additionalModelResponseFieldPaths>|<get-additionalModelResponseFieldPaths>(){}[0]
+    final val guardrailConfig // com.steamstreet.awskt.bedrock/ConverseRequest.guardrailConfig|{}guardrailConfig[0]
+        final fun <get-guardrailConfig>(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ConverseRequest.guardrailConfig.<get-guardrailConfig>|<get-guardrailConfig>(){}[0]
+    final val inferenceConfig // com.steamstreet.awskt.bedrock/ConverseRequest.inferenceConfig|{}inferenceConfig[0]
+        final fun <get-inferenceConfig>(): com.steamstreet.awskt.bedrock/InferenceConfiguration? // com.steamstreet.awskt.bedrock/ConverseRequest.inferenceConfig.<get-inferenceConfig>|<get-inferenceConfig>(){}[0]
+    final val messages // com.steamstreet.awskt.bedrock/ConverseRequest.messages|{}messages[0]
+        final fun <get-messages>(): kotlin.collections/List<com.steamstreet.awskt.bedrock/Message> // com.steamstreet.awskt.bedrock/ConverseRequest.messages.<get-messages>|<get-messages>(){}[0]
+    final val modelId // com.steamstreet.awskt.bedrock/ConverseRequest.modelId|{}modelId[0]
+        final fun <get-modelId>(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseRequest.modelId.<get-modelId>|<get-modelId>(){}[0]
+    final val system // com.steamstreet.awskt.bedrock/ConverseRequest.system|{}system[0]
+        final fun <get-system>(): kotlin.collections/List<com.steamstreet.awskt.bedrock/SystemContentBlock>? // com.steamstreet.awskt.bedrock/ConverseRequest.system.<get-system>|<get-system>(){}[0]
+    final val toolConfig // com.steamstreet.awskt.bedrock/ConverseRequest.toolConfig|{}toolConfig[0]
+        final fun <get-toolConfig>(): com.steamstreet.awskt.bedrock/ToolConfiguration? // com.steamstreet.awskt.bedrock/ConverseRequest.toolConfig.<get-toolConfig>|<get-toolConfig>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseRequest.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<com.steamstreet.awskt.bedrock/Message> // com.steamstreet.awskt.bedrock/ConverseRequest.component2|component2(){}[0]
+    final fun component3(): kotlin.collections/List<com.steamstreet.awskt.bedrock/SystemContentBlock>? // com.steamstreet.awskt.bedrock/ConverseRequest.component3|component3(){}[0]
+    final fun component4(): com.steamstreet.awskt.bedrock/InferenceConfiguration? // com.steamstreet.awskt.bedrock/ConverseRequest.component4|component4(){}[0]
+    final fun component5(): com.steamstreet.awskt.bedrock/ToolConfiguration? // com.steamstreet.awskt.bedrock/ConverseRequest.component5|component5(){}[0]
+    final fun component6(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ConverseRequest.component6|component6(){}[0]
+    final fun component7(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.bedrock/ConverseRequest.component7|component7(){}[0]
+    final fun component8(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ConverseRequest.component8|component8(){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/List<com.steamstreet.awskt.bedrock/Message> = ..., kotlin.collections/List<com.steamstreet.awskt.bedrock/SystemContentBlock>? = ..., com.steamstreet.awskt.bedrock/InferenceConfiguration? = ..., com.steamstreet.awskt.bedrock/ToolConfiguration? = ..., kotlinx.serialization.json/JsonElement? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlinx.serialization.json/JsonElement? = ...): com.steamstreet.awskt.bedrock/ConverseRequest // com.steamstreet.awskt.bedrock/ConverseRequest.copy|copy(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.bedrock.Message>;kotlin.collections.List<com.steamstreet.awskt.bedrock.SystemContentBlock>?;com.steamstreet.awskt.bedrock.InferenceConfiguration?;com.steamstreet.awskt.bedrock.ToolConfiguration?;kotlinx.serialization.json.JsonElement?;kotlin.collections.List<kotlin.String>?;kotlinx.serialization.json.JsonElement?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ConverseRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.bedrock/ConverseResponse { // com.steamstreet.awskt.bedrock/ConverseResponse|null[0]
+    constructor <init>(com.steamstreet.awskt.bedrock/ConverseOutput? = ..., kotlin/String? = ..., com.steamstreet.awskt.bedrock/TokenUsage? = ..., com.steamstreet.awskt.bedrock/ConverseMetrics? = ..., kotlinx.serialization.json/JsonElement? = ..., kotlinx.serialization.json/JsonElement? = ...) // com.steamstreet.awskt.bedrock/ConverseResponse.<init>|<init>(com.steamstreet.awskt.bedrock.ConverseOutput?;kotlin.String?;com.steamstreet.awskt.bedrock.TokenUsage?;com.steamstreet.awskt.bedrock.ConverseMetrics?;kotlinx.serialization.json.JsonElement?;kotlinx.serialization.json.JsonElement?){}[0]
+
+    final val additionalModelResponseFields // com.steamstreet.awskt.bedrock/ConverseResponse.additionalModelResponseFields|{}additionalModelResponseFields[0]
+        final fun <get-additionalModelResponseFields>(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ConverseResponse.additionalModelResponseFields.<get-additionalModelResponseFields>|<get-additionalModelResponseFields>(){}[0]
+    final val message // com.steamstreet.awskt.bedrock/ConverseResponse.message|{}message[0]
+        final fun <get-message>(): com.steamstreet.awskt.bedrock/Message? // com.steamstreet.awskt.bedrock/ConverseResponse.message.<get-message>|<get-message>(){}[0]
+    final val metrics // com.steamstreet.awskt.bedrock/ConverseResponse.metrics|{}metrics[0]
+        final fun <get-metrics>(): com.steamstreet.awskt.bedrock/ConverseMetrics? // com.steamstreet.awskt.bedrock/ConverseResponse.metrics.<get-metrics>|<get-metrics>(){}[0]
+    final val output // com.steamstreet.awskt.bedrock/ConverseResponse.output|{}output[0]
+        final fun <get-output>(): com.steamstreet.awskt.bedrock/ConverseOutput? // com.steamstreet.awskt.bedrock/ConverseResponse.output.<get-output>|<get-output>(){}[0]
+    final val stopReason // com.steamstreet.awskt.bedrock/ConverseResponse.stopReason|{}stopReason[0]
+        final fun <get-stopReason>(): kotlin/String? // com.steamstreet.awskt.bedrock/ConverseResponse.stopReason.<get-stopReason>|<get-stopReason>(){}[0]
+    final val text // com.steamstreet.awskt.bedrock/ConverseResponse.text|{}text[0]
+        final fun <get-text>(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseResponse.text.<get-text>|<get-text>(){}[0]
+    final val toolUses // com.steamstreet.awskt.bedrock/ConverseResponse.toolUses|{}toolUses[0]
+        final fun <get-toolUses>(): kotlin.collections/List<com.steamstreet.awskt.bedrock/ContentBlock.ToolUse> // com.steamstreet.awskt.bedrock/ConverseResponse.toolUses.<get-toolUses>|<get-toolUses>(){}[0]
+    final val trace // com.steamstreet.awskt.bedrock/ConverseResponse.trace|{}trace[0]
+        final fun <get-trace>(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ConverseResponse.trace.<get-trace>|<get-trace>(){}[0]
+    final val usage // com.steamstreet.awskt.bedrock/ConverseResponse.usage|{}usage[0]
+        final fun <get-usage>(): com.steamstreet.awskt.bedrock/TokenUsage? // com.steamstreet.awskt.bedrock/ConverseResponse.usage.<get-usage>|<get-usage>(){}[0]
+
+    final fun component1(): com.steamstreet.awskt.bedrock/ConverseOutput? // com.steamstreet.awskt.bedrock/ConverseResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.bedrock/ConverseResponse.component2|component2(){}[0]
+    final fun component3(): com.steamstreet.awskt.bedrock/TokenUsage? // com.steamstreet.awskt.bedrock/ConverseResponse.component3|component3(){}[0]
+    final fun component4(): com.steamstreet.awskt.bedrock/ConverseMetrics? // com.steamstreet.awskt.bedrock/ConverseResponse.component4|component4(){}[0]
+    final fun component5(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ConverseResponse.component5|component5(){}[0]
+    final fun component6(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ConverseResponse.component6|component6(){}[0]
+    final fun copy(com.steamstreet.awskt.bedrock/ConverseOutput? = ..., kotlin/String? = ..., com.steamstreet.awskt.bedrock/TokenUsage? = ..., com.steamstreet.awskt.bedrock/ConverseMetrics? = ..., kotlinx.serialization.json/JsonElement? = ..., kotlinx.serialization.json/JsonElement? = ...): com.steamstreet.awskt.bedrock/ConverseResponse // com.steamstreet.awskt.bedrock/ConverseResponse.copy|copy(com.steamstreet.awskt.bedrock.ConverseOutput?;kotlin.String?;com.steamstreet.awskt.bedrock.TokenUsage?;com.steamstreet.awskt.bedrock.ConverseMetrics?;kotlinx.serialization.json.JsonElement?;kotlinx.serialization.json.JsonElement?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ConverseResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ConverseResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ConverseResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/ConverseResponse> { // com.steamstreet.awskt.bedrock/ConverseResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/ConverseResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/ConverseResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/ConverseResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/ConverseResponse // com.steamstreet.awskt.bedrock/ConverseResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/ConverseResponse) // com.steamstreet.awskt.bedrock/ConverseResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.ConverseResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/ConverseResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/ConverseResponse> // com.steamstreet.awskt.bedrock/ConverseResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/InferenceConfiguration { // com.steamstreet.awskt.bedrock/InferenceConfiguration|null[0]
+    constructor <init>(kotlin/Int? = ..., kotlin/Float? = ..., kotlin/Float? = ..., kotlin.collections/List<kotlin/String>? = ...) // com.steamstreet.awskt.bedrock/InferenceConfiguration.<init>|<init>(kotlin.Int?;kotlin.Float?;kotlin.Float?;kotlin.collections.List<kotlin.String>?){}[0]
+
+    final val maxTokens // com.steamstreet.awskt.bedrock/InferenceConfiguration.maxTokens|{}maxTokens[0]
+        final fun <get-maxTokens>(): kotlin/Int? // com.steamstreet.awskt.bedrock/InferenceConfiguration.maxTokens.<get-maxTokens>|<get-maxTokens>(){}[0]
+    final val stopSequences // com.steamstreet.awskt.bedrock/InferenceConfiguration.stopSequences|{}stopSequences[0]
+        final fun <get-stopSequences>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.bedrock/InferenceConfiguration.stopSequences.<get-stopSequences>|<get-stopSequences>(){}[0]
+    final val temperature // com.steamstreet.awskt.bedrock/InferenceConfiguration.temperature|{}temperature[0]
+        final fun <get-temperature>(): kotlin/Float? // com.steamstreet.awskt.bedrock/InferenceConfiguration.temperature.<get-temperature>|<get-temperature>(){}[0]
+    final val topP // com.steamstreet.awskt.bedrock/InferenceConfiguration.topP|{}topP[0]
+        final fun <get-topP>(): kotlin/Float? // com.steamstreet.awskt.bedrock/InferenceConfiguration.topP.<get-topP>|<get-topP>(){}[0]
+
+    final fun component1(): kotlin/Int? // com.steamstreet.awskt.bedrock/InferenceConfiguration.component1|component1(){}[0]
+    final fun component2(): kotlin/Float? // com.steamstreet.awskt.bedrock/InferenceConfiguration.component2|component2(){}[0]
+    final fun component3(): kotlin/Float? // com.steamstreet.awskt.bedrock/InferenceConfiguration.component3|component3(){}[0]
+    final fun component4(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.bedrock/InferenceConfiguration.component4|component4(){}[0]
+    final fun copy(kotlin/Int? = ..., kotlin/Float? = ..., kotlin/Float? = ..., kotlin.collections/List<kotlin/String>? = ...): com.steamstreet.awskt.bedrock/InferenceConfiguration // com.steamstreet.awskt.bedrock/InferenceConfiguration.copy|copy(kotlin.Int?;kotlin.Float?;kotlin.Float?;kotlin.collections.List<kotlin.String>?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/InferenceConfiguration.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/InferenceConfiguration.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/InferenceConfiguration.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/InferenceConfiguration> { // com.steamstreet.awskt.bedrock/InferenceConfiguration.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/InferenceConfiguration.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/InferenceConfiguration.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/InferenceConfiguration.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/InferenceConfiguration // com.steamstreet.awskt.bedrock/InferenceConfiguration.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/InferenceConfiguration) // com.steamstreet.awskt.bedrock/InferenceConfiguration.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.InferenceConfiguration){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/InferenceConfiguration.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.bedrock/InferenceConfiguration.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/InferenceConfiguration> // com.steamstreet.awskt.bedrock/InferenceConfiguration.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/InternalServerException : com.steamstreet.awskt.bedrock/BedrockException { // com.steamstreet.awskt.bedrock/InternalServerException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.bedrock/InternalServerException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.bedrock/Message { // com.steamstreet.awskt.bedrock/Message|null[0]
+    constructor <init>(kotlin/String, kotlin.collections/List<com.steamstreet.awskt.bedrock/ContentBlock>) // com.steamstreet.awskt.bedrock/Message.<init>|<init>(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.bedrock.ContentBlock>){}[0]
+
+    final val content // com.steamstreet.awskt.bedrock/Message.content|{}content[0]
+        final fun <get-content>(): kotlin.collections/List<com.steamstreet.awskt.bedrock/ContentBlock> // com.steamstreet.awskt.bedrock/Message.content.<get-content>|<get-content>(){}[0]
+    final val role // com.steamstreet.awskt.bedrock/Message.role|{}role[0]
+        final fun <get-role>(): kotlin/String // com.steamstreet.awskt.bedrock/Message.role.<get-role>|<get-role>(){}[0]
+    final val text // com.steamstreet.awskt.bedrock/Message.text|{}text[0]
+        final fun <get-text>(): kotlin/String // com.steamstreet.awskt.bedrock/Message.text.<get-text>|<get-text>(){}[0]
+    final val toolUses // com.steamstreet.awskt.bedrock/Message.toolUses|{}toolUses[0]
+        final fun <get-toolUses>(): kotlin.collections/List<com.steamstreet.awskt.bedrock/ContentBlock.ToolUse> // com.steamstreet.awskt.bedrock/Message.toolUses.<get-toolUses>|<get-toolUses>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.bedrock/Message.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<com.steamstreet.awskt.bedrock/ContentBlock> // com.steamstreet.awskt.bedrock/Message.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/List<com.steamstreet.awskt.bedrock/ContentBlock> = ...): com.steamstreet.awskt.bedrock/Message // com.steamstreet.awskt.bedrock/Message.copy|copy(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.bedrock.ContentBlock>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/Message.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/Message.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/Message.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/Message> { // com.steamstreet.awskt.bedrock/Message.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/Message.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/Message.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/Message.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/Message // com.steamstreet.awskt.bedrock/Message.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/Message) // com.steamstreet.awskt.bedrock/Message.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.Message){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/Message.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.bedrock/Message.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun assistant(kotlin/String): com.steamstreet.awskt.bedrock/Message // com.steamstreet.awskt.bedrock/Message.Companion.assistant|assistant(kotlin.String){}[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/Message> // com.steamstreet.awskt.bedrock/Message.Companion.serializer|serializer(){}[0]
+        final fun user(kotlin/String): com.steamstreet.awskt.bedrock/Message // com.steamstreet.awskt.bedrock/Message.Companion.user|user(kotlin.String){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/ModelErrorException : com.steamstreet.awskt.bedrock/BedrockException { // com.steamstreet.awskt.bedrock/ModelErrorException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.bedrock/ModelErrorException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.bedrock/ModelNotReadyException : com.steamstreet.awskt.bedrock/BedrockException { // com.steamstreet.awskt.bedrock/ModelNotReadyException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.bedrock/ModelNotReadyException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.bedrock/ModelStreamErrorException : com.steamstreet.awskt.bedrock/BedrockException { // com.steamstreet.awskt.bedrock/ModelStreamErrorException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.bedrock/ModelStreamErrorException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.bedrock/ModelTimeoutException : com.steamstreet.awskt.bedrock/BedrockException { // com.steamstreet.awskt.bedrock/ModelTimeoutException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.bedrock/ModelTimeoutException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.bedrock/ResourceNotFoundException : com.steamstreet.awskt.bedrock/BedrockException { // com.steamstreet.awskt.bedrock/ResourceNotFoundException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.bedrock/ResourceNotFoundException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.bedrock/S3Location { // com.steamstreet.awskt.bedrock/S3Location|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ...) // com.steamstreet.awskt.bedrock/S3Location.<init>|<init>(kotlin.String;kotlin.String?){}[0]
+
+    final val bucketOwner // com.steamstreet.awskt.bedrock/S3Location.bucketOwner|{}bucketOwner[0]
+        final fun <get-bucketOwner>(): kotlin/String? // com.steamstreet.awskt.bedrock/S3Location.bucketOwner.<get-bucketOwner>|<get-bucketOwner>(){}[0]
+    final val uri // com.steamstreet.awskt.bedrock/S3Location.uri|{}uri[0]
+        final fun <get-uri>(): kotlin/String // com.steamstreet.awskt.bedrock/S3Location.uri.<get-uri>|<get-uri>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.bedrock/S3Location.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.bedrock/S3Location.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ...): com.steamstreet.awskt.bedrock/S3Location // com.steamstreet.awskt.bedrock/S3Location.copy|copy(kotlin.String;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/S3Location.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/S3Location.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/S3Location.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/S3Location> { // com.steamstreet.awskt.bedrock/S3Location.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/S3Location.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/S3Location.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/S3Location.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/S3Location // com.steamstreet.awskt.bedrock/S3Location.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/S3Location) // com.steamstreet.awskt.bedrock/S3Location.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.S3Location){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/S3Location.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/S3Location> // com.steamstreet.awskt.bedrock/S3Location.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/ServiceUnavailableException : com.steamstreet.awskt.bedrock/BedrockException { // com.steamstreet.awskt.bedrock/ServiceUnavailableException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.bedrock/ServiceUnavailableException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.bedrock/SpecificToolChoice { // com.steamstreet.awskt.bedrock/SpecificToolChoice|null[0]
+    constructor <init>(kotlin/String) // com.steamstreet.awskt.bedrock/SpecificToolChoice.<init>|<init>(kotlin.String){}[0]
+
+    final val name // com.steamstreet.awskt.bedrock/SpecificToolChoice.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.steamstreet.awskt.bedrock/SpecificToolChoice.name.<get-name>|<get-name>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.bedrock/SpecificToolChoice.component1|component1(){}[0]
+    final fun copy(kotlin/String = ...): com.steamstreet.awskt.bedrock/SpecificToolChoice // com.steamstreet.awskt.bedrock/SpecificToolChoice.copy|copy(kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/SpecificToolChoice.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/SpecificToolChoice.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/SpecificToolChoice.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/SpecificToolChoice> { // com.steamstreet.awskt.bedrock/SpecificToolChoice.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/SpecificToolChoice.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/SpecificToolChoice.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/SpecificToolChoice.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/SpecificToolChoice // com.steamstreet.awskt.bedrock/SpecificToolChoice.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/SpecificToolChoice) // com.steamstreet.awskt.bedrock/SpecificToolChoice.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.SpecificToolChoice){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/SpecificToolChoice.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/SpecificToolChoice> // com.steamstreet.awskt.bedrock/SpecificToolChoice.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/SystemContentBlock { // com.steamstreet.awskt.bedrock/SystemContentBlock|null[0]
+    constructor <init>(kotlin/String? = ..., com.steamstreet.awskt.bedrock/CachePointSpec? = ...) // com.steamstreet.awskt.bedrock/SystemContentBlock.<init>|<init>(kotlin.String?;com.steamstreet.awskt.bedrock.CachePointSpec?){}[0]
+
+    final val cachePoint // com.steamstreet.awskt.bedrock/SystemContentBlock.cachePoint|{}cachePoint[0]
+        final fun <get-cachePoint>(): com.steamstreet.awskt.bedrock/CachePointSpec? // com.steamstreet.awskt.bedrock/SystemContentBlock.cachePoint.<get-cachePoint>|<get-cachePoint>(){}[0]
+    final val text // com.steamstreet.awskt.bedrock/SystemContentBlock.text|{}text[0]
+        final fun <get-text>(): kotlin/String? // com.steamstreet.awskt.bedrock/SystemContentBlock.text.<get-text>|<get-text>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.bedrock/SystemContentBlock.component1|component1(){}[0]
+    final fun component2(): com.steamstreet.awskt.bedrock/CachePointSpec? // com.steamstreet.awskt.bedrock/SystemContentBlock.component2|component2(){}[0]
+    final fun copy(kotlin/String? = ..., com.steamstreet.awskt.bedrock/CachePointSpec? = ...): com.steamstreet.awskt.bedrock/SystemContentBlock // com.steamstreet.awskt.bedrock/SystemContentBlock.copy|copy(kotlin.String?;com.steamstreet.awskt.bedrock.CachePointSpec?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/SystemContentBlock.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/SystemContentBlock.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/SystemContentBlock.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/SystemContentBlock> { // com.steamstreet.awskt.bedrock/SystemContentBlock.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/SystemContentBlock.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/SystemContentBlock.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/SystemContentBlock.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/SystemContentBlock // com.steamstreet.awskt.bedrock/SystemContentBlock.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/SystemContentBlock) // com.steamstreet.awskt.bedrock/SystemContentBlock.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.SystemContentBlock){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/SystemContentBlock.Companion|null[0]
+        final fun cachePoint(): com.steamstreet.awskt.bedrock/SystemContentBlock // com.steamstreet.awskt.bedrock/SystemContentBlock.Companion.cachePoint|cachePoint(){}[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/SystemContentBlock> // com.steamstreet.awskt.bedrock/SystemContentBlock.Companion.serializer|serializer(){}[0]
+        final fun text(kotlin/String): com.steamstreet.awskt.bedrock/SystemContentBlock // com.steamstreet.awskt.bedrock/SystemContentBlock.Companion.text|text(kotlin.String){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/ThrottlingException : com.steamstreet.awskt.bedrock/BedrockException { // com.steamstreet.awskt.bedrock/ThrottlingException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.bedrock/ThrottlingException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.bedrock/TokenUsage { // com.steamstreet.awskt.bedrock/TokenUsage|null[0]
+    constructor <init>(kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/Int? = ..., kotlin/Int? = ...) // com.steamstreet.awskt.bedrock/TokenUsage.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int?;kotlin.Int?){}[0]
+
+    final val cacheReadInputTokens // com.steamstreet.awskt.bedrock/TokenUsage.cacheReadInputTokens|{}cacheReadInputTokens[0]
+        final fun <get-cacheReadInputTokens>(): kotlin/Int? // com.steamstreet.awskt.bedrock/TokenUsage.cacheReadInputTokens.<get-cacheReadInputTokens>|<get-cacheReadInputTokens>(){}[0]
+    final val cacheWriteInputTokens // com.steamstreet.awskt.bedrock/TokenUsage.cacheWriteInputTokens|{}cacheWriteInputTokens[0]
+        final fun <get-cacheWriteInputTokens>(): kotlin/Int? // com.steamstreet.awskt.bedrock/TokenUsage.cacheWriteInputTokens.<get-cacheWriteInputTokens>|<get-cacheWriteInputTokens>(){}[0]
+    final val inputTokens // com.steamstreet.awskt.bedrock/TokenUsage.inputTokens|{}inputTokens[0]
+        final fun <get-inputTokens>(): kotlin/Int // com.steamstreet.awskt.bedrock/TokenUsage.inputTokens.<get-inputTokens>|<get-inputTokens>(){}[0]
+    final val outputTokens // com.steamstreet.awskt.bedrock/TokenUsage.outputTokens|{}outputTokens[0]
+        final fun <get-outputTokens>(): kotlin/Int // com.steamstreet.awskt.bedrock/TokenUsage.outputTokens.<get-outputTokens>|<get-outputTokens>(){}[0]
+    final val totalTokens // com.steamstreet.awskt.bedrock/TokenUsage.totalTokens|{}totalTokens[0]
+        final fun <get-totalTokens>(): kotlin/Int // com.steamstreet.awskt.bedrock/TokenUsage.totalTokens.<get-totalTokens>|<get-totalTokens>(){}[0]
+
+    final fun component1(): kotlin/Int // com.steamstreet.awskt.bedrock/TokenUsage.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // com.steamstreet.awskt.bedrock/TokenUsage.component2|component2(){}[0]
+    final fun component3(): kotlin/Int // com.steamstreet.awskt.bedrock/TokenUsage.component3|component3(){}[0]
+    final fun component4(): kotlin/Int? // com.steamstreet.awskt.bedrock/TokenUsage.component4|component4(){}[0]
+    final fun component5(): kotlin/Int? // com.steamstreet.awskt.bedrock/TokenUsage.component5|component5(){}[0]
+    final fun copy(kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/Int? = ..., kotlin/Int? = ...): com.steamstreet.awskt.bedrock/TokenUsage // com.steamstreet.awskt.bedrock/TokenUsage.copy|copy(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int?;kotlin.Int?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/TokenUsage.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/TokenUsage.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/TokenUsage.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/TokenUsage> { // com.steamstreet.awskt.bedrock/TokenUsage.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/TokenUsage.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/TokenUsage.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/TokenUsage.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/TokenUsage // com.steamstreet.awskt.bedrock/TokenUsage.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/TokenUsage) // com.steamstreet.awskt.bedrock/TokenUsage.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.TokenUsage){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/TokenUsage.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/TokenUsage> // com.steamstreet.awskt.bedrock/TokenUsage.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/Tool { // com.steamstreet.awskt.bedrock/Tool|null[0]
+    constructor <init>(com.steamstreet.awskt.bedrock/ToolSpecification? = ..., com.steamstreet.awskt.bedrock/CachePointSpec? = ...) // com.steamstreet.awskt.bedrock/Tool.<init>|<init>(com.steamstreet.awskt.bedrock.ToolSpecification?;com.steamstreet.awskt.bedrock.CachePointSpec?){}[0]
+
+    final val cachePoint // com.steamstreet.awskt.bedrock/Tool.cachePoint|{}cachePoint[0]
+        final fun <get-cachePoint>(): com.steamstreet.awskt.bedrock/CachePointSpec? // com.steamstreet.awskt.bedrock/Tool.cachePoint.<get-cachePoint>|<get-cachePoint>(){}[0]
+    final val toolSpec // com.steamstreet.awskt.bedrock/Tool.toolSpec|{}toolSpec[0]
+        final fun <get-toolSpec>(): com.steamstreet.awskt.bedrock/ToolSpecification? // com.steamstreet.awskt.bedrock/Tool.toolSpec.<get-toolSpec>|<get-toolSpec>(){}[0]
+
+    final fun component1(): com.steamstreet.awskt.bedrock/ToolSpecification? // com.steamstreet.awskt.bedrock/Tool.component1|component1(){}[0]
+    final fun component2(): com.steamstreet.awskt.bedrock/CachePointSpec? // com.steamstreet.awskt.bedrock/Tool.component2|component2(){}[0]
+    final fun copy(com.steamstreet.awskt.bedrock/ToolSpecification? = ..., com.steamstreet.awskt.bedrock/CachePointSpec? = ...): com.steamstreet.awskt.bedrock/Tool // com.steamstreet.awskt.bedrock/Tool.copy|copy(com.steamstreet.awskt.bedrock.ToolSpecification?;com.steamstreet.awskt.bedrock.CachePointSpec?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/Tool.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/Tool.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/Tool.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/Tool> { // com.steamstreet.awskt.bedrock/Tool.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/Tool.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/Tool.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/Tool.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/Tool // com.steamstreet.awskt.bedrock/Tool.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/Tool) // com.steamstreet.awskt.bedrock/Tool.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.Tool){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/Tool.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/Tool> // com.steamstreet.awskt.bedrock/Tool.Companion.serializer|serializer(){}[0]
+        final fun spec(com.steamstreet.awskt.bedrock/ToolSpecification): com.steamstreet.awskt.bedrock/Tool // com.steamstreet.awskt.bedrock/Tool.Companion.spec|spec(com.steamstreet.awskt.bedrock.ToolSpecification){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/ToolChoice { // com.steamstreet.awskt.bedrock/ToolChoice|null[0]
+    constructor <init>(kotlinx.serialization.json/JsonObject? = ..., kotlinx.serialization.json/JsonObject? = ..., com.steamstreet.awskt.bedrock/SpecificToolChoice? = ...) // com.steamstreet.awskt.bedrock/ToolChoice.<init>|<init>(kotlinx.serialization.json.JsonObject?;kotlinx.serialization.json.JsonObject?;com.steamstreet.awskt.bedrock.SpecificToolChoice?){}[0]
+
+    final val any // com.steamstreet.awskt.bedrock/ToolChoice.any|{}any[0]
+        final fun <get-any>(): kotlinx.serialization.json/JsonObject? // com.steamstreet.awskt.bedrock/ToolChoice.any.<get-any>|<get-any>(){}[0]
+    final val auto // com.steamstreet.awskt.bedrock/ToolChoice.auto|{}auto[0]
+        final fun <get-auto>(): kotlinx.serialization.json/JsonObject? // com.steamstreet.awskt.bedrock/ToolChoice.auto.<get-auto>|<get-auto>(){}[0]
+    final val tool // com.steamstreet.awskt.bedrock/ToolChoice.tool|{}tool[0]
+        final fun <get-tool>(): com.steamstreet.awskt.bedrock/SpecificToolChoice? // com.steamstreet.awskt.bedrock/ToolChoice.tool.<get-tool>|<get-tool>(){}[0]
+
+    final fun component1(): kotlinx.serialization.json/JsonObject? // com.steamstreet.awskt.bedrock/ToolChoice.component1|component1(){}[0]
+    final fun component2(): kotlinx.serialization.json/JsonObject? // com.steamstreet.awskt.bedrock/ToolChoice.component2|component2(){}[0]
+    final fun component3(): com.steamstreet.awskt.bedrock/SpecificToolChoice? // com.steamstreet.awskt.bedrock/ToolChoice.component3|component3(){}[0]
+    final fun copy(kotlinx.serialization.json/JsonObject? = ..., kotlinx.serialization.json/JsonObject? = ..., com.steamstreet.awskt.bedrock/SpecificToolChoice? = ...): com.steamstreet.awskt.bedrock/ToolChoice // com.steamstreet.awskt.bedrock/ToolChoice.copy|copy(kotlinx.serialization.json.JsonObject?;kotlinx.serialization.json.JsonObject?;com.steamstreet.awskt.bedrock.SpecificToolChoice?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ToolChoice.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ToolChoice.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ToolChoice.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/ToolChoice> { // com.steamstreet.awskt.bedrock/ToolChoice.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/ToolChoice.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/ToolChoice.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/ToolChoice.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/ToolChoice // com.steamstreet.awskt.bedrock/ToolChoice.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/ToolChoice) // com.steamstreet.awskt.bedrock/ToolChoice.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.ToolChoice){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/ToolChoice.Companion|null[0]
+        final fun any(): com.steamstreet.awskt.bedrock/ToolChoice // com.steamstreet.awskt.bedrock/ToolChoice.Companion.any|any(){}[0]
+        final fun auto(): com.steamstreet.awskt.bedrock/ToolChoice // com.steamstreet.awskt.bedrock/ToolChoice.Companion.auto|auto(){}[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/ToolChoice> // com.steamstreet.awskt.bedrock/ToolChoice.Companion.serializer|serializer(){}[0]
+        final fun tool(kotlin/String): com.steamstreet.awskt.bedrock/ToolChoice // com.steamstreet.awskt.bedrock/ToolChoice.Companion.tool|tool(kotlin.String){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/ToolConfiguration { // com.steamstreet.awskt.bedrock/ToolConfiguration|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.bedrock/Tool>, com.steamstreet.awskt.bedrock/ToolChoice? = ...) // com.steamstreet.awskt.bedrock/ToolConfiguration.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.bedrock.Tool>;com.steamstreet.awskt.bedrock.ToolChoice?){}[0]
+
+    final val toolChoice // com.steamstreet.awskt.bedrock/ToolConfiguration.toolChoice|{}toolChoice[0]
+        final fun <get-toolChoice>(): com.steamstreet.awskt.bedrock/ToolChoice? // com.steamstreet.awskt.bedrock/ToolConfiguration.toolChoice.<get-toolChoice>|<get-toolChoice>(){}[0]
+    final val tools // com.steamstreet.awskt.bedrock/ToolConfiguration.tools|{}tools[0]
+        final fun <get-tools>(): kotlin.collections/List<com.steamstreet.awskt.bedrock/Tool> // com.steamstreet.awskt.bedrock/ToolConfiguration.tools.<get-tools>|<get-tools>(){}[0]
+
+    final fun component1(): kotlin.collections/List<com.steamstreet.awskt.bedrock/Tool> // com.steamstreet.awskt.bedrock/ToolConfiguration.component1|component1(){}[0]
+    final fun component2(): com.steamstreet.awskt.bedrock/ToolChoice? // com.steamstreet.awskt.bedrock/ToolConfiguration.component2|component2(){}[0]
+    final fun copy(kotlin.collections/List<com.steamstreet.awskt.bedrock/Tool> = ..., com.steamstreet.awskt.bedrock/ToolChoice? = ...): com.steamstreet.awskt.bedrock/ToolConfiguration // com.steamstreet.awskt.bedrock/ToolConfiguration.copy|copy(kotlin.collections.List<com.steamstreet.awskt.bedrock.Tool>;com.steamstreet.awskt.bedrock.ToolChoice?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ToolConfiguration.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ToolConfiguration.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ToolConfiguration.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/ToolConfiguration> { // com.steamstreet.awskt.bedrock/ToolConfiguration.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/ToolConfiguration.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/ToolConfiguration.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/ToolConfiguration.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/ToolConfiguration // com.steamstreet.awskt.bedrock/ToolConfiguration.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/ToolConfiguration) // com.steamstreet.awskt.bedrock/ToolConfiguration.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.ToolConfiguration){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/ToolConfiguration.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.bedrock/ToolConfiguration.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/ToolConfiguration> // com.steamstreet.awskt.bedrock/ToolConfiguration.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/ToolInputSchema { // com.steamstreet.awskt.bedrock/ToolInputSchema|null[0]
+    constructor <init>(kotlinx.serialization.json/JsonElement) // com.steamstreet.awskt.bedrock/ToolInputSchema.<init>|<init>(kotlinx.serialization.json.JsonElement){}[0]
+
+    final val json // com.steamstreet.awskt.bedrock/ToolInputSchema.json|{}json[0]
+        final fun <get-json>(): kotlinx.serialization.json/JsonElement // com.steamstreet.awskt.bedrock/ToolInputSchema.json.<get-json>|<get-json>(){}[0]
+
+    final fun component1(): kotlinx.serialization.json/JsonElement // com.steamstreet.awskt.bedrock/ToolInputSchema.component1|component1(){}[0]
+    final fun copy(kotlinx.serialization.json/JsonElement = ...): com.steamstreet.awskt.bedrock/ToolInputSchema // com.steamstreet.awskt.bedrock/ToolInputSchema.copy|copy(kotlinx.serialization.json.JsonElement){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ToolInputSchema.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ToolInputSchema.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ToolInputSchema.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/ToolInputSchema> { // com.steamstreet.awskt.bedrock/ToolInputSchema.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/ToolInputSchema.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/ToolInputSchema.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/ToolInputSchema.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/ToolInputSchema // com.steamstreet.awskt.bedrock/ToolInputSchema.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/ToolInputSchema) // com.steamstreet.awskt.bedrock/ToolInputSchema.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.ToolInputSchema){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/ToolInputSchema.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/ToolInputSchema> // com.steamstreet.awskt.bedrock/ToolInputSchema.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/ToolResultContent { // com.steamstreet.awskt.bedrock/ToolResultContent|null[0]
+    constructor <init>(kotlin/String? = ..., kotlinx.serialization.json/JsonElement? = ...) // com.steamstreet.awskt.bedrock/ToolResultContent.<init>|<init>(kotlin.String?;kotlinx.serialization.json.JsonElement?){}[0]
+
+    final val json // com.steamstreet.awskt.bedrock/ToolResultContent.json|{}json[0]
+        final fun <get-json>(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ToolResultContent.json.<get-json>|<get-json>(){}[0]
+    final val text // com.steamstreet.awskt.bedrock/ToolResultContent.text|{}text[0]
+        final fun <get-text>(): kotlin/String? // com.steamstreet.awskt.bedrock/ToolResultContent.text.<get-text>|<get-text>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.bedrock/ToolResultContent.component1|component1(){}[0]
+    final fun component2(): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.bedrock/ToolResultContent.component2|component2(){}[0]
+    final fun copy(kotlin/String? = ..., kotlinx.serialization.json/JsonElement? = ...): com.steamstreet.awskt.bedrock/ToolResultContent // com.steamstreet.awskt.bedrock/ToolResultContent.copy|copy(kotlin.String?;kotlinx.serialization.json.JsonElement?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ToolResultContent.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ToolResultContent.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ToolResultContent.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/ToolResultContent> { // com.steamstreet.awskt.bedrock/ToolResultContent.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/ToolResultContent.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/ToolResultContent.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/ToolResultContent.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/ToolResultContent // com.steamstreet.awskt.bedrock/ToolResultContent.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/ToolResultContent) // com.steamstreet.awskt.bedrock/ToolResultContent.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.ToolResultContent){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/ToolResultContent.Companion|null[0]
+        final fun json(kotlinx.serialization.json/JsonElement): com.steamstreet.awskt.bedrock/ToolResultContent // com.steamstreet.awskt.bedrock/ToolResultContent.Companion.json|json(kotlinx.serialization.json.JsonElement){}[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/ToolResultContent> // com.steamstreet.awskt.bedrock/ToolResultContent.Companion.serializer|serializer(){}[0]
+        final fun text(kotlin/String): com.steamstreet.awskt.bedrock/ToolResultContent // com.steamstreet.awskt.bedrock/ToolResultContent.Companion.text|text(kotlin.String){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/ToolSpecification { // com.steamstreet.awskt.bedrock/ToolSpecification|null[0]
+    constructor <init>(kotlin/String, com.steamstreet.awskt.bedrock/ToolInputSchema, kotlin/String? = ...) // com.steamstreet.awskt.bedrock/ToolSpecification.<init>|<init>(kotlin.String;com.steamstreet.awskt.bedrock.ToolInputSchema;kotlin.String?){}[0]
+
+    final val description // com.steamstreet.awskt.bedrock/ToolSpecification.description|{}description[0]
+        final fun <get-description>(): kotlin/String? // com.steamstreet.awskt.bedrock/ToolSpecification.description.<get-description>|<get-description>(){}[0]
+    final val inputSchema // com.steamstreet.awskt.bedrock/ToolSpecification.inputSchema|{}inputSchema[0]
+        final fun <get-inputSchema>(): com.steamstreet.awskt.bedrock/ToolInputSchema // com.steamstreet.awskt.bedrock/ToolSpecification.inputSchema.<get-inputSchema>|<get-inputSchema>(){}[0]
+    final val name // com.steamstreet.awskt.bedrock/ToolSpecification.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.steamstreet.awskt.bedrock/ToolSpecification.name.<get-name>|<get-name>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.bedrock/ToolSpecification.component1|component1(){}[0]
+    final fun component2(): com.steamstreet.awskt.bedrock/ToolInputSchema // com.steamstreet.awskt.bedrock/ToolSpecification.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.bedrock/ToolSpecification.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., com.steamstreet.awskt.bedrock/ToolInputSchema = ..., kotlin/String? = ...): com.steamstreet.awskt.bedrock/ToolSpecification // com.steamstreet.awskt.bedrock/ToolSpecification.copy|copy(kotlin.String;com.steamstreet.awskt.bedrock.ToolInputSchema;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ToolSpecification.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ToolSpecification.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ToolSpecification.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.bedrock/ToolSpecification> { // com.steamstreet.awskt.bedrock/ToolSpecification.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.bedrock/ToolSpecification.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/ToolSpecification.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.bedrock/ToolSpecification.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/ToolSpecification // com.steamstreet.awskt.bedrock/ToolSpecification.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/ToolSpecification) // com.steamstreet.awskt.bedrock/ToolSpecification.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.ToolSpecification){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.bedrock/ToolSpecification.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/ToolSpecification> // com.steamstreet.awskt.bedrock/ToolSpecification.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.bedrock/ToolUseStart { // com.steamstreet.awskt.bedrock/ToolUseStart|null[0]
+    constructor <init>(kotlin/String, kotlin/String) // com.steamstreet.awskt.bedrock/ToolUseStart.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val name // com.steamstreet.awskt.bedrock/ToolUseStart.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.steamstreet.awskt.bedrock/ToolUseStart.name.<get-name>|<get-name>(){}[0]
+    final val toolUseId // com.steamstreet.awskt.bedrock/ToolUseStart.toolUseId|{}toolUseId[0]
+        final fun <get-toolUseId>(): kotlin/String // com.steamstreet.awskt.bedrock/ToolUseStart.toolUseId.<get-toolUseId>|<get-toolUseId>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.bedrock/ToolUseStart.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.bedrock/ToolUseStart.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ...): com.steamstreet.awskt.bedrock/ToolUseStart // com.steamstreet.awskt.bedrock/ToolUseStart.copy|copy(kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.bedrock/ToolUseStart.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.bedrock/ToolUseStart.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.bedrock/ToolUseStart.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.bedrock/ValidationException : com.steamstreet.awskt.bedrock/BedrockException { // com.steamstreet.awskt.bedrock/ValidationException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.bedrock/ValidationException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+open class com.steamstreet.awskt.bedrock/BedrockException : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.bedrock/BedrockException|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.bedrock/BedrockException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final object com.steamstreet.awskt.bedrock/ContentBlockSerializer : kotlinx.serialization/KSerializer<com.steamstreet.awskt.bedrock/ContentBlock> { // com.steamstreet.awskt.bedrock/ContentBlockSerializer|null[0]
+    final val descriptor // com.steamstreet.awskt.bedrock/ContentBlockSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.bedrock/ContentBlockSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.bedrock/ContentBlock // com.steamstreet.awskt.bedrock/ContentBlockSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.bedrock/ContentBlock) // com.steamstreet.awskt.bedrock/ContentBlockSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.bedrock.ContentBlock){}[0]
+}
+
+final object com.steamstreet.awskt.bedrock/ConversationRole { // com.steamstreet.awskt.bedrock/ConversationRole|null[0]
+    final const val ASSISTANT // com.steamstreet.awskt.bedrock/ConversationRole.ASSISTANT|{}ASSISTANT[0]
+        final fun <get-ASSISTANT>(): kotlin/String // com.steamstreet.awskt.bedrock/ConversationRole.ASSISTANT.<get-ASSISTANT>|<get-ASSISTANT>(){}[0]
+    final const val USER // com.steamstreet.awskt.bedrock/ConversationRole.USER|{}USER[0]
+        final fun <get-USER>(): kotlin/String // com.steamstreet.awskt.bedrock/ConversationRole.USER.<get-USER>|<get-USER>(){}[0]
+}
+
+final object com.steamstreet.awskt.bedrock/StopReason { // com.steamstreet.awskt.bedrock/StopReason|null[0]
+    final const val CONTENT_FILTERED // com.steamstreet.awskt.bedrock/StopReason.CONTENT_FILTERED|{}CONTENT_FILTERED[0]
+        final fun <get-CONTENT_FILTERED>(): kotlin/String // com.steamstreet.awskt.bedrock/StopReason.CONTENT_FILTERED.<get-CONTENT_FILTERED>|<get-CONTENT_FILTERED>(){}[0]
+    final const val END_TURN // com.steamstreet.awskt.bedrock/StopReason.END_TURN|{}END_TURN[0]
+        final fun <get-END_TURN>(): kotlin/String // com.steamstreet.awskt.bedrock/StopReason.END_TURN.<get-END_TURN>|<get-END_TURN>(){}[0]
+    final const val GUARDRAIL_INTERVENED // com.steamstreet.awskt.bedrock/StopReason.GUARDRAIL_INTERVENED|{}GUARDRAIL_INTERVENED[0]
+        final fun <get-GUARDRAIL_INTERVENED>(): kotlin/String // com.steamstreet.awskt.bedrock/StopReason.GUARDRAIL_INTERVENED.<get-GUARDRAIL_INTERVENED>|<get-GUARDRAIL_INTERVENED>(){}[0]
+    final const val MAX_TOKENS // com.steamstreet.awskt.bedrock/StopReason.MAX_TOKENS|{}MAX_TOKENS[0]
+        final fun <get-MAX_TOKENS>(): kotlin/String // com.steamstreet.awskt.bedrock/StopReason.MAX_TOKENS.<get-MAX_TOKENS>|<get-MAX_TOKENS>(){}[0]
+    final const val STOP_SEQUENCE // com.steamstreet.awskt.bedrock/StopReason.STOP_SEQUENCE|{}STOP_SEQUENCE[0]
+        final fun <get-STOP_SEQUENCE>(): kotlin/String // com.steamstreet.awskt.bedrock/StopReason.STOP_SEQUENCE.<get-STOP_SEQUENCE>|<get-STOP_SEQUENCE>(){}[0]
+    final const val TOOL_USE // com.steamstreet.awskt.bedrock/StopReason.TOOL_USE|{}TOOL_USE[0]
+        final fun <get-TOOL_USE>(): kotlin/String // com.steamstreet.awskt.bedrock/StopReason.TOOL_USE.<get-TOOL_USE>|<get-TOOL_USE>(){}[0]
+}
+
+final object com.steamstreet.awskt.bedrock/ToolResultStatus { // com.steamstreet.awskt.bedrock/ToolResultStatus|null[0]
+    final const val ERROR // com.steamstreet.awskt.bedrock/ToolResultStatus.ERROR|{}ERROR[0]
+        final fun <get-ERROR>(): kotlin/String // com.steamstreet.awskt.bedrock/ToolResultStatus.ERROR.<get-ERROR>|<get-ERROR>(){}[0]
+    final const val SUCCESS // com.steamstreet.awskt.bedrock/ToolResultStatus.SUCCESS|{}SUCCESS[0]
+        final fun <get-SUCCESS>(): kotlin/String // com.steamstreet.awskt.bedrock/ToolResultStatus.SUCCESS.<get-SUCCESS>|<get-SUCCESS>(){}[0]
+}
+
+final val com.steamstreet.awskt.bedrock/BEDROCK_RUNTIME_PROTOCOL // com.steamstreet.awskt.bedrock/BEDROCK_RUNTIME_PROTOCOL|{}BEDROCK_RUNTIME_PROTOCOL[0]
+    final fun <get-BEDROCK_RUNTIME_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.bedrock/BEDROCK_RUNTIME_PROTOCOL.<get-BEDROCK_RUNTIME_PROTOCOL>|<get-BEDROCK_RUNTIME_PROTOCOL>(){}[0]
+
+final fun (kotlin.collections/List<com.steamstreet.awskt.bedrock/Message>).com.steamstreet.awskt.bedrock/plusReply(com.steamstreet.awskt.bedrock/ConverseResponse): kotlin.collections/List<com.steamstreet.awskt.bedrock/Message> // com.steamstreet.awskt.bedrock/plusReply|plusReply@kotlin.collections.List<com.steamstreet.awskt.bedrock.Message>(com.steamstreet.awskt.bedrock.ConverseResponse){}[0]
+final fun (kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.bedrock/ConverseStreamEvent>).com.steamstreet.awskt.bedrock/textDeltas(): kotlinx.coroutines.flow/Flow<kotlin/String> // com.steamstreet.awskt.bedrock/textDeltas|textDeltas@kotlinx.coroutines.flow.Flow<com.steamstreet.awskt.bedrock.ConverseStreamEvent>(){}[0]
+final fun com.steamstreet.awskt.bedrock/BedrockRuntime(kotlin/Function1<com.steamstreet.awskt.bedrock/BedrockRuntimeConfig, kotlin/Unit> = ...): com.steamstreet.awskt.bedrock/BedrockRuntime // com.steamstreet.awskt.bedrock/BedrockRuntime|BedrockRuntime(kotlin.Function1<com.steamstreet.awskt.bedrock.BedrockRuntimeConfig,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.awskt.bedrock/BedrockRuntime).com.steamstreet.awskt.bedrock/ask(kotlin/String, kotlin/String, kotlin/String? = ..., kotlin/Int? = ...): kotlin/String // com.steamstreet.awskt.bedrock/ask|ask@com.steamstreet.awskt.bedrock.BedrockRuntime(kotlin.String;kotlin.String;kotlin.String?;kotlin.Int?){}[0]
+final suspend fun (kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.bedrock/ConverseStreamEvent>).com.steamstreet.awskt.bedrock/accumulate(): com.steamstreet.awskt.bedrock/ConverseResponse // com.steamstreet.awskt.bedrock/accumulate|accumulate@kotlinx.coroutines.flow.Flow<com.steamstreet.awskt.bedrock.ConverseStreamEvent>(){}[0]

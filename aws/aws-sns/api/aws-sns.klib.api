@@ -1,0 +1,400 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:aws-sns>
+abstract interface com.steamstreet.awskt.sns/Sns : kotlin/AutoCloseable { // com.steamstreet.awskt.sns/Sns|null[0]
+    abstract val client // com.steamstreet.awskt.sns/Sns.client|{}client[0]
+        abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.sns/Sns.client.<get-client>|<get-client>(){}[0]
+
+    abstract suspend fun createPlatformEndpoint(com.steamstreet.awskt.sns/CreatePlatformEndpointRequest): com.steamstreet.awskt.sns/CreatePlatformEndpointResponse // com.steamstreet.awskt.sns/Sns.createPlatformEndpoint|createPlatformEndpoint(com.steamstreet.awskt.sns.CreatePlatformEndpointRequest){}[0]
+    abstract suspend fun deleteEndpoint(kotlin/String) // com.steamstreet.awskt.sns/Sns.deleteEndpoint|deleteEndpoint(kotlin.String){}[0]
+    abstract suspend fun getEndpointAttributes(kotlin/String): com.steamstreet.awskt.sns/EndpointAttributes // com.steamstreet.awskt.sns/Sns.getEndpointAttributes|getEndpointAttributes(kotlin.String){}[0]
+    abstract suspend fun listEndpointsByPlatformApplication(kotlin/String, kotlin/String? = ...): com.steamstreet.awskt.sns/ListEndpointsResponse // com.steamstreet.awskt.sns/Sns.listEndpointsByPlatformApplication|listEndpointsByPlatformApplication(kotlin.String;kotlin.String?){}[0]
+    abstract suspend fun publish(com.steamstreet.awskt.sns/PublishRequest): com.steamstreet.awskt.sns/PublishResponse // com.steamstreet.awskt.sns/Sns.publish|publish(com.steamstreet.awskt.sns.PublishRequest){}[0]
+    abstract suspend fun publishBatch(kotlin/String, kotlin.collections/List<com.steamstreet.awskt.sns/PublishBatchRequestEntry>): com.steamstreet.awskt.sns/PublishBatchResponse // com.steamstreet.awskt.sns/Sns.publishBatch|publishBatch(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.sns.PublishBatchRequestEntry>){}[0]
+    abstract suspend fun setEndpointAttributes(kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String>) // com.steamstreet.awskt.sns/Sns.setEndpointAttributes|setEndpointAttributes(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
+}
+
+final class com.steamstreet.awskt.sns/AuthorizationErrorException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/AuthorizationErrorException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/AuthorizationErrorException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sns/BatchEntryIdsNotDistinctException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/BatchEntryIdsNotDistinctException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/BatchEntryIdsNotDistinctException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sns/BatchRequestTooLongException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/BatchRequestTooLongException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/BatchRequestTooLongException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sns/BatchResultErrorEntry { // com.steamstreet.awskt.sns/BatchResultErrorEntry|null[0]
+    constructor <init>(kotlin/String, kotlin/Boolean = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.sns/BatchResultErrorEntry.<init>|<init>(kotlin.String;kotlin.Boolean;kotlin.String?;kotlin.String?){}[0]
+
+    final val code // com.steamstreet.awskt.sns/BatchResultErrorEntry.code|{}code[0]
+        final fun <get-code>(): kotlin/String? // com.steamstreet.awskt.sns/BatchResultErrorEntry.code.<get-code>|<get-code>(){}[0]
+    final val id // com.steamstreet.awskt.sns/BatchResultErrorEntry.id|{}id[0]
+        final fun <get-id>(): kotlin/String // com.steamstreet.awskt.sns/BatchResultErrorEntry.id.<get-id>|<get-id>(){}[0]
+    final val message // com.steamstreet.awskt.sns/BatchResultErrorEntry.message|{}message[0]
+        final fun <get-message>(): kotlin/String? // com.steamstreet.awskt.sns/BatchResultErrorEntry.message.<get-message>|<get-message>(){}[0]
+    final val senderFault // com.steamstreet.awskt.sns/BatchResultErrorEntry.senderFault|{}senderFault[0]
+        final fun <get-senderFault>(): kotlin/Boolean // com.steamstreet.awskt.sns/BatchResultErrorEntry.senderFault.<get-senderFault>|<get-senderFault>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sns/BatchResultErrorEntry.component1|component1(){}[0]
+    final fun component2(): kotlin/Boolean // com.steamstreet.awskt.sns/BatchResultErrorEntry.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.sns/BatchResultErrorEntry.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.sns/BatchResultErrorEntry.component4|component4(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/Boolean = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.sns/BatchResultErrorEntry // com.steamstreet.awskt.sns/BatchResultErrorEntry.copy|copy(kotlin.String;kotlin.Boolean;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sns/BatchResultErrorEntry.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sns/BatchResultErrorEntry.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sns/BatchResultErrorEntry.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sns/CreatePlatformEndpointRequest { // com.steamstreet.awskt.sns/CreatePlatformEndpointRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ...) // com.steamstreet.awskt.sns/CreatePlatformEndpointRequest.<init>|<init>(kotlin.String;kotlin.String;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
+
+    final val attributes // com.steamstreet.awskt.sns/CreatePlatformEndpointRequest.attributes|{}attributes[0]
+        final fun <get-attributes>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.sns/CreatePlatformEndpointRequest.attributes.<get-attributes>|<get-attributes>(){}[0]
+    final val customUserData // com.steamstreet.awskt.sns/CreatePlatformEndpointRequest.customUserData|{}customUserData[0]
+        final fun <get-customUserData>(): kotlin/String? // com.steamstreet.awskt.sns/CreatePlatformEndpointRequest.customUserData.<get-customUserData>|<get-customUserData>(){}[0]
+    final val platformApplicationArn // com.steamstreet.awskt.sns/CreatePlatformEndpointRequest.platformApplicationArn|{}platformApplicationArn[0]
+        final fun <get-platformApplicationArn>(): kotlin/String // com.steamstreet.awskt.sns/CreatePlatformEndpointRequest.platformApplicationArn.<get-platformApplicationArn>|<get-platformApplicationArn>(){}[0]
+    final val token // com.steamstreet.awskt.sns/CreatePlatformEndpointRequest.token|{}token[0]
+        final fun <get-token>(): kotlin/String // com.steamstreet.awskt.sns/CreatePlatformEndpointRequest.token.<get-token>|<get-token>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sns/CreatePlatformEndpointRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sns/CreatePlatformEndpointRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sns/CreatePlatformEndpointRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sns/CreatePlatformEndpointResponse { // com.steamstreet.awskt.sns/CreatePlatformEndpointResponse|null[0]
+    constructor <init>(kotlin/String? = ...) // com.steamstreet.awskt.sns/CreatePlatformEndpointResponse.<init>|<init>(kotlin.String?){}[0]
+
+    final val endpointArn // com.steamstreet.awskt.sns/CreatePlatformEndpointResponse.endpointArn|{}endpointArn[0]
+        final fun <get-endpointArn>(): kotlin/String? // com.steamstreet.awskt.sns/CreatePlatformEndpointResponse.endpointArn.<get-endpointArn>|<get-endpointArn>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.sns/CreatePlatformEndpointResponse.component1|component1(){}[0]
+    final fun copy(kotlin/String? = ...): com.steamstreet.awskt.sns/CreatePlatformEndpointResponse // com.steamstreet.awskt.sns/CreatePlatformEndpointResponse.copy|copy(kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sns/CreatePlatformEndpointResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sns/CreatePlatformEndpointResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sns/CreatePlatformEndpointResponse.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sns/EmptyBatchRequestException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/EmptyBatchRequestException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/EmptyBatchRequestException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sns/EndpointAttributes { // com.steamstreet.awskt.sns/EndpointAttributes|null[0]
+    constructor <init>(kotlin.collections/Map<kotlin/String, kotlin/String>) // com.steamstreet.awskt.sns/EndpointAttributes.<init>|<init>(kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
+
+    final val customUserData // com.steamstreet.awskt.sns/EndpointAttributes.customUserData|{}customUserData[0]
+        final fun <get-customUserData>(): kotlin/String? // com.steamstreet.awskt.sns/EndpointAttributes.customUserData.<get-customUserData>|<get-customUserData>(){}[0]
+    final val enabled // com.steamstreet.awskt.sns/EndpointAttributes.enabled|{}enabled[0]
+        final fun <get-enabled>(): kotlin/Boolean? // com.steamstreet.awskt.sns/EndpointAttributes.enabled.<get-enabled>|<get-enabled>(){}[0]
+    final val raw // com.steamstreet.awskt.sns/EndpointAttributes.raw|{}raw[0]
+        final fun <get-raw>(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.awskt.sns/EndpointAttributes.raw.<get-raw>|<get-raw>(){}[0]
+    final val token // com.steamstreet.awskt.sns/EndpointAttributes.token|{}token[0]
+        final fun <get-token>(): kotlin/String? // com.steamstreet.awskt.sns/EndpointAttributes.token.<get-token>|<get-token>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sns/EndpointAttributes.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sns/EndpointAttributes.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sns/EndpointAttributes.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sns/EndpointDisabledException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/EndpointDisabledException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/EndpointDisabledException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sns/InternalErrorException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/InternalErrorException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/InternalErrorException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sns/InvalidBatchEntryIdException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/InvalidBatchEntryIdException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/InvalidBatchEntryIdException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sns/InvalidParameterException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/InvalidParameterException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/InvalidParameterException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sns/InvalidParameterValueException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/InvalidParameterValueException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/InvalidParameterValueException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sns/InvalidSecurityException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/InvalidSecurityException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/InvalidSecurityException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sns/ListEndpointsResponse { // com.steamstreet.awskt.sns/ListEndpointsResponse|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.sns/PlatformEndpoint> = ..., kotlin/String? = ...) // com.steamstreet.awskt.sns/ListEndpointsResponse.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.sns.PlatformEndpoint>;kotlin.String?){}[0]
+
+    final val endpoints // com.steamstreet.awskt.sns/ListEndpointsResponse.endpoints|{}endpoints[0]
+        final fun <get-endpoints>(): kotlin.collections/List<com.steamstreet.awskt.sns/PlatformEndpoint> // com.steamstreet.awskt.sns/ListEndpointsResponse.endpoints.<get-endpoints>|<get-endpoints>(){}[0]
+    final val nextToken // com.steamstreet.awskt.sns/ListEndpointsResponse.nextToken|{}nextToken[0]
+        final fun <get-nextToken>(): kotlin/String? // com.steamstreet.awskt.sns/ListEndpointsResponse.nextToken.<get-nextToken>|<get-nextToken>(){}[0]
+
+    final fun component1(): kotlin.collections/List<com.steamstreet.awskt.sns/PlatformEndpoint> // com.steamstreet.awskt.sns/ListEndpointsResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.sns/ListEndpointsResponse.component2|component2(){}[0]
+    final fun copy(kotlin.collections/List<com.steamstreet.awskt.sns/PlatformEndpoint> = ..., kotlin/String? = ...): com.steamstreet.awskt.sns/ListEndpointsResponse // com.steamstreet.awskt.sns/ListEndpointsResponse.copy|copy(kotlin.collections.List<com.steamstreet.awskt.sns.PlatformEndpoint>;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sns/ListEndpointsResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sns/ListEndpointsResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sns/ListEndpointsResponse.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sns/MessageAttributeValue { // com.steamstreet.awskt.sns/MessageAttributeValue|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., kotlin/ByteArray? = ...) // com.steamstreet.awskt.sns/MessageAttributeValue.<init>|<init>(kotlin.String;kotlin.String?;kotlin.ByteArray?){}[0]
+
+    final val binaryValue // com.steamstreet.awskt.sns/MessageAttributeValue.binaryValue|{}binaryValue[0]
+        final fun <get-binaryValue>(): kotlin/ByteArray? // com.steamstreet.awskt.sns/MessageAttributeValue.binaryValue.<get-binaryValue>|<get-binaryValue>(){}[0]
+    final val dataType // com.steamstreet.awskt.sns/MessageAttributeValue.dataType|{}dataType[0]
+        final fun <get-dataType>(): kotlin/String // com.steamstreet.awskt.sns/MessageAttributeValue.dataType.<get-dataType>|<get-dataType>(){}[0]
+    final val stringValue // com.steamstreet.awskt.sns/MessageAttributeValue.stringValue|{}stringValue[0]
+        final fun <get-stringValue>(): kotlin/String? // com.steamstreet.awskt.sns/MessageAttributeValue.stringValue.<get-stringValue>|<get-stringValue>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sns/MessageAttributeValue.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sns/MessageAttributeValue.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sns/MessageAttributeValue.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sns/MobilePushMessage { // com.steamstreet.awskt.sns/MobilePushMessage|null[0]
+    final val default // com.steamstreet.awskt.sns/MobilePushMessage.default|{}default[0]
+        final fun <get-default>(): kotlin/String // com.steamstreet.awskt.sns/MobilePushMessage.default.<get-default>|<get-default>(){}[0]
+    final val payloads // com.steamstreet.awskt.sns/MobilePushMessage.payloads|{}payloads[0]
+        final fun <get-payloads>(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.awskt.sns/MobilePushMessage.payloads.<get-payloads>|<get-payloads>(){}[0]
+
+    final fun toMessageJson(): kotlin/String // com.steamstreet.awskt.sns/MobilePushMessage.toMessageJson|toMessageJson(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sns/MobilePushMessage.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sns/MobilePushMessageBuilder { // com.steamstreet.awskt.sns/MobilePushMessageBuilder|null[0]
+    final fun platform(kotlin/String, kotlin/String) // com.steamstreet.awskt.sns/MobilePushMessageBuilder.platform|platform(kotlin.String;kotlin.String){}[0]
+    final fun platform(kotlin/String, kotlinx.serialization.json/JsonObject) // com.steamstreet.awskt.sns/MobilePushMessageBuilder.platform|platform(kotlin.String;kotlinx.serialization.json.JsonObject){}[0]
+}
+
+final class com.steamstreet.awskt.sns/NotFoundException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/NotFoundException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/NotFoundException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sns/PlatformApplicationDisabledException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/PlatformApplicationDisabledException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/PlatformApplicationDisabledException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sns/PlatformEndpoint { // com.steamstreet.awskt.sns/PlatformEndpoint|null[0]
+    constructor <init>(kotlin/String? = ..., com.steamstreet.awskt.sns/EndpointAttributes = ...) // com.steamstreet.awskt.sns/PlatformEndpoint.<init>|<init>(kotlin.String?;com.steamstreet.awskt.sns.EndpointAttributes){}[0]
+
+    final val attributes // com.steamstreet.awskt.sns/PlatformEndpoint.attributes|{}attributes[0]
+        final fun <get-attributes>(): com.steamstreet.awskt.sns/EndpointAttributes // com.steamstreet.awskt.sns/PlatformEndpoint.attributes.<get-attributes>|<get-attributes>(){}[0]
+    final val endpointArn // com.steamstreet.awskt.sns/PlatformEndpoint.endpointArn|{}endpointArn[0]
+        final fun <get-endpointArn>(): kotlin/String? // com.steamstreet.awskt.sns/PlatformEndpoint.endpointArn.<get-endpointArn>|<get-endpointArn>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sns/PlatformEndpoint.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sns/PlatformEndpoint.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sns/PlatformEndpoint.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sns/PublishBatchPartialFailureException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/PublishBatchPartialFailureException|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.sns/PublishBatchResultEntry>, kotlin.collections/List<kotlin/Pair<com.steamstreet.awskt.sns/PublishBatchRequestEntry, com.steamstreet.awskt.sns/BatchResultErrorEntry>>, kotlin/String?, kotlin/String? = ...) // com.steamstreet.awskt.sns/PublishBatchPartialFailureException.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.sns.PublishBatchResultEntry>;kotlin.collections.List<kotlin.Pair<com.steamstreet.awskt.sns.PublishBatchRequestEntry,com.steamstreet.awskt.sns.BatchResultErrorEntry>>;kotlin.String?;kotlin.String?){}[0]
+
+    final val failed // com.steamstreet.awskt.sns/PublishBatchPartialFailureException.failed|{}failed[0]
+        final fun <get-failed>(): kotlin.collections/List<kotlin/Pair<com.steamstreet.awskt.sns/PublishBatchRequestEntry, com.steamstreet.awskt.sns/BatchResultErrorEntry>> // com.steamstreet.awskt.sns/PublishBatchPartialFailureException.failed.<get-failed>|<get-failed>(){}[0]
+    final val succeeded // com.steamstreet.awskt.sns/PublishBatchPartialFailureException.succeeded|{}succeeded[0]
+        final fun <get-succeeded>(): kotlin.collections/List<com.steamstreet.awskt.sns/PublishBatchResultEntry> // com.steamstreet.awskt.sns/PublishBatchPartialFailureException.succeeded.<get-succeeded>|<get-succeeded>(){}[0]
+}
+
+final class com.steamstreet.awskt.sns/PublishBatchRequestEntry { // com.steamstreet.awskt.sns/PublishBatchRequestEntry|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sns/MessageAttributeValue>? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.sns/PublishBatchRequestEntry.<init>|<init>(kotlin.String;kotlin.String;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.sns.MessageAttributeValue>?;kotlin.String?;kotlin.String?){}[0]
+
+    final val id // com.steamstreet.awskt.sns/PublishBatchRequestEntry.id|{}id[0]
+        final fun <get-id>(): kotlin/String // com.steamstreet.awskt.sns/PublishBatchRequestEntry.id.<get-id>|<get-id>(){}[0]
+    final val message // com.steamstreet.awskt.sns/PublishBatchRequestEntry.message|{}message[0]
+        final fun <get-message>(): kotlin/String // com.steamstreet.awskt.sns/PublishBatchRequestEntry.message.<get-message>|<get-message>(){}[0]
+    final val messageAttributes // com.steamstreet.awskt.sns/PublishBatchRequestEntry.messageAttributes|{}messageAttributes[0]
+        final fun <get-messageAttributes>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sns/MessageAttributeValue>? // com.steamstreet.awskt.sns/PublishBatchRequestEntry.messageAttributes.<get-messageAttributes>|<get-messageAttributes>(){}[0]
+    final val messageDeduplicationId // com.steamstreet.awskt.sns/PublishBatchRequestEntry.messageDeduplicationId|{}messageDeduplicationId[0]
+        final fun <get-messageDeduplicationId>(): kotlin/String? // com.steamstreet.awskt.sns/PublishBatchRequestEntry.messageDeduplicationId.<get-messageDeduplicationId>|<get-messageDeduplicationId>(){}[0]
+    final val messageGroupId // com.steamstreet.awskt.sns/PublishBatchRequestEntry.messageGroupId|{}messageGroupId[0]
+        final fun <get-messageGroupId>(): kotlin/String? // com.steamstreet.awskt.sns/PublishBatchRequestEntry.messageGroupId.<get-messageGroupId>|<get-messageGroupId>(){}[0]
+    final val messageStructure // com.steamstreet.awskt.sns/PublishBatchRequestEntry.messageStructure|{}messageStructure[0]
+        final fun <get-messageStructure>(): kotlin/String? // com.steamstreet.awskt.sns/PublishBatchRequestEntry.messageStructure.<get-messageStructure>|<get-messageStructure>(){}[0]
+    final val subject // com.steamstreet.awskt.sns/PublishBatchRequestEntry.subject|{}subject[0]
+        final fun <get-subject>(): kotlin/String? // com.steamstreet.awskt.sns/PublishBatchRequestEntry.subject.<get-subject>|<get-subject>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sns/PublishBatchRequestEntry.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sns/PublishBatchRequestEntry.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sns/PublishBatchRequestEntry.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sns/PublishBatchResponse { // com.steamstreet.awskt.sns/PublishBatchResponse|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.sns/PublishBatchResultEntry> = ..., kotlin.collections/List<com.steamstreet.awskt.sns/BatchResultErrorEntry> = ...) // com.steamstreet.awskt.sns/PublishBatchResponse.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.sns.PublishBatchResultEntry>;kotlin.collections.List<com.steamstreet.awskt.sns.BatchResultErrorEntry>){}[0]
+
+    final val failed // com.steamstreet.awskt.sns/PublishBatchResponse.failed|{}failed[0]
+        final fun <get-failed>(): kotlin.collections/List<com.steamstreet.awskt.sns/BatchResultErrorEntry> // com.steamstreet.awskt.sns/PublishBatchResponse.failed.<get-failed>|<get-failed>(){}[0]
+    final val successful // com.steamstreet.awskt.sns/PublishBatchResponse.successful|{}successful[0]
+        final fun <get-successful>(): kotlin.collections/List<com.steamstreet.awskt.sns/PublishBatchResultEntry> // com.steamstreet.awskt.sns/PublishBatchResponse.successful.<get-successful>|<get-successful>(){}[0]
+
+    final fun component1(): kotlin.collections/List<com.steamstreet.awskt.sns/PublishBatchResultEntry> // com.steamstreet.awskt.sns/PublishBatchResponse.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<com.steamstreet.awskt.sns/BatchResultErrorEntry> // com.steamstreet.awskt.sns/PublishBatchResponse.component2|component2(){}[0]
+    final fun copy(kotlin.collections/List<com.steamstreet.awskt.sns/PublishBatchResultEntry> = ..., kotlin.collections/List<com.steamstreet.awskt.sns/BatchResultErrorEntry> = ...): com.steamstreet.awskt.sns/PublishBatchResponse // com.steamstreet.awskt.sns/PublishBatchResponse.copy|copy(kotlin.collections.List<com.steamstreet.awskt.sns.PublishBatchResultEntry>;kotlin.collections.List<com.steamstreet.awskt.sns.BatchResultErrorEntry>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sns/PublishBatchResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sns/PublishBatchResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sns/PublishBatchResponse.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sns/PublishBatchResultEntry { // com.steamstreet.awskt.sns/PublishBatchResultEntry|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.sns/PublishBatchResultEntry.<init>|<init>(kotlin.String;kotlin.String?;kotlin.String?){}[0]
+
+    final val id // com.steamstreet.awskt.sns/PublishBatchResultEntry.id|{}id[0]
+        final fun <get-id>(): kotlin/String // com.steamstreet.awskt.sns/PublishBatchResultEntry.id.<get-id>|<get-id>(){}[0]
+    final val messageId // com.steamstreet.awskt.sns/PublishBatchResultEntry.messageId|{}messageId[0]
+        final fun <get-messageId>(): kotlin/String? // com.steamstreet.awskt.sns/PublishBatchResultEntry.messageId.<get-messageId>|<get-messageId>(){}[0]
+    final val sequenceNumber // com.steamstreet.awskt.sns/PublishBatchResultEntry.sequenceNumber|{}sequenceNumber[0]
+        final fun <get-sequenceNumber>(): kotlin/String? // com.steamstreet.awskt.sns/PublishBatchResultEntry.sequenceNumber.<get-sequenceNumber>|<get-sequenceNumber>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sns/PublishBatchResultEntry.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.sns/PublishBatchResultEntry.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.sns/PublishBatchResultEntry.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.sns/PublishBatchResultEntry // com.steamstreet.awskt.sns/PublishBatchResultEntry.copy|copy(kotlin.String;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sns/PublishBatchResultEntry.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sns/PublishBatchResultEntry.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sns/PublishBatchResultEntry.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sns/PublishRequest { // com.steamstreet.awskt.sns/PublishRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sns/MessageAttributeValue>? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.sns/PublishRequest.<init>|<init>(kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.sns.MessageAttributeValue>?;kotlin.String?;kotlin.String?){}[0]
+
+    final val message // com.steamstreet.awskt.sns/PublishRequest.message|{}message[0]
+        final fun <get-message>(): kotlin/String // com.steamstreet.awskt.sns/PublishRequest.message.<get-message>|<get-message>(){}[0]
+    final val messageAttributes // com.steamstreet.awskt.sns/PublishRequest.messageAttributes|{}messageAttributes[0]
+        final fun <get-messageAttributes>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sns/MessageAttributeValue>? // com.steamstreet.awskt.sns/PublishRequest.messageAttributes.<get-messageAttributes>|<get-messageAttributes>(){}[0]
+    final val messageDeduplicationId // com.steamstreet.awskt.sns/PublishRequest.messageDeduplicationId|{}messageDeduplicationId[0]
+        final fun <get-messageDeduplicationId>(): kotlin/String? // com.steamstreet.awskt.sns/PublishRequest.messageDeduplicationId.<get-messageDeduplicationId>|<get-messageDeduplicationId>(){}[0]
+    final val messageGroupId // com.steamstreet.awskt.sns/PublishRequest.messageGroupId|{}messageGroupId[0]
+        final fun <get-messageGroupId>(): kotlin/String? // com.steamstreet.awskt.sns/PublishRequest.messageGroupId.<get-messageGroupId>|<get-messageGroupId>(){}[0]
+    final val messageStructure // com.steamstreet.awskt.sns/PublishRequest.messageStructure|{}messageStructure[0]
+        final fun <get-messageStructure>(): kotlin/String? // com.steamstreet.awskt.sns/PublishRequest.messageStructure.<get-messageStructure>|<get-messageStructure>(){}[0]
+    final val phoneNumber // com.steamstreet.awskt.sns/PublishRequest.phoneNumber|{}phoneNumber[0]
+        final fun <get-phoneNumber>(): kotlin/String? // com.steamstreet.awskt.sns/PublishRequest.phoneNumber.<get-phoneNumber>|<get-phoneNumber>(){}[0]
+    final val subject // com.steamstreet.awskt.sns/PublishRequest.subject|{}subject[0]
+        final fun <get-subject>(): kotlin/String? // com.steamstreet.awskt.sns/PublishRequest.subject.<get-subject>|<get-subject>(){}[0]
+    final val targetArn // com.steamstreet.awskt.sns/PublishRequest.targetArn|{}targetArn[0]
+        final fun <get-targetArn>(): kotlin/String? // com.steamstreet.awskt.sns/PublishRequest.targetArn.<get-targetArn>|<get-targetArn>(){}[0]
+    final val topicArn // com.steamstreet.awskt.sns/PublishRequest.topicArn|{}topicArn[0]
+        final fun <get-topicArn>(): kotlin/String? // com.steamstreet.awskt.sns/PublishRequest.topicArn.<get-topicArn>|<get-topicArn>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sns/PublishRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sns/PublishRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sns/PublishRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sns/PublishResponse { // com.steamstreet.awskt.sns/PublishResponse|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.sns/PublishResponse.<init>|<init>(kotlin.String?;kotlin.String?){}[0]
+
+    final val messageId // com.steamstreet.awskt.sns/PublishResponse.messageId|{}messageId[0]
+        final fun <get-messageId>(): kotlin/String? // com.steamstreet.awskt.sns/PublishResponse.messageId.<get-messageId>|<get-messageId>(){}[0]
+    final val sequenceNumber // com.steamstreet.awskt.sns/PublishResponse.sequenceNumber|{}sequenceNumber[0]
+        final fun <get-sequenceNumber>(): kotlin/String? // com.steamstreet.awskt.sns/PublishResponse.sequenceNumber.<get-sequenceNumber>|<get-sequenceNumber>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.sns/PublishResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.sns/PublishResponse.component2|component2(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.sns/PublishResponse // com.steamstreet.awskt.sns/PublishResponse.copy|copy(kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sns/PublishResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sns/PublishResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sns/PublishResponse.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sns/SnsConfig { // com.steamstreet.awskt.sns/SnsConfig|null[0]
+    constructor <init>() // com.steamstreet.awskt.sns/SnsConfig.<init>|<init>(){}[0]
+
+    final var caInfo // com.steamstreet.awskt.sns/SnsConfig.caInfo|{}caInfo[0]
+        final fun <get-caInfo>(): kotlin/String? // com.steamstreet.awskt.sns/SnsConfig.caInfo.<get-caInfo>|<get-caInfo>(){}[0]
+        final fun <set-caInfo>(kotlin/String?) // com.steamstreet.awskt.sns/SnsConfig.caInfo.<set-caInfo>|<set-caInfo>(kotlin.String?){}[0]
+    final var credentialsProvider // com.steamstreet.awskt.sns/SnsConfig.credentialsProvider|{}credentialsProvider[0]
+        final fun <get-credentialsProvider>(): com.steamstreet.awskt.core/AwsCredentialsProvider? // com.steamstreet.awskt.sns/SnsConfig.credentialsProvider.<get-credentialsProvider>|<get-credentialsProvider>(){}[0]
+        final fun <set-credentialsProvider>(com.steamstreet.awskt.core/AwsCredentialsProvider?) // com.steamstreet.awskt.sns/SnsConfig.credentialsProvider.<set-credentialsProvider>|<set-credentialsProvider>(com.steamstreet.awskt.core.AwsCredentialsProvider?){}[0]
+    final var endpointUrl // com.steamstreet.awskt.sns/SnsConfig.endpointUrl|{}endpointUrl[0]
+        final fun <get-endpointUrl>(): kotlin/String? // com.steamstreet.awskt.sns/SnsConfig.endpointUrl.<get-endpointUrl>|<get-endpointUrl>(){}[0]
+        final fun <set-endpointUrl>(kotlin/String?) // com.steamstreet.awskt.sns/SnsConfig.endpointUrl.<set-endpointUrl>|<set-endpointUrl>(kotlin.String?){}[0]
+    final var httpClient // com.steamstreet.awskt.sns/SnsConfig.httpClient|{}httpClient[0]
+        final fun <get-httpClient>(): io.ktor.client/HttpClient? // com.steamstreet.awskt.sns/SnsConfig.httpClient.<get-httpClient>|<get-httpClient>(){}[0]
+        final fun <set-httpClient>(io.ktor.client/HttpClient?) // com.steamstreet.awskt.sns/SnsConfig.httpClient.<set-httpClient>|<set-httpClient>(io.ktor.client.HttpClient?){}[0]
+    final var httpTimeouts // com.steamstreet.awskt.sns/SnsConfig.httpTimeouts|{}httpTimeouts[0]
+        final fun <get-httpTimeouts>(): com.steamstreet.awskt.core/AwsHttpTimeouts // com.steamstreet.awskt.sns/SnsConfig.httpTimeouts.<get-httpTimeouts>|<get-httpTimeouts>(){}[0]
+        final fun <set-httpTimeouts>(com.steamstreet.awskt.core/AwsHttpTimeouts) // com.steamstreet.awskt.sns/SnsConfig.httpTimeouts.<set-httpTimeouts>|<set-httpTimeouts>(com.steamstreet.awskt.core.AwsHttpTimeouts){}[0]
+    final var observer // com.steamstreet.awskt.sns/SnsConfig.observer|{}observer[0]
+        final fun <get-observer>(): com.steamstreet.awskt.core/AwsCallObserver? // com.steamstreet.awskt.sns/SnsConfig.observer.<get-observer>|<get-observer>(){}[0]
+        final fun <set-observer>(com.steamstreet.awskt.core/AwsCallObserver?) // com.steamstreet.awskt.sns/SnsConfig.observer.<set-observer>|<set-observer>(com.steamstreet.awskt.core.AwsCallObserver?){}[0]
+    final var region // com.steamstreet.awskt.sns/SnsConfig.region|{}region[0]
+        final fun <get-region>(): kotlin/String? // com.steamstreet.awskt.sns/SnsConfig.region.<get-region>|<get-region>(){}[0]
+        final fun <set-region>(kotlin/String?) // com.steamstreet.awskt.sns/SnsConfig.region.<set-region>|<set-region>(kotlin.String?){}[0]
+    final var retryConfig // com.steamstreet.awskt.sns/SnsConfig.retryConfig|{}retryConfig[0]
+        final fun <get-retryConfig>(): com.steamstreet.awskt.core/RetryConfig // com.steamstreet.awskt.sns/SnsConfig.retryConfig.<get-retryConfig>|<get-retryConfig>(){}[0]
+        final fun <set-retryConfig>(com.steamstreet.awskt.core/RetryConfig) // com.steamstreet.awskt.sns/SnsConfig.retryConfig.<set-retryConfig>|<set-retryConfig>(com.steamstreet.awskt.core.RetryConfig){}[0]
+}
+
+final class com.steamstreet.awskt.sns/ThrottledException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/ThrottledException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/ThrottledException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sns/TooManyEntriesInBatchRequestException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/TooManyEntriesInBatchRequestException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/TooManyEntriesInBatchRequestException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sns/TopicEncryptionKeyException : com.steamstreet.awskt.sns/SnsException { // com.steamstreet.awskt.sns/TopicEncryptionKeyException|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/TopicEncryptionKeyException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+open class com.steamstreet.awskt.sns/SnsException : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.sns/SnsException|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sns/SnsException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final object com.steamstreet.awskt.sns/EndpointAttribute { // com.steamstreet.awskt.sns/EndpointAttribute|null[0]
+    final const val CUSTOM_USER_DATA // com.steamstreet.awskt.sns/EndpointAttribute.CUSTOM_USER_DATA|{}CUSTOM_USER_DATA[0]
+        final fun <get-CUSTOM_USER_DATA>(): kotlin/String // com.steamstreet.awskt.sns/EndpointAttribute.CUSTOM_USER_DATA.<get-CUSTOM_USER_DATA>|<get-CUSTOM_USER_DATA>(){}[0]
+    final const val ENABLED // com.steamstreet.awskt.sns/EndpointAttribute.ENABLED|{}ENABLED[0]
+        final fun <get-ENABLED>(): kotlin/String // com.steamstreet.awskt.sns/EndpointAttribute.ENABLED.<get-ENABLED>|<get-ENABLED>(){}[0]
+    final const val TOKEN // com.steamstreet.awskt.sns/EndpointAttribute.TOKEN|{}TOKEN[0]
+        final fun <get-TOKEN>(): kotlin/String // com.steamstreet.awskt.sns/EndpointAttribute.TOKEN.<get-TOKEN>|<get-TOKEN>(){}[0]
+}
+
+final object com.steamstreet.awskt.sns/PushPlatform { // com.steamstreet.awskt.sns/PushPlatform|null[0]
+    final const val ADM // com.steamstreet.awskt.sns/PushPlatform.ADM|{}ADM[0]
+        final fun <get-ADM>(): kotlin/String // com.steamstreet.awskt.sns/PushPlatform.ADM.<get-ADM>|<get-ADM>(){}[0]
+    final const val APNS // com.steamstreet.awskt.sns/PushPlatform.APNS|{}APNS[0]
+        final fun <get-APNS>(): kotlin/String // com.steamstreet.awskt.sns/PushPlatform.APNS.<get-APNS>|<get-APNS>(){}[0]
+    final const val APNS_SANDBOX // com.steamstreet.awskt.sns/PushPlatform.APNS_SANDBOX|{}APNS_SANDBOX[0]
+        final fun <get-APNS_SANDBOX>(): kotlin/String // com.steamstreet.awskt.sns/PushPlatform.APNS_SANDBOX.<get-APNS_SANDBOX>|<get-APNS_SANDBOX>(){}[0]
+    final const val APNS_VOIP // com.steamstreet.awskt.sns/PushPlatform.APNS_VOIP|{}APNS_VOIP[0]
+        final fun <get-APNS_VOIP>(): kotlin/String // com.steamstreet.awskt.sns/PushPlatform.APNS_VOIP.<get-APNS_VOIP>|<get-APNS_VOIP>(){}[0]
+    final const val APNS_VOIP_SANDBOX // com.steamstreet.awskt.sns/PushPlatform.APNS_VOIP_SANDBOX|{}APNS_VOIP_SANDBOX[0]
+        final fun <get-APNS_VOIP_SANDBOX>(): kotlin/String // com.steamstreet.awskt.sns/PushPlatform.APNS_VOIP_SANDBOX.<get-APNS_VOIP_SANDBOX>|<get-APNS_VOIP_SANDBOX>(){}[0]
+    final const val BAIDU // com.steamstreet.awskt.sns/PushPlatform.BAIDU|{}BAIDU[0]
+        final fun <get-BAIDU>(): kotlin/String // com.steamstreet.awskt.sns/PushPlatform.BAIDU.<get-BAIDU>|<get-BAIDU>(){}[0]
+    final const val FCM // com.steamstreet.awskt.sns/PushPlatform.FCM|{}FCM[0]
+        final fun <get-FCM>(): kotlin/String // com.steamstreet.awskt.sns/PushPlatform.FCM.<get-FCM>|<get-FCM>(){}[0]
+    final const val GCM // com.steamstreet.awskt.sns/PushPlatform.GCM|{}GCM[0]
+        final fun <get-GCM>(): kotlin/String // com.steamstreet.awskt.sns/PushPlatform.GCM.<get-GCM>|<get-GCM>(){}[0]
+    final const val MACOS // com.steamstreet.awskt.sns/PushPlatform.MACOS|{}MACOS[0]
+        final fun <get-MACOS>(): kotlin/String // com.steamstreet.awskt.sns/PushPlatform.MACOS.<get-MACOS>|<get-MACOS>(){}[0]
+    final const val MACOS_SANDBOX // com.steamstreet.awskt.sns/PushPlatform.MACOS_SANDBOX|{}MACOS_SANDBOX[0]
+        final fun <get-MACOS_SANDBOX>(): kotlin/String // com.steamstreet.awskt.sns/PushPlatform.MACOS_SANDBOX.<get-MACOS_SANDBOX>|<get-MACOS_SANDBOX>(){}[0]
+    final const val MPNS // com.steamstreet.awskt.sns/PushPlatform.MPNS|{}MPNS[0]
+        final fun <get-MPNS>(): kotlin/String // com.steamstreet.awskt.sns/PushPlatform.MPNS.<get-MPNS>|<get-MPNS>(){}[0]
+    final const val WNS // com.steamstreet.awskt.sns/PushPlatform.WNS|{}WNS[0]
+        final fun <get-WNS>(): kotlin/String // com.steamstreet.awskt.sns/PushPlatform.WNS.<get-WNS>|<get-WNS>(){}[0]
+}
+
+final val com.steamstreet.awskt.sns/SNS_PROTOCOL // com.steamstreet.awskt.sns/SNS_PROTOCOL|{}SNS_PROTOCOL[0]
+    final fun <get-SNS_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.sns/SNS_PROTOCOL.<get-SNS_PROTOCOL>|<get-SNS_PROTOCOL>(){}[0]
+
+final fun com.steamstreet.awskt.sns/Sns(kotlin/Function1<com.steamstreet.awskt.sns/SnsConfig, kotlin/Unit> = ...): com.steamstreet.awskt.sns/Sns // com.steamstreet.awskt.sns/Sns|Sns(kotlin.Function1<com.steamstreet.awskt.sns.SnsConfig,kotlin.Unit>){}[0]
+final fun com.steamstreet.awskt.sns/apnsAlert(kotlin/String? = ..., kotlin/String, kotlin/Int? = ..., kotlin/String? = ..., kotlin/Boolean = ...): kotlin/String // com.steamstreet.awskt.sns/apnsAlert|apnsAlert(kotlin.String?;kotlin.String;kotlin.Int?;kotlin.String?;kotlin.Boolean){}[0]
+final fun com.steamstreet.awskt.sns/fcmNotification(kotlin/String? = ..., kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String>? = ...): kotlin/String // com.steamstreet.awskt.sns/fcmNotification|fcmNotification(kotlin.String?;kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
+final fun com.steamstreet.awskt.sns/mobilePushMessage(kotlin/String, kotlin/Function1<com.steamstreet.awskt.sns/MobilePushMessageBuilder, kotlin/Unit> = ...): com.steamstreet.awskt.sns/MobilePushMessage // com.steamstreet.awskt.sns/mobilePushMessage|mobilePushMessage(kotlin.String;kotlin.Function1<com.steamstreet.awskt.sns.MobilePushMessageBuilder,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.awskt.sns/Sns).com.steamstreet.awskt.sns/listAllEndpoints(kotlin/String, kotlin/Int = ...): kotlin.collections/List<com.steamstreet.awskt.sns/PlatformEndpoint> // com.steamstreet.awskt.sns/listAllEndpoints|listAllEndpoints@com.steamstreet.awskt.sns.Sns(kotlin.String;kotlin.Int){}[0]
+final suspend fun (com.steamstreet.awskt.sns/Sns).com.steamstreet.awskt.sns/publish(kotlin/String, kotlin/String, kotlin/String? = ...): kotlin/String? // com.steamstreet.awskt.sns/publish|publish@com.steamstreet.awskt.sns.Sns(kotlin.String;kotlin.String;kotlin.String?){}[0]
+final suspend fun (com.steamstreet.awskt.sns/Sns).com.steamstreet.awskt.sns/publishAll(kotlin/String, kotlin.collections/List<com.steamstreet.awskt.sns/PublishBatchRequestEntry>, kotlin/Int = ..., com.steamstreet.awskt.core/BatchRetry = ...): kotlin.collections/List<com.steamstreet.awskt.sns/PublishBatchResultEntry> // com.steamstreet.awskt.sns/publishAll|publishAll@com.steamstreet.awskt.sns.Sns(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.sns.PublishBatchRequestEntry>;kotlin.Int;com.steamstreet.awskt.core.BatchRetry){}[0]
+final suspend fun (com.steamstreet.awskt.sns/Sns).com.steamstreet.awskt.sns/publishToDevice(kotlin/String, com.steamstreet.awskt.sns/MobilePushMessage): kotlin/String? // com.steamstreet.awskt.sns/publishToDevice|publishToDevice@com.steamstreet.awskt.sns.Sns(kotlin.String;com.steamstreet.awskt.sns.MobilePushMessage){}[0]
+final suspend fun (com.steamstreet.awskt.sns/Sns).com.steamstreet.awskt.sns/registerDevice(kotlin/String, kotlin/String, kotlin/String? = ...): kotlin/String // com.steamstreet.awskt.sns/registerDevice|registerDevice@com.steamstreet.awskt.sns.Sns(kotlin.String;kotlin.String;kotlin.String?){}[0]

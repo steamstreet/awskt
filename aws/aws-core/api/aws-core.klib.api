@@ -146,6 +146,8 @@ final class com.steamstreet.awskt.core/AwsProtocol { // com.steamstreet.awskt.co
     final object Companion { // com.steamstreet.awskt.core/AwsProtocol.Companion|null[0]
         final fun awsJson1_0(kotlin/String, kotlin/String, kotlin/String = ...): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.core/AwsProtocol.Companion.awsJson1_0|awsJson1_0(kotlin.String;kotlin.String;kotlin.String){}[0]
         final fun awsJson1_1(kotlin/String, kotlin/String, kotlin/String = ...): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.core/AwsProtocol.Companion.awsJson1_1|awsJson1_1(kotlin.String;kotlin.String;kotlin.String){}[0]
+        final fun awsQuery(kotlin/String, kotlin/String = ...): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.core/AwsProtocol.Companion.awsQuery|awsQuery(kotlin.String;kotlin.String){}[0]
+        final fun restJson1(kotlin/String, kotlin/String = ...): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.core/AwsProtocol.Companion.restJson1|restJson1(kotlin.String;kotlin.String){}[0]
         final fun restXml(kotlin/String, kotlin/String = ...): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.core/AwsProtocol.Companion.restXml|restXml(kotlin.String;kotlin.String){}[0]
     }
 }
@@ -162,6 +164,7 @@ final class com.steamstreet.awskt.core/AwsRedirectException : com.steamstreet.aw
 final class com.steamstreet.awskt.core/AwsServiceClient { // com.steamstreet.awskt.core/AwsServiceClient|null[0]
     constructor <init>(io.ktor.client/HttpClient, com.steamstreet.awskt.core/AwsCredentialsProvider, com.steamstreet.awskt.core/AwsEndpoint, kotlin/String, com.steamstreet.awskt.core/AwsProtocol, com.steamstreet.awskt.core/RetryConfig = ..., kotlin/Function0<kotlin/Long> = ..., kotlin/Function0<kotlin/Double> = ..., kotlin.coroutines/SuspendFunction1<kotlin/Long, kotlin/Unit> = ..., com.steamstreet.awskt.core/AwsCallObserver? = ...) // com.steamstreet.awskt.core/AwsServiceClient.<init>|<init>(io.ktor.client.HttpClient;com.steamstreet.awskt.core.AwsCredentialsProvider;com.steamstreet.awskt.core.AwsEndpoint;kotlin.String;com.steamstreet.awskt.core.AwsProtocol;com.steamstreet.awskt.core.RetryConfig;kotlin.Function0<kotlin.Long>;kotlin.Function0<kotlin.Double>;kotlin.coroutines.SuspendFunction1<kotlin.Long,kotlin.Unit>;com.steamstreet.awskt.core.AwsCallObserver?){}[0]
 
+    final suspend fun <#A1: kotlin/Any?> callStreaming(kotlin/String, kotlin/String = ..., kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ..., kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ..., kotlin/ByteArray = ..., kotlin/String? = ..., com.steamstreet.awskt.core/OperationSafety = ..., com.steamstreet.awskt.signing/PayloadHash = ..., com.steamstreet.awskt.signing/SignedBodyHeader = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin.coroutines/SuspendFunction3<kotlin/Int, kotlin.collections/Map<kotlin/String, kotlin/String>, io.ktor.utils.io/ByteReadChannel, #A1>): #A1 // com.steamstreet.awskt.core/AwsServiceClient.callStreaming|callStreaming(kotlin.String;kotlin.String;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>;kotlin.ByteArray;kotlin.String?;com.steamstreet.awskt.core.OperationSafety;com.steamstreet.awskt.signing.PayloadHash;com.steamstreet.awskt.signing.SignedBodyHeader;kotlin.Boolean;kotlin.Boolean;kotlin.coroutines.SuspendFunction3<kotlin.Int,kotlin.collections.Map<kotlin.String,kotlin.String>,io.ktor.utils.io.ByteReadChannel,0:0>){0§<kotlin.Any?>}[0]
     final suspend fun callRaw(kotlin/String, kotlin/String = ..., kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ..., kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ..., kotlin/ByteArray = ..., kotlin/String? = ..., com.steamstreet.awskt.core/OperationSafety = ..., com.steamstreet.awskt.signing/PayloadHash = ..., com.steamstreet.awskt.signing/SignedBodyHeader = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Function2<kotlin/Int, kotlin.collections/Map<kotlin/String, kotlin/String>, kotlin/Unit>? = ..., kotlin/Function1<com.steamstreet.awskt.core/AwsHttpResponse, kotlin/Unit>? = ...): com.steamstreet.awskt.core/AwsHttpResponse // com.steamstreet.awskt.core/AwsServiceClient.callRaw|callRaw(kotlin.String;kotlin.String;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>;kotlin.ByteArray;kotlin.String?;com.steamstreet.awskt.core.OperationSafety;com.steamstreet.awskt.signing.PayloadHash;com.steamstreet.awskt.signing.SignedBodyHeader;kotlin.Boolean;kotlin.Boolean;kotlin.Function2<kotlin.Int,kotlin.collections.Map<kotlin.String,kotlin.String>,kotlin.Unit>?;kotlin.Function1<com.steamstreet.awskt.core.AwsHttpResponse,kotlin.Unit>?){}[0]
 }
 
@@ -210,6 +213,27 @@ final class com.steamstreet.awskt.core/ErrorDetails { // com.steamstreet.awskt.c
         final fun <get-message>(): kotlin/String? // com.steamstreet.awskt.core/ErrorDetails.message.<get-message>|<get-message>(){}[0]
 }
 
+final class com.steamstreet.awskt.core/EventStreamException : kotlin/Exception { // com.steamstreet.awskt.core/EventStreamException|null[0]
+    constructor <init>(kotlin/String, kotlin/Throwable? = ...) // com.steamstreet.awskt.core/EventStreamException.<init>|<init>(kotlin.String;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.core/EventStreamMessage { // com.steamstreet.awskt.core/EventStreamMessage|null[0]
+    constructor <init>(kotlin.collections/Map<kotlin/String, kotlin/String>, kotlin/ByteArray) // com.steamstreet.awskt.core/EventStreamMessage.<init>|<init>(kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.ByteArray){}[0]
+
+    final val eventType // com.steamstreet.awskt.core/EventStreamMessage.eventType|{}eventType[0]
+        final fun <get-eventType>(): kotlin/String? // com.steamstreet.awskt.core/EventStreamMessage.eventType.<get-eventType>|<get-eventType>(){}[0]
+    final val exceptionType // com.steamstreet.awskt.core/EventStreamMessage.exceptionType|{}exceptionType[0]
+        final fun <get-exceptionType>(): kotlin/String? // com.steamstreet.awskt.core/EventStreamMessage.exceptionType.<get-exceptionType>|<get-exceptionType>(){}[0]
+    final val headers // com.steamstreet.awskt.core/EventStreamMessage.headers|{}headers[0]
+        final fun <get-headers>(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.awskt.core/EventStreamMessage.headers.<get-headers>|<get-headers>(){}[0]
+    final val messageType // com.steamstreet.awskt.core/EventStreamMessage.messageType|{}messageType[0]
+        final fun <get-messageType>(): kotlin/String? // com.steamstreet.awskt.core/EventStreamMessage.messageType.<get-messageType>|<get-messageType>(){}[0]
+    final val payload // com.steamstreet.awskt.core/EventStreamMessage.payload|{}payload[0]
+        final fun <get-payload>(): kotlin/ByteArray // com.steamstreet.awskt.core/EventStreamMessage.payload.<get-payload>|<get-payload>(){}[0]
+
+    final fun toString(): kotlin/String // com.steamstreet.awskt.core/EventStreamMessage.toString|toString(){}[0]
+}
+
 final class com.steamstreet.awskt.core/RetryConfig { // com.steamstreet.awskt.core/RetryConfig|null[0]
     constructor <init>(kotlin/Int = ..., kotlin/Long = ..., kotlin/Long = ..., kotlin/Long = ..., kotlin.time/Duration = ..., kotlin/Boolean = ...) // com.steamstreet.awskt.core/RetryConfig.<init>|<init>(kotlin.Int;kotlin.Long;kotlin.Long;kotlin.Long;kotlin.time.Duration;kotlin.Boolean){}[0]
 
@@ -255,6 +279,14 @@ final object com.steamstreet.awskt.core/AwsJsonErrorParser : com.steamstreet.aws
     final fun parse(kotlin/Int, kotlin.collections/Map<kotlin/String, kotlin/String>, kotlin/ByteArray?): com.steamstreet.awskt.core/ErrorDetails // com.steamstreet.awskt.core/AwsJsonErrorParser.parse|parse(kotlin.Int;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.ByteArray?){}[0]
 }
 
+final object com.steamstreet.awskt.core/Base64BlobSerializer : kotlinx.serialization/KSerializer<kotlin/ByteArray> { // com.steamstreet.awskt.core/Base64BlobSerializer|null[0]
+    final val descriptor // com.steamstreet.awskt.core/Base64BlobSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.core/Base64BlobSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): kotlin/ByteArray // com.steamstreet.awskt.core/Base64BlobSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, kotlin/ByteArray) // com.steamstreet.awskt.core/Base64BlobSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;kotlin.ByteArray){}[0]
+}
+
 final object com.steamstreet.awskt.core/RestXmlErrorParser : com.steamstreet.awskt.core/AwsErrorParser { // com.steamstreet.awskt.core/RestXmlErrorParser|null[0]
     final fun parse(kotlin/Int, kotlin.collections/Map<kotlin/String, kotlin/String>, kotlin/ByteArray?): com.steamstreet.awskt.core/ErrorDetails // com.steamstreet.awskt.core/RestXmlErrorParser.parse|parse(kotlin.Int;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.ByteArray?){}[0]
 }
@@ -262,6 +294,7 @@ final object com.steamstreet.awskt.core/RestXmlErrorParser : com.steamstreet.aws
 final val com.steamstreet.awskt.core/awsJson // com.steamstreet.awskt.core/awsJson|{}awsJson[0]
     final fun <get-awsJson>(): kotlinx.serialization.json/Json // com.steamstreet.awskt.core/awsJson.<get-awsJson>|<get-awsJson>(){}[0]
 
+final fun (io.ktor.utils.io/ByteReadChannel).com.steamstreet.awskt.core/awsEventStream(): kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.core/EventStreamMessage> // com.steamstreet.awskt.core/awsEventStream|awsEventStream@io.ktor.utils.io.ByteReadChannel(){}[0]
 final fun com.steamstreet.awskt.core/awsEnv(kotlin/String): kotlin/String? // com.steamstreet.awskt.core/awsEnv|awsEnv(kotlin.String){}[0]
 final fun com.steamstreet.awskt.core/awsHttpClient(kotlin/String? = ..., com.steamstreet.awskt.core/AwsHttpTimeouts = ...): io.ktor.client/HttpClient // com.steamstreet.awskt.core/awsHttpClient|awsHttpClient(kotlin.String?;com.steamstreet.awskt.core.AwsHttpTimeouts){}[0]
 final fun com.steamstreet.awskt.core/backoffMillis(com.steamstreet.awskt.core/RetryErrorType, kotlin/Int, com.steamstreet.awskt.core/RetryConfig, kotlin/Function0<kotlin/Double>): kotlin/Long // com.steamstreet.awskt.core/backoffMillis|backoffMillis(com.steamstreet.awskt.core.RetryErrorType;kotlin.Int;com.steamstreet.awskt.core.RetryConfig;kotlin.Function0<kotlin.Double>){}[0]
@@ -272,3 +305,5 @@ final fun com.steamstreet.awskt.core/resolveEndpoint(kotlin/String, kotlin/Strin
 final fun com.steamstreet.awskt.core/resolveRegion(kotlin/String? = ..., kotlin/Function1<kotlin/String, kotlin/String?> = ..., kotlin/Function1<kotlin/String, kotlin/String?> = ...): kotlin/String // com.steamstreet.awskt.core/resolveRegion|resolveRegion(kotlin.String?;kotlin.Function1<kotlin.String,kotlin.String?>;kotlin.Function1<kotlin.String,kotlin.String?>){}[0]
 final fun com.steamstreet.awskt.core/transactionCancellationReasons(kotlin/ByteArray?): kotlin.collections/List<kotlin/String> // com.steamstreet.awskt.core/transactionCancellationReasons|transactionCancellationReasons(kotlin.ByteArray?){}[0]
 final suspend fun <#A: kotlin/Any?, #B: kotlin/Any?> (com.steamstreet.awskt.core/AwsServiceClient).com.steamstreet.awskt.core/callJson(kotlin/String, #A, kotlinx.serialization/SerializationStrategy<#A>, kotlinx.serialization/DeserializationStrategy<#B>, kotlinx.serialization.json/Json = ..., com.steamstreet.awskt.core/OperationSafety = ..., kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ...): #B // com.steamstreet.awskt.core/callJson|callJson@com.steamstreet.awskt.core.AwsServiceClient(kotlin.String;0:0;kotlinx.serialization.SerializationStrategy<0:0>;kotlinx.serialization.DeserializationStrategy<0:1>;kotlinx.serialization.json.Json;com.steamstreet.awskt.core.OperationSafety;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final suspend fun <#A: kotlin/Any?, #B: kotlin/Any?> (com.steamstreet.awskt.core/AwsServiceClient).com.steamstreet.awskt.core/callRestJson(kotlin/String, kotlin/String, #A, kotlinx.serialization/SerializationStrategy<#A>, kotlinx.serialization/DeserializationStrategy<#B>, kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ..., kotlin/String? = ..., kotlinx.serialization.json/Json = ..., com.steamstreet.awskt.core/OperationSafety = ..., kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ...): #B // com.steamstreet.awskt.core/callRestJson|callRestJson@com.steamstreet.awskt.core.AwsServiceClient(kotlin.String;kotlin.String;0:0;kotlinx.serialization.SerializationStrategy<0:0>;kotlinx.serialization.DeserializationStrategy<0:1>;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>;kotlin.String?;kotlinx.serialization.json.Json;com.steamstreet.awskt.core.OperationSafety;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final suspend fun <#A: kotlin/Any?> (com.steamstreet.awskt.core/AwsServiceClient).com.steamstreet.awskt.core/callRestJsonNoBody(kotlin/String, kotlin/String, kotlinx.serialization/DeserializationStrategy<#A>, kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ..., kotlin/String? = ..., kotlinx.serialization.json/Json = ..., com.steamstreet.awskt.core/OperationSafety = ..., kotlin.collections/List<kotlin/Pair<kotlin/String, kotlin/String>> = ...): #A // com.steamstreet.awskt.core/callRestJsonNoBody|callRestJsonNoBody@com.steamstreet.awskt.core.AwsServiceClient(kotlin.String;kotlin.String;kotlinx.serialization.DeserializationStrategy<0:0>;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>;kotlin.String?;kotlinx.serialization.json.Json;com.steamstreet.awskt.core.OperationSafety;kotlin.collections.List<kotlin.Pair<kotlin.String,kotlin.String>>){0§<kotlin.Any?>}[0]

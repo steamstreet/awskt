@@ -1,0 +1,963 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet:aws-sqs>
+abstract interface com.steamstreet.awskt.sqs/Sqs : kotlin/AutoCloseable { // com.steamstreet.awskt.sqs/Sqs|null[0]
+    abstract val client // com.steamstreet.awskt.sqs/Sqs.client|{}client[0]
+        abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.sqs/Sqs.client.<get-client>|<get-client>(){}[0]
+
+    abstract suspend fun changeMessageVisibility(com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest) // com.steamstreet.awskt.sqs/Sqs.changeMessageVisibility|changeMessageVisibility(com.steamstreet.awskt.sqs.ChangeMessageVisibilityRequest){}[0]
+    abstract suspend fun changeMessageVisibilityBatch(com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest): com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse // com.steamstreet.awskt.sqs/Sqs.changeMessageVisibilityBatch|changeMessageVisibilityBatch(com.steamstreet.awskt.sqs.ChangeMessageVisibilityBatchRequest){}[0]
+    abstract suspend fun deleteMessage(com.steamstreet.awskt.sqs/DeleteMessageRequest) // com.steamstreet.awskt.sqs/Sqs.deleteMessage|deleteMessage(com.steamstreet.awskt.sqs.DeleteMessageRequest){}[0]
+    abstract suspend fun deleteMessageBatch(com.steamstreet.awskt.sqs/DeleteMessageBatchRequest): com.steamstreet.awskt.sqs/DeleteMessageBatchResponse // com.steamstreet.awskt.sqs/Sqs.deleteMessageBatch|deleteMessageBatch(com.steamstreet.awskt.sqs.DeleteMessageBatchRequest){}[0]
+    abstract suspend fun getQueueUrl(com.steamstreet.awskt.sqs/GetQueueUrlRequest): com.steamstreet.awskt.sqs/GetQueueUrlResponse // com.steamstreet.awskt.sqs/Sqs.getQueueUrl|getQueueUrl(com.steamstreet.awskt.sqs.GetQueueUrlRequest){}[0]
+    abstract suspend fun receiveMessage(com.steamstreet.awskt.sqs/ReceiveMessageRequest): com.steamstreet.awskt.sqs/ReceiveMessageResponse // com.steamstreet.awskt.sqs/Sqs.receiveMessage|receiveMessage(com.steamstreet.awskt.sqs.ReceiveMessageRequest){}[0]
+    abstract suspend fun sendMessage(com.steamstreet.awskt.sqs/SendMessageRequest): com.steamstreet.awskt.sqs/SendMessageResponse // com.steamstreet.awskt.sqs/Sqs.sendMessage|sendMessage(com.steamstreet.awskt.sqs.SendMessageRequest){}[0]
+    abstract suspend fun sendMessageBatch(com.steamstreet.awskt.sqs/SendMessageBatchRequest): com.steamstreet.awskt.sqs/SendMessageBatchResponse // com.steamstreet.awskt.sqs/Sqs.sendMessageBatch|sendMessageBatch(com.steamstreet.awskt.sqs.SendMessageBatchRequest){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/BatchEntryIdsNotDistinctException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/BatchEntryIdsNotDistinctException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sqs/BatchEntryIdsNotDistinctException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/BatchRequestTooLongException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/BatchRequestTooLongException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sqs/BatchRequestTooLongException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/BatchResultErrorEntry { // com.steamstreet.awskt.sqs/BatchResultErrorEntry|null[0]
+    constructor <init>(kotlin/String, kotlin/Boolean = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.sqs/BatchResultErrorEntry.<init>|<init>(kotlin.String;kotlin.Boolean;kotlin.String?;kotlin.String?){}[0]
+
+    final val code // com.steamstreet.awskt.sqs/BatchResultErrorEntry.code|{}code[0]
+        final fun <get-code>(): kotlin/String? // com.steamstreet.awskt.sqs/BatchResultErrorEntry.code.<get-code>|<get-code>(){}[0]
+    final val id // com.steamstreet.awskt.sqs/BatchResultErrorEntry.id|{}id[0]
+        final fun <get-id>(): kotlin/String // com.steamstreet.awskt.sqs/BatchResultErrorEntry.id.<get-id>|<get-id>(){}[0]
+    final val message // com.steamstreet.awskt.sqs/BatchResultErrorEntry.message|{}message[0]
+        final fun <get-message>(): kotlin/String? // com.steamstreet.awskt.sqs/BatchResultErrorEntry.message.<get-message>|<get-message>(){}[0]
+    final val senderFault // com.steamstreet.awskt.sqs/BatchResultErrorEntry.senderFault|{}senderFault[0]
+        final fun <get-senderFault>(): kotlin/Boolean // com.steamstreet.awskt.sqs/BatchResultErrorEntry.senderFault.<get-senderFault>|<get-senderFault>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sqs/BatchResultErrorEntry.component1|component1(){}[0]
+    final fun component2(): kotlin/Boolean // com.steamstreet.awskt.sqs/BatchResultErrorEntry.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.sqs/BatchResultErrorEntry.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.sqs/BatchResultErrorEntry.component4|component4(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/Boolean = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.sqs/BatchResultErrorEntry // com.steamstreet.awskt.sqs/BatchResultErrorEntry.copy|copy(kotlin.String;kotlin.Boolean;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/BatchResultErrorEntry.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/BatchResultErrorEntry.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/BatchResultErrorEntry.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/BatchResultErrorEntry> { // com.steamstreet.awskt.sqs/BatchResultErrorEntry.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/BatchResultErrorEntry.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/BatchResultErrorEntry.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/BatchResultErrorEntry.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/BatchResultErrorEntry // com.steamstreet.awskt.sqs/BatchResultErrorEntry.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/BatchResultErrorEntry) // com.steamstreet.awskt.sqs/BatchResultErrorEntry.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.BatchResultErrorEntry){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/BatchResultErrorEntry.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/BatchResultErrorEntry> // com.steamstreet.awskt.sqs/BatchResultErrorEntry.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest { // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest|null[0]
+    constructor <init>(kotlin/String, kotlin.collections/List<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry>) // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.<init>|<init>(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.sqs.ChangeMessageVisibilityBatchRequestEntry>){}[0]
+
+    final val entries // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.entries|{}entries[0]
+        final fun <get-entries>(): kotlin.collections/List<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.entries.<get-entries>|<get-entries>(){}[0]
+    final val queueUrl // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.queueUrl|{}queueUrl[0]
+        final fun <get-queueUrl>(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.queueUrl.<get-queueUrl>|<get-queueUrl>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/List<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry> = ...): com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.copy|copy(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.sqs.ChangeMessageVisibilityBatchRequestEntry>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest> { // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest) // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.ChangeMessageVisibilityBatchRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry { // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/Int? = ...) // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.<init>|<init>(kotlin.String;kotlin.String;kotlin.Int?){}[0]
+
+    final val id // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.id|{}id[0]
+        final fun <get-id>(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.id.<get-id>|<get-id>(){}[0]
+    final val receiptHandle // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.receiptHandle|{}receiptHandle[0]
+        final fun <get-receiptHandle>(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.receiptHandle.<get-receiptHandle>|<get-receiptHandle>(){}[0]
+    final val visibilityTimeout // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.visibilityTimeout|{}visibilityTimeout[0]
+        final fun <get-visibilityTimeout>(): kotlin/Int? // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.visibilityTimeout.<get-visibilityTimeout>|<get-visibilityTimeout>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.component2|component2(){}[0]
+    final fun component3(): kotlin/Int? // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/Int? = ...): com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.copy|copy(kotlin.String;kotlin.String;kotlin.Int?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry> { // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry) // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.ChangeMessageVisibilityBatchRequestEntry){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchRequestEntry.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse { // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry> = ..., kotlin.collections/List<com.steamstreet.awskt.sqs/BatchResultErrorEntry> = ...) // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.sqs.ChangeMessageVisibilityBatchResultEntry>;kotlin.collections.List<com.steamstreet.awskt.sqs.BatchResultErrorEntry>){}[0]
+
+    final val failed // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.failed|{}failed[0]
+        final fun <get-failed>(): kotlin.collections/List<com.steamstreet.awskt.sqs/BatchResultErrorEntry> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.failed.<get-failed>|<get-failed>(){}[0]
+    final val successful // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.successful|{}successful[0]
+        final fun <get-successful>(): kotlin.collections/List<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.successful.<get-successful>|<get-successful>(){}[0]
+
+    final fun component1(): kotlin.collections/List<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<com.steamstreet.awskt.sqs/BatchResultErrorEntry> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.component2|component2(){}[0]
+    final fun copy(kotlin.collections/List<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry> = ..., kotlin.collections/List<com.steamstreet.awskt.sqs/BatchResultErrorEntry> = ...): com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.copy|copy(kotlin.collections.List<com.steamstreet.awskt.sqs.ChangeMessageVisibilityBatchResultEntry>;kotlin.collections.List<com.steamstreet.awskt.sqs.BatchResultErrorEntry>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse> { // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse) // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.ChangeMessageVisibilityBatchResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry { // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry|null[0]
+    constructor <init>(kotlin/String) // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.<init>|<init>(kotlin.String){}[0]
+
+    final val id // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.id|{}id[0]
+        final fun <get-id>(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.id.<get-id>|<get-id>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.component1|component1(){}[0]
+    final fun copy(kotlin/String = ...): com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.copy|copy(kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry> { // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry) // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.ChangeMessageVisibilityBatchResultEntry){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityBatchResultEntry.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest { // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/Int) // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.<init>|<init>(kotlin.String;kotlin.String;kotlin.Int){}[0]
+
+    final val queueUrl // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.queueUrl|{}queueUrl[0]
+        final fun <get-queueUrl>(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.queueUrl.<get-queueUrl>|<get-queueUrl>(){}[0]
+    final val receiptHandle // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.receiptHandle|{}receiptHandle[0]
+        final fun <get-receiptHandle>(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.receiptHandle.<get-receiptHandle>|<get-receiptHandle>(){}[0]
+    final val visibilityTimeout // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.visibilityTimeout|{}visibilityTimeout[0]
+        final fun <get-visibilityTimeout>(): kotlin/Int // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.visibilityTimeout.<get-visibilityTimeout>|<get-visibilityTimeout>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/Int // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/Int = ...): com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.copy|copy(kotlin.String;kotlin.String;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest> { // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest) // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.ChangeMessageVisibilityRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest> // com.steamstreet.awskt.sqs/ChangeMessageVisibilityRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/DeleteMessageBatchPartialFailureException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/DeleteMessageBatchPartialFailureException|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry>, kotlin.collections/List<kotlin/Pair<com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry, com.steamstreet.awskt.sqs/BatchResultErrorEntry>>, kotlin/String?, kotlin/String? = ...) // com.steamstreet.awskt.sqs/DeleteMessageBatchPartialFailureException.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.sqs.DeleteMessageBatchResultEntry>;kotlin.collections.List<kotlin.Pair<com.steamstreet.awskt.sqs.DeleteMessageBatchRequestEntry,com.steamstreet.awskt.sqs.BatchResultErrorEntry>>;kotlin.String?;kotlin.String?){}[0]
+
+    final val failed // com.steamstreet.awskt.sqs/DeleteMessageBatchPartialFailureException.failed|{}failed[0]
+        final fun <get-failed>(): kotlin.collections/List<kotlin/Pair<com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry, com.steamstreet.awskt.sqs/BatchResultErrorEntry>> // com.steamstreet.awskt.sqs/DeleteMessageBatchPartialFailureException.failed.<get-failed>|<get-failed>(){}[0]
+    final val succeeded // com.steamstreet.awskt.sqs/DeleteMessageBatchPartialFailureException.succeeded|{}succeeded[0]
+        final fun <get-succeeded>(): kotlin.collections/List<com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry> // com.steamstreet.awskt.sqs/DeleteMessageBatchPartialFailureException.succeeded.<get-succeeded>|<get-succeeded>(){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/DeleteMessageBatchRequest { // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest|null[0]
+    constructor <init>(kotlin/String, kotlin.collections/List<com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry>) // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.<init>|<init>(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.sqs.DeleteMessageBatchRequestEntry>){}[0]
+
+    final val entries // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.entries|{}entries[0]
+        final fun <get-entries>(): kotlin.collections/List<com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry> // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.entries.<get-entries>|<get-entries>(){}[0]
+    final val queueUrl // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.queueUrl|{}queueUrl[0]
+        final fun <get-queueUrl>(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.queueUrl.<get-queueUrl>|<get-queueUrl>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry> // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/List<com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry> = ...): com.steamstreet.awskt.sqs/DeleteMessageBatchRequest // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.copy|copy(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.sqs.DeleteMessageBatchRequestEntry>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/DeleteMessageBatchRequest> { // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/DeleteMessageBatchRequest // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/DeleteMessageBatchRequest) // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.DeleteMessageBatchRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/DeleteMessageBatchRequest> // com.steamstreet.awskt.sqs/DeleteMessageBatchRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry { // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry|null[0]
+    constructor <init>(kotlin/String, kotlin/String) // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val id // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.id|{}id[0]
+        final fun <get-id>(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.id.<get-id>|<get-id>(){}[0]
+    final val receiptHandle // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.receiptHandle|{}receiptHandle[0]
+        final fun <get-receiptHandle>(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.receiptHandle.<get-receiptHandle>|<get-receiptHandle>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ...): com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.copy|copy(kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry> { // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry) // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.DeleteMessageBatchRequestEntry){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry> // com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/DeleteMessageBatchResponse { // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry> = ..., kotlin.collections/List<com.steamstreet.awskt.sqs/BatchResultErrorEntry> = ...) // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.sqs.DeleteMessageBatchResultEntry>;kotlin.collections.List<com.steamstreet.awskt.sqs.BatchResultErrorEntry>){}[0]
+
+    final val failed // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.failed|{}failed[0]
+        final fun <get-failed>(): kotlin.collections/List<com.steamstreet.awskt.sqs/BatchResultErrorEntry> // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.failed.<get-failed>|<get-failed>(){}[0]
+    final val successful // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.successful|{}successful[0]
+        final fun <get-successful>(): kotlin.collections/List<com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry> // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.successful.<get-successful>|<get-successful>(){}[0]
+
+    final fun component1(): kotlin.collections/List<com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry> // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<com.steamstreet.awskt.sqs/BatchResultErrorEntry> // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.component2|component2(){}[0]
+    final fun copy(kotlin.collections/List<com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry> = ..., kotlin.collections/List<com.steamstreet.awskt.sqs/BatchResultErrorEntry> = ...): com.steamstreet.awskt.sqs/DeleteMessageBatchResponse // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.copy|copy(kotlin.collections.List<com.steamstreet.awskt.sqs.DeleteMessageBatchResultEntry>;kotlin.collections.List<com.steamstreet.awskt.sqs.BatchResultErrorEntry>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/DeleteMessageBatchResponse> { // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/DeleteMessageBatchResponse // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/DeleteMessageBatchResponse) // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.DeleteMessageBatchResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/DeleteMessageBatchResponse> // com.steamstreet.awskt.sqs/DeleteMessageBatchResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry { // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry|null[0]
+    constructor <init>(kotlin/String) // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.<init>|<init>(kotlin.String){}[0]
+
+    final val id // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.id|{}id[0]
+        final fun <get-id>(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.id.<get-id>|<get-id>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.component1|component1(){}[0]
+    final fun copy(kotlin/String = ...): com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.copy|copy(kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry> { // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry) // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.DeleteMessageBatchResultEntry){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry> // com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/DeleteMessageRequest { // com.steamstreet.awskt.sqs/DeleteMessageRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String) // com.steamstreet.awskt.sqs/DeleteMessageRequest.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val queueUrl // com.steamstreet.awskt.sqs/DeleteMessageRequest.queueUrl|{}queueUrl[0]
+        final fun <get-queueUrl>(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageRequest.queueUrl.<get-queueUrl>|<get-queueUrl>(){}[0]
+    final val receiptHandle // com.steamstreet.awskt.sqs/DeleteMessageRequest.receiptHandle|{}receiptHandle[0]
+        final fun <get-receiptHandle>(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageRequest.receiptHandle.<get-receiptHandle>|<get-receiptHandle>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageRequest.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ...): com.steamstreet.awskt.sqs/DeleteMessageRequest // com.steamstreet.awskt.sqs/DeleteMessageRequest.copy|copy(kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/DeleteMessageRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/DeleteMessageRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/DeleteMessageRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/DeleteMessageRequest> { // com.steamstreet.awskt.sqs/DeleteMessageRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/DeleteMessageRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/DeleteMessageRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/DeleteMessageRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/DeleteMessageRequest // com.steamstreet.awskt.sqs/DeleteMessageRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/DeleteMessageRequest) // com.steamstreet.awskt.sqs/DeleteMessageRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.DeleteMessageRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/DeleteMessageRequest.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/DeleteMessageRequest> // com.steamstreet.awskt.sqs/DeleteMessageRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/EmptyBatchRequestException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/EmptyBatchRequestException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sqs/EmptyBatchRequestException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/GetQueueUrlRequest { // com.steamstreet.awskt.sqs/GetQueueUrlRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ...) // com.steamstreet.awskt.sqs/GetQueueUrlRequest.<init>|<init>(kotlin.String;kotlin.String?){}[0]
+
+    final val queueName // com.steamstreet.awskt.sqs/GetQueueUrlRequest.queueName|{}queueName[0]
+        final fun <get-queueName>(): kotlin/String // com.steamstreet.awskt.sqs/GetQueueUrlRequest.queueName.<get-queueName>|<get-queueName>(){}[0]
+    final val queueOwnerAwsAccountId // com.steamstreet.awskt.sqs/GetQueueUrlRequest.queueOwnerAwsAccountId|{}queueOwnerAwsAccountId[0]
+        final fun <get-queueOwnerAwsAccountId>(): kotlin/String? // com.steamstreet.awskt.sqs/GetQueueUrlRequest.queueOwnerAwsAccountId.<get-queueOwnerAwsAccountId>|<get-queueOwnerAwsAccountId>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sqs/GetQueueUrlRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.sqs/GetQueueUrlRequest.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ...): com.steamstreet.awskt.sqs/GetQueueUrlRequest // com.steamstreet.awskt.sqs/GetQueueUrlRequest.copy|copy(kotlin.String;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/GetQueueUrlRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/GetQueueUrlRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/GetQueueUrlRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/GetQueueUrlRequest> { // com.steamstreet.awskt.sqs/GetQueueUrlRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/GetQueueUrlRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/GetQueueUrlRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/GetQueueUrlRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/GetQueueUrlRequest // com.steamstreet.awskt.sqs/GetQueueUrlRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/GetQueueUrlRequest) // com.steamstreet.awskt.sqs/GetQueueUrlRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.GetQueueUrlRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/GetQueueUrlRequest.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/GetQueueUrlRequest> // com.steamstreet.awskt.sqs/GetQueueUrlRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/GetQueueUrlResponse { // com.steamstreet.awskt.sqs/GetQueueUrlResponse|null[0]
+    constructor <init>(kotlin/String? = ...) // com.steamstreet.awskt.sqs/GetQueueUrlResponse.<init>|<init>(kotlin.String?){}[0]
+
+    final val queueUrl // com.steamstreet.awskt.sqs/GetQueueUrlResponse.queueUrl|{}queueUrl[0]
+        final fun <get-queueUrl>(): kotlin/String? // com.steamstreet.awskt.sqs/GetQueueUrlResponse.queueUrl.<get-queueUrl>|<get-queueUrl>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.sqs/GetQueueUrlResponse.component1|component1(){}[0]
+    final fun copy(kotlin/String? = ...): com.steamstreet.awskt.sqs/GetQueueUrlResponse // com.steamstreet.awskt.sqs/GetQueueUrlResponse.copy|copy(kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/GetQueueUrlResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/GetQueueUrlResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/GetQueueUrlResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/GetQueueUrlResponse> { // com.steamstreet.awskt.sqs/GetQueueUrlResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/GetQueueUrlResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/GetQueueUrlResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/GetQueueUrlResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/GetQueueUrlResponse // com.steamstreet.awskt.sqs/GetQueueUrlResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/GetQueueUrlResponse) // com.steamstreet.awskt.sqs/GetQueueUrlResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.GetQueueUrlResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/GetQueueUrlResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/GetQueueUrlResponse> // com.steamstreet.awskt.sqs/GetQueueUrlResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/InvalidBatchEntryIdException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/InvalidBatchEntryIdException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sqs/InvalidBatchEntryIdException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/InvalidMessageContentsException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/InvalidMessageContentsException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sqs/InvalidMessageContentsException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/Message { // com.steamstreet.awskt.sqs/Message|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageAttributeValue> = ..., kotlin/String? = ...) // com.steamstreet.awskt.sqs/Message.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.sqs.MessageAttributeValue>;kotlin.String?){}[0]
+
+    final val attributes // com.steamstreet.awskt.sqs/Message.attributes|{}attributes[0]
+        final fun <get-attributes>(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.awskt.sqs/Message.attributes.<get-attributes>|<get-attributes>(){}[0]
+    final val body // com.steamstreet.awskt.sqs/Message.body|{}body[0]
+        final fun <get-body>(): kotlin/String? // com.steamstreet.awskt.sqs/Message.body.<get-body>|<get-body>(){}[0]
+    final val md5OfBody // com.steamstreet.awskt.sqs/Message.md5OfBody|{}md5OfBody[0]
+        final fun <get-md5OfBody>(): kotlin/String? // com.steamstreet.awskt.sqs/Message.md5OfBody.<get-md5OfBody>|<get-md5OfBody>(){}[0]
+    final val md5OfMessageAttributes // com.steamstreet.awskt.sqs/Message.md5OfMessageAttributes|{}md5OfMessageAttributes[0]
+        final fun <get-md5OfMessageAttributes>(): kotlin/String? // com.steamstreet.awskt.sqs/Message.md5OfMessageAttributes.<get-md5OfMessageAttributes>|<get-md5OfMessageAttributes>(){}[0]
+    final val messageAttributes // com.steamstreet.awskt.sqs/Message.messageAttributes|{}messageAttributes[0]
+        final fun <get-messageAttributes>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageAttributeValue> // com.steamstreet.awskt.sqs/Message.messageAttributes.<get-messageAttributes>|<get-messageAttributes>(){}[0]
+    final val messageId // com.steamstreet.awskt.sqs/Message.messageId|{}messageId[0]
+        final fun <get-messageId>(): kotlin/String? // com.steamstreet.awskt.sqs/Message.messageId.<get-messageId>|<get-messageId>(){}[0]
+    final val receiptHandle // com.steamstreet.awskt.sqs/Message.receiptHandle|{}receiptHandle[0]
+        final fun <get-receiptHandle>(): kotlin/String? // com.steamstreet.awskt.sqs/Message.receiptHandle.<get-receiptHandle>|<get-receiptHandle>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.sqs/Message.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.sqs/Message.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.sqs/Message.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.sqs/Message.component4|component4(){}[0]
+    final fun component5(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.awskt.sqs/Message.component5|component5(){}[0]
+    final fun component6(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageAttributeValue> // com.steamstreet.awskt.sqs/Message.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // com.steamstreet.awskt.sqs/Message.component7|component7(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageAttributeValue> = ..., kotlin/String? = ...): com.steamstreet.awskt.sqs/Message // com.steamstreet.awskt.sqs/Message.copy|copy(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.sqs.MessageAttributeValue>;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/Message.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/Message.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/Message.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/Message> { // com.steamstreet.awskt.sqs/Message.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/Message.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/Message.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/Message.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/Message // com.steamstreet.awskt.sqs/Message.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/Message) // com.steamstreet.awskt.sqs/Message.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.Message){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/Message.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.sqs/Message.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/Message> // com.steamstreet.awskt.sqs/Message.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/MessageAttributeValue { // com.steamstreet.awskt.sqs/MessageAttributeValue|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., kotlin/ByteArray? = ...) // com.steamstreet.awskt.sqs/MessageAttributeValue.<init>|<init>(kotlin.String;kotlin.String?;kotlin.ByteArray?){}[0]
+
+    final val binaryValue // com.steamstreet.awskt.sqs/MessageAttributeValue.binaryValue|{}binaryValue[0]
+        final fun <get-binaryValue>(): kotlin/ByteArray? // com.steamstreet.awskt.sqs/MessageAttributeValue.binaryValue.<get-binaryValue>|<get-binaryValue>(){}[0]
+    final val dataType // com.steamstreet.awskt.sqs/MessageAttributeValue.dataType|{}dataType[0]
+        final fun <get-dataType>(): kotlin/String // com.steamstreet.awskt.sqs/MessageAttributeValue.dataType.<get-dataType>|<get-dataType>(){}[0]
+    final val stringValue // com.steamstreet.awskt.sqs/MessageAttributeValue.stringValue|{}stringValue[0]
+        final fun <get-stringValue>(): kotlin/String? // com.steamstreet.awskt.sqs/MessageAttributeValue.stringValue.<get-stringValue>|<get-stringValue>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/MessageAttributeValue.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/MessageAttributeValue.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/MessageAttributeValue.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/MessageAttributeValue> { // com.steamstreet.awskt.sqs/MessageAttributeValue.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/MessageAttributeValue.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/MessageAttributeValue.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/MessageAttributeValue.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/MessageAttributeValue // com.steamstreet.awskt.sqs/MessageAttributeValue.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/MessageAttributeValue) // com.steamstreet.awskt.sqs/MessageAttributeValue.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.MessageAttributeValue){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/MessageAttributeValue.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/MessageAttributeValue> // com.steamstreet.awskt.sqs/MessageAttributeValue.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/MessageNotInflightException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/MessageNotInflightException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sqs/MessageNotInflightException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/MessageSystemAttributeValue { // com.steamstreet.awskt.sqs/MessageSystemAttributeValue|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., kotlin/ByteArray? = ...) // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.<init>|<init>(kotlin.String;kotlin.String?;kotlin.ByteArray?){}[0]
+
+    final val binaryValue // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.binaryValue|{}binaryValue[0]
+        final fun <get-binaryValue>(): kotlin/ByteArray? // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.binaryValue.<get-binaryValue>|<get-binaryValue>(){}[0]
+    final val dataType // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.dataType|{}dataType[0]
+        final fun <get-dataType>(): kotlin/String // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.dataType.<get-dataType>|<get-dataType>(){}[0]
+    final val stringValue // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.stringValue|{}stringValue[0]
+        final fun <get-stringValue>(): kotlin/String? // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.stringValue.<get-stringValue>|<get-stringValue>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/MessageSystemAttributeValue> { // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/MessageSystemAttributeValue // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/MessageSystemAttributeValue) // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.MessageSystemAttributeValue){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/MessageSystemAttributeValue> // com.steamstreet.awskt.sqs/MessageSystemAttributeValue.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/OverLimitException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/OverLimitException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sqs/OverLimitException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/QueueDeletedRecentlyException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/QueueDeletedRecentlyException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sqs/QueueDeletedRecentlyException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/QueueDoesNotExistException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/QueueDoesNotExistException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sqs/QueueDoesNotExistException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/QueueEncryptionKeyException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/QueueEncryptionKeyException|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sqs/QueueEncryptionKeyException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/ReceiptHandleIsInvalidException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/ReceiptHandleIsInvalidException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sqs/ReceiptHandleIsInvalidException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/ReceiveMessageRequest { // com.steamstreet.awskt.sqs/ReceiveMessageRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/Int? = ..., kotlin/Int? = ..., kotlin/Int? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ...) // com.steamstreet.awskt.sqs/ReceiveMessageRequest.<init>|<init>(kotlin.String;kotlin.Int?;kotlin.Int?;kotlin.Int?;kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?;kotlin.String?){}[0]
+
+    final val maxNumberOfMessages // com.steamstreet.awskt.sqs/ReceiveMessageRequest.maxNumberOfMessages|{}maxNumberOfMessages[0]
+        final fun <get-maxNumberOfMessages>(): kotlin/Int? // com.steamstreet.awskt.sqs/ReceiveMessageRequest.maxNumberOfMessages.<get-maxNumberOfMessages>|<get-maxNumberOfMessages>(){}[0]
+    final val messageAttributeNames // com.steamstreet.awskt.sqs/ReceiveMessageRequest.messageAttributeNames|{}messageAttributeNames[0]
+        final fun <get-messageAttributeNames>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.sqs/ReceiveMessageRequest.messageAttributeNames.<get-messageAttributeNames>|<get-messageAttributeNames>(){}[0]
+    final val messageSystemAttributeNames // com.steamstreet.awskt.sqs/ReceiveMessageRequest.messageSystemAttributeNames|{}messageSystemAttributeNames[0]
+        final fun <get-messageSystemAttributeNames>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.sqs/ReceiveMessageRequest.messageSystemAttributeNames.<get-messageSystemAttributeNames>|<get-messageSystemAttributeNames>(){}[0]
+    final val queueUrl // com.steamstreet.awskt.sqs/ReceiveMessageRequest.queueUrl|{}queueUrl[0]
+        final fun <get-queueUrl>(): kotlin/String // com.steamstreet.awskt.sqs/ReceiveMessageRequest.queueUrl.<get-queueUrl>|<get-queueUrl>(){}[0]
+    final val receiveRequestAttemptId // com.steamstreet.awskt.sqs/ReceiveMessageRequest.receiveRequestAttemptId|{}receiveRequestAttemptId[0]
+        final fun <get-receiveRequestAttemptId>(): kotlin/String? // com.steamstreet.awskt.sqs/ReceiveMessageRequest.receiveRequestAttemptId.<get-receiveRequestAttemptId>|<get-receiveRequestAttemptId>(){}[0]
+    final val visibilityTimeout // com.steamstreet.awskt.sqs/ReceiveMessageRequest.visibilityTimeout|{}visibilityTimeout[0]
+        final fun <get-visibilityTimeout>(): kotlin/Int? // com.steamstreet.awskt.sqs/ReceiveMessageRequest.visibilityTimeout.<get-visibilityTimeout>|<get-visibilityTimeout>(){}[0]
+    final val waitTimeSeconds // com.steamstreet.awskt.sqs/ReceiveMessageRequest.waitTimeSeconds|{}waitTimeSeconds[0]
+        final fun <get-waitTimeSeconds>(): kotlin/Int? // com.steamstreet.awskt.sqs/ReceiveMessageRequest.waitTimeSeconds.<get-waitTimeSeconds>|<get-waitTimeSeconds>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sqs/ReceiveMessageRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/Int? // com.steamstreet.awskt.sqs/ReceiveMessageRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/Int? // com.steamstreet.awskt.sqs/ReceiveMessageRequest.component3|component3(){}[0]
+    final fun component4(): kotlin/Int? // com.steamstreet.awskt.sqs/ReceiveMessageRequest.component4|component4(){}[0]
+    final fun component5(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.sqs/ReceiveMessageRequest.component5|component5(){}[0]
+    final fun component6(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.sqs/ReceiveMessageRequest.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // com.steamstreet.awskt.sqs/ReceiveMessageRequest.component7|component7(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/Int? = ..., kotlin/Int? = ..., kotlin/Int? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ...): com.steamstreet.awskt.sqs/ReceiveMessageRequest // com.steamstreet.awskt.sqs/ReceiveMessageRequest.copy|copy(kotlin.String;kotlin.Int?;kotlin.Int?;kotlin.Int?;kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/ReceiveMessageRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/ReceiveMessageRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/ReceiveMessageRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/ReceiveMessageRequest> { // com.steamstreet.awskt.sqs/ReceiveMessageRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/ReceiveMessageRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/ReceiveMessageRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/ReceiveMessageRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/ReceiveMessageRequest // com.steamstreet.awskt.sqs/ReceiveMessageRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/ReceiveMessageRequest) // com.steamstreet.awskt.sqs/ReceiveMessageRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.ReceiveMessageRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/ReceiveMessageRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.sqs/ReceiveMessageRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/ReceiveMessageRequest> // com.steamstreet.awskt.sqs/ReceiveMessageRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/ReceiveMessageResponse { // com.steamstreet.awskt.sqs/ReceiveMessageResponse|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.sqs/Message> = ...) // com.steamstreet.awskt.sqs/ReceiveMessageResponse.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.sqs.Message>){}[0]
+
+    final val messages // com.steamstreet.awskt.sqs/ReceiveMessageResponse.messages|{}messages[0]
+        final fun <get-messages>(): kotlin.collections/List<com.steamstreet.awskt.sqs/Message> // com.steamstreet.awskt.sqs/ReceiveMessageResponse.messages.<get-messages>|<get-messages>(){}[0]
+
+    final fun component1(): kotlin.collections/List<com.steamstreet.awskt.sqs/Message> // com.steamstreet.awskt.sqs/ReceiveMessageResponse.component1|component1(){}[0]
+    final fun copy(kotlin.collections/List<com.steamstreet.awskt.sqs/Message> = ...): com.steamstreet.awskt.sqs/ReceiveMessageResponse // com.steamstreet.awskt.sqs/ReceiveMessageResponse.copy|copy(kotlin.collections.List<com.steamstreet.awskt.sqs.Message>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/ReceiveMessageResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/ReceiveMessageResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/ReceiveMessageResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/ReceiveMessageResponse> { // com.steamstreet.awskt.sqs/ReceiveMessageResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/ReceiveMessageResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/ReceiveMessageResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/ReceiveMessageResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/ReceiveMessageResponse // com.steamstreet.awskt.sqs/ReceiveMessageResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/ReceiveMessageResponse) // com.steamstreet.awskt.sqs/ReceiveMessageResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.ReceiveMessageResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/ReceiveMessageResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.sqs/ReceiveMessageResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/ReceiveMessageResponse> // com.steamstreet.awskt.sqs/ReceiveMessageResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/RequestThrottledException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/RequestThrottledException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sqs/RequestThrottledException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/SendMessageBatchPartialFailureException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/SendMessageBatchPartialFailureException|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.sqs/SendMessageBatchResultEntry>, kotlin.collections/List<kotlin/Pair<com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry, com.steamstreet.awskt.sqs/BatchResultErrorEntry>>, kotlin/String?, kotlin/String? = ...) // com.steamstreet.awskt.sqs/SendMessageBatchPartialFailureException.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.sqs.SendMessageBatchResultEntry>;kotlin.collections.List<kotlin.Pair<com.steamstreet.awskt.sqs.SendMessageBatchRequestEntry,com.steamstreet.awskt.sqs.BatchResultErrorEntry>>;kotlin.String?;kotlin.String?){}[0]
+
+    final val failed // com.steamstreet.awskt.sqs/SendMessageBatchPartialFailureException.failed|{}failed[0]
+        final fun <get-failed>(): kotlin.collections/List<kotlin/Pair<com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry, com.steamstreet.awskt.sqs/BatchResultErrorEntry>> // com.steamstreet.awskt.sqs/SendMessageBatchPartialFailureException.failed.<get-failed>|<get-failed>(){}[0]
+    final val succeeded // com.steamstreet.awskt.sqs/SendMessageBatchPartialFailureException.succeeded|{}succeeded[0]
+        final fun <get-succeeded>(): kotlin.collections/List<com.steamstreet.awskt.sqs/SendMessageBatchResultEntry> // com.steamstreet.awskt.sqs/SendMessageBatchPartialFailureException.succeeded.<get-succeeded>|<get-succeeded>(){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/SendMessageBatchRequest { // com.steamstreet.awskt.sqs/SendMessageBatchRequest|null[0]
+    constructor <init>(kotlin/String, kotlin.collections/List<com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry>) // com.steamstreet.awskt.sqs/SendMessageBatchRequest.<init>|<init>(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.sqs.SendMessageBatchRequestEntry>){}[0]
+
+    final val entries // com.steamstreet.awskt.sqs/SendMessageBatchRequest.entries|{}entries[0]
+        final fun <get-entries>(): kotlin.collections/List<com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry> // com.steamstreet.awskt.sqs/SendMessageBatchRequest.entries.<get-entries>|<get-entries>(){}[0]
+    final val queueUrl // com.steamstreet.awskt.sqs/SendMessageBatchRequest.queueUrl|{}queueUrl[0]
+        final fun <get-queueUrl>(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageBatchRequest.queueUrl.<get-queueUrl>|<get-queueUrl>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageBatchRequest.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry> // com.steamstreet.awskt.sqs/SendMessageBatchRequest.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/List<com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry> = ...): com.steamstreet.awskt.sqs/SendMessageBatchRequest // com.steamstreet.awskt.sqs/SendMessageBatchRequest.copy|copy(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.sqs.SendMessageBatchRequestEntry>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/SendMessageBatchRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/SendMessageBatchRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageBatchRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/SendMessageBatchRequest> { // com.steamstreet.awskt.sqs/SendMessageBatchRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/SendMessageBatchRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/SendMessageBatchRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/SendMessageBatchRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/SendMessageBatchRequest // com.steamstreet.awskt.sqs/SendMessageBatchRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/SendMessageBatchRequest) // com.steamstreet.awskt.sqs/SendMessageBatchRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.SendMessageBatchRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/SendMessageBatchRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.sqs/SendMessageBatchRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/SendMessageBatchRequest> // com.steamstreet.awskt.sqs/SendMessageBatchRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry { // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageAttributeValue>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageSystemAttributeValue>? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.<init>|<init>(kotlin.String;kotlin.String;kotlin.Int?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.sqs.MessageAttributeValue>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.sqs.MessageSystemAttributeValue>?;kotlin.String?;kotlin.String?){}[0]
+
+    final val delaySeconds // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.delaySeconds|{}delaySeconds[0]
+        final fun <get-delaySeconds>(): kotlin/Int? // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.delaySeconds.<get-delaySeconds>|<get-delaySeconds>(){}[0]
+    final val id // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.id|{}id[0]
+        final fun <get-id>(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.id.<get-id>|<get-id>(){}[0]
+    final val messageAttributes // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.messageAttributes|{}messageAttributes[0]
+        final fun <get-messageAttributes>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageAttributeValue>? // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.messageAttributes.<get-messageAttributes>|<get-messageAttributes>(){}[0]
+    final val messageBody // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.messageBody|{}messageBody[0]
+        final fun <get-messageBody>(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.messageBody.<get-messageBody>|<get-messageBody>(){}[0]
+    final val messageDeduplicationId // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.messageDeduplicationId|{}messageDeduplicationId[0]
+        final fun <get-messageDeduplicationId>(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.messageDeduplicationId.<get-messageDeduplicationId>|<get-messageDeduplicationId>(){}[0]
+    final val messageGroupId // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.messageGroupId|{}messageGroupId[0]
+        final fun <get-messageGroupId>(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.messageGroupId.<get-messageGroupId>|<get-messageGroupId>(){}[0]
+    final val messageSystemAttributes // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.messageSystemAttributes|{}messageSystemAttributes[0]
+        final fun <get-messageSystemAttributes>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageSystemAttributeValue>? // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.messageSystemAttributes.<get-messageSystemAttributes>|<get-messageSystemAttributes>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.component2|component2(){}[0]
+    final fun component3(): kotlin/Int? // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.component3|component3(){}[0]
+    final fun component4(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageAttributeValue>? // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.component4|component4(){}[0]
+    final fun component5(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageSystemAttributeValue>? // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.component5|component5(){}[0]
+    final fun component6(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.component7|component7(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageAttributeValue>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageSystemAttributeValue>? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.copy|copy(kotlin.String;kotlin.String;kotlin.Int?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.sqs.MessageAttributeValue>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.sqs.MessageSystemAttributeValue>?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry> { // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry) // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.SendMessageBatchRequestEntry){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry> // com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/SendMessageBatchResponse { // com.steamstreet.awskt.sqs/SendMessageBatchResponse|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.sqs/SendMessageBatchResultEntry> = ..., kotlin.collections/List<com.steamstreet.awskt.sqs/BatchResultErrorEntry> = ...) // com.steamstreet.awskt.sqs/SendMessageBatchResponse.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.sqs.SendMessageBatchResultEntry>;kotlin.collections.List<com.steamstreet.awskt.sqs.BatchResultErrorEntry>){}[0]
+
+    final val failed // com.steamstreet.awskt.sqs/SendMessageBatchResponse.failed|{}failed[0]
+        final fun <get-failed>(): kotlin.collections/List<com.steamstreet.awskt.sqs/BatchResultErrorEntry> // com.steamstreet.awskt.sqs/SendMessageBatchResponse.failed.<get-failed>|<get-failed>(){}[0]
+    final val successful // com.steamstreet.awskt.sqs/SendMessageBatchResponse.successful|{}successful[0]
+        final fun <get-successful>(): kotlin.collections/List<com.steamstreet.awskt.sqs/SendMessageBatchResultEntry> // com.steamstreet.awskt.sqs/SendMessageBatchResponse.successful.<get-successful>|<get-successful>(){}[0]
+
+    final fun component1(): kotlin.collections/List<com.steamstreet.awskt.sqs/SendMessageBatchResultEntry> // com.steamstreet.awskt.sqs/SendMessageBatchResponse.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<com.steamstreet.awskt.sqs/BatchResultErrorEntry> // com.steamstreet.awskt.sqs/SendMessageBatchResponse.component2|component2(){}[0]
+    final fun copy(kotlin.collections/List<com.steamstreet.awskt.sqs/SendMessageBatchResultEntry> = ..., kotlin.collections/List<com.steamstreet.awskt.sqs/BatchResultErrorEntry> = ...): com.steamstreet.awskt.sqs/SendMessageBatchResponse // com.steamstreet.awskt.sqs/SendMessageBatchResponse.copy|copy(kotlin.collections.List<com.steamstreet.awskt.sqs.SendMessageBatchResultEntry>;kotlin.collections.List<com.steamstreet.awskt.sqs.BatchResultErrorEntry>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/SendMessageBatchResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/SendMessageBatchResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageBatchResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/SendMessageBatchResponse> { // com.steamstreet.awskt.sqs/SendMessageBatchResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/SendMessageBatchResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/SendMessageBatchResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/SendMessageBatchResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/SendMessageBatchResponse // com.steamstreet.awskt.sqs/SendMessageBatchResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/SendMessageBatchResponse) // com.steamstreet.awskt.sqs/SendMessageBatchResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.SendMessageBatchResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/SendMessageBatchResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.sqs/SendMessageBatchResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/SendMessageBatchResponse> // com.steamstreet.awskt.sqs/SendMessageBatchResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/SendMessageBatchResultEntry { // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.<init>|<init>(kotlin.String;kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val id // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.id|{}id[0]
+        final fun <get-id>(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.id.<get-id>|<get-id>(){}[0]
+    final val md5OfMessageAttributes // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.md5OfMessageAttributes|{}md5OfMessageAttributes[0]
+        final fun <get-md5OfMessageAttributes>(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.md5OfMessageAttributes.<get-md5OfMessageAttributes>|<get-md5OfMessageAttributes>(){}[0]
+    final val md5OfMessageBody // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.md5OfMessageBody|{}md5OfMessageBody[0]
+        final fun <get-md5OfMessageBody>(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.md5OfMessageBody.<get-md5OfMessageBody>|<get-md5OfMessageBody>(){}[0]
+    final val md5OfMessageSystemAttributes // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.md5OfMessageSystemAttributes|{}md5OfMessageSystemAttributes[0]
+        final fun <get-md5OfMessageSystemAttributes>(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.md5OfMessageSystemAttributes.<get-md5OfMessageSystemAttributes>|<get-md5OfMessageSystemAttributes>(){}[0]
+    final val messageId // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.messageId|{}messageId[0]
+        final fun <get-messageId>(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.messageId.<get-messageId>|<get-messageId>(){}[0]
+    final val sequenceNumber // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.sequenceNumber|{}sequenceNumber[0]
+        final fun <get-sequenceNumber>(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.sequenceNumber.<get-sequenceNumber>|<get-sequenceNumber>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.component5|component5(){}[0]
+    final fun component6(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.component6|component6(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.sqs/SendMessageBatchResultEntry // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.copy|copy(kotlin.String;kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/SendMessageBatchResultEntry> { // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/SendMessageBatchResultEntry // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/SendMessageBatchResultEntry) // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.SendMessageBatchResultEntry){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/SendMessageBatchResultEntry> // com.steamstreet.awskt.sqs/SendMessageBatchResultEntry.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/SendMessageRequest { // com.steamstreet.awskt.sqs/SendMessageRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageAttributeValue>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageSystemAttributeValue>? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.sqs/SendMessageRequest.<init>|<init>(kotlin.String;kotlin.String;kotlin.Int?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.sqs.MessageAttributeValue>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.sqs.MessageSystemAttributeValue>?;kotlin.String?;kotlin.String?){}[0]
+
+    final val delaySeconds // com.steamstreet.awskt.sqs/SendMessageRequest.delaySeconds|{}delaySeconds[0]
+        final fun <get-delaySeconds>(): kotlin/Int? // com.steamstreet.awskt.sqs/SendMessageRequest.delaySeconds.<get-delaySeconds>|<get-delaySeconds>(){}[0]
+    final val messageAttributes // com.steamstreet.awskt.sqs/SendMessageRequest.messageAttributes|{}messageAttributes[0]
+        final fun <get-messageAttributes>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageAttributeValue>? // com.steamstreet.awskt.sqs/SendMessageRequest.messageAttributes.<get-messageAttributes>|<get-messageAttributes>(){}[0]
+    final val messageBody // com.steamstreet.awskt.sqs/SendMessageRequest.messageBody|{}messageBody[0]
+        final fun <get-messageBody>(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageRequest.messageBody.<get-messageBody>|<get-messageBody>(){}[0]
+    final val messageDeduplicationId // com.steamstreet.awskt.sqs/SendMessageRequest.messageDeduplicationId|{}messageDeduplicationId[0]
+        final fun <get-messageDeduplicationId>(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageRequest.messageDeduplicationId.<get-messageDeduplicationId>|<get-messageDeduplicationId>(){}[0]
+    final val messageGroupId // com.steamstreet.awskt.sqs/SendMessageRequest.messageGroupId|{}messageGroupId[0]
+        final fun <get-messageGroupId>(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageRequest.messageGroupId.<get-messageGroupId>|<get-messageGroupId>(){}[0]
+    final val messageSystemAttributes // com.steamstreet.awskt.sqs/SendMessageRequest.messageSystemAttributes|{}messageSystemAttributes[0]
+        final fun <get-messageSystemAttributes>(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageSystemAttributeValue>? // com.steamstreet.awskt.sqs/SendMessageRequest.messageSystemAttributes.<get-messageSystemAttributes>|<get-messageSystemAttributes>(){}[0]
+    final val queueUrl // com.steamstreet.awskt.sqs/SendMessageRequest.queueUrl|{}queueUrl[0]
+        final fun <get-queueUrl>(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageRequest.queueUrl.<get-queueUrl>|<get-queueUrl>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/Int? // com.steamstreet.awskt.sqs/SendMessageRequest.component3|component3(){}[0]
+    final fun component4(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageAttributeValue>? // com.steamstreet.awskt.sqs/SendMessageRequest.component4|component4(){}[0]
+    final fun component5(): kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageSystemAttributeValue>? // com.steamstreet.awskt.sqs/SendMessageRequest.component5|component5(){}[0]
+    final fun component6(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageRequest.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageRequest.component7|component7(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/Int? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageAttributeValue>? = ..., kotlin.collections/Map<kotlin/String, com.steamstreet.awskt.sqs/MessageSystemAttributeValue>? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.sqs/SendMessageRequest // com.steamstreet.awskt.sqs/SendMessageRequest.copy|copy(kotlin.String;kotlin.String;kotlin.Int?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.sqs.MessageAttributeValue>?;kotlin.collections.Map<kotlin.String,com.steamstreet.awskt.sqs.MessageSystemAttributeValue>?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/SendMessageRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/SendMessageRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageRequest.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/SendMessageRequest> { // com.steamstreet.awskt.sqs/SendMessageRequest.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/SendMessageRequest.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/SendMessageRequest.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/SendMessageRequest.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/SendMessageRequest // com.steamstreet.awskt.sqs/SendMessageRequest.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/SendMessageRequest) // com.steamstreet.awskt.sqs/SendMessageRequest.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.SendMessageRequest){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/SendMessageRequest.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.sqs/SendMessageRequest.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/SendMessageRequest> // com.steamstreet.awskt.sqs/SendMessageRequest.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/SendMessageResponse { // com.steamstreet.awskt.sqs/SendMessageResponse|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.sqs/SendMessageResponse.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val md5OfMessageAttributes // com.steamstreet.awskt.sqs/SendMessageResponse.md5OfMessageAttributes|{}md5OfMessageAttributes[0]
+        final fun <get-md5OfMessageAttributes>(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageResponse.md5OfMessageAttributes.<get-md5OfMessageAttributes>|<get-md5OfMessageAttributes>(){}[0]
+    final val md5OfMessageBody // com.steamstreet.awskt.sqs/SendMessageResponse.md5OfMessageBody|{}md5OfMessageBody[0]
+        final fun <get-md5OfMessageBody>(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageResponse.md5OfMessageBody.<get-md5OfMessageBody>|<get-md5OfMessageBody>(){}[0]
+    final val md5OfMessageSystemAttributes // com.steamstreet.awskt.sqs/SendMessageResponse.md5OfMessageSystemAttributes|{}md5OfMessageSystemAttributes[0]
+        final fun <get-md5OfMessageSystemAttributes>(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageResponse.md5OfMessageSystemAttributes.<get-md5OfMessageSystemAttributes>|<get-md5OfMessageSystemAttributes>(){}[0]
+    final val messageId // com.steamstreet.awskt.sqs/SendMessageResponse.messageId|{}messageId[0]
+        final fun <get-messageId>(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageResponse.messageId.<get-messageId>|<get-messageId>(){}[0]
+    final val sequenceNumber // com.steamstreet.awskt.sqs/SendMessageResponse.sequenceNumber|{}sequenceNumber[0]
+        final fun <get-sequenceNumber>(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageResponse.sequenceNumber.<get-sequenceNumber>|<get-sequenceNumber>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageResponse.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageResponse.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageResponse.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.awskt.sqs/SendMessageResponse.component5|component5(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.sqs/SendMessageResponse // com.steamstreet.awskt.sqs/SendMessageResponse.copy|copy(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sqs/SendMessageResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sqs/SendMessageResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sqs/SendMessageResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.sqs/SendMessageResponse> { // com.steamstreet.awskt.sqs/SendMessageResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.sqs/SendMessageResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.sqs/SendMessageResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.sqs/SendMessageResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.sqs/SendMessageResponse // com.steamstreet.awskt.sqs/SendMessageResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.sqs/SendMessageResponse) // com.steamstreet.awskt.sqs/SendMessageResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.sqs.SendMessageResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.sqs/SendMessageResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.sqs/SendMessageResponse> // com.steamstreet.awskt.sqs/SendMessageResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.sqs/SqsConfig { // com.steamstreet.awskt.sqs/SqsConfig|null[0]
+    constructor <init>() // com.steamstreet.awskt.sqs/SqsConfig.<init>|<init>(){}[0]
+
+    final var caInfo // com.steamstreet.awskt.sqs/SqsConfig.caInfo|{}caInfo[0]
+        final fun <get-caInfo>(): kotlin/String? // com.steamstreet.awskt.sqs/SqsConfig.caInfo.<get-caInfo>|<get-caInfo>(){}[0]
+        final fun <set-caInfo>(kotlin/String?) // com.steamstreet.awskt.sqs/SqsConfig.caInfo.<set-caInfo>|<set-caInfo>(kotlin.String?){}[0]
+    final var credentialsProvider // com.steamstreet.awskt.sqs/SqsConfig.credentialsProvider|{}credentialsProvider[0]
+        final fun <get-credentialsProvider>(): com.steamstreet.awskt.core/AwsCredentialsProvider? // com.steamstreet.awskt.sqs/SqsConfig.credentialsProvider.<get-credentialsProvider>|<get-credentialsProvider>(){}[0]
+        final fun <set-credentialsProvider>(com.steamstreet.awskt.core/AwsCredentialsProvider?) // com.steamstreet.awskt.sqs/SqsConfig.credentialsProvider.<set-credentialsProvider>|<set-credentialsProvider>(com.steamstreet.awskt.core.AwsCredentialsProvider?){}[0]
+    final var endpointUrl // com.steamstreet.awskt.sqs/SqsConfig.endpointUrl|{}endpointUrl[0]
+        final fun <get-endpointUrl>(): kotlin/String? // com.steamstreet.awskt.sqs/SqsConfig.endpointUrl.<get-endpointUrl>|<get-endpointUrl>(){}[0]
+        final fun <set-endpointUrl>(kotlin/String?) // com.steamstreet.awskt.sqs/SqsConfig.endpointUrl.<set-endpointUrl>|<set-endpointUrl>(kotlin.String?){}[0]
+    final var httpClient // com.steamstreet.awskt.sqs/SqsConfig.httpClient|{}httpClient[0]
+        final fun <get-httpClient>(): io.ktor.client/HttpClient? // com.steamstreet.awskt.sqs/SqsConfig.httpClient.<get-httpClient>|<get-httpClient>(){}[0]
+        final fun <set-httpClient>(io.ktor.client/HttpClient?) // com.steamstreet.awskt.sqs/SqsConfig.httpClient.<set-httpClient>|<set-httpClient>(io.ktor.client.HttpClient?){}[0]
+    final var httpTimeouts // com.steamstreet.awskt.sqs/SqsConfig.httpTimeouts|{}httpTimeouts[0]
+        final fun <get-httpTimeouts>(): com.steamstreet.awskt.core/AwsHttpTimeouts // com.steamstreet.awskt.sqs/SqsConfig.httpTimeouts.<get-httpTimeouts>|<get-httpTimeouts>(){}[0]
+        final fun <set-httpTimeouts>(com.steamstreet.awskt.core/AwsHttpTimeouts) // com.steamstreet.awskt.sqs/SqsConfig.httpTimeouts.<set-httpTimeouts>|<set-httpTimeouts>(com.steamstreet.awskt.core.AwsHttpTimeouts){}[0]
+    final var observer // com.steamstreet.awskt.sqs/SqsConfig.observer|{}observer[0]
+        final fun <get-observer>(): com.steamstreet.awskt.core/AwsCallObserver? // com.steamstreet.awskt.sqs/SqsConfig.observer.<get-observer>|<get-observer>(){}[0]
+        final fun <set-observer>(com.steamstreet.awskt.core/AwsCallObserver?) // com.steamstreet.awskt.sqs/SqsConfig.observer.<set-observer>|<set-observer>(com.steamstreet.awskt.core.AwsCallObserver?){}[0]
+    final var region // com.steamstreet.awskt.sqs/SqsConfig.region|{}region[0]
+        final fun <get-region>(): kotlin/String? // com.steamstreet.awskt.sqs/SqsConfig.region.<get-region>|<get-region>(){}[0]
+        final fun <set-region>(kotlin/String?) // com.steamstreet.awskt.sqs/SqsConfig.region.<set-region>|<set-region>(kotlin.String?){}[0]
+    final var retryConfig // com.steamstreet.awskt.sqs/SqsConfig.retryConfig|{}retryConfig[0]
+        final fun <get-retryConfig>(): com.steamstreet.awskt.core/RetryConfig // com.steamstreet.awskt.sqs/SqsConfig.retryConfig.<get-retryConfig>|<get-retryConfig>(){}[0]
+        final fun <set-retryConfig>(com.steamstreet.awskt.core/RetryConfig) // com.steamstreet.awskt.sqs/SqsConfig.retryConfig.<set-retryConfig>|<set-retryConfig>(com.steamstreet.awskt.core.RetryConfig){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/TooManyEntriesInBatchRequestException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/TooManyEntriesInBatchRequestException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sqs/TooManyEntriesInBatchRequestException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sqs/UnsupportedQueueOperationException : com.steamstreet.awskt.sqs/SqsException { // com.steamstreet.awskt.sqs/UnsupportedQueueOperationException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sqs/UnsupportedQueueOperationException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+open class com.steamstreet.awskt.sqs/SqsException : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.sqs/SqsException|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sqs/SqsException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final object com.steamstreet.awskt.sqs/MessageSystemAttributeName { // com.steamstreet.awskt.sqs/MessageSystemAttributeName|null[0]
+    final const val ALL // com.steamstreet.awskt.sqs/MessageSystemAttributeName.ALL|{}ALL[0]
+        final fun <get-ALL>(): kotlin/String // com.steamstreet.awskt.sqs/MessageSystemAttributeName.ALL.<get-ALL>|<get-ALL>(){}[0]
+    final const val APPROXIMATE_FIRST_RECEIVE_TIMESTAMP // com.steamstreet.awskt.sqs/MessageSystemAttributeName.APPROXIMATE_FIRST_RECEIVE_TIMESTAMP|{}APPROXIMATE_FIRST_RECEIVE_TIMESTAMP[0]
+        final fun <get-APPROXIMATE_FIRST_RECEIVE_TIMESTAMP>(): kotlin/String // com.steamstreet.awskt.sqs/MessageSystemAttributeName.APPROXIMATE_FIRST_RECEIVE_TIMESTAMP.<get-APPROXIMATE_FIRST_RECEIVE_TIMESTAMP>|<get-APPROXIMATE_FIRST_RECEIVE_TIMESTAMP>(){}[0]
+    final const val APPROXIMATE_RECEIVE_COUNT // com.steamstreet.awskt.sqs/MessageSystemAttributeName.APPROXIMATE_RECEIVE_COUNT|{}APPROXIMATE_RECEIVE_COUNT[0]
+        final fun <get-APPROXIMATE_RECEIVE_COUNT>(): kotlin/String // com.steamstreet.awskt.sqs/MessageSystemAttributeName.APPROXIMATE_RECEIVE_COUNT.<get-APPROXIMATE_RECEIVE_COUNT>|<get-APPROXIMATE_RECEIVE_COUNT>(){}[0]
+    final const val AWS_TRACE_HEADER // com.steamstreet.awskt.sqs/MessageSystemAttributeName.AWS_TRACE_HEADER|{}AWS_TRACE_HEADER[0]
+        final fun <get-AWS_TRACE_HEADER>(): kotlin/String // com.steamstreet.awskt.sqs/MessageSystemAttributeName.AWS_TRACE_HEADER.<get-AWS_TRACE_HEADER>|<get-AWS_TRACE_HEADER>(){}[0]
+    final const val DEAD_LETTER_QUEUE_SOURCE_ARN // com.steamstreet.awskt.sqs/MessageSystemAttributeName.DEAD_LETTER_QUEUE_SOURCE_ARN|{}DEAD_LETTER_QUEUE_SOURCE_ARN[0]
+        final fun <get-DEAD_LETTER_QUEUE_SOURCE_ARN>(): kotlin/String // com.steamstreet.awskt.sqs/MessageSystemAttributeName.DEAD_LETTER_QUEUE_SOURCE_ARN.<get-DEAD_LETTER_QUEUE_SOURCE_ARN>|<get-DEAD_LETTER_QUEUE_SOURCE_ARN>(){}[0]
+    final const val MESSAGE_DEDUPLICATION_ID // com.steamstreet.awskt.sqs/MessageSystemAttributeName.MESSAGE_DEDUPLICATION_ID|{}MESSAGE_DEDUPLICATION_ID[0]
+        final fun <get-MESSAGE_DEDUPLICATION_ID>(): kotlin/String // com.steamstreet.awskt.sqs/MessageSystemAttributeName.MESSAGE_DEDUPLICATION_ID.<get-MESSAGE_DEDUPLICATION_ID>|<get-MESSAGE_DEDUPLICATION_ID>(){}[0]
+    final const val MESSAGE_GROUP_ID // com.steamstreet.awskt.sqs/MessageSystemAttributeName.MESSAGE_GROUP_ID|{}MESSAGE_GROUP_ID[0]
+        final fun <get-MESSAGE_GROUP_ID>(): kotlin/String // com.steamstreet.awskt.sqs/MessageSystemAttributeName.MESSAGE_GROUP_ID.<get-MESSAGE_GROUP_ID>|<get-MESSAGE_GROUP_ID>(){}[0]
+    final const val SENDER_ID // com.steamstreet.awskt.sqs/MessageSystemAttributeName.SENDER_ID|{}SENDER_ID[0]
+        final fun <get-SENDER_ID>(): kotlin/String // com.steamstreet.awskt.sqs/MessageSystemAttributeName.SENDER_ID.<get-SENDER_ID>|<get-SENDER_ID>(){}[0]
+    final const val SENT_TIMESTAMP // com.steamstreet.awskt.sqs/MessageSystemAttributeName.SENT_TIMESTAMP|{}SENT_TIMESTAMP[0]
+        final fun <get-SENT_TIMESTAMP>(): kotlin/String // com.steamstreet.awskt.sqs/MessageSystemAttributeName.SENT_TIMESTAMP.<get-SENT_TIMESTAMP>|<get-SENT_TIMESTAMP>(){}[0]
+    final const val SEQUENCE_NUMBER // com.steamstreet.awskt.sqs/MessageSystemAttributeName.SEQUENCE_NUMBER|{}SEQUENCE_NUMBER[0]
+        final fun <get-SEQUENCE_NUMBER>(): kotlin/String // com.steamstreet.awskt.sqs/MessageSystemAttributeName.SEQUENCE_NUMBER.<get-SEQUENCE_NUMBER>|<get-SEQUENCE_NUMBER>(){}[0]
+}
+
+final object com.steamstreet.awskt.sqs/MessageSystemAttributeNameForSends { // com.steamstreet.awskt.sqs/MessageSystemAttributeNameForSends|null[0]
+    final const val AWS_TRACE_HEADER // com.steamstreet.awskt.sqs/MessageSystemAttributeNameForSends.AWS_TRACE_HEADER|{}AWS_TRACE_HEADER[0]
+        final fun <get-AWS_TRACE_HEADER>(): kotlin/String // com.steamstreet.awskt.sqs/MessageSystemAttributeNameForSends.AWS_TRACE_HEADER.<get-AWS_TRACE_HEADER>|<get-AWS_TRACE_HEADER>(){}[0]
+}
+
+final val com.steamstreet.awskt.sqs/SQS_PROTOCOL // com.steamstreet.awskt.sqs/SQS_PROTOCOL|{}SQS_PROTOCOL[0]
+    final fun <get-SQS_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.sqs/SQS_PROTOCOL.<get-SQS_PROTOCOL>|<get-SQS_PROTOCOL>(){}[0]
+
+final fun com.steamstreet.awskt.sqs/Sqs(kotlin/Function1<com.steamstreet.awskt.sqs/SqsConfig, kotlin/Unit> = ...): com.steamstreet.awskt.sqs/Sqs // com.steamstreet.awskt.sqs/Sqs|Sqs(kotlin.Function1<com.steamstreet.awskt.sqs.SqsConfig,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.awskt.sqs/Sqs).com.steamstreet.awskt.sqs/deleteMessage(kotlin/String, com.steamstreet.awskt.sqs/Message) // com.steamstreet.awskt.sqs/deleteMessage|deleteMessage@com.steamstreet.awskt.sqs.Sqs(kotlin.String;com.steamstreet.awskt.sqs.Message){}[0]
+final suspend fun (com.steamstreet.awskt.sqs/Sqs).com.steamstreet.awskt.sqs/deleteMessagesAll(kotlin/String, kotlin.collections/List<com.steamstreet.awskt.sqs/DeleteMessageBatchRequestEntry>, kotlin/Int = ..., com.steamstreet.awskt.core/BatchRetry = ...): kotlin.collections/List<com.steamstreet.awskt.sqs/DeleteMessageBatchResultEntry> // com.steamstreet.awskt.sqs/deleteMessagesAll|deleteMessagesAll@com.steamstreet.awskt.sqs.Sqs(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.sqs.DeleteMessageBatchRequestEntry>;kotlin.Int;com.steamstreet.awskt.core.BatchRetry){}[0]
+final suspend fun (com.steamstreet.awskt.sqs/Sqs).com.steamstreet.awskt.sqs/receiveMessages(kotlin/String, kotlin/Int = ..., kotlin/Int = ..., kotlin/Int? = ...): kotlin.collections/List<com.steamstreet.awskt.sqs/Message> // com.steamstreet.awskt.sqs/receiveMessages|receiveMessages@com.steamstreet.awskt.sqs.Sqs(kotlin.String;kotlin.Int;kotlin.Int;kotlin.Int?){}[0]
+final suspend fun (com.steamstreet.awskt.sqs/Sqs).com.steamstreet.awskt.sqs/sendMessage(kotlin/String, kotlin/String): kotlin/String? // com.steamstreet.awskt.sqs/sendMessage|sendMessage@com.steamstreet.awskt.sqs.Sqs(kotlin.String;kotlin.String){}[0]
+final suspend fun (com.steamstreet.awskt.sqs/Sqs).com.steamstreet.awskt.sqs/sendMessagesAll(kotlin/String, kotlin.collections/List<com.steamstreet.awskt.sqs/SendMessageBatchRequestEntry>, kotlin/Int = ..., com.steamstreet.awskt.core/BatchRetry = ...): kotlin.collections/List<com.steamstreet.awskt.sqs/SendMessageBatchResultEntry> // com.steamstreet.awskt.sqs/sendMessagesAll|sendMessagesAll@com.steamstreet.awskt.sqs.Sqs(kotlin.String;kotlin.collections.List<com.steamstreet.awskt.sqs.SendMessageBatchRequestEntry>;kotlin.Int;com.steamstreet.awskt.core.BatchRetry){}[0]
