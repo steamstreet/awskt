@@ -67,7 +67,6 @@ publishing {
     publications.withType<MavenPublication> {
         artifact(javadocJar)
         groupId = "com.steamstreet"
-        artifactId = "awskt-${artifactId}"
 
         pom {
             name.set("AWSKT: ${project.name}")
@@ -89,6 +88,28 @@ publishing {
             scm {
                 url.set("https://github.com/steamstreet/awskt")
             }
+        }
+    }
+}
+
+/**
+ * Prefix every published coordinate with `awskt-`.
+ *
+ * This cannot be done where the rest of the publication is configured. The Kotlin plugin assigns the
+ * per-target publications their artifactIds (`<name>-jvm`, `<name>-linuxarm64`, …) from its own
+ * `afterEvaluate`, which runs *after* a value set at creation time and silently overwrote it. The
+ * result was a split namespace: the metadata module published as `awskt-<name>` while all of its
+ * targets published as the bare `<name>-<target>`. Maven Central coordinates cannot be withdrawn
+ * once released, so the prefix has to be applied from a later `afterEvaluate` than the Kotlin
+ * plugin's, which is what this is.
+ *
+ * The `startsWith` guard keeps it idempotent — without it, a second pass over the same publication
+ * would yield `awskt-awskt-`.
+ */
+afterEvaluate {
+    publishing.publications.withType<MavenPublication>().forEach { publication ->
+        if (!publication.artifactId.startsWith("awskt-")) {
+            publication.artifactId = "awskt-${publication.artifactId}"
         }
     }
 }
