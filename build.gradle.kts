@@ -35,6 +35,14 @@ allprojects {
 }
 
 nexusPublishing {
+    // The default client timeout is five minutes, which is not enough. Closing a staging repository
+    // holding every module's artifacts took 272 seconds when measured directly against the API, so
+    // the default sits close enough to the real duration that it timed out and failed the release
+    // *after* everything had already been uploaded — leaving the release untagged, which is the same
+    // end state the note below the `final` task describes.
+    clientTimeout.set(java.time.Duration.ofMinutes(30))
+    connectTimeout.set(java.time.Duration.ofMinutes(5))
+
     repositories {
         sonatype {
             nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
