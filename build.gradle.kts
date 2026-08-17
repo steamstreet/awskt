@@ -71,11 +71,20 @@ tasks.named("snapshot") {
     dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "publishToMavenLocal" } })
 }
 
-// Only close the staging repository. The Central Portal is configured to publish automatically once
-// a deployment validates, and its OSSRH compatibility API never reports the 'released' state that
-// closeAndReleaseSonatypeStagingRepository waits for. Releasing here therefore failed after the
-// artifacts had already been published, which left the release untagged and forced the next build to
-// reuse the version.
+// Only close the staging repository, because `closeAndReleaseSonatypeStagingRepository` waits for a
+// 'released' state that the Central Portal's OSSRH compatibility API never reports. Releasing that
+// way failed *after* the artifacts had already been uploaded, which left the release untagged and
+// forced the next build to reuse the version.
+//
+// IMPORTANT: closing is not publishing, and `final` therefore does not finish a release. The
+// deployment stops at VALIDATED and stays there until something publishes it explicitly; this
+// namespace is not on auto-publish. `final` exits 0 either way, so a release driven by it alone
+// looks like it succeeded and ships nothing. Both 3.0.0 and 3.1.0 stalled here.
+//
+// Use `scripts/release.sh`, which runs `final` and then publishes the deployment and verifies the
+// artifacts actually answer on repo1. Publishing by hand instead means POSTing to
+// https://central.sonatype.com/api/v1/publisher/deployment/<id>, or clicking Publish at
+// https://central.sonatype.com/publishing/deployments.
 val closeTask = tasks.named("closeSonatypeStagingRepository")
 
 tasks.named("final") {

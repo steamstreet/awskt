@@ -20,8 +20,8 @@ kotlin {
     }
 
     /**
-     * ABI dumps — see the fuller note in the multiplatform conventions. `updateLegacyAbi`
-     * regenerates, `checkLegacyAbi` verifies and is wired into `check`.
+     * ABI dumps — see the fuller note in the multiplatform conventions. `updateKotlinAbi`
+     * regenerates, `checkKotlinAbi` verifies and is wired into `check`.
      *
      * This is what makes the 3.0 break reviewable: the `dynamo` / `dynamokt` / `dynamokt-exposed`
      * dumps taken *before* M5a are the baseline the migration diff is read against, and that

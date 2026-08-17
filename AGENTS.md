@@ -9,6 +9,13 @@ This repo hosts Kotlin multiplatform libraries grouped by AWS capability. Core m
 - `./gradlew :logging:allTests` (swap module path as needed) focuses on a single module for quicker feedback.
 - `./gradlew publishToMavenLocal` builds and stages artifacts for local integration testing.
 
+## Releasing
+Run `scripts/release.sh`. `--dry-run` stops after the clean `check`, before anything is uploaded, and `--scope minor` or `--scope major` overrides the default patch bump. The script validates, uploads, tags, publishes both deployments and confirms the artifacts answer on `repo1`.
+
+Do not release with `./gradlew final` alone. It closes the staging repository but does not publish it: the deployment stops at `VALIDATED`, this namespace is not on auto-publish, and `final` exits 0 having shipped nothing. The plugin also needs publishing separately, because `gradle-plugin` is an `includeBuild` and takes no part in the root project's release.
+
+Artifacts publish as `com.steamstreet.awskt:<module>`, and the plugin as `com.steamstreet.awskt:gradle-plugin` under the plugin id `com.steamstreet.awskt.native-lambda`. Versions through 3.0.0 published as `com.steamstreet:awskt-<module>` instead; those coordinates remain on Central and are not maintained.
+
 ## Coding Style & Naming Conventions
 Follow standard Kotlin style: 4-space indentation, `PascalCase` types, `camelCase` members, and `UPPER_SNAKE_CASE` constants. Most modules enable `explicitApi()`, so declare visibility and return types on public APIs. Keep package names under `com.steamstreet.<module>`. Gradle scripts use Kotlin DSL; align new tasks with the conventions in `buildSrc/steamstreet-common.*`. Serialization relies on `@Serializable` models; prefer data classes and meaningful property names mirroring AWS schemas.
 

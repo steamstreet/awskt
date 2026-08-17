@@ -51,7 +51,11 @@ kotlin {
      * would silently drop the Linux targets and running it on CI would drop the Apple ones, so the
      * two hosts would fight over the checked-in file forever.
      *
-     * Tasks: `updateLegacyAbi` to regenerate, `checkLegacyAbi` to verify (wired into `check`).
+     * Tasks: `updateKotlinAbi` to regenerate, `checkKotlinAbi` to verify (wired into `check`).
+     *
+     * Note that a klib's ABI dump records the library's unique name, which embeds the group. A
+     * change to the group therefore rewrites every dump without any declaration having moved, and
+     * `checkKotlinAbi` fails until `updateKotlinAbi` is run.
      */
     @OptIn(ExperimentalAbiValidation::class)
     abiValidation {
