@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:lambda-sns>
+// Library unique name: <com.steamstreet.awskt:lambda-sns>
 final class com.steamstreet.aws.sns/SnsData { // com.steamstreet.aws.sns/SnsData|null[0]
     constructor <init>(kotlin/String, kotlin/String, kotlin/String, kotlin/String? = ..., kotlin/String, kotlin/String, kotlin/String, kotlin/String? = ...) // com.steamstreet.aws.sns/SnsData.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.String?;kotlin.String;kotlin.String;kotlin.String;kotlin.String?){}[0]
 

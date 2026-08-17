@@ -44,9 +44,9 @@ tasks.named<Jar>("javadocJar") {
 
 publishing {
     publications.create<MavenPublication>("maven") {
-        groupId = "com.steamstreet"
-        artifactId = "awskt-${artifactId}"
-
+        // Group and artifactId are inherited: `com.steamstreet.awskt` from the root project and the
+        // module's own name. Through 3.0.0 this prefixed the artifactId with `awskt-` to make up for
+        // a group that did not name the project.
         from(components["java"])
 
         pom {

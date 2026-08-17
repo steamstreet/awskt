@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:aws-sns>
+// Library unique name: <com.steamstreet.awskt:aws-sns>
 abstract interface com.steamstreet.awskt.sns/Sns : kotlin/AutoCloseable { // com.steamstreet.awskt.sns/Sns|null[0]
     abstract val client // com.steamstreet.awskt.sns/Sns.client|{}client[0]
         abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.sns/Sns.client.<get-client>|<get-client>(){}[0]

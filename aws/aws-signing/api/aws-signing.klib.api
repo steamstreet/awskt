@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:aws-signing>
+// Library unique name: <com.steamstreet.awskt:aws-signing>
 final enum class com.steamstreet.awskt.signing/SignatureLocation : kotlin/Enum<com.steamstreet.awskt.signing/SignatureLocation> { // com.steamstreet.awskt.signing/SignatureLocation|null[0]
     enum entry HEADERS // com.steamstreet.awskt.signing/SignatureLocation.HEADERS|null[0]
     enum entry QUERY_STRING // com.steamstreet.awskt.signing/SignatureLocation.QUERY_STRING|null[0]

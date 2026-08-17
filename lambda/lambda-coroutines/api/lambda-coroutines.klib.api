@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:lambda-coroutines>
+// Library unique name: <com.steamstreet.awskt:lambda-coroutines>
 abstract interface com.steamstreet.aws.lambda/LambdaContext { // com.steamstreet.aws.lambda/LambdaContext|null[0]
     abstract val functionName // com.steamstreet.aws.lambda/LambdaContext.functionName|{}functionName[0]
         abstract fun <get-functionName>(): kotlin/String // com.steamstreet.aws.lambda/LambdaContext.functionName.<get-functionName>|<get-functionName>(){}[0]

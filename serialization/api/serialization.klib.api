@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:serialization>
+// Library unique name: <com.steamstreet.awskt:serialization>
 final fun (kotlinx.serialization.json/JsonObject).com.steamstreet.serialization/comprehensiveDiff(kotlinx.serialization.json/JsonObject): kotlinx.serialization.json/JsonObject // com.steamstreet.serialization/comprehensiveDiff|comprehensiveDiff@kotlinx.serialization.json.JsonObject(kotlinx.serialization.json.JsonObject){}[0]
 final fun (kotlinx.serialization.json/JsonObject).com.steamstreet.serialization/copy(kotlin/Function1<kotlinx.serialization.json/JsonObjectBuilder, kotlin/Unit>): kotlinx.serialization.json/JsonObject // com.steamstreet.serialization/copy|copy@kotlinx.serialization.json.JsonObject(kotlin.Function1<kotlinx.serialization.json.JsonObjectBuilder,kotlin.Unit>){}[0]
 final fun (kotlinx.serialization.json/JsonObject).com.steamstreet.serialization/deepEquals(kotlinx.serialization.json/JsonObject): kotlin/Boolean // com.steamstreet.serialization/deepEquals|deepEquals@kotlinx.serialization.json.JsonObject(kotlinx.serialization.json.JsonObject){}[0]

@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:lambda-eventbridge>
+// Library unique name: <com.steamstreet.awskt:lambda-eventbridge>
 abstract interface com.steamstreet.aws.lambda.eventbridge/Event { // com.steamstreet.aws.lambda.eventbridge/Event|null[0]
     abstract val detail // com.steamstreet.aws.lambda.eventbridge/Event.detail|{}detail[0]
         abstract fun <get-detail>(): kotlinx.serialization.json/JsonObject // com.steamstreet.aws.lambda.eventbridge/Event.detail.<get-detail>|<get-detail>(){}[0]

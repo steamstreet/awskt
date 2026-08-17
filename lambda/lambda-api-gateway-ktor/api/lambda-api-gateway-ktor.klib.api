@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:lambda-api-gateway-ktor>
+// Library unique name: <com.steamstreet.awskt:lambda-api-gateway-ktor>
 abstract class com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase : io.ktor.server.application/PipelineCall { // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase|null[0]
     open val application // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase.application|{}application[0]
         open fun <get-application>(): io.ktor.server.application/Application // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayKtorCallBase.application.<get-application>|<get-application>(){}[0]

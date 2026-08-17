@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:appsync>
+// Library unique name: <com.steamstreet.awskt:appsync>
 final class com.steamstreet.aws.appsync/AppSyncContext { // com.steamstreet.aws.appsync/AppSyncContext|null[0]
     constructor <init>(kotlinx.serialization.json/JsonObject, kotlinx.serialization.json/JsonObject? = ..., com.steamstreet.aws.appsync/AppSyncIdentity? = ..., com.steamstreet.aws.appsync/AppSyncInfo, com.steamstreet.aws.appsync/AppSyncRequest? = ..., kotlinx.serialization.json/JsonObject? = ...) // com.steamstreet.aws.appsync/AppSyncContext.<init>|<init>(kotlinx.serialization.json.JsonObject;kotlinx.serialization.json.JsonObject?;com.steamstreet.aws.appsync.AppSyncIdentity?;com.steamstreet.aws.appsync.AppSyncInfo;com.steamstreet.aws.appsync.AppSyncRequest?;kotlinx.serialization.json.JsonObject?){}[0]
 

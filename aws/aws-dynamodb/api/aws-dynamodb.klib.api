@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:aws-dynamodb>
+// Library unique name: <com.steamstreet.awskt:aws-dynamodb>
 final enum class com.steamstreet.awskt.dynamodb/BillingMode : kotlin/Enum<com.steamstreet.awskt.dynamodb/BillingMode> { // com.steamstreet.awskt.dynamodb/BillingMode|null[0]
     enum entry PayPerRequest // com.steamstreet.awskt.dynamodb/BillingMode.PayPerRequest|null[0]
     enum entry Provisioned // com.steamstreet.awskt.dynamodb/BillingMode.Provisioned|null[0]

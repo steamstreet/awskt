@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:aws-eventbridge>
+// Library unique name: <com.steamstreet.awskt:aws-eventbridge>
 abstract interface com.steamstreet.awskt.eventbridge/EventBridge : kotlin/AutoCloseable { // com.steamstreet.awskt.eventbridge/EventBridge|null[0]
     abstract val client // com.steamstreet.awskt.eventbridge/EventBridge.client|{}client[0]
         abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.eventbridge/EventBridge.client.<get-client>|<get-client>(){}[0]

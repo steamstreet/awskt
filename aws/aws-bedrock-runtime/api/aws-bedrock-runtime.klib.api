@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:aws-bedrock-runtime>
+// Library unique name: <com.steamstreet.awskt:aws-bedrock-runtime>
 abstract interface com.steamstreet.awskt.bedrock/BedrockRuntime : kotlin/AutoCloseable { // com.steamstreet.awskt.bedrock/BedrockRuntime|null[0]
     abstract val client // com.steamstreet.awskt.bedrock/BedrockRuntime.client|{}client[0]
         abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.bedrock/BedrockRuntime.client.<get-client>|<get-client>(){}[0]

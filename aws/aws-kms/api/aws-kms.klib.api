@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:aws-kms>
+// Library unique name: <com.steamstreet.awskt:aws-kms>
 abstract interface com.steamstreet.awskt.kms/Kms : kotlin/AutoCloseable { // com.steamstreet.awskt.kms/Kms|null[0]
     abstract val client // com.steamstreet.awskt.kms/Kms.client|{}client[0]
         abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.kms/Kms.client.<get-client>|<get-client>(){}[0]

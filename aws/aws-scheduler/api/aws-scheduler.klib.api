@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:aws-scheduler>
+// Library unique name: <com.steamstreet.awskt:aws-scheduler>
 abstract interface com.steamstreet.awskt.scheduler/Scheduler : kotlin/AutoCloseable { // com.steamstreet.awskt.scheduler/Scheduler|null[0]
     abstract val client // com.steamstreet.awskt.scheduler/Scheduler.client|{}client[0]
         abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.scheduler/Scheduler.client.<get-client>|<get-client>(){}[0]

@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:lambda-kinesis>
+// Library unique name: <com.steamstreet.awskt:lambda-kinesis>
 final class com.steamstreet.aws.lambda.kinesis/BatchItemFailure { // com.steamstreet.aws.lambda.kinesis/BatchItemFailure|null[0]
     constructor <init>(kotlin/String) // com.steamstreet.aws.lambda.kinesis/BatchItemFailure.<init>|<init>(kotlin.String){}[0]
 

@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:lambda-api-gateway>
+// Library unique name: <com.steamstreet.awskt:lambda-api-gateway>
 final class com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest { // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest|null[0]
     constructor <init>(kotlin/String, kotlin/String, kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/String>>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/String>>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ..., com.steamstreet.aws.lambda.apigateway/ProxyRequestContext, kotlin/String? = ..., kotlin/Boolean? = ...) // com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.collections.List<kotlin.String>>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.collections.List<kotlin.String>>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.collections.Map<kotlin.String,kotlin.String>?;com.steamstreet.aws.lambda.apigateway.ProxyRequestContext;kotlin.String?;kotlin.Boolean?){}[0]
 

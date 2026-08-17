@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:lambda-appsync>
+// Library unique name: <com.steamstreet.awskt:lambda-appsync>
 abstract interface com.steamstreet.aws.appsync/AppSyncTypeHandler { // com.steamstreet.aws.appsync/AppSyncTypeHandler|null[0]
     abstract val context // com.steamstreet.aws.appsync/AppSyncTypeHandler.context|{}context[0]
         abstract fun <get-context>(): com.steamstreet.aws.appsync/AppSyncContext // com.steamstreet.aws.appsync/AppSyncTypeHandler.context.<get-context>|<get-context>(){}[0]

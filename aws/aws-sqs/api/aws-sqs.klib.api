@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:aws-sqs>
+// Library unique name: <com.steamstreet.awskt:aws-sqs>
 abstract interface com.steamstreet.awskt.sqs/Sqs : kotlin/AutoCloseable { // com.steamstreet.awskt.sqs/Sqs|null[0]
     abstract val client // com.steamstreet.awskt.sqs/Sqs.client|{}client[0]
         abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.sqs/Sqs.client.<get-client>|<get-client>(){}[0]

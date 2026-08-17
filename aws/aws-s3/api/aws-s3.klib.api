@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:aws-s3>
+// Library unique name: <com.steamstreet.awskt:aws-s3>
 final enum class com.steamstreet.awskt.s3/PresignMethod : kotlin/Enum<com.steamstreet.awskt.s3/PresignMethod> { // com.steamstreet.awskt.s3/PresignMethod|null[0]
     enum entry DELETE // com.steamstreet.awskt.s3/PresignMethod.DELETE|null[0]
     enum entry GET // com.steamstreet.awskt.s3/PresignMethod.GET|null[0]

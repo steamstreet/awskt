@@ -5,7 +5,12 @@ plugins {
 }
 
 allprojects {
-    group = "com.steamstreet"
+    // The project owns the `com.steamstreet.awskt` namespace outright, so the group carries the
+    // project name and the artifacts do not have to. Through 3.0.0 these published as
+    // `com.steamstreet:awskt-<module>`, which needed a prefix forced onto every artifactId; a
+    // namespaced group makes that unnecessary. Central coordinates are immutable, so the 3.0.0
+    // coordinates remain published — see the release notes for the relocation story.
+    group = "com.steamstreet.awskt"
 
     // Apply ktfmt for code formatting (manual execution only)
 //    apply(plugin = "com.ncorti.ktfmt.gradle")

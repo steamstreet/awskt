@@ -5,7 +5,7 @@ plugins {
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
 }
 
-group = "com.steamstreet"
+group = "com.steamstreet.awskt"
 description =
     "Gradle plugin that packages a Kotlin/Native linuxArm64 executable as an AWS Lambda " +
         "`provided.al2023` bootstrap zip."
@@ -44,6 +44,16 @@ gradlePlugin {
 java {
     withSourcesJar()
     withJavadocJar()
+}
+
+// `rootProject.name` here is `awskt-gradle-plugin`, which read correctly under the old
+// `com.steamstreet` group but stutters under `com.steamstreet.awskt`. Only the jar publication is
+// renamed: the marker's coordinates are derived from the plugin id, not from this project's name, and
+// `plugins { id(...) }` resolution depends on them staying exactly as the id spells them.
+afterEvaluate {
+    publishing.publications.withType<MavenPublication>()
+        .matching { it.name == "pluginMaven" }
+        .forEach { it.artifactId = "gradle-plugin" }
 }
 
 publishing {

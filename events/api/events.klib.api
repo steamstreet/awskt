@@ -6,7 +6,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:events>
+// Library unique name: <com.steamstreet.awskt:events>
 abstract interface com.steamstreet.events/ApplicationEventPoster { // com.steamstreet.events/ApplicationEventPoster|null[0]
     abstract suspend fun post(kotlin.collections/Collection<com.steamstreet.events/Event>): kotlin.collections/List<kotlin/String?> // com.steamstreet.events/ApplicationEventPoster.post|post(kotlin.collections.Collection<com.steamstreet.events.Event>){}[0]
     abstract suspend fun post(kotlin/String, kotlin/String, kotlin/String? = ...): kotlin/String? // com.steamstreet.events/ApplicationEventPoster.post|post(kotlin.String;kotlin.String;kotlin.String?){}[0]

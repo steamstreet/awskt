@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:standards>
+// Library unique name: <com.steamstreet.awskt:standards>
 abstract interface com.steamstreet.exceptions/MDCExceptionMixin { // com.steamstreet.exceptions/MDCExceptionMixin|null[0]
     abstract val mdcAttributes // com.steamstreet.exceptions/MDCExceptionMixin.mdcAttributes|{}mdcAttributes[0]
         abstract fun <get-mdcAttributes>(): kotlin.collections/MutableMap<kotlin/String, kotlin/Any?> // com.steamstreet.exceptions/MDCExceptionMixin.mdcAttributes.<get-mdcAttributes>|<get-mdcAttributes>(){}[0]

@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.steamstreet:aws-kinesis>
+// Library unique name: <com.steamstreet.awskt:aws-kinesis>
 final enum class com.steamstreet.awskt.kinesis/ShardIteratorType : kotlin/Enum<com.steamstreet.awskt.kinesis/ShardIteratorType> { // com.steamstreet.awskt.kinesis/ShardIteratorType|null[0]
     enum entry AFTER_SEQUENCE_NUMBER // com.steamstreet.awskt.kinesis/ShardIteratorType.AFTER_SEQUENCE_NUMBER|null[0]
     enum entry AT_SEQUENCE_NUMBER // com.steamstreet.awskt.kinesis/ShardIteratorType.AT_SEQUENCE_NUMBER|null[0]
