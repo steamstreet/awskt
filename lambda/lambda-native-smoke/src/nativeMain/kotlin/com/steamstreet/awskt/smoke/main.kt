@@ -23,6 +23,8 @@ import com.steamstreet.awskt.kms.Kms
 import com.steamstreet.awskt.logs.Logs
 import com.steamstreet.awskt.logs.StartQueryRequest
 import com.steamstreet.awskt.logs.query
+import com.steamstreet.awskt.opensearch.OpenSearch
+import com.steamstreet.awskt.opensearch.OpenSearchException
 import com.steamstreet.awskt.kms.decrypt
 import com.steamstreet.awskt.kms.encrypt
 import com.steamstreet.awskt.scheduler.ActionAfterCompletion
@@ -50,6 +52,7 @@ import com.steamstreet.env.Env
 import kotlinx.coroutines.flow.toList
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.time.Duration.Companion.minutes
@@ -194,6 +197,25 @@ private val bedrockClient by lazy {
 
 private val logsClient by lazy {
     Logs { region = Env["AWS_REGION"]; credentialsProvider = credentials; caInfo = CA_BUNDLE }
+}
+
+/**
+ * The one client here whose endpoint is not derivable from the region: an OpenSearch domain answers
+ * on a host of its own. `Env[...]` throws when the variable is absent, which is safe because `lazy`
+ * defers it until the probe — and the probe only runs when the variable is set.
+ *
+ * **Never yet run against a domain.** Unlike every other probe in this file, this one has no
+ * recorded green invocation: writing it required no test domain and none was reachable at the time.
+ * It self-skips, so its presence costs a deployment nothing, but do not read it as coverage until
+ * `SMOKE_OPENSEARCH_ENDPOINT` has been set once and the probe has come back `ok`.
+ */
+private val openSearchClient by lazy {
+    OpenSearch {
+        region = Env["AWS_REGION"]
+        endpointUrl = Env["SMOKE_OPENSEARCH_ENDPOINT"]
+        credentialsProvider = credentials
+        caInfo = CA_BUNDLE
+    }
 }
 
 /**
@@ -354,6 +376,36 @@ private suspend fun runServiceProbes(requestId: String): List<ProbeResult> = lis
         )
         require(response.isComplete) { "query ended '${response.status}' rather than Complete" }
         "completed, ${response.rows.size} row(s), ${response.statistics?.bytesScanned} bytes scanned"
+    },
+
+    // Needs **no fixture at all**, which is what makes it worth having: `_all` answers on an empty
+    // cluster, and an index that certainly does not exist answers with the error envelope
+    // `aws-opensearch` exists to parse. Both halves matter and neither writes anything.
+    //
+    // The variable is the domain endpoint itself rather than a resource name, because an OpenSearch
+    // endpoint is a domain host and cannot be derived from the region. A **VPC-only** domain is not
+    // reachable from a Lambda outside its VPC — that reports an error here, not a skip, and the
+    // remedy is to leave the variable unset rather than to attach this function to a VPC.
+    probe("opensearch", "SMOKE_OPENSEARCH_ENDPOINT") { _ ->
+        val response = openSearchClient.search(
+            "_all",
+            Json.parseToJsonElement("""{"size":0,"query":{"match_all":{}}}""").jsonObject,
+        )
+        require(response["hits"] != null) { "search answered without a hits object" }
+
+        // The error envelope, on Graviton, against the real managed service. Nothing else in this
+        // repository proves that `OpenSearchErrorParser` reads what AWS actually sends.
+        val missing = "awskt-smoke-no-such-index-$requestId"
+        val failure = runCatching { openSearchClient.search(missing, JsonObject(emptyMap())) }
+            .exceptionOrNull()
+        require(failure is OpenSearchException) {
+            "a missing index produced ${failure?.let { it::class.simpleName } ?: "no failure"}"
+        }
+        require(failure.type == "index_not_found_exception") {
+            "a missing index reported type '${failure.type}' — the error envelope has changed"
+        }
+
+        "searched _all, and a missing index reported ${failure.type}"
     },
 )
 

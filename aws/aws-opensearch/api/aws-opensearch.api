@@ -1,0 +1,66 @@
+public final class com/steamstreet/awskt/opensearch/ErrorsKt {
+	public static final fun openSearchErrorType ([B)Ljava/lang/String;
+}
+
+public abstract interface class com/steamstreet/awskt/opensearch/OpenSearch : java/lang/AutoCloseable {
+	public abstract fun bulk (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun bulk$default (Lcom/steamstreet/awskt/opensearch/OpenSearch;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun getClient ()Lcom/steamstreet/awskt/core/AwsServiceClient;
+	public abstract fun getDocument (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun getDocument$default (Lcom/steamstreet/awskt/opensearch/OpenSearch;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun request (Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/core/OperationSafety;Ljava/util/List;Lkotlinx/serialization/json/JsonObject;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun request$default (Lcom/steamstreet/awskt/opensearch/OpenSearch;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/core/OperationSafety;Ljava/util/List;Lkotlinx/serialization/json/JsonObject;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun search (Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun search$default (Lcom/steamstreet/awskt/opensearch/OpenSearch;Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;Ljava/util/List;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/opensearch/OpenSearch$DefaultImpls {
+	public static synthetic fun bulk$default (Lcom/steamstreet/awskt/opensearch/OpenSearch;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun getDocument$default (Lcom/steamstreet/awskt/opensearch/OpenSearch;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun request$default (Lcom/steamstreet/awskt/opensearch/OpenSearch;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/core/OperationSafety;Ljava/util/List;Lkotlinx/serialization/json/JsonObject;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun search$default (Lcom/steamstreet/awskt/opensearch/OpenSearch;Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;Ljava/util/List;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/opensearch/OpenSearchConfig {
+	public fun <init> ()V
+	public final fun getCaInfo ()Ljava/lang/String;
+	public final fun getCredentialsProvider ()Lcom/steamstreet/awskt/core/AwsCredentialsProvider;
+	public final fun getEndpointUrl ()Ljava/lang/String;
+	public final fun getHttpClient ()Lio/ktor/client/HttpClient;
+	public final fun getHttpTimeouts ()Lcom/steamstreet/awskt/core/AwsHttpTimeouts;
+	public final fun getObserver ()Lcom/steamstreet/awskt/core/AwsCallObserver;
+	public final fun getRegion ()Ljava/lang/String;
+	public final fun getRetryConfig ()Lcom/steamstreet/awskt/core/RetryConfig;
+	public final fun getServerless ()Z
+	public final fun setCaInfo (Ljava/lang/String;)V
+	public final fun setCredentialsProvider (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;)V
+	public final fun setEndpointUrl (Ljava/lang/String;)V
+	public final fun setHttpClient (Lio/ktor/client/HttpClient;)V
+	public final fun setHttpTimeouts (Lcom/steamstreet/awskt/core/AwsHttpTimeouts;)V
+	public final fun setObserver (Lcom/steamstreet/awskt/core/AwsCallObserver;)V
+	public final fun setRegion (Ljava/lang/String;)V
+	public final fun setRetryConfig (Lcom/steamstreet/awskt/core/RetryConfig;)V
+	public final fun setServerless (Z)V
+}
+
+public final class com/steamstreet/awskt/opensearch/OpenSearchErrorParser : com/steamstreet/awskt/core/AwsErrorParser {
+	public static final field INSTANCE Lcom/steamstreet/awskt/opensearch/OpenSearchErrorParser;
+	public fun parse (ILjava/util/Map;[B)Lcom/steamstreet/awskt/core/ErrorDetails;
+}
+
+public class com/steamstreet/awskt/opensearch/OpenSearchException : com/steamstreet/awskt/core/AwsServiceException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;[B)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;[BILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getType ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/opensearch/OpenSearchKt {
+	public static final fun OpenSearch (Lkotlin/jvm/functions/Function1;)Lcom/steamstreet/awskt/opensearch/OpenSearch;
+	public static synthetic fun OpenSearch$default (Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/steamstreet/awskt/opensearch/OpenSearch;
+	public static final fun getOPENSEARCH_PROTOCOL ()Lcom/steamstreet/awskt/core/AwsProtocol;
+	public static final fun getOPENSEARCH_SERVERLESS_PROTOCOL ()Lcom/steamstreet/awskt/core/AwsProtocol;
+	public static final fun openSearch (Lcom/steamstreet/awskt/core/AwsProtocol$Companion;Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/core/AwsProtocol;
+	public static synthetic fun openSearch$default (Lcom/steamstreet/awskt/core/AwsProtocol$Companion;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/core/AwsProtocol;
+}
+

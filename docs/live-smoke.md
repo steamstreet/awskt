@@ -38,6 +38,7 @@ export AWS_REGION=us-west-2
 | `aws-scheduler` | `SMOKE_SCHEDULER_TARGET_ARN`, `SMOKE_SCHEDULER_ROLE_ARN` | a target and a role trusting `scheduler.amazonaws.com` |
 | `aws-bedrock-runtime` | `SMOKE_BEDROCK_MODEL_ID` | model access granted in the account |
 | `aws-cloudwatch-logs` | `SMOKE_LOG_GROUP` | any existing log group — **it may be empty** |
+| `aws-opensearch` | `SMOKE_OPENSEARCH_ENDPOINT` | a **public-access** managed domain whose access policy names you — read-only, and it needs no index |
 | `aws-core` | *(credentials alone)* | none — calls `ListTables` |
 
 ```bash
@@ -48,6 +49,7 @@ export AWS_REGION=us-west-2
 ./gradlew :aws:aws-core:jvmTest :aws:aws-kms:jvmTest :aws:aws-secretsmanager:jvmTest \
           :aws:aws-sqs:jvmTest :aws:aws-sns:jvmTest :aws:aws-scheduler:jvmTest \
           :aws:aws-bedrock-runtime:jvmTest :aws:aws-cloudwatch-logs:jvmTest \
+          :aws:aws-opensearch:jvmTest \
           :aws:aws-ses:jvmTest
 
 # On macOS, the same tests through the Curl engine rather than CIO — worth doing at least once,
@@ -113,7 +115,9 @@ aws lambda invoke \
     {"service": "bedrock",        "ok": true,
                                   "detail": "converse='pong', stream delivered 23 deltas"},
     {"service": "cloudwatch-insights", "ok": true,
-                                  "detail": "completed, 1 row(s), 4096.0 bytes scanned"}
+                                  "detail": "completed, 1 row(s), 4096.0 bytes scanned"},
+    {"service": "opensearch",     "ok": false, "skipped": true,
+                                  "detail": "SMOKE_OPENSEARCH_ENDPOINT not set"}
   ],
   "allOk": true
 }
@@ -126,6 +130,13 @@ in your shell. **None of them is required**: an existing deployment has `AWS_REG
 
 `allOk` is false only when a probe *ran and failed* — skipped probes do not fail it, so the same
 payload is meaningful in an account where only some fixtures exist.
+
+The `opensearch` probe is the one exception to "every probe here has been run green at least once":
+it was written without a test domain to point it at and has only ever reported `skipped`. Treat its
+first non-skipped run as the thing that establishes the coverage, not as a regression check. Note
+also that a **VPC-only** domain is unreachable from a Lambda outside its VPC and will report an
+error rather than a skip — leave the variable unset in that case rather than attaching this function
+to a VPC.
 
 The other modes are unchanged: `ping`, `get`, `event`, `getevent` for latency measurement, and the
 default `full` for the DynamoDB and S3 correctness workload.
