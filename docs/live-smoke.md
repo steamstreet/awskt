@@ -37,6 +37,8 @@ export AWS_REGION=us-west-2
 | `aws-ses` | `SMOKE_SES_FROM`, `SMOKE_SES_TO` | a verified sending identity, and an address you own — **it really sends mail** |
 | `aws-scheduler` | `SMOKE_SCHEDULER_TARGET_ARN`, `SMOKE_SCHEDULER_ROLE_ARN` | a target and a role trusting `scheduler.amazonaws.com` |
 | `aws-bedrock-runtime` | `SMOKE_BEDROCK_MODEL_ID` | model access granted in the account |
+| `aws-lambda` | `SMOKE_LAMBDA_FUNCTION` | any function that runs — **it really invokes it**, twice (once synchronously, once queued) |
+| `aws-lambda` (streaming) | `SMOKE_LAMBDA_STREAM_FUNCTION` | a function configured with `InvokeMode = RESPONSE_STREAM` |
 | `aws-cloudwatch-logs` | `SMOKE_LOG_GROUP` | any existing log group — **it may be empty** |
 | `aws-opensearch` | `SMOKE_OPENSEARCH_ENDPOINT` | a **public-access** managed domain whose access policy names you — read-only, and it needs no index |
 | `aws-core` | *(credentials alone)* | none — calls `ListTables` |
@@ -49,7 +51,7 @@ export AWS_REGION=us-west-2
 ./gradlew :aws:aws-core:jvmTest :aws:aws-kms:jvmTest :aws:aws-secretsmanager:jvmTest \
           :aws:aws-sqs:jvmTest :aws:aws-sns:jvmTest :aws:aws-scheduler:jvmTest \
           :aws:aws-bedrock-runtime:jvmTest :aws:aws-cloudwatch-logs:jvmTest \
-          :aws:aws-opensearch:jvmTest \
+          :aws:aws-opensearch:jvmTest :aws:aws-lambda:jvmTest \
           :aws:aws-ses:jvmTest
 
 # On macOS, the same tests through the Curl engine rather than CIO — worth doing at least once,
@@ -61,6 +63,12 @@ Everything the suites create, they delete: SQS messages are received and deleted
 schedules are deleted in a `finally`. Secrets Manager is read-only by design — `PutSecretValue`
 would accumulate secret versions against an account quota, so its idempotency-token behaviour is
 asserted hermetically instead.
+
+**`aws-lambda` is the other suite that does something rather than reading something**: it invokes
+the named function for real, synchronously and then asynchronously, so point it at a function whose
+side effects you are happy to repeat. It is deliberately tolerant about what comes back — a fixture
+whose handler *throws* still passes, because a `200` carrying `X-Amz-Function-Error` is precisely
+the case that module exists to tell apart from a failed invocation.
 
 **`aws-ses` is the exception, and it is not a fixable one: an email cannot be un-sent.** It is the
 only suite here that leaves something behind outside AWS, which is why it needs its own
