@@ -1,0 +1,267 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet.awskt:aws-lambda>
+final enum class com.steamstreet.awskt.lambda/InvocationType : kotlin/Enum<com.steamstreet.awskt.lambda/InvocationType> { // com.steamstreet.awskt.lambda/InvocationType|null[0]
+    enum entry DRY_RUN // com.steamstreet.awskt.lambda/InvocationType.DRY_RUN|null[0]
+    enum entry EVENT // com.steamstreet.awskt.lambda/InvocationType.EVENT|null[0]
+    enum entry REQUEST_RESPONSE // com.steamstreet.awskt.lambda/InvocationType.REQUEST_RESPONSE|null[0]
+
+    final val entries // com.steamstreet.awskt.lambda/InvocationType.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.steamstreet.awskt.lambda/InvocationType> // com.steamstreet.awskt.lambda/InvocationType.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.steamstreet.awskt.lambda/InvocationType // com.steamstreet.awskt.lambda/InvocationType.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.steamstreet.awskt.lambda/InvocationType> // com.steamstreet.awskt.lambda/InvocationType.values|values#static(){}[0]
+}
+
+final enum class com.steamstreet.awskt.lambda/LogType : kotlin/Enum<com.steamstreet.awskt.lambda/LogType> { // com.steamstreet.awskt.lambda/LogType|null[0]
+    enum entry NONE // com.steamstreet.awskt.lambda/LogType.NONE|null[0]
+    enum entry TAIL // com.steamstreet.awskt.lambda/LogType.TAIL|null[0]
+
+    final val entries // com.steamstreet.awskt.lambda/LogType.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.steamstreet.awskt.lambda/LogType> // com.steamstreet.awskt.lambda/LogType.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.steamstreet.awskt.lambda/LogType // com.steamstreet.awskt.lambda/LogType.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.steamstreet.awskt.lambda/LogType> // com.steamstreet.awskt.lambda/LogType.values|values#static(){}[0]
+}
+
+abstract interface com.steamstreet.awskt.lambda/Lambda : kotlin/AutoCloseable { // com.steamstreet.awskt.lambda/Lambda|null[0]
+    abstract val client // com.steamstreet.awskt.lambda/Lambda.client|{}client[0]
+        abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.lambda/Lambda.client.<get-client>|<get-client>(){}[0]
+
+    abstract fun invokeWithResponseStream(com.steamstreet.awskt.lambda/InvokeRequest): kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.lambda/InvokeStreamEvent> // com.steamstreet.awskt.lambda/Lambda.invokeWithResponseStream|invokeWithResponseStream(com.steamstreet.awskt.lambda.InvokeRequest){}[0]
+    abstract suspend fun invoke(com.steamstreet.awskt.lambda/InvokeRequest): com.steamstreet.awskt.lambda/InvokeResponse // com.steamstreet.awskt.lambda/Lambda.invoke|invoke(com.steamstreet.awskt.lambda.InvokeRequest){}[0]
+}
+
+sealed interface com.steamstreet.awskt.lambda/InvokeStreamEvent { // com.steamstreet.awskt.lambda/InvokeStreamEvent|null[0]
+    final class Complete : com.steamstreet.awskt.lambda/InvokeStreamEvent { // com.steamstreet.awskt.lambda/InvokeStreamEvent.Complete|null[0]
+        constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.lambda/InvokeStreamEvent.Complete.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+        final val errorCode // com.steamstreet.awskt.lambda/InvokeStreamEvent.Complete.errorCode|{}errorCode[0]
+            final fun <get-errorCode>(): kotlin/String? // com.steamstreet.awskt.lambda/InvokeStreamEvent.Complete.errorCode.<get-errorCode>|<get-errorCode>(){}[0]
+        final val errorDetails // com.steamstreet.awskt.lambda/InvokeStreamEvent.Complete.errorDetails|{}errorDetails[0]
+            final fun <get-errorDetails>(): kotlin/String? // com.steamstreet.awskt.lambda/InvokeStreamEvent.Complete.errorDetails.<get-errorDetails>|<get-errorDetails>(){}[0]
+        final val logResult // com.steamstreet.awskt.lambda/InvokeStreamEvent.Complete.logResult|{}logResult[0]
+            final fun <get-logResult>(): kotlin/String? // com.steamstreet.awskt.lambda/InvokeStreamEvent.Complete.logResult.<get-logResult>|<get-logResult>(){}[0]
+
+        final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/InvokeStreamEvent.Complete.toString|toString(){}[0]
+    }
+
+    final class PayloadChunk : com.steamstreet.awskt.lambda/InvokeStreamEvent { // com.steamstreet.awskt.lambda/InvokeStreamEvent.PayloadChunk|null[0]
+        constructor <init>(kotlin/ByteArray) // com.steamstreet.awskt.lambda/InvokeStreamEvent.PayloadChunk.<init>|<init>(kotlin.ByteArray){}[0]
+
+        final val payload // com.steamstreet.awskt.lambda/InvokeStreamEvent.PayloadChunk.payload|{}payload[0]
+            final fun <get-payload>(): kotlin/ByteArray // com.steamstreet.awskt.lambda/InvokeStreamEvent.PayloadChunk.payload.<get-payload>|<get-payload>(){}[0]
+
+        final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/InvokeStreamEvent.PayloadChunk.toString|toString(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.lambda/ENILimitReachedException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/ENILimitReachedException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/ENILimitReachedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/FunctionErrorException : kotlin/Exception { // com.steamstreet.awskt.lambda/FunctionErrorException|null[0]
+    constructor <init>(kotlin/String, kotlin/String?, kotlin/String?, kotlin/ByteArray) // com.steamstreet.awskt.lambda/FunctionErrorException.<init>|<init>(kotlin.String;kotlin.String?;kotlin.String?;kotlin.ByteArray){}[0]
+
+    final val errorMessage // com.steamstreet.awskt.lambda/FunctionErrorException.errorMessage|{}errorMessage[0]
+        final fun <get-errorMessage>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionErrorException.errorMessage.<get-errorMessage>|<get-errorMessage>(){}[0]
+    final val errorType // com.steamstreet.awskt.lambda/FunctionErrorException.errorType|{}errorType[0]
+        final fun <get-errorType>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionErrorException.errorType.<get-errorType>|<get-errorType>(){}[0]
+    final val functionError // com.steamstreet.awskt.lambda/FunctionErrorException.functionError|{}functionError[0]
+        final fun <get-functionError>(): kotlin/String // com.steamstreet.awskt.lambda/FunctionErrorException.functionError.<get-functionError>|<get-functionError>(){}[0]
+    final val payload // com.steamstreet.awskt.lambda/FunctionErrorException.payload|{}payload[0]
+        final fun <get-payload>(): kotlin/ByteArray // com.steamstreet.awskt.lambda/FunctionErrorException.payload.<get-payload>|<get-payload>(){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/FunctionErrorPayload { // com.steamstreet.awskt.lambda/FunctionErrorPayload|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ...) // com.steamstreet.awskt.lambda/FunctionErrorPayload.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlin.String?){}[0]
+
+    final val errorMessage // com.steamstreet.awskt.lambda/FunctionErrorPayload.errorMessage|{}errorMessage[0]
+        final fun <get-errorMessage>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionErrorPayload.errorMessage.<get-errorMessage>|<get-errorMessage>(){}[0]
+    final val errorType // com.steamstreet.awskt.lambda/FunctionErrorPayload.errorType|{}errorType[0]
+        final fun <get-errorType>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionErrorPayload.errorType.<get-errorType>|<get-errorType>(){}[0]
+    final val requestId // com.steamstreet.awskt.lambda/FunctionErrorPayload.requestId|{}requestId[0]
+        final fun <get-requestId>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionErrorPayload.requestId.<get-requestId>|<get-requestId>(){}[0]
+    final val stackTrace // com.steamstreet.awskt.lambda/FunctionErrorPayload.stackTrace|{}stackTrace[0]
+        final fun <get-stackTrace>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.lambda/FunctionErrorPayload.stackTrace.<get-stackTrace>|<get-stackTrace>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionErrorPayload.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionErrorPayload.component2|component2(){}[0]
+    final fun component3(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.lambda/FunctionErrorPayload.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionErrorPayload.component4|component4(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ...): com.steamstreet.awskt.lambda/FunctionErrorPayload // com.steamstreet.awskt.lambda/FunctionErrorPayload.copy|copy(kotlin.String?;kotlin.String?;kotlin.collections.List<kotlin.String>?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/FunctionErrorPayload.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/FunctionErrorPayload.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/FunctionErrorPayload.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/FunctionErrorPayload> { // com.steamstreet.awskt.lambda/FunctionErrorPayload.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/FunctionErrorPayload.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/FunctionErrorPayload.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/FunctionErrorPayload.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/FunctionErrorPayload // com.steamstreet.awskt.lambda/FunctionErrorPayload.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/FunctionErrorPayload) // com.steamstreet.awskt.lambda/FunctionErrorPayload.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.FunctionErrorPayload){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/FunctionErrorPayload.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.lambda/FunctionErrorPayload.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/FunctionErrorPayload> // com.steamstreet.awskt.lambda/FunctionErrorPayload.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.lambda/InvalidRequestContentException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/InvalidRequestContentException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/InvalidRequestContentException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/InvokeRequest { // com.steamstreet.awskt.lambda/InvokeRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/ByteArray? = ..., com.steamstreet.awskt.lambda/InvocationType = ..., com.steamstreet.awskt.lambda/LogType = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.core/OperationSafety = ...) // com.steamstreet.awskt.lambda/InvokeRequest.<init>|<init>(kotlin.String;kotlin.ByteArray?;com.steamstreet.awskt.lambda.InvocationType;com.steamstreet.awskt.lambda.LogType;kotlin.String?;kotlin.String?;com.steamstreet.awskt.core.OperationSafety){}[0]
+
+    final val clientContextJson // com.steamstreet.awskt.lambda/InvokeRequest.clientContextJson|{}clientContextJson[0]
+        final fun <get-clientContextJson>(): kotlin/String? // com.steamstreet.awskt.lambda/InvokeRequest.clientContextJson.<get-clientContextJson>|<get-clientContextJson>(){}[0]
+    final val functionName // com.steamstreet.awskt.lambda/InvokeRequest.functionName|{}functionName[0]
+        final fun <get-functionName>(): kotlin/String // com.steamstreet.awskt.lambda/InvokeRequest.functionName.<get-functionName>|<get-functionName>(){}[0]
+    final val invocationType // com.steamstreet.awskt.lambda/InvokeRequest.invocationType|{}invocationType[0]
+        final fun <get-invocationType>(): com.steamstreet.awskt.lambda/InvocationType // com.steamstreet.awskt.lambda/InvokeRequest.invocationType.<get-invocationType>|<get-invocationType>(){}[0]
+    final val logType // com.steamstreet.awskt.lambda/InvokeRequest.logType|{}logType[0]
+        final fun <get-logType>(): com.steamstreet.awskt.lambda/LogType // com.steamstreet.awskt.lambda/InvokeRequest.logType.<get-logType>|<get-logType>(){}[0]
+    final val payload // com.steamstreet.awskt.lambda/InvokeRequest.payload|{}payload[0]
+        final fun <get-payload>(): kotlin/ByteArray? // com.steamstreet.awskt.lambda/InvokeRequest.payload.<get-payload>|<get-payload>(){}[0]
+    final val qualifier // com.steamstreet.awskt.lambda/InvokeRequest.qualifier|{}qualifier[0]
+        final fun <get-qualifier>(): kotlin/String? // com.steamstreet.awskt.lambda/InvokeRequest.qualifier.<get-qualifier>|<get-qualifier>(){}[0]
+    final val safety // com.steamstreet.awskt.lambda/InvokeRequest.safety|{}safety[0]
+        final fun <get-safety>(): com.steamstreet.awskt.core/OperationSafety // com.steamstreet.awskt.lambda/InvokeRequest.safety.<get-safety>|<get-safety>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/InvokeRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/InvokeRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/InvokeRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/InvokeResponse { // com.steamstreet.awskt.lambda/InvokeResponse|null[0]
+    constructor <init>(kotlin/Int, kotlin/ByteArray, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.lambda/InvokeResponse.<init>|<init>(kotlin.Int;kotlin.ByteArray;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val executedVersion // com.steamstreet.awskt.lambda/InvokeResponse.executedVersion|{}executedVersion[0]
+        final fun <get-executedVersion>(): kotlin/String? // com.steamstreet.awskt.lambda/InvokeResponse.executedVersion.<get-executedVersion>|<get-executedVersion>(){}[0]
+    final val functionError // com.steamstreet.awskt.lambda/InvokeResponse.functionError|{}functionError[0]
+        final fun <get-functionError>(): kotlin/String? // com.steamstreet.awskt.lambda/InvokeResponse.functionError.<get-functionError>|<get-functionError>(){}[0]
+    final val isFunctionError // com.steamstreet.awskt.lambda/InvokeResponse.isFunctionError|{}isFunctionError[0]
+        final fun <get-isFunctionError>(): kotlin/Boolean // com.steamstreet.awskt.lambda/InvokeResponse.isFunctionError.<get-isFunctionError>|<get-isFunctionError>(){}[0]
+    final val logResult // com.steamstreet.awskt.lambda/InvokeResponse.logResult|{}logResult[0]
+        final fun <get-logResult>(): kotlin/String? // com.steamstreet.awskt.lambda/InvokeResponse.logResult.<get-logResult>|<get-logResult>(){}[0]
+    final val logTail // com.steamstreet.awskt.lambda/InvokeResponse.logTail|{}logTail[0]
+        final fun <get-logTail>(): kotlin/String? // com.steamstreet.awskt.lambda/InvokeResponse.logTail.<get-logTail>|<get-logTail>(){}[0]
+    final val payload // com.steamstreet.awskt.lambda/InvokeResponse.payload|{}payload[0]
+        final fun <get-payload>(): kotlin/ByteArray // com.steamstreet.awskt.lambda/InvokeResponse.payload.<get-payload>|<get-payload>(){}[0]
+    final val payloadText // com.steamstreet.awskt.lambda/InvokeResponse.payloadText|{}payloadText[0]
+        final fun <get-payloadText>(): kotlin/String // com.steamstreet.awskt.lambda/InvokeResponse.payloadText.<get-payloadText>|<get-payloadText>(){}[0]
+    final val statusCode // com.steamstreet.awskt.lambda/InvokeResponse.statusCode|{}statusCode[0]
+        final fun <get-statusCode>(): kotlin/Int // com.steamstreet.awskt.lambda/InvokeResponse.statusCode.<get-statusCode>|<get-statusCode>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/InvokeResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/InvokeResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/InvokeResponse.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/KmsException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/KmsException|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/KmsException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/LambdaConfig { // com.steamstreet.awskt.lambda/LambdaConfig|null[0]
+    constructor <init>() // com.steamstreet.awskt.lambda/LambdaConfig.<init>|<init>(){}[0]
+
+    final var caInfo // com.steamstreet.awskt.lambda/LambdaConfig.caInfo|{}caInfo[0]
+        final fun <get-caInfo>(): kotlin/String? // com.steamstreet.awskt.lambda/LambdaConfig.caInfo.<get-caInfo>|<get-caInfo>(){}[0]
+        final fun <set-caInfo>(kotlin/String?) // com.steamstreet.awskt.lambda/LambdaConfig.caInfo.<set-caInfo>|<set-caInfo>(kotlin.String?){}[0]
+    final var credentialsProvider // com.steamstreet.awskt.lambda/LambdaConfig.credentialsProvider|{}credentialsProvider[0]
+        final fun <get-credentialsProvider>(): com.steamstreet.awskt.core/AwsCredentialsProvider? // com.steamstreet.awskt.lambda/LambdaConfig.credentialsProvider.<get-credentialsProvider>|<get-credentialsProvider>(){}[0]
+        final fun <set-credentialsProvider>(com.steamstreet.awskt.core/AwsCredentialsProvider?) // com.steamstreet.awskt.lambda/LambdaConfig.credentialsProvider.<set-credentialsProvider>|<set-credentialsProvider>(com.steamstreet.awskt.core.AwsCredentialsProvider?){}[0]
+    final var endpointUrl // com.steamstreet.awskt.lambda/LambdaConfig.endpointUrl|{}endpointUrl[0]
+        final fun <get-endpointUrl>(): kotlin/String? // com.steamstreet.awskt.lambda/LambdaConfig.endpointUrl.<get-endpointUrl>|<get-endpointUrl>(){}[0]
+        final fun <set-endpointUrl>(kotlin/String?) // com.steamstreet.awskt.lambda/LambdaConfig.endpointUrl.<set-endpointUrl>|<set-endpointUrl>(kotlin.String?){}[0]
+    final var httpClient // com.steamstreet.awskt.lambda/LambdaConfig.httpClient|{}httpClient[0]
+        final fun <get-httpClient>(): io.ktor.client/HttpClient? // com.steamstreet.awskt.lambda/LambdaConfig.httpClient.<get-httpClient>|<get-httpClient>(){}[0]
+        final fun <set-httpClient>(io.ktor.client/HttpClient?) // com.steamstreet.awskt.lambda/LambdaConfig.httpClient.<set-httpClient>|<set-httpClient>(io.ktor.client.HttpClient?){}[0]
+    final var httpTimeouts // com.steamstreet.awskt.lambda/LambdaConfig.httpTimeouts|{}httpTimeouts[0]
+        final fun <get-httpTimeouts>(): com.steamstreet.awskt.core/AwsHttpTimeouts // com.steamstreet.awskt.lambda/LambdaConfig.httpTimeouts.<get-httpTimeouts>|<get-httpTimeouts>(){}[0]
+        final fun <set-httpTimeouts>(com.steamstreet.awskt.core/AwsHttpTimeouts) // com.steamstreet.awskt.lambda/LambdaConfig.httpTimeouts.<set-httpTimeouts>|<set-httpTimeouts>(com.steamstreet.awskt.core.AwsHttpTimeouts){}[0]
+    final var observer // com.steamstreet.awskt.lambda/LambdaConfig.observer|{}observer[0]
+        final fun <get-observer>(): com.steamstreet.awskt.core/AwsCallObserver? // com.steamstreet.awskt.lambda/LambdaConfig.observer.<get-observer>|<get-observer>(){}[0]
+        final fun <set-observer>(com.steamstreet.awskt.core/AwsCallObserver?) // com.steamstreet.awskt.lambda/LambdaConfig.observer.<set-observer>|<set-observer>(com.steamstreet.awskt.core.AwsCallObserver?){}[0]
+    final var region // com.steamstreet.awskt.lambda/LambdaConfig.region|{}region[0]
+        final fun <get-region>(): kotlin/String? // com.steamstreet.awskt.lambda/LambdaConfig.region.<get-region>|<get-region>(){}[0]
+        final fun <set-region>(kotlin/String?) // com.steamstreet.awskt.lambda/LambdaConfig.region.<set-region>|<set-region>(kotlin.String?){}[0]
+    final var retryConfig // com.steamstreet.awskt.lambda/LambdaConfig.retryConfig|{}retryConfig[0]
+        final fun <get-retryConfig>(): com.steamstreet.awskt.core/RetryConfig // com.steamstreet.awskt.lambda/LambdaConfig.retryConfig.<get-retryConfig>|<get-retryConfig>(){}[0]
+        final fun <set-retryConfig>(com.steamstreet.awskt.core/RetryConfig) // com.steamstreet.awskt.lambda/LambdaConfig.retryConfig.<set-retryConfig>|<set-retryConfig>(com.steamstreet.awskt.core.RetryConfig){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/LambdaPayloadTooLargeException : kotlin/Exception { // com.steamstreet.awskt.lambda/LambdaPayloadTooLargeException|null[0]
+    constructor <init>(kotlin/String) // com.steamstreet.awskt.lambda/LambdaPayloadTooLargeException.<init>|<init>(kotlin.String){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/RecursiveInvocationException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/RecursiveInvocationException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/RecursiveInvocationException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/RequestTooLargeException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/RequestTooLargeException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/RequestTooLargeException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/ResourceConflictException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/ResourceConflictException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/ResourceConflictException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/ResourceNotFoundException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/ResourceNotFoundException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/ResourceNotFoundException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/ResourceNotReadyException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/ResourceNotReadyException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/ResourceNotReadyException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/ServiceException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/ServiceException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/ServiceException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/SubnetIPAddressLimitReachedException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/SubnetIPAddressLimitReachedException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/SubnetIPAddressLimitReachedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/TooManyRequestsException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/TooManyRequestsException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String?, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/TooManyRequestsException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+
+    final val reason // com.steamstreet.awskt.lambda/TooManyRequestsException.reason|{}reason[0]
+        final fun <get-reason>(): kotlin/String? // com.steamstreet.awskt.lambda/TooManyRequestsException.reason.<get-reason>|<get-reason>(){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/UnsupportedMediaTypeException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/UnsupportedMediaTypeException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/UnsupportedMediaTypeException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+open class com.steamstreet.awskt.lambda/LambdaException : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.lambda/LambdaException|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/LambdaException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final const val com.steamstreet.awskt.lambda/MAX_CLIENT_CONTEXT_BYTES // com.steamstreet.awskt.lambda/MAX_CLIENT_CONTEXT_BYTES|{}MAX_CLIENT_CONTEXT_BYTES[0]
+    final fun <get-MAX_CLIENT_CONTEXT_BYTES>(): kotlin/Int // com.steamstreet.awskt.lambda/MAX_CLIENT_CONTEXT_BYTES.<get-MAX_CLIENT_CONTEXT_BYTES>|<get-MAX_CLIENT_CONTEXT_BYTES>(){}[0]
+final const val com.steamstreet.awskt.lambda/MAX_EVENT_PAYLOAD_BYTES // com.steamstreet.awskt.lambda/MAX_EVENT_PAYLOAD_BYTES|{}MAX_EVENT_PAYLOAD_BYTES[0]
+    final fun <get-MAX_EVENT_PAYLOAD_BYTES>(): kotlin/Int // com.steamstreet.awskt.lambda/MAX_EVENT_PAYLOAD_BYTES.<get-MAX_EVENT_PAYLOAD_BYTES>|<get-MAX_EVENT_PAYLOAD_BYTES>(){}[0]
+final const val com.steamstreet.awskt.lambda/MAX_SYNC_PAYLOAD_BYTES // com.steamstreet.awskt.lambda/MAX_SYNC_PAYLOAD_BYTES|{}MAX_SYNC_PAYLOAD_BYTES[0]
+    final fun <get-MAX_SYNC_PAYLOAD_BYTES>(): kotlin/Int // com.steamstreet.awskt.lambda/MAX_SYNC_PAYLOAD_BYTES.<get-MAX_SYNC_PAYLOAD_BYTES>|<get-MAX_SYNC_PAYLOAD_BYTES>(){}[0]
+
+final val com.steamstreet.awskt.lambda/LAMBDA_PROTOCOL // com.steamstreet.awskt.lambda/LAMBDA_PROTOCOL|{}LAMBDA_PROTOCOL[0]
+    final fun <get-LAMBDA_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.lambda/LAMBDA_PROTOCOL.<get-LAMBDA_PROTOCOL>|<get-LAMBDA_PROTOCOL>(){}[0]
+
+final fun (com.steamstreet.awskt.lambda/InvokeResponse).com.steamstreet.awskt.lambda/orThrow(): com.steamstreet.awskt.lambda/InvokeResponse // com.steamstreet.awskt.lambda/orThrow|orThrow@com.steamstreet.awskt.lambda.InvokeResponse(){}[0]
+final fun (kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.lambda/InvokeStreamEvent>).com.steamstreet.awskt.lambda/payloadChunks(): kotlinx.coroutines.flow/Flow<kotlin/ByteArray> // com.steamstreet.awskt.lambda/payloadChunks|payloadChunks@kotlinx.coroutines.flow.Flow<com.steamstreet.awskt.lambda.InvokeStreamEvent>(){}[0]
+final fun com.steamstreet.awskt.lambda/Lambda(kotlin/Function1<com.steamstreet.awskt.lambda/LambdaConfig, kotlin/Unit> = ...): com.steamstreet.awskt.lambda/Lambda // com.steamstreet.awskt.lambda/Lambda|Lambda(kotlin.Function1<com.steamstreet.awskt.lambda.LambdaConfig,kotlin.Unit>){}[0]
+final suspend fun (com.steamstreet.awskt.lambda/Lambda).com.steamstreet.awskt.lambda/dryRun(kotlin/String, kotlin/String? = ...) // com.steamstreet.awskt.lambda/dryRun|dryRun@com.steamstreet.awskt.lambda.Lambda(kotlin.String;kotlin.String?){}[0]
+final suspend fun (com.steamstreet.awskt.lambda/Lambda).com.steamstreet.awskt.lambda/invokeEvent(kotlin/String, kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.lambda/invokeEvent|invokeEvent@com.steamstreet.awskt.lambda.Lambda(kotlin.String;kotlin.String?;kotlin.String?){}[0]
+final suspend fun (com.steamstreet.awskt.lambda/Lambda).com.steamstreet.awskt.lambda/invokeFunction(kotlin/String, kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.core/OperationSafety = ...): kotlin/String // com.steamstreet.awskt.lambda/invokeFunction|invokeFunction@com.steamstreet.awskt.lambda.Lambda(kotlin.String;kotlin.String?;kotlin.String?;com.steamstreet.awskt.core.OperationSafety){}[0]
+final suspend fun (kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.lambda/InvokeStreamEvent>).com.steamstreet.awskt.lambda/collectPayload(): kotlin/ByteArray // com.steamstreet.awskt.lambda/collectPayload|collectPayload@kotlinx.coroutines.flow.Flow<com.steamstreet.awskt.lambda.InvokeStreamEvent>(){}[0]
+final suspend fun (kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.lambda/InvokeStreamEvent>).com.steamstreet.awskt.lambda/collectPayloadText(): kotlin/String // com.steamstreet.awskt.lambda/collectPayloadText|collectPayloadText@kotlinx.coroutines.flow.Flow<com.steamstreet.awskt.lambda.InvokeStreamEvent>(){}[0]
