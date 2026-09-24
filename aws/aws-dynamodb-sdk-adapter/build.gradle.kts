@@ -11,6 +11,9 @@ dependencies {
     api(project(":aws:aws-dynamodb"))
     api(project(":dynamo"))
     api(libs.aws.dynamodb)
+    // The one SDK-to-awskt credentials bridge, so the extension seam inherits the SDK client's
+    // profile, SSO or container credentials rather than falling back to environment variables.
+    implementation(project(":aws:aws-sdk-credentials"))
 
     testImplementation(kotlin("test"))
     testImplementation(libs.kotlin.coroutines.test)

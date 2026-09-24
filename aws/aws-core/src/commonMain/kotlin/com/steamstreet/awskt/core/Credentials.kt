@@ -260,9 +260,59 @@ public class CachedCredentialsProvider(
     override fun toString(): String = "CachedCredentialsProvider($delegate)"
 }
 
-/** The default chain. Deliberately short — see the plan's out-of-scope list for what is missing. */
-public fun defaultCredentialsProvider(): AwsCredentialsProvider =
-    CachedCredentialsProvider(CredentialsProviderChain(EnvironmentCredentialsProvider()))
+/**
+ * The process-wide replacement for the built-in default chain.
+ *
+ * The built-in chain reads environment variables only, which is all a Lambda needs and far less than
+ * a JVM service on ECS or a developer's laptop needs: no container credentials, no profiles, no SSO.
+ * `aws-core` deliberately does not grow those providers, so this is the seam through which a JVM
+ * application supplies its own — typically the AWS SDK's chain, via `aws-sdk-credentials` — once, at
+ * startup, rather than handing a provider to every client it constructs.
+ *
+ * ```
+ * AwsCredentialsDefaults.provider = sdkDefaultChainCredentialsProvider()
+ * ```
+ *
+ * **It is consulted when credentials are resolved, not when a client is built.** A client
+ * constructed before this is set — in a companion object, a lazy, a DI module that happens to
+ * initialise first — still picks the override up on its next call. Setting it to null restores the
+ * built-in chain.
+ *
+ * A client configured with an explicit `credentialsProvider` never consults it.
+ */
+@OptIn(ExperimentalAtomicApi::class)
+public object AwsCredentialsDefaults {
+    private val override = AtomicReference<AwsCredentialsProvider?>(null)
+
+    /** The provider [defaultCredentialsProvider] delegates to, or null for the built-in chain. */
+    public var provider: AwsCredentialsProvider?
+        get() = override.load()
+        set(value) {
+            override.store(value)
+        }
+}
+
+/**
+ * The default chain: [AwsCredentialsDefaults.provider] when one is set, otherwise the built-in chain,
+ * which is deliberately short — see the plan's out-of-scope list for what is missing.
+ */
+public fun defaultCredentialsProvider(): AwsCredentialsProvider = DefaultCredentialsProvider()
+
+/**
+ * Looks the override up on every resolve so that it takes effect for clients already built. The
+ * built-in chain is still constructed eagerly, and caches as before, so a process that never sets
+ * the override behaves exactly as it did.
+ */
+private class DefaultCredentialsProvider : AwsCredentialsProvider {
+    private val builtIn =
+        CachedCredentialsProvider(CredentialsProviderChain(EnvironmentCredentialsProvider()))
+
+    override suspend fun resolve(): AwsCredentials =
+        (AwsCredentialsDefaults.provider ?: builtIn).resolve()
+
+    override fun toString(): String =
+        AwsCredentialsDefaults.provider?.toString() ?: builtIn.toString()
+}
 
 /**
  * Parses the `AWS_CREDENTIAL_EXPIRATION` convention to epoch millis — the one parser for that

@@ -2,13 +2,13 @@ package com.steamstreet.awskt.dynamodb.sdk
 
 import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
 import aws.smithy.kotlin.runtime.http.response.HttpResponse
-import com.steamstreet.awskt.core.AwsCredentialsProvider
 import com.steamstreet.awskt.core.AwsServiceClient
 import com.steamstreet.awskt.core.RetryConfig
 import com.steamstreet.awskt.core.awsHttpClient
 import com.steamstreet.awskt.core.defaultCredentialsProvider
 import com.steamstreet.awskt.core.resolveEndpoint
 import com.steamstreet.awskt.core.resolveRegion
+import com.steamstreet.awskt.credentials.sdk.SdkCredentialsProvider
 import com.steamstreet.awskt.dynamodb.BatchGetItemRequest
 import com.steamstreet.awskt.dynamodb.BatchGetItemResponse
 import com.steamstreet.awskt.dynamodb.BatchWriteItemRequest
@@ -44,7 +44,6 @@ import com.steamstreet.awskt.dynamodb.TransactionCanceledException
 import com.steamstreet.awskt.dynamodb.UpdateItemRequest
 import com.steamstreet.awskt.dynamodb.UpdateItemResponse
 import com.steamstreet.awskt.dynamodb.ValidationException
-import com.steamstreet.awskt.signing.AwsCredentials
 import io.ktor.client.HttpClient
 import aws.sdk.kotlin.services.dynamodb.model.BatchGetItemRequest as SdkBatchGetItemRequest
 import aws.sdk.kotlin.services.dynamodb.model.BatchWriteItemRequest as SdkBatchWriteItemRequest
@@ -122,7 +121,7 @@ public class SdkBackedDynamoDb(
         return AwsServiceClient(
             httpClient = http,
             credentialsProvider = delegate.config.credentialsProvider
-                ?.let(::SdkCredentialsProviderBridge)
+                ?.let(::SdkCredentialsProvider)
                 ?: defaultCredentialsProvider(),
             endpoint = resolveEndpoint("dynamodb", region, delegate.config.endpointUrl?.toString()),
             region = region,
@@ -395,33 +394,6 @@ public class SdkBackedDynamoDb(
             ownedHttpClient?.close()
         }
     }
-}
-
-/**
- * Presents the SDK's credential provider as this library's.
- *
- * One adapter is what lets [SdkBackedDynamoDb]'s extension seam inherit whatever the delegate was
- * configured with — a profile, SSO, `credential_process`, container credentials — none of which
- * `aws-core` carries, and all of which a JVM developer's laptop relies on.
- */
-private class SdkCredentialsProviderBridge(
-    private val delegate: aws.smithy.kotlin.runtime.auth.awscredentials.CredentialsProvider,
-) : AwsCredentialsProvider {
-    override suspend fun resolve(): AwsCredentials {
-        val credentials = delegate.resolve()
-        return AwsCredentials(
-            accessKeyId = credentials.accessKeyId,
-            secretAccessKey = credentials.secretAccessKey,
-            sessionToken = credentials.sessionToken,
-            // smithy-kotlin's Instant exposes seconds and sub-second nanos, not millis.
-            expiresAtEpochMillis = credentials.expiration?.let {
-                it.epochSeconds * 1_000L + it.nanosecondsOfSecond / 1_000_000L
-            },
-        )
-    }
-
-    /** Never render the wrapped secret. */
-    override fun toString(): String = "SdkCredentialsProviderBridge($delegate)"
 }
 
 /**

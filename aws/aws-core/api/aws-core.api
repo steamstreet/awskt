@@ -30,6 +30,12 @@ public final class com/steamstreet/awskt/core/AwsConfigurationException : java/l
 	public fun <init> (Ljava/lang/String;)V
 }
 
+public final class com/steamstreet/awskt/core/AwsCredentialsDefaults {
+	public static final field INSTANCE Lcom/steamstreet/awskt/core/AwsCredentialsDefaults;
+	public final fun getProvider ()Lcom/steamstreet/awskt/core/AwsCredentialsProvider;
+	public final fun setProvider (Lcom/steamstreet/awskt/core/AwsCredentialsProvider;)V
+}
+
 public final class com/steamstreet/awskt/core/AwsCredentialsNotFoundException : java/lang/Exception {
 	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V

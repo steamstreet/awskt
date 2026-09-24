@@ -275,6 +275,12 @@ open class com.steamstreet.awskt.core/AwsServiceException : kotlin/Exception { /
     open fun toString(): kotlin/String // com.steamstreet.awskt.core/AwsServiceException.toString|toString(){}[0]
 }
 
+final object com.steamstreet.awskt.core/AwsCredentialsDefaults { // com.steamstreet.awskt.core/AwsCredentialsDefaults|null[0]
+    final var provider // com.steamstreet.awskt.core/AwsCredentialsDefaults.provider|{}provider[0]
+        final fun <get-provider>(): com.steamstreet.awskt.core/AwsCredentialsProvider? // com.steamstreet.awskt.core/AwsCredentialsDefaults.provider.<get-provider>|<get-provider>(){}[0]
+        final fun <set-provider>(com.steamstreet.awskt.core/AwsCredentialsProvider?) // com.steamstreet.awskt.core/AwsCredentialsDefaults.provider.<set-provider>|<set-provider>(com.steamstreet.awskt.core.AwsCredentialsProvider?){}[0]
+}
+
 final object com.steamstreet.awskt.core/AwsJsonErrorParser : com.steamstreet.awskt.core/AwsErrorParser { // com.steamstreet.awskt.core/AwsJsonErrorParser|null[0]
     final fun parse(kotlin/Int, kotlin.collections/Map<kotlin/String, kotlin/String>, kotlin/ByteArray?): com.steamstreet.awskt.core/ErrorDetails // com.steamstreet.awskt.core/AwsJsonErrorParser.parse|parse(kotlin.Int;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.ByteArray?){}[0]
 }
