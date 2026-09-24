@@ -18,13 +18,6 @@ public var secrets: SecretsProvider by mutableLazy {
         .newInstance() as SecretsProvider
 }
 
-/**
- * Interface for a secret provider.
- */
-public interface SecretsProvider {
-    public suspend fun getSecretValue(secretId: String): String?
-}
-
 public actual fun getEnvironmentVariable(key: String): String? = runBlocking {
     // we can encode an environment variable as a secret, which will retrieve it using the AWS secrets manager.
     val value = System.getProperty("ENV.$key") ?: System.getenv(key)

@@ -34,6 +34,27 @@ kotlin {
                 implementation(project(":logging"))
             }
         }
+
+        // `Secret_` resolution on native goes through awskt's own Secrets Manager client, since the
+        // AWS SDK the JVM uses has no native build. The plan's Decision 6 permits this direction:
+        // `aws-secretsmanager` must not depend on `env`, but `env` may depend on it. `api` because
+        // SecretsManagerSecretsProvider's constructor takes that module's client type.
+        nativeMain {
+            dependencies {
+                api(project(":aws:aws-secretsmanager"))
+                implementation(project(":logging"))
+                implementation(libs.kotlin.coroutines.core)
+                implementation(libs.kotlin.serialization.json)
+            }
+        }
+
+        nativeTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.ktor.client.mock)
+                implementation(libs.kotlin.coroutines.core)
+            }
+        }
     }
 }
 
