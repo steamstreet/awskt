@@ -14,6 +14,8 @@ ktor = "3.5.2"
 slf4j = "2.0.9"
 coroutines = "1.10.2"
 kotest = "5.9.1"
+# JWT signatures. Pre-1.0: pin exactly and read the changelog before bumping.
+cryptography = "0.6.0"
 
 [libraries]
 # -- Kotlin Serialization
@@ -50,6 +52,9 @@ ktor-client-js = { group = "io.ktor", name = "ktor-client-js", version.ref = "kt
 ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
 ktor-client-curl = { group = "io.ktor", name = "ktor-client-curl", version.ref = "ktor" }
 ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
+cryptography-core = { group = "dev.whyoleg.cryptography", name = "cryptography-core", version.ref = "cryptography" }
+cryptography-provider-jdk = { group = "dev.whyoleg.cryptography", name = "cryptography-provider-jdk", version.ref = "cryptography" }
+cryptography-provider-openssl3-prebuilt = { group = "dev.whyoleg.cryptography", name = "cryptography-provider-openssl3-prebuilt", version.ref = "cryptography" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version = "1.21.4" }
 testcontainers-localstack = { module = "org.testcontainers:localstack", version = "1.21.4" }
 

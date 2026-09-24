@@ -1,0 +1,144 @@
+public final class com/steamstreet/awskt/jwt/Es256Signer {
+	public static final field Companion Lcom/steamstreet/awskt/jwt/Es256Signer$Companion;
+	public synthetic fun <init> (Ljava/lang/String;Ldev/whyoleg/cryptography/operations/SignatureGenerator;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun sign (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun sign (Lkotlinx/serialization/json/JsonObject;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/jwt/Es256Signer$Companion {
+	public final fun fromPrivateKey (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun fromPrivateKey$default (Lcom/steamstreet/awskt/jwt/Es256Signer$Companion;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/jwt/JwksKeySource : com/steamstreet/awskt/jwt/JwtKeySource, java/lang/AutoCloseable {
+	public synthetic fun <init> (Ljava/lang/String;Lio/ktor/client/HttpClient;JJLkotlin/time/Clock;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/ktor/client/HttpClient;JJLkotlin/time/Clock;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public final fun getUrl ()Ljava/lang/String;
+	public fun key (Ljava/lang/String;Lcom/steamstreet/awskt/jwt/JwtAlgorithm;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/jwt/Jwt {
+	public static final field Companion Lcom/steamstreet/awskt/jwt/Jwt$Companion;
+	public synthetic fun <init> (Lcom/steamstreet/awskt/jwt/JwtHeader;Lcom/steamstreet/awskt/jwt/JwtClaims;[B[BLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getClaims ()Lcom/steamstreet/awskt/jwt/JwtClaims;
+	public final fun getHeader ()Lcom/steamstreet/awskt/jwt/JwtHeader;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/jwt/Jwt$Companion {
+	public final fun decode (Ljava/lang/String;)Lcom/steamstreet/awskt/jwt/Jwt;
+}
+
+public final class com/steamstreet/awskt/jwt/JwtAlgorithm : java/lang/Enum {
+	public static final field ES256 Lcom/steamstreet/awskt/jwt/JwtAlgorithm;
+	public static final field RS256 Lcom/steamstreet/awskt/jwt/JwtAlgorithm;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getHeaderName ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/jwt/JwtAlgorithm;
+	public static fun values ()[Lcom/steamstreet/awskt/jwt/JwtAlgorithm;
+}
+
+public final class com/steamstreet/awskt/jwt/JwtClaims {
+	public fun <init> (Lkotlinx/serialization/json/JsonObject;)V
+	public final fun boolean (Ljava/lang/String;)Ljava/lang/Boolean;
+	public final fun get (Ljava/lang/String;)Lkotlinx/serialization/json/JsonElement;
+	public final fun getAudience ()Ljava/util/List;
+	public final fun getExpiresAt ()Lkotlin/time/Instant;
+	public final fun getIssuedAt ()Lkotlin/time/Instant;
+	public final fun getIssuer ()Ljava/lang/String;
+	public final fun getJson ()Lkotlinx/serialization/json/JsonObject;
+	public final fun getJwtId ()Ljava/lang/String;
+	public final fun getNotBefore ()Lkotlin/time/Instant;
+	public final fun getSubject ()Ljava/lang/String;
+	public final fun long (Ljava/lang/String;)Ljava/lang/Long;
+	public final fun string (Ljava/lang/String;)Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/jwt/JwtClaimsBuilder {
+	public fun <init> ()V
+	public final fun audience ([Ljava/lang/String;)V
+	public final fun claim (Ljava/lang/String;Ljava/lang/Boolean;)V
+	public final fun claim (Ljava/lang/String;Ljava/lang/Number;)V
+	public final fun claim (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun claim (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)V
+	public final fun getExpiresAt ()Lkotlin/time/Instant;
+	public final fun getIssuedAt ()Lkotlin/time/Instant;
+	public final fun getIssuer ()Ljava/lang/String;
+	public final fun getJwtId ()Ljava/lang/String;
+	public final fun getNotBefore ()Lkotlin/time/Instant;
+	public final fun getSubject ()Ljava/lang/String;
+	public final fun setExpiresAt (Lkotlin/time/Instant;)V
+	public final fun setIssuedAt (Lkotlin/time/Instant;)V
+	public final fun setIssuer (Ljava/lang/String;)V
+	public final fun setJwtId (Ljava/lang/String;)V
+	public final fun setNotBefore (Lkotlin/time/Instant;)V
+	public final fun setSubject (Ljava/lang/String;)V
+}
+
+public class com/steamstreet/awskt/jwt/JwtException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/jwt/JwtFormatException : com/steamstreet/awskt/jwt/JwtException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/jwt/JwtHeader {
+	public fun <init> (Lkotlinx/serialization/json/JsonObject;)V
+	public final fun getAlgorithm ()Ljava/lang/String;
+	public final fun getJson ()Lkotlinx/serialization/json/JsonObject;
+	public final fun getKeyId ()Ljava/lang/String;
+	public final fun getType ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/steamstreet/awskt/jwt/JwtKeySource {
+	public abstract fun key (Ljava/lang/String;Lcom/steamstreet/awskt/jwt/JwtAlgorithm;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/jwt/JwtVerificationException : com/steamstreet/awskt/jwt/JwtException {
+	public fun <init> (Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getReason ()Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
+}
+
+public final class com/steamstreet/awskt/jwt/JwtVerificationException$Reason : java/lang/Enum {
+	public static final field ALGORITHM_NOT_ALLOWED Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
+	public static final field AUDIENCE Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
+	public static final field EXPIRED Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
+	public static final field INVALID_SIGNATURE Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
+	public static final field ISSUER Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
+	public static final field KEY_NOT_FOUND Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
+	public static final field MALFORMED Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
+	public static final field NOT_YET_VALID Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
+	public static final field UNSUPPORTED_HEADER Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
+	public static fun values ()[Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
+}
+
+public final class com/steamstreet/awskt/jwt/JwtVerificationKey {
+	public static final field Companion Lcom/steamstreet/awskt/jwt/JwtVerificationKey$Companion;
+	public synthetic fun <init> (Lcom/steamstreet/awskt/jwt/JwtAlgorithm;Ljava/lang/String;Ldev/whyoleg/cryptography/operations/SignatureVerifier;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getAlgorithm ()Lcom/steamstreet/awskt/jwt/JwtAlgorithm;
+	public final fun getKeyId ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/jwt/JwtVerificationKey$Companion {
+	public final fun fromJwk (Lkotlinx/serialization/json/JsonObject;Lcom/steamstreet/awskt/jwt/JwtAlgorithm;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/jwt/JwtVerifier {
+	public synthetic fun <init> (Lcom/steamstreet/awskt/jwt/JwtKeySource;Ljava/util/Set;Ljava/util/Set;Ljava/util/Set;JLkotlin/time/Clock;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/jwt/JwtKeySource;Ljava/util/Set;Ljava/util/Set;Ljava/util/Set;JLkotlin/time/Clock;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun toString ()Ljava/lang/String;
+	public final fun verify (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

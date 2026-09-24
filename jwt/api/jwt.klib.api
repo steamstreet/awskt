@@ -1,0 +1,182 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet.awskt:jwt>
+final enum class com.steamstreet.awskt.jwt/JwtAlgorithm : kotlin/Enum<com.steamstreet.awskt.jwt/JwtAlgorithm> { // com.steamstreet.awskt.jwt/JwtAlgorithm|null[0]
+    enum entry ES256 // com.steamstreet.awskt.jwt/JwtAlgorithm.ES256|null[0]
+    enum entry RS256 // com.steamstreet.awskt.jwt/JwtAlgorithm.RS256|null[0]
+
+    final val entries // com.steamstreet.awskt.jwt/JwtAlgorithm.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.steamstreet.awskt.jwt/JwtAlgorithm> // com.steamstreet.awskt.jwt/JwtAlgorithm.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val headerName // com.steamstreet.awskt.jwt/JwtAlgorithm.headerName|{}headerName[0]
+        final fun <get-headerName>(): kotlin/String // com.steamstreet.awskt.jwt/JwtAlgorithm.headerName.<get-headerName>|<get-headerName>(){}[0]
+
+    final fun valueOf(kotlin/String): com.steamstreet.awskt.jwt/JwtAlgorithm // com.steamstreet.awskt.jwt/JwtAlgorithm.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.steamstreet.awskt.jwt/JwtAlgorithm> // com.steamstreet.awskt.jwt/JwtAlgorithm.values|values#static(){}[0]
+}
+
+abstract fun interface com.steamstreet.awskt.jwt/JwtKeySource { // com.steamstreet.awskt.jwt/JwtKeySource|null[0]
+    abstract suspend fun key(kotlin/String?, com.steamstreet.awskt.jwt/JwtAlgorithm): com.steamstreet.awskt.jwt/JwtVerificationKey? // com.steamstreet.awskt.jwt/JwtKeySource.key|key(kotlin.String?;com.steamstreet.awskt.jwt.JwtAlgorithm){}[0]
+}
+
+final class com.steamstreet.awskt.jwt/Es256Signer { // com.steamstreet.awskt.jwt/Es256Signer|null[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.jwt/Es256Signer.toString|toString(){}[0]
+    final suspend fun sign(kotlin/Function1<com.steamstreet.awskt.jwt/JwtClaimsBuilder, kotlin/Unit>): kotlin/String // com.steamstreet.awskt.jwt/Es256Signer.sign|sign(kotlin.Function1<com.steamstreet.awskt.jwt.JwtClaimsBuilder,kotlin.Unit>){}[0]
+    final suspend fun sign(kotlinx.serialization.json/JsonObject): kotlin/String // com.steamstreet.awskt.jwt/Es256Signer.sign|sign(kotlinx.serialization.json.JsonObject){}[0]
+
+    final object Companion { // com.steamstreet.awskt.jwt/Es256Signer.Companion|null[0]
+        final suspend fun fromPrivateKey(kotlin/String, kotlin/String? = ...): com.steamstreet.awskt.jwt/Es256Signer // com.steamstreet.awskt.jwt/Es256Signer.Companion.fromPrivateKey|fromPrivateKey(kotlin.String;kotlin.String?){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.jwt/JwksKeySource : com.steamstreet.awskt.jwt/JwtKeySource, kotlin/AutoCloseable { // com.steamstreet.awskt.jwt/JwksKeySource|null[0]
+    constructor <init>(kotlin/String, io.ktor.client/HttpClient? = ..., kotlin.time/Duration = ..., kotlin.time/Duration = ..., kotlin.time/Clock = ...) // com.steamstreet.awskt.jwt/JwksKeySource.<init>|<init>(kotlin.String;io.ktor.client.HttpClient?;kotlin.time.Duration;kotlin.time.Duration;kotlin.time.Clock){}[0]
+
+    final val url // com.steamstreet.awskt.jwt/JwksKeySource.url|{}url[0]
+        final fun <get-url>(): kotlin/String // com.steamstreet.awskt.jwt/JwksKeySource.url.<get-url>|<get-url>(){}[0]
+
+    final fun close() // com.steamstreet.awskt.jwt/JwksKeySource.close|close(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.jwt/JwksKeySource.toString|toString(){}[0]
+    final suspend fun key(kotlin/String?, com.steamstreet.awskt.jwt/JwtAlgorithm): com.steamstreet.awskt.jwt/JwtVerificationKey? // com.steamstreet.awskt.jwt/JwksKeySource.key|key(kotlin.String?;com.steamstreet.awskt.jwt.JwtAlgorithm){}[0]
+}
+
+final class com.steamstreet.awskt.jwt/Jwt { // com.steamstreet.awskt.jwt/Jwt|null[0]
+    final val claims // com.steamstreet.awskt.jwt/Jwt.claims|{}claims[0]
+        final fun <get-claims>(): com.steamstreet.awskt.jwt/JwtClaims // com.steamstreet.awskt.jwt/Jwt.claims.<get-claims>|<get-claims>(){}[0]
+    final val header // com.steamstreet.awskt.jwt/Jwt.header|{}header[0]
+        final fun <get-header>(): com.steamstreet.awskt.jwt/JwtHeader // com.steamstreet.awskt.jwt/Jwt.header.<get-header>|<get-header>(){}[0]
+
+    final fun toString(): kotlin/String // com.steamstreet.awskt.jwt/Jwt.toString|toString(){}[0]
+
+    final object Companion { // com.steamstreet.awskt.jwt/Jwt.Companion|null[0]
+        final fun decode(kotlin/String): com.steamstreet.awskt.jwt/Jwt // com.steamstreet.awskt.jwt/Jwt.Companion.decode|decode(kotlin.String){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.jwt/JwtClaims { // com.steamstreet.awskt.jwt/JwtClaims|null[0]
+    constructor <init>(kotlinx.serialization.json/JsonObject) // com.steamstreet.awskt.jwt/JwtClaims.<init>|<init>(kotlinx.serialization.json.JsonObject){}[0]
+
+    final val audience // com.steamstreet.awskt.jwt/JwtClaims.audience|{}audience[0]
+        final fun <get-audience>(): kotlin.collections/List<kotlin/String> // com.steamstreet.awskt.jwt/JwtClaims.audience.<get-audience>|<get-audience>(){}[0]
+    final val expiresAt // com.steamstreet.awskt.jwt/JwtClaims.expiresAt|{}expiresAt[0]
+        final fun <get-expiresAt>(): kotlin.time/Instant? // com.steamstreet.awskt.jwt/JwtClaims.expiresAt.<get-expiresAt>|<get-expiresAt>(){}[0]
+    final val issuedAt // com.steamstreet.awskt.jwt/JwtClaims.issuedAt|{}issuedAt[0]
+        final fun <get-issuedAt>(): kotlin.time/Instant? // com.steamstreet.awskt.jwt/JwtClaims.issuedAt.<get-issuedAt>|<get-issuedAt>(){}[0]
+    final val issuer // com.steamstreet.awskt.jwt/JwtClaims.issuer|{}issuer[0]
+        final fun <get-issuer>(): kotlin/String? // com.steamstreet.awskt.jwt/JwtClaims.issuer.<get-issuer>|<get-issuer>(){}[0]
+    final val json // com.steamstreet.awskt.jwt/JwtClaims.json|{}json[0]
+        final fun <get-json>(): kotlinx.serialization.json/JsonObject // com.steamstreet.awskt.jwt/JwtClaims.json.<get-json>|<get-json>(){}[0]
+    final val jwtId // com.steamstreet.awskt.jwt/JwtClaims.jwtId|{}jwtId[0]
+        final fun <get-jwtId>(): kotlin/String? // com.steamstreet.awskt.jwt/JwtClaims.jwtId.<get-jwtId>|<get-jwtId>(){}[0]
+    final val notBefore // com.steamstreet.awskt.jwt/JwtClaims.notBefore|{}notBefore[0]
+        final fun <get-notBefore>(): kotlin.time/Instant? // com.steamstreet.awskt.jwt/JwtClaims.notBefore.<get-notBefore>|<get-notBefore>(){}[0]
+    final val subject // com.steamstreet.awskt.jwt/JwtClaims.subject|{}subject[0]
+        final fun <get-subject>(): kotlin/String? // com.steamstreet.awskt.jwt/JwtClaims.subject.<get-subject>|<get-subject>(){}[0]
+
+    final fun boolean(kotlin/String): kotlin/Boolean? // com.steamstreet.awskt.jwt/JwtClaims.boolean|boolean(kotlin.String){}[0]
+    final fun get(kotlin/String): kotlinx.serialization.json/JsonElement? // com.steamstreet.awskt.jwt/JwtClaims.get|get(kotlin.String){}[0]
+    final fun long(kotlin/String): kotlin/Long? // com.steamstreet.awskt.jwt/JwtClaims.long|long(kotlin.String){}[0]
+    final fun string(kotlin/String): kotlin/String? // com.steamstreet.awskt.jwt/JwtClaims.string|string(kotlin.String){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.jwt/JwtClaims.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.jwt/JwtClaimsBuilder { // com.steamstreet.awskt.jwt/JwtClaimsBuilder|null[0]
+    constructor <init>() // com.steamstreet.awskt.jwt/JwtClaimsBuilder.<init>|<init>(){}[0]
+
+    final var expiresAt // com.steamstreet.awskt.jwt/JwtClaimsBuilder.expiresAt|{}expiresAt[0]
+        final fun <get-expiresAt>(): kotlin.time/Instant? // com.steamstreet.awskt.jwt/JwtClaimsBuilder.expiresAt.<get-expiresAt>|<get-expiresAt>(){}[0]
+        final fun <set-expiresAt>(kotlin.time/Instant?) // com.steamstreet.awskt.jwt/JwtClaimsBuilder.expiresAt.<set-expiresAt>|<set-expiresAt>(kotlin.time.Instant?){}[0]
+    final var issuedAt // com.steamstreet.awskt.jwt/JwtClaimsBuilder.issuedAt|{}issuedAt[0]
+        final fun <get-issuedAt>(): kotlin.time/Instant? // com.steamstreet.awskt.jwt/JwtClaimsBuilder.issuedAt.<get-issuedAt>|<get-issuedAt>(){}[0]
+        final fun <set-issuedAt>(kotlin.time/Instant?) // com.steamstreet.awskt.jwt/JwtClaimsBuilder.issuedAt.<set-issuedAt>|<set-issuedAt>(kotlin.time.Instant?){}[0]
+    final var issuer // com.steamstreet.awskt.jwt/JwtClaimsBuilder.issuer|{}issuer[0]
+        final fun <get-issuer>(): kotlin/String? // com.steamstreet.awskt.jwt/JwtClaimsBuilder.issuer.<get-issuer>|<get-issuer>(){}[0]
+        final fun <set-issuer>(kotlin/String?) // com.steamstreet.awskt.jwt/JwtClaimsBuilder.issuer.<set-issuer>|<set-issuer>(kotlin.String?){}[0]
+    final var jwtId // com.steamstreet.awskt.jwt/JwtClaimsBuilder.jwtId|{}jwtId[0]
+        final fun <get-jwtId>(): kotlin/String? // com.steamstreet.awskt.jwt/JwtClaimsBuilder.jwtId.<get-jwtId>|<get-jwtId>(){}[0]
+        final fun <set-jwtId>(kotlin/String?) // com.steamstreet.awskt.jwt/JwtClaimsBuilder.jwtId.<set-jwtId>|<set-jwtId>(kotlin.String?){}[0]
+    final var notBefore // com.steamstreet.awskt.jwt/JwtClaimsBuilder.notBefore|{}notBefore[0]
+        final fun <get-notBefore>(): kotlin.time/Instant? // com.steamstreet.awskt.jwt/JwtClaimsBuilder.notBefore.<get-notBefore>|<get-notBefore>(){}[0]
+        final fun <set-notBefore>(kotlin.time/Instant?) // com.steamstreet.awskt.jwt/JwtClaimsBuilder.notBefore.<set-notBefore>|<set-notBefore>(kotlin.time.Instant?){}[0]
+    final var subject // com.steamstreet.awskt.jwt/JwtClaimsBuilder.subject|{}subject[0]
+        final fun <get-subject>(): kotlin/String? // com.steamstreet.awskt.jwt/JwtClaimsBuilder.subject.<get-subject>|<get-subject>(){}[0]
+        final fun <set-subject>(kotlin/String?) // com.steamstreet.awskt.jwt/JwtClaimsBuilder.subject.<set-subject>|<set-subject>(kotlin.String?){}[0]
+
+    final fun audience(kotlin/Array<out kotlin/String>...) // com.steamstreet.awskt.jwt/JwtClaimsBuilder.audience|audience(kotlin.Array<out|kotlin.String>...){}[0]
+    final fun claim(kotlin/String, kotlin/Boolean?) // com.steamstreet.awskt.jwt/JwtClaimsBuilder.claim|claim(kotlin.String;kotlin.Boolean?){}[0]
+    final fun claim(kotlin/String, kotlin/Number?) // com.steamstreet.awskt.jwt/JwtClaimsBuilder.claim|claim(kotlin.String;kotlin.Number?){}[0]
+    final fun claim(kotlin/String, kotlin/String?) // com.steamstreet.awskt.jwt/JwtClaimsBuilder.claim|claim(kotlin.String;kotlin.String?){}[0]
+    final fun claim(kotlin/String, kotlinx.serialization.json/JsonElement) // com.steamstreet.awskt.jwt/JwtClaimsBuilder.claim|claim(kotlin.String;kotlinx.serialization.json.JsonElement){}[0]
+}
+
+final class com.steamstreet.awskt.jwt/JwtFormatException : com.steamstreet.awskt.jwt/JwtException { // com.steamstreet.awskt.jwt/JwtFormatException|null[0]
+    constructor <init>(kotlin/String, kotlin/Throwable? = ...) // com.steamstreet.awskt.jwt/JwtFormatException.<init>|<init>(kotlin.String;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.jwt/JwtHeader { // com.steamstreet.awskt.jwt/JwtHeader|null[0]
+    constructor <init>(kotlinx.serialization.json/JsonObject) // com.steamstreet.awskt.jwt/JwtHeader.<init>|<init>(kotlinx.serialization.json.JsonObject){}[0]
+
+    final val algorithm // com.steamstreet.awskt.jwt/JwtHeader.algorithm|{}algorithm[0]
+        final fun <get-algorithm>(): kotlin/String? // com.steamstreet.awskt.jwt/JwtHeader.algorithm.<get-algorithm>|<get-algorithm>(){}[0]
+    final val json // com.steamstreet.awskt.jwt/JwtHeader.json|{}json[0]
+        final fun <get-json>(): kotlinx.serialization.json/JsonObject // com.steamstreet.awskt.jwt/JwtHeader.json.<get-json>|<get-json>(){}[0]
+    final val keyId // com.steamstreet.awskt.jwt/JwtHeader.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String? // com.steamstreet.awskt.jwt/JwtHeader.keyId.<get-keyId>|<get-keyId>(){}[0]
+    final val type // com.steamstreet.awskt.jwt/JwtHeader.type|{}type[0]
+        final fun <get-type>(): kotlin/String? // com.steamstreet.awskt.jwt/JwtHeader.type.<get-type>|<get-type>(){}[0]
+
+    final fun toString(): kotlin/String // com.steamstreet.awskt.jwt/JwtHeader.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.jwt/JwtVerificationException : com.steamstreet.awskt.jwt/JwtException { // com.steamstreet.awskt.jwt/JwtVerificationException|null[0]
+    constructor <init>(com.steamstreet.awskt.jwt/JwtVerificationException.Reason, kotlin/String, kotlin/Throwable? = ...) // com.steamstreet.awskt.jwt/JwtVerificationException.<init>|<init>(com.steamstreet.awskt.jwt.JwtVerificationException.Reason;kotlin.String;kotlin.Throwable?){}[0]
+
+    final val reason // com.steamstreet.awskt.jwt/JwtVerificationException.reason|{}reason[0]
+        final fun <get-reason>(): com.steamstreet.awskt.jwt/JwtVerificationException.Reason // com.steamstreet.awskt.jwt/JwtVerificationException.reason.<get-reason>|<get-reason>(){}[0]
+
+    final enum class Reason : kotlin/Enum<com.steamstreet.awskt.jwt/JwtVerificationException.Reason> { // com.steamstreet.awskt.jwt/JwtVerificationException.Reason|null[0]
+        enum entry ALGORITHM_NOT_ALLOWED // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.ALGORITHM_NOT_ALLOWED|null[0]
+        enum entry AUDIENCE // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.AUDIENCE|null[0]
+        enum entry EXPIRED // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.EXPIRED|null[0]
+        enum entry INVALID_SIGNATURE // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.INVALID_SIGNATURE|null[0]
+        enum entry ISSUER // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.ISSUER|null[0]
+        enum entry KEY_NOT_FOUND // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.KEY_NOT_FOUND|null[0]
+        enum entry MALFORMED // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.MALFORMED|null[0]
+        enum entry NOT_YET_VALID // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.NOT_YET_VALID|null[0]
+        enum entry UNSUPPORTED_HEADER // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.UNSUPPORTED_HEADER|null[0]
+
+        final val entries // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.entries|#static{}entries[0]
+            final fun <get-entries>(): kotlin.enums/EnumEntries<com.steamstreet.awskt.jwt/JwtVerificationException.Reason> // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.entries.<get-entries>|<get-entries>#static(){}[0]
+
+        final fun valueOf(kotlin/String): com.steamstreet.awskt.jwt/JwtVerificationException.Reason // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.valueOf|valueOf#static(kotlin.String){}[0]
+        final fun values(): kotlin/Array<com.steamstreet.awskt.jwt/JwtVerificationException.Reason> // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.values|values#static(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.jwt/JwtVerificationKey { // com.steamstreet.awskt.jwt/JwtVerificationKey|null[0]
+    final val algorithm // com.steamstreet.awskt.jwt/JwtVerificationKey.algorithm|{}algorithm[0]
+        final fun <get-algorithm>(): com.steamstreet.awskt.jwt/JwtAlgorithm // com.steamstreet.awskt.jwt/JwtVerificationKey.algorithm.<get-algorithm>|<get-algorithm>(){}[0]
+    final val keyId // com.steamstreet.awskt.jwt/JwtVerificationKey.keyId|{}keyId[0]
+        final fun <get-keyId>(): kotlin/String? // com.steamstreet.awskt.jwt/JwtVerificationKey.keyId.<get-keyId>|<get-keyId>(){}[0]
+
+    final fun toString(): kotlin/String // com.steamstreet.awskt.jwt/JwtVerificationKey.toString|toString(){}[0]
+
+    final object Companion { // com.steamstreet.awskt.jwt/JwtVerificationKey.Companion|null[0]
+        final suspend fun fromJwk(kotlinx.serialization.json/JsonObject, com.steamstreet.awskt.jwt/JwtAlgorithm): com.steamstreet.awskt.jwt/JwtVerificationKey // com.steamstreet.awskt.jwt/JwtVerificationKey.Companion.fromJwk|fromJwk(kotlinx.serialization.json.JsonObject;com.steamstreet.awskt.jwt.JwtAlgorithm){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.jwt/JwtVerifier { // com.steamstreet.awskt.jwt/JwtVerifier|null[0]
+    constructor <init>(com.steamstreet.awskt.jwt/JwtKeySource, kotlin.collections/Set<kotlin/String>, kotlin.collections/Set<kotlin/String>, kotlin.collections/Set<com.steamstreet.awskt.jwt/JwtAlgorithm> = ..., kotlin.time/Duration = ..., kotlin.time/Clock = ...) // com.steamstreet.awskt.jwt/JwtVerifier.<init>|<init>(com.steamstreet.awskt.jwt.JwtKeySource;kotlin.collections.Set<kotlin.String>;kotlin.collections.Set<kotlin.String>;kotlin.collections.Set<com.steamstreet.awskt.jwt.JwtAlgorithm>;kotlin.time.Duration;kotlin.time.Clock){}[0]
+
+    final fun toString(): kotlin/String // com.steamstreet.awskt.jwt/JwtVerifier.toString|toString(){}[0]
+    final suspend fun verify(kotlin/String): com.steamstreet.awskt.jwt/Jwt // com.steamstreet.awskt.jwt/JwtVerifier.verify|verify(kotlin.String){}[0]
+}
+
+open class com.steamstreet.awskt.jwt/JwtException : kotlin/Exception { // com.steamstreet.awskt.jwt/JwtException|null[0]
+    constructor <init>(kotlin/String, kotlin/Throwable? = ...) // com.steamstreet.awskt.jwt/JwtException.<init>|<init>(kotlin.String;kotlin.Throwable?){}[0]
+}
