@@ -108,10 +108,13 @@ api_post() { curl -fsS -X POST -H "Authorization: Bearer $TOKEN" --max-time 300 
 
 say "Resolving version"
 
+# Expanded below as ${SCOPE_ARG[@]+...}, never plainly: macOS ships bash 3.2, which under `set -u`
+# treats an empty array's "${SCOPE_ARG[@]}" as an unbound variable and exits. That stopped the
+# first real run of this script here, with no --scope given.
 SCOPE_ARG=()
 [[ -n "$SCOPE" ]] && SCOPE_ARG=(-Prelease.scope="$SCOPE")
 
-VERSION="$(./gradlew properties -Prelease.stage=final "${SCOPE_ARG[@]}" --console=plain -q 2>/dev/null \
+VERSION="$(./gradlew properties -Prelease.stage=final ${SCOPE_ARG[@]+"${SCOPE_ARG[@]}"} --console=plain -q 2>/dev/null \
   | grep -E '^version:' | head -1 | awk '{print $2}')"
 
 [[ -n "$VERSION" ]] || die "could not determine the version nebula would use"
@@ -152,7 +155,7 @@ PRE_EXISTING="$(api_get "$OSSRH_API/manual/search/repositories" \
   | python3 -c 'import json,sys; print(" ".join(r["key"] for r in json.load(sys.stdin).get("repositories",[])))')"
 [[ -n "$PRE_EXISTING" ]] && info "note: staging repositories already exist and will be left alone"
 
-./gradlew final "${SCOPE_ARG[@]}" --console=plain || \
+./gradlew final ${SCOPE_ARG[@]+"${SCOPE_ARG[@]}"} --console=plain || \
   die "the release build failed; check whether artifacts were uploaded and whether v$VERSION was tagged before retrying"
 
 git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null || die "release finished but tag v$VERSION was not created"
