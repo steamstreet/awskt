@@ -1,6 +1,320 @@
+public final class com/steamstreet/awskt/lambda/CapacityProviderConfig {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/CapacityProviderConfig$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig;
+	public final fun copy (Lcom/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig;)Lcom/steamstreet/awskt/lambda/CapacityProviderConfig;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/CapacityProviderConfig;Lcom/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/CapacityProviderConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLambdaManagedInstancesCapacityProviderConfig ()Lcom/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/CapacityProviderConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/CapacityProviderConfig$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/CapacityProviderConfig;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/CapacityProviderConfig;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/CapacityProviderConfig$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/DeadLetterConfig {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/DeadLetterConfig$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/DeadLetterConfig;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/DeadLetterConfig;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/DeadLetterConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTargetArn ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/DeadLetterConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/DeadLetterConfig$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/DeadLetterConfig;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/DeadLetterConfig;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/DeadLetterConfig$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/DurableConfig {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/DurableConfig$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Integer;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/lang/Integer;Ljava/lang/Integer;)Lcom/steamstreet/awskt/lambda/DurableConfig;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/DurableConfig;Ljava/lang/Integer;Ljava/lang/Integer;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/DurableConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getExecutionTimeout ()Ljava/lang/Integer;
+	public final fun getRetentionPeriodInDays ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/DurableConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/DurableConfig$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/DurableConfig;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/DurableConfig;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/DurableConfig$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/steamstreet/awskt/lambda/ENILimitReachedException : com/steamstreet/awskt/lambda/LambdaException {
 	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/lambda/EnvironmentError {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/EnvironmentError$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/EnvironmentError;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/EnvironmentError;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/EnvironmentError;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getErrorCode ()Ljava/lang/String;
+	public final fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/EnvironmentError$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/EnvironmentError$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/EnvironmentError;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/EnvironmentError;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/EnvironmentError$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/EnvironmentResponse {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/EnvironmentResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/lambda/EnvironmentError;Ljava/util/Map;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/lambda/EnvironmentError;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/lambda/EnvironmentError;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun copy (Lcom/steamstreet/awskt/lambda/EnvironmentError;Ljava/util/Map;)Lcom/steamstreet/awskt/lambda/EnvironmentResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/EnvironmentResponse;Lcom/steamstreet/awskt/lambda/EnvironmentError;Ljava/util/Map;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/EnvironmentResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getError ()Lcom/steamstreet/awskt/lambda/EnvironmentError;
+	public final fun getVariables ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/EnvironmentResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/EnvironmentResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/EnvironmentResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/EnvironmentResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/EnvironmentResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/EphemeralStorage {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/EphemeralStorage$Companion;
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lcom/steamstreet/awskt/lambda/EphemeralStorage;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/EphemeralStorage;IILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/EphemeralStorage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSize ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/EphemeralStorage$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/EphemeralStorage$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/EphemeralStorage;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/EphemeralStorage;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/EphemeralStorage$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/FileSystemConfig {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/FileSystemConfig$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/FileSystemConfig;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/FileSystemConfig;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/FileSystemConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArn ()Ljava/lang/String;
+	public final fun getLocalMountPath ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/FileSystemConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/FileSystemConfig$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/FileSystemConfig;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/FileSystemConfig;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/FileSystemConfig$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/FunctionConfiguration {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/FunctionConfiguration$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;Lcom/steamstreet/awskt/lambda/CapacityProviderConfig;Ljava/lang/String;JLjava/lang/String;Lcom/steamstreet/awskt/lambda/DeadLetterConfig;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/DurableConfig;Lcom/steamstreet/awskt/lambda/EnvironmentResponse;Lcom/steamstreet/awskt/lambda/EphemeralStorage;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/ImageConfigResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/lambda/LoggingConfig;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/RuntimeVersionConfig;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/SnapStartResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/TenancyConfig;Ljava/lang/Integer;Lcom/steamstreet/awskt/lambda/TracingConfigResponse;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/VpcConfigResponse;)V
+	public synthetic fun <init> (Ljava/util/List;Lcom/steamstreet/awskt/lambda/CapacityProviderConfig;Ljava/lang/String;JLjava/lang/String;Lcom/steamstreet/awskt/lambda/DeadLetterConfig;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/DurableConfig;Lcom/steamstreet/awskt/lambda/EnvironmentResponse;Lcom/steamstreet/awskt/lambda/EphemeralStorage;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/ImageConfigResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/lambda/LoggingConfig;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/RuntimeVersionConfig;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/SnapStartResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/TenancyConfig;Ljava/lang/Integer;Lcom/steamstreet/awskt/lambda/TracingConfigResponse;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/VpcConfigResponse;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component10 ()Lcom/steamstreet/awskt/lambda/EphemeralStorage;
+	public final fun component11 ()Ljava/util/List;
+	public final fun component12 ()Ljava/lang/String;
+	public final fun component13 ()Ljava/lang/String;
+	public final fun component14 ()Ljava/lang/String;
+	public final fun component15 ()Lcom/steamstreet/awskt/lambda/ImageConfigResponse;
+	public final fun component16 ()Ljava/lang/String;
+	public final fun component17 ()Ljava/lang/String;
+	public final fun component18 ()Ljava/lang/String;
+	public final fun component19 ()Ljava/lang/String;
+	public final fun component2 ()Lcom/steamstreet/awskt/lambda/CapacityProviderConfig;
+	public final fun component20 ()Ljava/lang/String;
+	public final fun component21 ()Ljava/util/List;
+	public final fun component22 ()Lcom/steamstreet/awskt/lambda/LoggingConfig;
+	public final fun component23 ()Ljava/lang/String;
+	public final fun component24 ()Ljava/lang/Integer;
+	public final fun component25 ()Ljava/lang/String;
+	public final fun component26 ()Ljava/lang/String;
+	public final fun component27 ()Ljava/lang/String;
+	public final fun component28 ()Ljava/lang/String;
+	public final fun component29 ()Lcom/steamstreet/awskt/lambda/RuntimeVersionConfig;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component30 ()Ljava/lang/String;
+	public final fun component31 ()Ljava/lang/String;
+	public final fun component32 ()Lcom/steamstreet/awskt/lambda/SnapStartResponse;
+	public final fun component33 ()Ljava/lang/String;
+	public final fun component34 ()Ljava/lang/String;
+	public final fun component35 ()Ljava/lang/String;
+	public final fun component36 ()Lcom/steamstreet/awskt/lambda/TenancyConfig;
+	public final fun component37 ()Ljava/lang/Integer;
+	public final fun component38 ()Lcom/steamstreet/awskt/lambda/TracingConfigResponse;
+	public final fun component39 ()Ljava/lang/String;
+	public final fun component4 ()J
+	public final fun component40 ()Lcom/steamstreet/awskt/lambda/VpcConfigResponse;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Lcom/steamstreet/awskt/lambda/DeadLetterConfig;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Lcom/steamstreet/awskt/lambda/DurableConfig;
+	public final fun component9 ()Lcom/steamstreet/awskt/lambda/EnvironmentResponse;
+	public final fun copy (Ljava/util/List;Lcom/steamstreet/awskt/lambda/CapacityProviderConfig;Ljava/lang/String;JLjava/lang/String;Lcom/steamstreet/awskt/lambda/DeadLetterConfig;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/DurableConfig;Lcom/steamstreet/awskt/lambda/EnvironmentResponse;Lcom/steamstreet/awskt/lambda/EphemeralStorage;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/ImageConfigResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/lambda/LoggingConfig;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/RuntimeVersionConfig;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/SnapStartResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/TenancyConfig;Ljava/lang/Integer;Lcom/steamstreet/awskt/lambda/TracingConfigResponse;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/VpcConfigResponse;)Lcom/steamstreet/awskt/lambda/FunctionConfiguration;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/FunctionConfiguration;Ljava/util/List;Lcom/steamstreet/awskt/lambda/CapacityProviderConfig;Ljava/lang/String;JLjava/lang/String;Lcom/steamstreet/awskt/lambda/DeadLetterConfig;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/DurableConfig;Lcom/steamstreet/awskt/lambda/EnvironmentResponse;Lcom/steamstreet/awskt/lambda/EphemeralStorage;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/ImageConfigResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lcom/steamstreet/awskt/lambda/LoggingConfig;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/RuntimeVersionConfig;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/SnapStartResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/TenancyConfig;Ljava/lang/Integer;Lcom/steamstreet/awskt/lambda/TracingConfigResponse;Ljava/lang/String;Lcom/steamstreet/awskt/lambda/VpcConfigResponse;IILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/FunctionConfiguration;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArchitectures ()Ljava/util/List;
+	public final fun getCapacityProviderConfig ()Lcom/steamstreet/awskt/lambda/CapacityProviderConfig;
+	public final fun getCodeSha256 ()Ljava/lang/String;
+	public final fun getCodeSize ()J
+	public final fun getConfigSha256 ()Ljava/lang/String;
+	public final fun getDeadLetterConfig ()Lcom/steamstreet/awskt/lambda/DeadLetterConfig;
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getDurableConfig ()Lcom/steamstreet/awskt/lambda/DurableConfig;
+	public final fun getEnvironment ()Lcom/steamstreet/awskt/lambda/EnvironmentResponse;
+	public final fun getEphemeralStorage ()Lcom/steamstreet/awskt/lambda/EphemeralStorage;
+	public final fun getFileSystemConfigs ()Ljava/util/List;
+	public final fun getFunctionArn ()Ljava/lang/String;
+	public final fun getFunctionName ()Ljava/lang/String;
+	public final fun getHandler ()Ljava/lang/String;
+	public final fun getImageConfigResponse ()Lcom/steamstreet/awskt/lambda/ImageConfigResponse;
+	public final fun getKmsKeyArn ()Ljava/lang/String;
+	public final fun getLastModified ()Ljava/lang/String;
+	public final fun getLastUpdateStatus ()Ljava/lang/String;
+	public final fun getLastUpdateStatusReason ()Ljava/lang/String;
+	public final fun getLastUpdateStatusReasonCode ()Ljava/lang/String;
+	public final fun getLayers ()Ljava/util/List;
+	public final fun getLoggingConfig ()Lcom/steamstreet/awskt/lambda/LoggingConfig;
+	public final fun getMasterArn ()Ljava/lang/String;
+	public final fun getMemorySize ()Ljava/lang/Integer;
+	public final fun getPackageType ()Ljava/lang/String;
+	public final fun getRevisionId ()Ljava/lang/String;
+	public final fun getRole ()Ljava/lang/String;
+	public final fun getRuntime ()Ljava/lang/String;
+	public final fun getRuntimeVersionConfig ()Lcom/steamstreet/awskt/lambda/RuntimeVersionConfig;
+	public final fun getSigningJobArn ()Ljava/lang/String;
+	public final fun getSigningProfileVersionArn ()Ljava/lang/String;
+	public final fun getSnapStart ()Lcom/steamstreet/awskt/lambda/SnapStartResponse;
+	public final fun getState ()Ljava/lang/String;
+	public final fun getStateReason ()Ljava/lang/String;
+	public final fun getStateReasonCode ()Ljava/lang/String;
+	public final fun getTenancyConfig ()Lcom/steamstreet/awskt/lambda/TenancyConfig;
+	public final fun getTimeout ()Ljava/lang/Integer;
+	public final fun getTracingConfig ()Lcom/steamstreet/awskt/lambda/TracingConfigResponse;
+	public final fun getVersion ()Ljava/lang/String;
+	public final fun getVpcConfig ()Lcom/steamstreet/awskt/lambda/VpcConfigResponse;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/FunctionConfiguration$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/FunctionConfiguration$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/FunctionConfiguration;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/FunctionConfiguration;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/FunctionConfiguration$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/steamstreet/awskt/lambda/FunctionErrorException : java/lang/Exception {
@@ -43,6 +357,116 @@ public final synthetic class com/steamstreet/awskt/lambda/FunctionErrorPayload$$
 }
 
 public final class com/steamstreet/awskt/lambda/FunctionErrorPayload$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/FunctionVersion : java/lang/Enum {
+	public static final field ALL Lcom/steamstreet/awskt/lambda/FunctionVersion;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/FunctionVersion;
+	public static fun values ()[Lcom/steamstreet/awskt/lambda/FunctionVersion;
+}
+
+public final class com/steamstreet/awskt/lambda/FunctionsKt {
+	public static final fun functions (Lkotlinx/coroutines/flow/Flow;)Lkotlinx/coroutines/flow/Flow;
+	public static final fun listFunctions (Lcom/steamstreet/awskt/lambda/Lambda;Lcom/steamstreet/awskt/lambda/ListFunctionsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun listFunctions$default (Lcom/steamstreet/awskt/lambda/Lambda;Lcom/steamstreet/awskt/lambda/ListFunctionsRequest;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun listFunctionsPaginated (Lcom/steamstreet/awskt/lambda/Lambda;Lcom/steamstreet/awskt/lambda/ListFunctionsRequest;)Lkotlinx/coroutines/flow/Flow;
+	public static synthetic fun listFunctionsPaginated$default (Lcom/steamstreet/awskt/lambda/Lambda;Lcom/steamstreet/awskt/lambda/ListFunctionsRequest;ILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
+}
+
+public final class com/steamstreet/awskt/lambda/ImageConfig {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/ImageConfig$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;Ljava/util/List;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/util/List;Ljava/util/List;Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/ImageConfig;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/ImageConfig;Ljava/util/List;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/ImageConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCommand ()Ljava/util/List;
+	public final fun getEntryPoint ()Ljava/util/List;
+	public final fun getWorkingDirectory ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/ImageConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/ImageConfig$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/ImageConfig;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/ImageConfig;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/ImageConfig$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/ImageConfigError {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/ImageConfigError$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/ImageConfigError;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/ImageConfigError;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/ImageConfigError;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getErrorCode ()Ljava/lang/String;
+	public final fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/ImageConfigError$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/ImageConfigError$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/ImageConfigError;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/ImageConfigError;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/ImageConfigError$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/ImageConfigResponse {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/ImageConfigResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/lambda/ImageConfigError;Lcom/steamstreet/awskt/lambda/ImageConfig;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/lambda/ImageConfigError;Lcom/steamstreet/awskt/lambda/ImageConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/lambda/ImageConfigError;
+	public final fun component2 ()Lcom/steamstreet/awskt/lambda/ImageConfig;
+	public final fun copy (Lcom/steamstreet/awskt/lambda/ImageConfigError;Lcom/steamstreet/awskt/lambda/ImageConfig;)Lcom/steamstreet/awskt/lambda/ImageConfigResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/ImageConfigResponse;Lcom/steamstreet/awskt/lambda/ImageConfigError;Lcom/steamstreet/awskt/lambda/ImageConfig;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/ImageConfigResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getError ()Lcom/steamstreet/awskt/lambda/ImageConfigError;
+	public final fun getImageConfig ()Lcom/steamstreet/awskt/lambda/ImageConfig;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/ImageConfigResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/ImageConfigResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/ImageConfigResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/ImageConfigResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/ImageConfigResponse$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
@@ -159,8 +583,125 @@ public final class com/steamstreet/awskt/lambda/LambdaKt {
 	public static final fun orThrow (Lcom/steamstreet/awskt/lambda/InvokeResponse;)Lcom/steamstreet/awskt/lambda/InvokeResponse;
 }
 
+public final class com/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/Double;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Double;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/Double;
+	public final fun component3 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/lang/String;Ljava/lang/Double;Ljava/lang/Integer;)Lcom/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig;Ljava/lang/String;Ljava/lang/Double;Ljava/lang/Integer;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCapacityProviderArn ()Ljava/lang/String;
+	public final fun getExecutionEnvironmentMemoryGibPerVCpu ()Ljava/lang/Double;
+	public final fun getPerExecutionEnvironmentMaxConcurrency ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/LambdaManagedInstancesCapacityProviderConfig$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/steamstreet/awskt/lambda/LambdaPayloadTooLargeException : java/lang/Exception {
 	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/steamstreet/awskt/lambda/Layer {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/Layer$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;JLjava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;JLjava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()J
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;JLjava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/Layer;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/Layer;Ljava/lang/String;JLjava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/Layer;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArn ()Ljava/lang/String;
+	public final fun getCodeSize ()J
+	public final fun getSigningJobArn ()Ljava/lang/String;
+	public final fun getSigningProfileVersionArn ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/Layer$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/Layer$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/Layer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/Layer;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/Layer$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/ListFunctionsRequest {
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/lambda/FunctionVersion;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/lambda/FunctionVersion;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/lambda/FunctionVersion;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/Integer;
+	public final fun copy (Lcom/steamstreet/awskt/lambda/FunctionVersion;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lcom/steamstreet/awskt/lambda/ListFunctionsRequest;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/ListFunctionsRequest;Lcom/steamstreet/awskt/lambda/FunctionVersion;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/ListFunctionsRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFunctionVersion ()Lcom/steamstreet/awskt/lambda/FunctionVersion;
+	public final fun getMarker ()Ljava/lang/String;
+	public final fun getMasterRegion ()Ljava/lang/String;
+	public final fun getMaxItems ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/lambda/ListFunctionsResponse {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/ListFunctionsResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/util/List;Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/ListFunctionsResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/ListFunctionsResponse;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/ListFunctionsResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFunctions ()Ljava/util/List;
+	public final fun getNextMarker ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/ListFunctionsResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/ListFunctionsResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/ListFunctionsResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/ListFunctionsResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/ListFunctionsResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/steamstreet/awskt/lambda/LogType : java/lang/Enum {
@@ -169,6 +710,41 @@ public final class com/steamstreet/awskt/lambda/LogType : java/lang/Enum {
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/LogType;
 	public static fun values ()[Lcom/steamstreet/awskt/lambda/LogType;
+}
+
+public final class com/steamstreet/awskt/lambda/LoggingConfig {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/LoggingConfig$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/LoggingConfig;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/LoggingConfig;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/LoggingConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getApplicationLogLevel ()Ljava/lang/String;
+	public final fun getLogFormat ()Ljava/lang/String;
+	public final fun getLogGroup ()Ljava/lang/String;
+	public final fun getSystemLogLevel ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/LoggingConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/LoggingConfig$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/LoggingConfig;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/LoggingConfig;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/LoggingConfig$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/steamstreet/awskt/lambda/ModelKt {
@@ -202,9 +778,102 @@ public final class com/steamstreet/awskt/lambda/ResourceNotReadyException : com/
 	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
+public final class com/steamstreet/awskt/lambda/RuntimeVersionConfig {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/RuntimeVersionConfig$Companion;
+	public fun <init> ()V
+	public fun <init> (Lcom/steamstreet/awskt/lambda/RuntimeVersionError;Ljava/lang/String;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/lambda/RuntimeVersionError;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/steamstreet/awskt/lambda/RuntimeVersionError;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Lcom/steamstreet/awskt/lambda/RuntimeVersionError;Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/RuntimeVersionConfig;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/RuntimeVersionConfig;Lcom/steamstreet/awskt/lambda/RuntimeVersionError;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/RuntimeVersionConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getError ()Lcom/steamstreet/awskt/lambda/RuntimeVersionError;
+	public final fun getRuntimeVersionArn ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/RuntimeVersionConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/RuntimeVersionConfig$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/RuntimeVersionConfig;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/RuntimeVersionConfig;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/RuntimeVersionConfig$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/RuntimeVersionError {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/RuntimeVersionError$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/RuntimeVersionError;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/RuntimeVersionError;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/RuntimeVersionError;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getErrorCode ()Ljava/lang/String;
+	public final fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/RuntimeVersionError$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/RuntimeVersionError$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/RuntimeVersionError;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/RuntimeVersionError;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/RuntimeVersionError$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/steamstreet/awskt/lambda/ServiceException : com/steamstreet/awskt/lambda/LambdaException {
 	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/lambda/SnapStartResponse {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/SnapStartResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/SnapStartResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/SnapStartResponse;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/SnapStartResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getApplyOn ()Ljava/lang/String;
+	public final fun getOptimizationStatus ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/SnapStartResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/SnapStartResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/SnapStartResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/SnapStartResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/SnapStartResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/steamstreet/awskt/lambda/StreamKt {
@@ -218,14 +887,105 @@ public final class com/steamstreet/awskt/lambda/SubnetIPAddressLimitReachedExcep
 	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
+public final class com/steamstreet/awskt/lambda/TenancyConfig {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/TenancyConfig$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/TenancyConfig;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/TenancyConfig;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/TenancyConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTenantIsolationMode ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/TenancyConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/TenancyConfig$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/TenancyConfig;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/TenancyConfig;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/TenancyConfig$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/steamstreet/awskt/lambda/TooManyRequestsException : com/steamstreet/awskt/lambda/LambdaException {
 	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getReason ()Ljava/lang/String;
 }
 
+public final class com/steamstreet/awskt/lambda/TracingConfigResponse {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/TracingConfigResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/TracingConfigResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/TracingConfigResponse;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/TracingConfigResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMode ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/TracingConfigResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/TracingConfigResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/TracingConfigResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/TracingConfigResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/TracingConfigResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/steamstreet/awskt/lambda/UnsupportedMediaTypeException : com/steamstreet/awskt/lambda/LambdaException {
 	public fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/steamstreet/awskt/lambda/VpcConfigResponse {
+	public static final field Companion Lcom/steamstreet/awskt/lambda/VpcConfigResponse$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Boolean;Ljava/util/List;Ljava/util/List;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/Boolean;Ljava/util/List;Ljava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Boolean;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/Boolean;Ljava/util/List;Ljava/util/List;Ljava/lang/String;)Lcom/steamstreet/awskt/lambda/VpcConfigResponse;
+	public static synthetic fun copy$default (Lcom/steamstreet/awskt/lambda/VpcConfigResponse;Ljava/lang/Boolean;Ljava/util/List;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lcom/steamstreet/awskt/lambda/VpcConfigResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIpv6AllowedForDualStack ()Ljava/lang/Boolean;
+	public final fun getSecurityGroupIds ()Ljava/util/List;
+	public final fun getSubnetIds ()Ljava/util/List;
+	public final fun getVpcId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/steamstreet/awskt/lambda/VpcConfigResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/steamstreet/awskt/lambda/VpcConfigResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/steamstreet/awskt/lambda/VpcConfigResponse;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/steamstreet/awskt/lambda/VpcConfigResponse;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/steamstreet/awskt/lambda/VpcConfigResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 

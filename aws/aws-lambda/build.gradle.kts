@@ -11,7 +11,8 @@ description = "A hand-written Lambda invoke client for Kotlin Multiplatform."
  * `InvokeWithResponseStream`. Everything else the Lambda API offers — creating functions, updating
  * code and configuration, aliases, versions, event source mappings, concurrency, layers — is the
  * resource plane, is provisioned by CloudFormation or the CLI rather than by a running function,
- * and is out of scope. See the KDoc on `Lambda`.
+ * and is out of scope. The one exception is `ListFunctions`, a runtime lookup that provisions
+ * nothing. See the KDoc on `Lambda`.
  *
  * Unrelated to the `:lambda:*` modules despite the shared name, and complementary to them: those
  * handle events *arriving* at a function and contain no client, while this one calls a function

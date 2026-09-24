@@ -6,6 +6,16 @@
 // - Show declarations: true
 
 // Library unique name: <com.steamstreet.awskt:aws-lambda>
+final enum class com.steamstreet.awskt.lambda/FunctionVersion : kotlin/Enum<com.steamstreet.awskt.lambda/FunctionVersion> { // com.steamstreet.awskt.lambda/FunctionVersion|null[0]
+    enum entry ALL // com.steamstreet.awskt.lambda/FunctionVersion.ALL|null[0]
+
+    final val entries // com.steamstreet.awskt.lambda/FunctionVersion.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.steamstreet.awskt.lambda/FunctionVersion> // com.steamstreet.awskt.lambda/FunctionVersion.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.steamstreet.awskt.lambda/FunctionVersion // com.steamstreet.awskt.lambda/FunctionVersion.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.steamstreet.awskt.lambda/FunctionVersion> // com.steamstreet.awskt.lambda/FunctionVersion.values|values#static(){}[0]
+}
+
 final enum class com.steamstreet.awskt.lambda/InvocationType : kotlin/Enum<com.steamstreet.awskt.lambda/InvocationType> { // com.steamstreet.awskt.lambda/InvocationType|null[0]
     enum entry DRY_RUN // com.steamstreet.awskt.lambda/InvocationType.DRY_RUN|null[0]
     enum entry EVENT // com.steamstreet.awskt.lambda/InvocationType.EVENT|null[0]
@@ -61,8 +71,349 @@ sealed interface com.steamstreet.awskt.lambda/InvokeStreamEvent { // com.steamst
     }
 }
 
+final class com.steamstreet.awskt.lambda/CapacityProviderConfig { // com.steamstreet.awskt.lambda/CapacityProviderConfig|null[0]
+    constructor <init>(com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig? = ...) // com.steamstreet.awskt.lambda/CapacityProviderConfig.<init>|<init>(com.steamstreet.awskt.lambda.LambdaManagedInstancesCapacityProviderConfig?){}[0]
+
+    final val lambdaManagedInstancesCapacityProviderConfig // com.steamstreet.awskt.lambda/CapacityProviderConfig.lambdaManagedInstancesCapacityProviderConfig|{}lambdaManagedInstancesCapacityProviderConfig[0]
+        final fun <get-lambdaManagedInstancesCapacityProviderConfig>(): com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig? // com.steamstreet.awskt.lambda/CapacityProviderConfig.lambdaManagedInstancesCapacityProviderConfig.<get-lambdaManagedInstancesCapacityProviderConfig>|<get-lambdaManagedInstancesCapacityProviderConfig>(){}[0]
+
+    final fun component1(): com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig? // com.steamstreet.awskt.lambda/CapacityProviderConfig.component1|component1(){}[0]
+    final fun copy(com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig? = ...): com.steamstreet.awskt.lambda/CapacityProviderConfig // com.steamstreet.awskt.lambda/CapacityProviderConfig.copy|copy(com.steamstreet.awskt.lambda.LambdaManagedInstancesCapacityProviderConfig?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/CapacityProviderConfig.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/CapacityProviderConfig.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/CapacityProviderConfig.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/CapacityProviderConfig> { // com.steamstreet.awskt.lambda/CapacityProviderConfig.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/CapacityProviderConfig.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/CapacityProviderConfig.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/CapacityProviderConfig.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/CapacityProviderConfig // com.steamstreet.awskt.lambda/CapacityProviderConfig.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/CapacityProviderConfig) // com.steamstreet.awskt.lambda/CapacityProviderConfig.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.CapacityProviderConfig){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/CapacityProviderConfig.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/CapacityProviderConfig> // com.steamstreet.awskt.lambda/CapacityProviderConfig.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.lambda/DeadLetterConfig { // com.steamstreet.awskt.lambda/DeadLetterConfig|null[0]
+    constructor <init>(kotlin/String? = ...) // com.steamstreet.awskt.lambda/DeadLetterConfig.<init>|<init>(kotlin.String?){}[0]
+
+    final val targetArn // com.steamstreet.awskt.lambda/DeadLetterConfig.targetArn|{}targetArn[0]
+        final fun <get-targetArn>(): kotlin/String? // com.steamstreet.awskt.lambda/DeadLetterConfig.targetArn.<get-targetArn>|<get-targetArn>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.lambda/DeadLetterConfig.component1|component1(){}[0]
+    final fun copy(kotlin/String? = ...): com.steamstreet.awskt.lambda/DeadLetterConfig // com.steamstreet.awskt.lambda/DeadLetterConfig.copy|copy(kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/DeadLetterConfig.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/DeadLetterConfig.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/DeadLetterConfig.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/DeadLetterConfig> { // com.steamstreet.awskt.lambda/DeadLetterConfig.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/DeadLetterConfig.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/DeadLetterConfig.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/DeadLetterConfig.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/DeadLetterConfig // com.steamstreet.awskt.lambda/DeadLetterConfig.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/DeadLetterConfig) // com.steamstreet.awskt.lambda/DeadLetterConfig.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.DeadLetterConfig){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/DeadLetterConfig.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/DeadLetterConfig> // com.steamstreet.awskt.lambda/DeadLetterConfig.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.lambda/DurableConfig { // com.steamstreet.awskt.lambda/DurableConfig|null[0]
+    constructor <init>(kotlin/Int? = ..., kotlin/Int? = ...) // com.steamstreet.awskt.lambda/DurableConfig.<init>|<init>(kotlin.Int?;kotlin.Int?){}[0]
+
+    final val executionTimeout // com.steamstreet.awskt.lambda/DurableConfig.executionTimeout|{}executionTimeout[0]
+        final fun <get-executionTimeout>(): kotlin/Int? // com.steamstreet.awskt.lambda/DurableConfig.executionTimeout.<get-executionTimeout>|<get-executionTimeout>(){}[0]
+    final val retentionPeriodInDays // com.steamstreet.awskt.lambda/DurableConfig.retentionPeriodInDays|{}retentionPeriodInDays[0]
+        final fun <get-retentionPeriodInDays>(): kotlin/Int? // com.steamstreet.awskt.lambda/DurableConfig.retentionPeriodInDays.<get-retentionPeriodInDays>|<get-retentionPeriodInDays>(){}[0]
+
+    final fun component1(): kotlin/Int? // com.steamstreet.awskt.lambda/DurableConfig.component1|component1(){}[0]
+    final fun component2(): kotlin/Int? // com.steamstreet.awskt.lambda/DurableConfig.component2|component2(){}[0]
+    final fun copy(kotlin/Int? = ..., kotlin/Int? = ...): com.steamstreet.awskt.lambda/DurableConfig // com.steamstreet.awskt.lambda/DurableConfig.copy|copy(kotlin.Int?;kotlin.Int?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/DurableConfig.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/DurableConfig.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/DurableConfig.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/DurableConfig> { // com.steamstreet.awskt.lambda/DurableConfig.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/DurableConfig.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/DurableConfig.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/DurableConfig.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/DurableConfig // com.steamstreet.awskt.lambda/DurableConfig.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/DurableConfig) // com.steamstreet.awskt.lambda/DurableConfig.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.DurableConfig){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/DurableConfig.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/DurableConfig> // com.steamstreet.awskt.lambda/DurableConfig.Companion.serializer|serializer(){}[0]
+    }
+}
+
 final class com.steamstreet.awskt.lambda/ENILimitReachedException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/ENILimitReachedException|null[0]
     constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/ENILimitReachedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/EnvironmentError { // com.steamstreet.awskt.lambda/EnvironmentError|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.lambda/EnvironmentError.<init>|<init>(kotlin.String?;kotlin.String?){}[0]
+
+    final val errorCode // com.steamstreet.awskt.lambda/EnvironmentError.errorCode|{}errorCode[0]
+        final fun <get-errorCode>(): kotlin/String? // com.steamstreet.awskt.lambda/EnvironmentError.errorCode.<get-errorCode>|<get-errorCode>(){}[0]
+    final val message // com.steamstreet.awskt.lambda/EnvironmentError.message|{}message[0]
+        final fun <get-message>(): kotlin/String? // com.steamstreet.awskt.lambda/EnvironmentError.message.<get-message>|<get-message>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.lambda/EnvironmentError.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.lambda/EnvironmentError.component2|component2(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.lambda/EnvironmentError // com.steamstreet.awskt.lambda/EnvironmentError.copy|copy(kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/EnvironmentError.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/EnvironmentError.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/EnvironmentError.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/EnvironmentError> { // com.steamstreet.awskt.lambda/EnvironmentError.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/EnvironmentError.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/EnvironmentError.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/EnvironmentError.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/EnvironmentError // com.steamstreet.awskt.lambda/EnvironmentError.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/EnvironmentError) // com.steamstreet.awskt.lambda/EnvironmentError.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.EnvironmentError){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/EnvironmentError.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/EnvironmentError> // com.steamstreet.awskt.lambda/EnvironmentError.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.lambda/EnvironmentResponse { // com.steamstreet.awskt.lambda/EnvironmentResponse|null[0]
+    constructor <init>(com.steamstreet.awskt.lambda/EnvironmentError? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ...) // com.steamstreet.awskt.lambda/EnvironmentResponse.<init>|<init>(com.steamstreet.awskt.lambda.EnvironmentError?;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
+
+    final val error // com.steamstreet.awskt.lambda/EnvironmentResponse.error|{}error[0]
+        final fun <get-error>(): com.steamstreet.awskt.lambda/EnvironmentError? // com.steamstreet.awskt.lambda/EnvironmentResponse.error.<get-error>|<get-error>(){}[0]
+    final val variables // com.steamstreet.awskt.lambda/EnvironmentResponse.variables|{}variables[0]
+        final fun <get-variables>(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.lambda/EnvironmentResponse.variables.<get-variables>|<get-variables>(){}[0]
+
+    final fun component1(): com.steamstreet.awskt.lambda/EnvironmentError? // com.steamstreet.awskt.lambda/EnvironmentResponse.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, kotlin/String>? // com.steamstreet.awskt.lambda/EnvironmentResponse.component2|component2(){}[0]
+    final fun copy(com.steamstreet.awskt.lambda/EnvironmentError? = ..., kotlin.collections/Map<kotlin/String, kotlin/String>? = ...): com.steamstreet.awskt.lambda/EnvironmentResponse // com.steamstreet.awskt.lambda/EnvironmentResponse.copy|copy(com.steamstreet.awskt.lambda.EnvironmentError?;kotlin.collections.Map<kotlin.String,kotlin.String>?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/EnvironmentResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/EnvironmentResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/EnvironmentResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/EnvironmentResponse> { // com.steamstreet.awskt.lambda/EnvironmentResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/EnvironmentResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/EnvironmentResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/EnvironmentResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/EnvironmentResponse // com.steamstreet.awskt.lambda/EnvironmentResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/EnvironmentResponse) // com.steamstreet.awskt.lambda/EnvironmentResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.EnvironmentResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/EnvironmentResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.lambda/EnvironmentResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/EnvironmentResponse> // com.steamstreet.awskt.lambda/EnvironmentResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.lambda/EphemeralStorage { // com.steamstreet.awskt.lambda/EphemeralStorage|null[0]
+    constructor <init>(kotlin/Int) // com.steamstreet.awskt.lambda/EphemeralStorage.<init>|<init>(kotlin.Int){}[0]
+
+    final val size // com.steamstreet.awskt.lambda/EphemeralStorage.size|{}size[0]
+        final fun <get-size>(): kotlin/Int // com.steamstreet.awskt.lambda/EphemeralStorage.size.<get-size>|<get-size>(){}[0]
+
+    final fun component1(): kotlin/Int // com.steamstreet.awskt.lambda/EphemeralStorage.component1|component1(){}[0]
+    final fun copy(kotlin/Int = ...): com.steamstreet.awskt.lambda/EphemeralStorage // com.steamstreet.awskt.lambda/EphemeralStorage.copy|copy(kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/EphemeralStorage.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/EphemeralStorage.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/EphemeralStorage.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/EphemeralStorage> { // com.steamstreet.awskt.lambda/EphemeralStorage.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/EphemeralStorage.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/EphemeralStorage.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/EphemeralStorage.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/EphemeralStorage // com.steamstreet.awskt.lambda/EphemeralStorage.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/EphemeralStorage) // com.steamstreet.awskt.lambda/EphemeralStorage.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.EphemeralStorage){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/EphemeralStorage.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/EphemeralStorage> // com.steamstreet.awskt.lambda/EphemeralStorage.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.lambda/FileSystemConfig { // com.steamstreet.awskt.lambda/FileSystemConfig|null[0]
+    constructor <init>(kotlin/String, kotlin/String) // com.steamstreet.awskt.lambda/FileSystemConfig.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val arn // com.steamstreet.awskt.lambda/FileSystemConfig.arn|{}arn[0]
+        final fun <get-arn>(): kotlin/String // com.steamstreet.awskt.lambda/FileSystemConfig.arn.<get-arn>|<get-arn>(){}[0]
+    final val localMountPath // com.steamstreet.awskt.lambda/FileSystemConfig.localMountPath|{}localMountPath[0]
+        final fun <get-localMountPath>(): kotlin/String // com.steamstreet.awskt.lambda/FileSystemConfig.localMountPath.<get-localMountPath>|<get-localMountPath>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.lambda/FileSystemConfig.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.lambda/FileSystemConfig.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ...): com.steamstreet.awskt.lambda/FileSystemConfig // com.steamstreet.awskt.lambda/FileSystemConfig.copy|copy(kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/FileSystemConfig.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/FileSystemConfig.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/FileSystemConfig.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/FileSystemConfig> { // com.steamstreet.awskt.lambda/FileSystemConfig.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/FileSystemConfig.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/FileSystemConfig.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/FileSystemConfig.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/FileSystemConfig // com.steamstreet.awskt.lambda/FileSystemConfig.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/FileSystemConfig) // com.steamstreet.awskt.lambda/FileSystemConfig.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.FileSystemConfig){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/FileSystemConfig.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/FileSystemConfig> // com.steamstreet.awskt.lambda/FileSystemConfig.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.lambda/FunctionConfiguration { // com.steamstreet.awskt.lambda/FunctionConfiguration|null[0]
+    constructor <init>(kotlin.collections/List<kotlin/String>? = ..., com.steamstreet.awskt.lambda/CapacityProviderConfig? = ..., kotlin/String? = ..., kotlin/Long = ..., kotlin/String? = ..., com.steamstreet.awskt.lambda/DeadLetterConfig? = ..., kotlin/String? = ..., com.steamstreet.awskt.lambda/DurableConfig? = ..., com.steamstreet.awskt.lambda/EnvironmentResponse? = ..., com.steamstreet.awskt.lambda/EphemeralStorage? = ..., kotlin.collections/List<com.steamstreet.awskt.lambda/FileSystemConfig>? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.lambda/ImageConfigResponse? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/List<com.steamstreet.awskt.lambda/Layer>? = ..., com.steamstreet.awskt.lambda/LoggingConfig? = ..., kotlin/String? = ..., kotlin/Int? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.lambda/RuntimeVersionConfig? = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.lambda/SnapStartResponse? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.lambda/TenancyConfig? = ..., kotlin/Int? = ..., com.steamstreet.awskt.lambda/TracingConfigResponse? = ..., kotlin/String? = ..., com.steamstreet.awskt.lambda/VpcConfigResponse? = ...) // com.steamstreet.awskt.lambda/FunctionConfiguration.<init>|<init>(kotlin.collections.List<kotlin.String>?;com.steamstreet.awskt.lambda.CapacityProviderConfig?;kotlin.String?;kotlin.Long;kotlin.String?;com.steamstreet.awskt.lambda.DeadLetterConfig?;kotlin.String?;com.steamstreet.awskt.lambda.DurableConfig?;com.steamstreet.awskt.lambda.EnvironmentResponse?;com.steamstreet.awskt.lambda.EphemeralStorage?;kotlin.collections.List<com.steamstreet.awskt.lambda.FileSystemConfig>?;kotlin.String?;kotlin.String?;kotlin.String?;com.steamstreet.awskt.lambda.ImageConfigResponse?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.List<com.steamstreet.awskt.lambda.Layer>?;com.steamstreet.awskt.lambda.LoggingConfig?;kotlin.String?;kotlin.Int?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;com.steamstreet.awskt.lambda.RuntimeVersionConfig?;kotlin.String?;kotlin.String?;com.steamstreet.awskt.lambda.SnapStartResponse?;kotlin.String?;kotlin.String?;kotlin.String?;com.steamstreet.awskt.lambda.TenancyConfig?;kotlin.Int?;com.steamstreet.awskt.lambda.TracingConfigResponse?;kotlin.String?;com.steamstreet.awskt.lambda.VpcConfigResponse?){}[0]
+
+    final val architectures // com.steamstreet.awskt.lambda/FunctionConfiguration.architectures|{}architectures[0]
+        final fun <get-architectures>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.lambda/FunctionConfiguration.architectures.<get-architectures>|<get-architectures>(){}[0]
+    final val capacityProviderConfig // com.steamstreet.awskt.lambda/FunctionConfiguration.capacityProviderConfig|{}capacityProviderConfig[0]
+        final fun <get-capacityProviderConfig>(): com.steamstreet.awskt.lambda/CapacityProviderConfig? // com.steamstreet.awskt.lambda/FunctionConfiguration.capacityProviderConfig.<get-capacityProviderConfig>|<get-capacityProviderConfig>(){}[0]
+    final val codeSha256 // com.steamstreet.awskt.lambda/FunctionConfiguration.codeSha256|{}codeSha256[0]
+        final fun <get-codeSha256>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.codeSha256.<get-codeSha256>|<get-codeSha256>(){}[0]
+    final val codeSize // com.steamstreet.awskt.lambda/FunctionConfiguration.codeSize|{}codeSize[0]
+        final fun <get-codeSize>(): kotlin/Long // com.steamstreet.awskt.lambda/FunctionConfiguration.codeSize.<get-codeSize>|<get-codeSize>(){}[0]
+    final val configSha256 // com.steamstreet.awskt.lambda/FunctionConfiguration.configSha256|{}configSha256[0]
+        final fun <get-configSha256>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.configSha256.<get-configSha256>|<get-configSha256>(){}[0]
+    final val deadLetterConfig // com.steamstreet.awskt.lambda/FunctionConfiguration.deadLetterConfig|{}deadLetterConfig[0]
+        final fun <get-deadLetterConfig>(): com.steamstreet.awskt.lambda/DeadLetterConfig? // com.steamstreet.awskt.lambda/FunctionConfiguration.deadLetterConfig.<get-deadLetterConfig>|<get-deadLetterConfig>(){}[0]
+    final val description // com.steamstreet.awskt.lambda/FunctionConfiguration.description|{}description[0]
+        final fun <get-description>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.description.<get-description>|<get-description>(){}[0]
+    final val durableConfig // com.steamstreet.awskt.lambda/FunctionConfiguration.durableConfig|{}durableConfig[0]
+        final fun <get-durableConfig>(): com.steamstreet.awskt.lambda/DurableConfig? // com.steamstreet.awskt.lambda/FunctionConfiguration.durableConfig.<get-durableConfig>|<get-durableConfig>(){}[0]
+    final val environment // com.steamstreet.awskt.lambda/FunctionConfiguration.environment|{}environment[0]
+        final fun <get-environment>(): com.steamstreet.awskt.lambda/EnvironmentResponse? // com.steamstreet.awskt.lambda/FunctionConfiguration.environment.<get-environment>|<get-environment>(){}[0]
+    final val ephemeralStorage // com.steamstreet.awskt.lambda/FunctionConfiguration.ephemeralStorage|{}ephemeralStorage[0]
+        final fun <get-ephemeralStorage>(): com.steamstreet.awskt.lambda/EphemeralStorage? // com.steamstreet.awskt.lambda/FunctionConfiguration.ephemeralStorage.<get-ephemeralStorage>|<get-ephemeralStorage>(){}[0]
+    final val fileSystemConfigs // com.steamstreet.awskt.lambda/FunctionConfiguration.fileSystemConfigs|{}fileSystemConfigs[0]
+        final fun <get-fileSystemConfigs>(): kotlin.collections/List<com.steamstreet.awskt.lambda/FileSystemConfig>? // com.steamstreet.awskt.lambda/FunctionConfiguration.fileSystemConfigs.<get-fileSystemConfigs>|<get-fileSystemConfigs>(){}[0]
+    final val functionArn // com.steamstreet.awskt.lambda/FunctionConfiguration.functionArn|{}functionArn[0]
+        final fun <get-functionArn>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.functionArn.<get-functionArn>|<get-functionArn>(){}[0]
+    final val functionName // com.steamstreet.awskt.lambda/FunctionConfiguration.functionName|{}functionName[0]
+        final fun <get-functionName>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.functionName.<get-functionName>|<get-functionName>(){}[0]
+    final val handler // com.steamstreet.awskt.lambda/FunctionConfiguration.handler|{}handler[0]
+        final fun <get-handler>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.handler.<get-handler>|<get-handler>(){}[0]
+    final val imageConfigResponse // com.steamstreet.awskt.lambda/FunctionConfiguration.imageConfigResponse|{}imageConfigResponse[0]
+        final fun <get-imageConfigResponse>(): com.steamstreet.awskt.lambda/ImageConfigResponse? // com.steamstreet.awskt.lambda/FunctionConfiguration.imageConfigResponse.<get-imageConfigResponse>|<get-imageConfigResponse>(){}[0]
+    final val kmsKeyArn // com.steamstreet.awskt.lambda/FunctionConfiguration.kmsKeyArn|{}kmsKeyArn[0]
+        final fun <get-kmsKeyArn>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.kmsKeyArn.<get-kmsKeyArn>|<get-kmsKeyArn>(){}[0]
+    final val lastModified // com.steamstreet.awskt.lambda/FunctionConfiguration.lastModified|{}lastModified[0]
+        final fun <get-lastModified>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.lastModified.<get-lastModified>|<get-lastModified>(){}[0]
+    final val lastUpdateStatus // com.steamstreet.awskt.lambda/FunctionConfiguration.lastUpdateStatus|{}lastUpdateStatus[0]
+        final fun <get-lastUpdateStatus>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.lastUpdateStatus.<get-lastUpdateStatus>|<get-lastUpdateStatus>(){}[0]
+    final val lastUpdateStatusReason // com.steamstreet.awskt.lambda/FunctionConfiguration.lastUpdateStatusReason|{}lastUpdateStatusReason[0]
+        final fun <get-lastUpdateStatusReason>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.lastUpdateStatusReason.<get-lastUpdateStatusReason>|<get-lastUpdateStatusReason>(){}[0]
+    final val lastUpdateStatusReasonCode // com.steamstreet.awskt.lambda/FunctionConfiguration.lastUpdateStatusReasonCode|{}lastUpdateStatusReasonCode[0]
+        final fun <get-lastUpdateStatusReasonCode>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.lastUpdateStatusReasonCode.<get-lastUpdateStatusReasonCode>|<get-lastUpdateStatusReasonCode>(){}[0]
+    final val layers // com.steamstreet.awskt.lambda/FunctionConfiguration.layers|{}layers[0]
+        final fun <get-layers>(): kotlin.collections/List<com.steamstreet.awskt.lambda/Layer>? // com.steamstreet.awskt.lambda/FunctionConfiguration.layers.<get-layers>|<get-layers>(){}[0]
+    final val loggingConfig // com.steamstreet.awskt.lambda/FunctionConfiguration.loggingConfig|{}loggingConfig[0]
+        final fun <get-loggingConfig>(): com.steamstreet.awskt.lambda/LoggingConfig? // com.steamstreet.awskt.lambda/FunctionConfiguration.loggingConfig.<get-loggingConfig>|<get-loggingConfig>(){}[0]
+    final val masterArn // com.steamstreet.awskt.lambda/FunctionConfiguration.masterArn|{}masterArn[0]
+        final fun <get-masterArn>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.masterArn.<get-masterArn>|<get-masterArn>(){}[0]
+    final val memorySize // com.steamstreet.awskt.lambda/FunctionConfiguration.memorySize|{}memorySize[0]
+        final fun <get-memorySize>(): kotlin/Int? // com.steamstreet.awskt.lambda/FunctionConfiguration.memorySize.<get-memorySize>|<get-memorySize>(){}[0]
+    final val packageType // com.steamstreet.awskt.lambda/FunctionConfiguration.packageType|{}packageType[0]
+        final fun <get-packageType>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.packageType.<get-packageType>|<get-packageType>(){}[0]
+    final val revisionId // com.steamstreet.awskt.lambda/FunctionConfiguration.revisionId|{}revisionId[0]
+        final fun <get-revisionId>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.revisionId.<get-revisionId>|<get-revisionId>(){}[0]
+    final val role // com.steamstreet.awskt.lambda/FunctionConfiguration.role|{}role[0]
+        final fun <get-role>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.role.<get-role>|<get-role>(){}[0]
+    final val runtime // com.steamstreet.awskt.lambda/FunctionConfiguration.runtime|{}runtime[0]
+        final fun <get-runtime>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.runtime.<get-runtime>|<get-runtime>(){}[0]
+    final val runtimeVersionConfig // com.steamstreet.awskt.lambda/FunctionConfiguration.runtimeVersionConfig|{}runtimeVersionConfig[0]
+        final fun <get-runtimeVersionConfig>(): com.steamstreet.awskt.lambda/RuntimeVersionConfig? // com.steamstreet.awskt.lambda/FunctionConfiguration.runtimeVersionConfig.<get-runtimeVersionConfig>|<get-runtimeVersionConfig>(){}[0]
+    final val signingJobArn // com.steamstreet.awskt.lambda/FunctionConfiguration.signingJobArn|{}signingJobArn[0]
+        final fun <get-signingJobArn>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.signingJobArn.<get-signingJobArn>|<get-signingJobArn>(){}[0]
+    final val signingProfileVersionArn // com.steamstreet.awskt.lambda/FunctionConfiguration.signingProfileVersionArn|{}signingProfileVersionArn[0]
+        final fun <get-signingProfileVersionArn>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.signingProfileVersionArn.<get-signingProfileVersionArn>|<get-signingProfileVersionArn>(){}[0]
+    final val snapStart // com.steamstreet.awskt.lambda/FunctionConfiguration.snapStart|{}snapStart[0]
+        final fun <get-snapStart>(): com.steamstreet.awskt.lambda/SnapStartResponse? // com.steamstreet.awskt.lambda/FunctionConfiguration.snapStart.<get-snapStart>|<get-snapStart>(){}[0]
+    final val state // com.steamstreet.awskt.lambda/FunctionConfiguration.state|{}state[0]
+        final fun <get-state>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.state.<get-state>|<get-state>(){}[0]
+    final val stateReason // com.steamstreet.awskt.lambda/FunctionConfiguration.stateReason|{}stateReason[0]
+        final fun <get-stateReason>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.stateReason.<get-stateReason>|<get-stateReason>(){}[0]
+    final val stateReasonCode // com.steamstreet.awskt.lambda/FunctionConfiguration.stateReasonCode|{}stateReasonCode[0]
+        final fun <get-stateReasonCode>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.stateReasonCode.<get-stateReasonCode>|<get-stateReasonCode>(){}[0]
+    final val tenancyConfig // com.steamstreet.awskt.lambda/FunctionConfiguration.tenancyConfig|{}tenancyConfig[0]
+        final fun <get-tenancyConfig>(): com.steamstreet.awskt.lambda/TenancyConfig? // com.steamstreet.awskt.lambda/FunctionConfiguration.tenancyConfig.<get-tenancyConfig>|<get-tenancyConfig>(){}[0]
+    final val timeout // com.steamstreet.awskt.lambda/FunctionConfiguration.timeout|{}timeout[0]
+        final fun <get-timeout>(): kotlin/Int? // com.steamstreet.awskt.lambda/FunctionConfiguration.timeout.<get-timeout>|<get-timeout>(){}[0]
+    final val tracingConfig // com.steamstreet.awskt.lambda/FunctionConfiguration.tracingConfig|{}tracingConfig[0]
+        final fun <get-tracingConfig>(): com.steamstreet.awskt.lambda/TracingConfigResponse? // com.steamstreet.awskt.lambda/FunctionConfiguration.tracingConfig.<get-tracingConfig>|<get-tracingConfig>(){}[0]
+    final val version // com.steamstreet.awskt.lambda/FunctionConfiguration.version|{}version[0]
+        final fun <get-version>(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.version.<get-version>|<get-version>(){}[0]
+    final val vpcConfig // com.steamstreet.awskt.lambda/FunctionConfiguration.vpcConfig|{}vpcConfig[0]
+        final fun <get-vpcConfig>(): com.steamstreet.awskt.lambda/VpcConfigResponse? // com.steamstreet.awskt.lambda/FunctionConfiguration.vpcConfig.<get-vpcConfig>|<get-vpcConfig>(){}[0]
+
+    final fun component1(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.lambda/FunctionConfiguration.component1|component1(){}[0]
+    final fun component10(): com.steamstreet.awskt.lambda/EphemeralStorage? // com.steamstreet.awskt.lambda/FunctionConfiguration.component10|component10(){}[0]
+    final fun component11(): kotlin.collections/List<com.steamstreet.awskt.lambda/FileSystemConfig>? // com.steamstreet.awskt.lambda/FunctionConfiguration.component11|component11(){}[0]
+    final fun component12(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component12|component12(){}[0]
+    final fun component13(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component13|component13(){}[0]
+    final fun component14(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component14|component14(){}[0]
+    final fun component15(): com.steamstreet.awskt.lambda/ImageConfigResponse? // com.steamstreet.awskt.lambda/FunctionConfiguration.component15|component15(){}[0]
+    final fun component16(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component16|component16(){}[0]
+    final fun component17(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component17|component17(){}[0]
+    final fun component18(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component18|component18(){}[0]
+    final fun component19(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component19|component19(){}[0]
+    final fun component2(): com.steamstreet.awskt.lambda/CapacityProviderConfig? // com.steamstreet.awskt.lambda/FunctionConfiguration.component2|component2(){}[0]
+    final fun component20(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component20|component20(){}[0]
+    final fun component21(): kotlin.collections/List<com.steamstreet.awskt.lambda/Layer>? // com.steamstreet.awskt.lambda/FunctionConfiguration.component21|component21(){}[0]
+    final fun component22(): com.steamstreet.awskt.lambda/LoggingConfig? // com.steamstreet.awskt.lambda/FunctionConfiguration.component22|component22(){}[0]
+    final fun component23(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component23|component23(){}[0]
+    final fun component24(): kotlin/Int? // com.steamstreet.awskt.lambda/FunctionConfiguration.component24|component24(){}[0]
+    final fun component25(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component25|component25(){}[0]
+    final fun component26(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component26|component26(){}[0]
+    final fun component27(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component27|component27(){}[0]
+    final fun component28(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component28|component28(){}[0]
+    final fun component29(): com.steamstreet.awskt.lambda/RuntimeVersionConfig? // com.steamstreet.awskt.lambda/FunctionConfiguration.component29|component29(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component3|component3(){}[0]
+    final fun component30(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component30|component30(){}[0]
+    final fun component31(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component31|component31(){}[0]
+    final fun component32(): com.steamstreet.awskt.lambda/SnapStartResponse? // com.steamstreet.awskt.lambda/FunctionConfiguration.component32|component32(){}[0]
+    final fun component33(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component33|component33(){}[0]
+    final fun component34(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component34|component34(){}[0]
+    final fun component35(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component35|component35(){}[0]
+    final fun component36(): com.steamstreet.awskt.lambda/TenancyConfig? // com.steamstreet.awskt.lambda/FunctionConfiguration.component36|component36(){}[0]
+    final fun component37(): kotlin/Int? // com.steamstreet.awskt.lambda/FunctionConfiguration.component37|component37(){}[0]
+    final fun component38(): com.steamstreet.awskt.lambda/TracingConfigResponse? // com.steamstreet.awskt.lambda/FunctionConfiguration.component38|component38(){}[0]
+    final fun component39(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component39|component39(){}[0]
+    final fun component4(): kotlin/Long // com.steamstreet.awskt.lambda/FunctionConfiguration.component4|component4(){}[0]
+    final fun component40(): com.steamstreet.awskt.lambda/VpcConfigResponse? // com.steamstreet.awskt.lambda/FunctionConfiguration.component40|component40(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component5|component5(){}[0]
+    final fun component6(): com.steamstreet.awskt.lambda/DeadLetterConfig? // com.steamstreet.awskt.lambda/FunctionConfiguration.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // com.steamstreet.awskt.lambda/FunctionConfiguration.component7|component7(){}[0]
+    final fun component8(): com.steamstreet.awskt.lambda/DurableConfig? // com.steamstreet.awskt.lambda/FunctionConfiguration.component8|component8(){}[0]
+    final fun component9(): com.steamstreet.awskt.lambda/EnvironmentResponse? // com.steamstreet.awskt.lambda/FunctionConfiguration.component9|component9(){}[0]
+    final fun copy(kotlin.collections/List<kotlin/String>? = ..., com.steamstreet.awskt.lambda/CapacityProviderConfig? = ..., kotlin/String? = ..., kotlin/Long = ..., kotlin/String? = ..., com.steamstreet.awskt.lambda/DeadLetterConfig? = ..., kotlin/String? = ..., com.steamstreet.awskt.lambda/DurableConfig? = ..., com.steamstreet.awskt.lambda/EnvironmentResponse? = ..., com.steamstreet.awskt.lambda/EphemeralStorage? = ..., kotlin.collections/List<com.steamstreet.awskt.lambda/FileSystemConfig>? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.lambda/ImageConfigResponse? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/List<com.steamstreet.awskt.lambda/Layer>? = ..., com.steamstreet.awskt.lambda/LoggingConfig? = ..., kotlin/String? = ..., kotlin/Int? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.lambda/RuntimeVersionConfig? = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.lambda/SnapStartResponse? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.lambda/TenancyConfig? = ..., kotlin/Int? = ..., com.steamstreet.awskt.lambda/TracingConfigResponse? = ..., kotlin/String? = ..., com.steamstreet.awskt.lambda/VpcConfigResponse? = ...): com.steamstreet.awskt.lambda/FunctionConfiguration // com.steamstreet.awskt.lambda/FunctionConfiguration.copy|copy(kotlin.collections.List<kotlin.String>?;com.steamstreet.awskt.lambda.CapacityProviderConfig?;kotlin.String?;kotlin.Long;kotlin.String?;com.steamstreet.awskt.lambda.DeadLetterConfig?;kotlin.String?;com.steamstreet.awskt.lambda.DurableConfig?;com.steamstreet.awskt.lambda.EnvironmentResponse?;com.steamstreet.awskt.lambda.EphemeralStorage?;kotlin.collections.List<com.steamstreet.awskt.lambda.FileSystemConfig>?;kotlin.String?;kotlin.String?;kotlin.String?;com.steamstreet.awskt.lambda.ImageConfigResponse?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.collections.List<com.steamstreet.awskt.lambda.Layer>?;com.steamstreet.awskt.lambda.LoggingConfig?;kotlin.String?;kotlin.Int?;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;com.steamstreet.awskt.lambda.RuntimeVersionConfig?;kotlin.String?;kotlin.String?;com.steamstreet.awskt.lambda.SnapStartResponse?;kotlin.String?;kotlin.String?;kotlin.String?;com.steamstreet.awskt.lambda.TenancyConfig?;kotlin.Int?;com.steamstreet.awskt.lambda.TracingConfigResponse?;kotlin.String?;com.steamstreet.awskt.lambda.VpcConfigResponse?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/FunctionConfiguration.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/FunctionConfiguration.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/FunctionConfiguration.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/FunctionConfiguration> { // com.steamstreet.awskt.lambda/FunctionConfiguration.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/FunctionConfiguration.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/FunctionConfiguration.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/FunctionConfiguration.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/FunctionConfiguration // com.steamstreet.awskt.lambda/FunctionConfiguration.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/FunctionConfiguration) // com.steamstreet.awskt.lambda/FunctionConfiguration.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.FunctionConfiguration){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/FunctionConfiguration.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.lambda/FunctionConfiguration.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/FunctionConfiguration> // com.steamstreet.awskt.lambda/FunctionConfiguration.Companion.serializer|serializer(){}[0]
+    }
 }
 
 final class com.steamstreet.awskt.lambda/FunctionErrorException : kotlin/Exception { // com.steamstreet.awskt.lambda/FunctionErrorException|null[0]
@@ -112,6 +463,98 @@ final class com.steamstreet.awskt.lambda/FunctionErrorPayload { // com.steamstre
         final val $childSerializers // com.steamstreet.awskt.lambda/FunctionErrorPayload.Companion.$childSerializers|{}$childSerializers[0]
 
         final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/FunctionErrorPayload> // com.steamstreet.awskt.lambda/FunctionErrorPayload.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.lambda/ImageConfig { // com.steamstreet.awskt.lambda/ImageConfig|null[0]
+    constructor <init>(kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ...) // com.steamstreet.awskt.lambda/ImageConfig.<init>|<init>(kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?;kotlin.String?){}[0]
+
+    final val command // com.steamstreet.awskt.lambda/ImageConfig.command|{}command[0]
+        final fun <get-command>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.lambda/ImageConfig.command.<get-command>|<get-command>(){}[0]
+    final val entryPoint // com.steamstreet.awskt.lambda/ImageConfig.entryPoint|{}entryPoint[0]
+        final fun <get-entryPoint>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.lambda/ImageConfig.entryPoint.<get-entryPoint>|<get-entryPoint>(){}[0]
+    final val workingDirectory // com.steamstreet.awskt.lambda/ImageConfig.workingDirectory|{}workingDirectory[0]
+        final fun <get-workingDirectory>(): kotlin/String? // com.steamstreet.awskt.lambda/ImageConfig.workingDirectory.<get-workingDirectory>|<get-workingDirectory>(){}[0]
+
+    final fun component1(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.lambda/ImageConfig.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.lambda/ImageConfig.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.lambda/ImageConfig.component3|component3(){}[0]
+    final fun copy(kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ...): com.steamstreet.awskt.lambda/ImageConfig // com.steamstreet.awskt.lambda/ImageConfig.copy|copy(kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/ImageConfig.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/ImageConfig.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/ImageConfig.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/ImageConfig> { // com.steamstreet.awskt.lambda/ImageConfig.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/ImageConfig.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/ImageConfig.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/ImageConfig.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/ImageConfig // com.steamstreet.awskt.lambda/ImageConfig.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/ImageConfig) // com.steamstreet.awskt.lambda/ImageConfig.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.ImageConfig){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/ImageConfig.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.lambda/ImageConfig.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/ImageConfig> // com.steamstreet.awskt.lambda/ImageConfig.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.lambda/ImageConfigError { // com.steamstreet.awskt.lambda/ImageConfigError|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.lambda/ImageConfigError.<init>|<init>(kotlin.String?;kotlin.String?){}[0]
+
+    final val errorCode // com.steamstreet.awskt.lambda/ImageConfigError.errorCode|{}errorCode[0]
+        final fun <get-errorCode>(): kotlin/String? // com.steamstreet.awskt.lambda/ImageConfigError.errorCode.<get-errorCode>|<get-errorCode>(){}[0]
+    final val message // com.steamstreet.awskt.lambda/ImageConfigError.message|{}message[0]
+        final fun <get-message>(): kotlin/String? // com.steamstreet.awskt.lambda/ImageConfigError.message.<get-message>|<get-message>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.lambda/ImageConfigError.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.lambda/ImageConfigError.component2|component2(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.lambda/ImageConfigError // com.steamstreet.awskt.lambda/ImageConfigError.copy|copy(kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/ImageConfigError.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/ImageConfigError.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/ImageConfigError.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/ImageConfigError> { // com.steamstreet.awskt.lambda/ImageConfigError.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/ImageConfigError.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/ImageConfigError.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/ImageConfigError.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/ImageConfigError // com.steamstreet.awskt.lambda/ImageConfigError.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/ImageConfigError) // com.steamstreet.awskt.lambda/ImageConfigError.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.ImageConfigError){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/ImageConfigError.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/ImageConfigError> // com.steamstreet.awskt.lambda/ImageConfigError.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.lambda/ImageConfigResponse { // com.steamstreet.awskt.lambda/ImageConfigResponse|null[0]
+    constructor <init>(com.steamstreet.awskt.lambda/ImageConfigError? = ..., com.steamstreet.awskt.lambda/ImageConfig? = ...) // com.steamstreet.awskt.lambda/ImageConfigResponse.<init>|<init>(com.steamstreet.awskt.lambda.ImageConfigError?;com.steamstreet.awskt.lambda.ImageConfig?){}[0]
+
+    final val error // com.steamstreet.awskt.lambda/ImageConfigResponse.error|{}error[0]
+        final fun <get-error>(): com.steamstreet.awskt.lambda/ImageConfigError? // com.steamstreet.awskt.lambda/ImageConfigResponse.error.<get-error>|<get-error>(){}[0]
+    final val imageConfig // com.steamstreet.awskt.lambda/ImageConfigResponse.imageConfig|{}imageConfig[0]
+        final fun <get-imageConfig>(): com.steamstreet.awskt.lambda/ImageConfig? // com.steamstreet.awskt.lambda/ImageConfigResponse.imageConfig.<get-imageConfig>|<get-imageConfig>(){}[0]
+
+    final fun component1(): com.steamstreet.awskt.lambda/ImageConfigError? // com.steamstreet.awskt.lambda/ImageConfigResponse.component1|component1(){}[0]
+    final fun component2(): com.steamstreet.awskt.lambda/ImageConfig? // com.steamstreet.awskt.lambda/ImageConfigResponse.component2|component2(){}[0]
+    final fun copy(com.steamstreet.awskt.lambda/ImageConfigError? = ..., com.steamstreet.awskt.lambda/ImageConfig? = ...): com.steamstreet.awskt.lambda/ImageConfigResponse // com.steamstreet.awskt.lambda/ImageConfigResponse.copy|copy(com.steamstreet.awskt.lambda.ImageConfigError?;com.steamstreet.awskt.lambda.ImageConfig?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/ImageConfigResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/ImageConfigResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/ImageConfigResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/ImageConfigResponse> { // com.steamstreet.awskt.lambda/ImageConfigResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/ImageConfigResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/ImageConfigResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/ImageConfigResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/ImageConfigResponse // com.steamstreet.awskt.lambda/ImageConfigResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/ImageConfigResponse) // com.steamstreet.awskt.lambda/ImageConfigResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.ImageConfigResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/ImageConfigResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/ImageConfigResponse> // com.steamstreet.awskt.lambda/ImageConfigResponse.Companion.serializer|serializer(){}[0]
     }
 }
 
@@ -200,8 +643,163 @@ final class com.steamstreet.awskt.lambda/LambdaConfig { // com.steamstreet.awskt
         final fun <set-retryConfig>(com.steamstreet.awskt.core/RetryConfig) // com.steamstreet.awskt.lambda/LambdaConfig.retryConfig.<set-retryConfig>|<set-retryConfig>(com.steamstreet.awskt.core.RetryConfig){}[0]
 }
 
+final class com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig { // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig|null[0]
+    constructor <init>(kotlin/String, kotlin/Double? = ..., kotlin/Int? = ...) // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.<init>|<init>(kotlin.String;kotlin.Double?;kotlin.Int?){}[0]
+
+    final val capacityProviderArn // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.capacityProviderArn|{}capacityProviderArn[0]
+        final fun <get-capacityProviderArn>(): kotlin/String // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.capacityProviderArn.<get-capacityProviderArn>|<get-capacityProviderArn>(){}[0]
+    final val executionEnvironmentMemoryGibPerVCpu // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.executionEnvironmentMemoryGibPerVCpu|{}executionEnvironmentMemoryGibPerVCpu[0]
+        final fun <get-executionEnvironmentMemoryGibPerVCpu>(): kotlin/Double? // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.executionEnvironmentMemoryGibPerVCpu.<get-executionEnvironmentMemoryGibPerVCpu>|<get-executionEnvironmentMemoryGibPerVCpu>(){}[0]
+    final val perExecutionEnvironmentMaxConcurrency // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.perExecutionEnvironmentMaxConcurrency|{}perExecutionEnvironmentMaxConcurrency[0]
+        final fun <get-perExecutionEnvironmentMaxConcurrency>(): kotlin/Int? // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.perExecutionEnvironmentMaxConcurrency.<get-perExecutionEnvironmentMaxConcurrency>|<get-perExecutionEnvironmentMaxConcurrency>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.component1|component1(){}[0]
+    final fun component2(): kotlin/Double? // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.component2|component2(){}[0]
+    final fun component3(): kotlin/Int? // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/Double? = ..., kotlin/Int? = ...): com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.copy|copy(kotlin.String;kotlin.Double?;kotlin.Int?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig> { // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig) // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.LambdaManagedInstancesCapacityProviderConfig){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig> // com.steamstreet.awskt.lambda/LambdaManagedInstancesCapacityProviderConfig.Companion.serializer|serializer(){}[0]
+    }
+}
+
 final class com.steamstreet.awskt.lambda/LambdaPayloadTooLargeException : kotlin/Exception { // com.steamstreet.awskt.lambda/LambdaPayloadTooLargeException|null[0]
     constructor <init>(kotlin/String) // com.steamstreet.awskt.lambda/LambdaPayloadTooLargeException.<init>|<init>(kotlin.String){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/Layer { // com.steamstreet.awskt.lambda/Layer|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/Long = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.lambda/Layer.<init>|<init>(kotlin.String?;kotlin.Long;kotlin.String?;kotlin.String?){}[0]
+
+    final val arn // com.steamstreet.awskt.lambda/Layer.arn|{}arn[0]
+        final fun <get-arn>(): kotlin/String? // com.steamstreet.awskt.lambda/Layer.arn.<get-arn>|<get-arn>(){}[0]
+    final val codeSize // com.steamstreet.awskt.lambda/Layer.codeSize|{}codeSize[0]
+        final fun <get-codeSize>(): kotlin/Long // com.steamstreet.awskt.lambda/Layer.codeSize.<get-codeSize>|<get-codeSize>(){}[0]
+    final val signingJobArn // com.steamstreet.awskt.lambda/Layer.signingJobArn|{}signingJobArn[0]
+        final fun <get-signingJobArn>(): kotlin/String? // com.steamstreet.awskt.lambda/Layer.signingJobArn.<get-signingJobArn>|<get-signingJobArn>(){}[0]
+    final val signingProfileVersionArn // com.steamstreet.awskt.lambda/Layer.signingProfileVersionArn|{}signingProfileVersionArn[0]
+        final fun <get-signingProfileVersionArn>(): kotlin/String? // com.steamstreet.awskt.lambda/Layer.signingProfileVersionArn.<get-signingProfileVersionArn>|<get-signingProfileVersionArn>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.lambda/Layer.component1|component1(){}[0]
+    final fun component2(): kotlin/Long // com.steamstreet.awskt.lambda/Layer.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.lambda/Layer.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.lambda/Layer.component4|component4(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/Long = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.lambda/Layer // com.steamstreet.awskt.lambda/Layer.copy|copy(kotlin.String?;kotlin.Long;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/Layer.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/Layer.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/Layer.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/Layer> { // com.steamstreet.awskt.lambda/Layer.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/Layer.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/Layer.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/Layer.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/Layer // com.steamstreet.awskt.lambda/Layer.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/Layer) // com.steamstreet.awskt.lambda/Layer.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.Layer){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/Layer.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/Layer> // com.steamstreet.awskt.lambda/Layer.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.lambda/ListFunctionsRequest { // com.steamstreet.awskt.lambda/ListFunctionsRequest|null[0]
+    constructor <init>(com.steamstreet.awskt.lambda/FunctionVersion? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Int? = ...) // com.steamstreet.awskt.lambda/ListFunctionsRequest.<init>|<init>(com.steamstreet.awskt.lambda.FunctionVersion?;kotlin.String?;kotlin.String?;kotlin.Int?){}[0]
+
+    final val functionVersion // com.steamstreet.awskt.lambda/ListFunctionsRequest.functionVersion|{}functionVersion[0]
+        final fun <get-functionVersion>(): com.steamstreet.awskt.lambda/FunctionVersion? // com.steamstreet.awskt.lambda/ListFunctionsRequest.functionVersion.<get-functionVersion>|<get-functionVersion>(){}[0]
+    final val marker // com.steamstreet.awskt.lambda/ListFunctionsRequest.marker|{}marker[0]
+        final fun <get-marker>(): kotlin/String? // com.steamstreet.awskt.lambda/ListFunctionsRequest.marker.<get-marker>|<get-marker>(){}[0]
+    final val masterRegion // com.steamstreet.awskt.lambda/ListFunctionsRequest.masterRegion|{}masterRegion[0]
+        final fun <get-masterRegion>(): kotlin/String? // com.steamstreet.awskt.lambda/ListFunctionsRequest.masterRegion.<get-masterRegion>|<get-masterRegion>(){}[0]
+    final val maxItems // com.steamstreet.awskt.lambda/ListFunctionsRequest.maxItems|{}maxItems[0]
+        final fun <get-maxItems>(): kotlin/Int? // com.steamstreet.awskt.lambda/ListFunctionsRequest.maxItems.<get-maxItems>|<get-maxItems>(){}[0]
+
+    final fun component1(): com.steamstreet.awskt.lambda/FunctionVersion? // com.steamstreet.awskt.lambda/ListFunctionsRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.lambda/ListFunctionsRequest.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.lambda/ListFunctionsRequest.component3|component3(){}[0]
+    final fun component4(): kotlin/Int? // com.steamstreet.awskt.lambda/ListFunctionsRequest.component4|component4(){}[0]
+    final fun copy(com.steamstreet.awskt.lambda/FunctionVersion? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Int? = ...): com.steamstreet.awskt.lambda/ListFunctionsRequest // com.steamstreet.awskt.lambda/ListFunctionsRequest.copy|copy(com.steamstreet.awskt.lambda.FunctionVersion?;kotlin.String?;kotlin.String?;kotlin.Int?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/ListFunctionsRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/ListFunctionsRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/ListFunctionsRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/ListFunctionsResponse { // com.steamstreet.awskt.lambda/ListFunctionsResponse|null[0]
+    constructor <init>(kotlin.collections/List<com.steamstreet.awskt.lambda/FunctionConfiguration>? = ..., kotlin/String? = ...) // com.steamstreet.awskt.lambda/ListFunctionsResponse.<init>|<init>(kotlin.collections.List<com.steamstreet.awskt.lambda.FunctionConfiguration>?;kotlin.String?){}[0]
+
+    final val functions // com.steamstreet.awskt.lambda/ListFunctionsResponse.functions|{}functions[0]
+        final fun <get-functions>(): kotlin.collections/List<com.steamstreet.awskt.lambda/FunctionConfiguration>? // com.steamstreet.awskt.lambda/ListFunctionsResponse.functions.<get-functions>|<get-functions>(){}[0]
+    final val nextMarker // com.steamstreet.awskt.lambda/ListFunctionsResponse.nextMarker|{}nextMarker[0]
+        final fun <get-nextMarker>(): kotlin/String? // com.steamstreet.awskt.lambda/ListFunctionsResponse.nextMarker.<get-nextMarker>|<get-nextMarker>(){}[0]
+
+    final fun component1(): kotlin.collections/List<com.steamstreet.awskt.lambda/FunctionConfiguration>? // com.steamstreet.awskt.lambda/ListFunctionsResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.lambda/ListFunctionsResponse.component2|component2(){}[0]
+    final fun copy(kotlin.collections/List<com.steamstreet.awskt.lambda/FunctionConfiguration>? = ..., kotlin/String? = ...): com.steamstreet.awskt.lambda/ListFunctionsResponse // com.steamstreet.awskt.lambda/ListFunctionsResponse.copy|copy(kotlin.collections.List<com.steamstreet.awskt.lambda.FunctionConfiguration>?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/ListFunctionsResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/ListFunctionsResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/ListFunctionsResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/ListFunctionsResponse> { // com.steamstreet.awskt.lambda/ListFunctionsResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/ListFunctionsResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/ListFunctionsResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/ListFunctionsResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/ListFunctionsResponse // com.steamstreet.awskt.lambda/ListFunctionsResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/ListFunctionsResponse) // com.steamstreet.awskt.lambda/ListFunctionsResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.ListFunctionsResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/ListFunctionsResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.lambda/ListFunctionsResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/ListFunctionsResponse> // com.steamstreet.awskt.lambda/ListFunctionsResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.lambda/LoggingConfig { // com.steamstreet.awskt.lambda/LoggingConfig|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.lambda/LoggingConfig.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val applicationLogLevel // com.steamstreet.awskt.lambda/LoggingConfig.applicationLogLevel|{}applicationLogLevel[0]
+        final fun <get-applicationLogLevel>(): kotlin/String? // com.steamstreet.awskt.lambda/LoggingConfig.applicationLogLevel.<get-applicationLogLevel>|<get-applicationLogLevel>(){}[0]
+    final val logFormat // com.steamstreet.awskt.lambda/LoggingConfig.logFormat|{}logFormat[0]
+        final fun <get-logFormat>(): kotlin/String? // com.steamstreet.awskt.lambda/LoggingConfig.logFormat.<get-logFormat>|<get-logFormat>(){}[0]
+    final val logGroup // com.steamstreet.awskt.lambda/LoggingConfig.logGroup|{}logGroup[0]
+        final fun <get-logGroup>(): kotlin/String? // com.steamstreet.awskt.lambda/LoggingConfig.logGroup.<get-logGroup>|<get-logGroup>(){}[0]
+    final val systemLogLevel // com.steamstreet.awskt.lambda/LoggingConfig.systemLogLevel|{}systemLogLevel[0]
+        final fun <get-systemLogLevel>(): kotlin/String? // com.steamstreet.awskt.lambda/LoggingConfig.systemLogLevel.<get-systemLogLevel>|<get-systemLogLevel>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.lambda/LoggingConfig.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.lambda/LoggingConfig.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // com.steamstreet.awskt.lambda/LoggingConfig.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.lambda/LoggingConfig.component4|component4(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.lambda/LoggingConfig // com.steamstreet.awskt.lambda/LoggingConfig.copy|copy(kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/LoggingConfig.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/LoggingConfig.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/LoggingConfig.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/LoggingConfig> { // com.steamstreet.awskt.lambda/LoggingConfig.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/LoggingConfig.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/LoggingConfig.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/LoggingConfig.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/LoggingConfig // com.steamstreet.awskt.lambda/LoggingConfig.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/LoggingConfig) // com.steamstreet.awskt.lambda/LoggingConfig.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.LoggingConfig){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/LoggingConfig.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/LoggingConfig> // com.steamstreet.awskt.lambda/LoggingConfig.Companion.serializer|serializer(){}[0]
+    }
 }
 
 final class com.steamstreet.awskt.lambda/RecursiveInvocationException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/RecursiveInvocationException|null[0]
@@ -224,12 +822,125 @@ final class com.steamstreet.awskt.lambda/ResourceNotReadyException : com.steamst
     constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/ResourceNotReadyException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
+final class com.steamstreet.awskt.lambda/RuntimeVersionConfig { // com.steamstreet.awskt.lambda/RuntimeVersionConfig|null[0]
+    constructor <init>(com.steamstreet.awskt.lambda/RuntimeVersionError? = ..., kotlin/String? = ...) // com.steamstreet.awskt.lambda/RuntimeVersionConfig.<init>|<init>(com.steamstreet.awskt.lambda.RuntimeVersionError?;kotlin.String?){}[0]
+
+    final val error // com.steamstreet.awskt.lambda/RuntimeVersionConfig.error|{}error[0]
+        final fun <get-error>(): com.steamstreet.awskt.lambda/RuntimeVersionError? // com.steamstreet.awskt.lambda/RuntimeVersionConfig.error.<get-error>|<get-error>(){}[0]
+    final val runtimeVersionArn // com.steamstreet.awskt.lambda/RuntimeVersionConfig.runtimeVersionArn|{}runtimeVersionArn[0]
+        final fun <get-runtimeVersionArn>(): kotlin/String? // com.steamstreet.awskt.lambda/RuntimeVersionConfig.runtimeVersionArn.<get-runtimeVersionArn>|<get-runtimeVersionArn>(){}[0]
+
+    final fun component1(): com.steamstreet.awskt.lambda/RuntimeVersionError? // com.steamstreet.awskt.lambda/RuntimeVersionConfig.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.lambda/RuntimeVersionConfig.component2|component2(){}[0]
+    final fun copy(com.steamstreet.awskt.lambda/RuntimeVersionError? = ..., kotlin/String? = ...): com.steamstreet.awskt.lambda/RuntimeVersionConfig // com.steamstreet.awskt.lambda/RuntimeVersionConfig.copy|copy(com.steamstreet.awskt.lambda.RuntimeVersionError?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/RuntimeVersionConfig.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/RuntimeVersionConfig.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/RuntimeVersionConfig.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/RuntimeVersionConfig> { // com.steamstreet.awskt.lambda/RuntimeVersionConfig.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/RuntimeVersionConfig.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/RuntimeVersionConfig.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/RuntimeVersionConfig.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/RuntimeVersionConfig // com.steamstreet.awskt.lambda/RuntimeVersionConfig.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/RuntimeVersionConfig) // com.steamstreet.awskt.lambda/RuntimeVersionConfig.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.RuntimeVersionConfig){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/RuntimeVersionConfig.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/RuntimeVersionConfig> // com.steamstreet.awskt.lambda/RuntimeVersionConfig.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class com.steamstreet.awskt.lambda/RuntimeVersionError { // com.steamstreet.awskt.lambda/RuntimeVersionError|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.lambda/RuntimeVersionError.<init>|<init>(kotlin.String?;kotlin.String?){}[0]
+
+    final val errorCode // com.steamstreet.awskt.lambda/RuntimeVersionError.errorCode|{}errorCode[0]
+        final fun <get-errorCode>(): kotlin/String? // com.steamstreet.awskt.lambda/RuntimeVersionError.errorCode.<get-errorCode>|<get-errorCode>(){}[0]
+    final val message // com.steamstreet.awskt.lambda/RuntimeVersionError.message|{}message[0]
+        final fun <get-message>(): kotlin/String? // com.steamstreet.awskt.lambda/RuntimeVersionError.message.<get-message>|<get-message>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.lambda/RuntimeVersionError.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.lambda/RuntimeVersionError.component2|component2(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.lambda/RuntimeVersionError // com.steamstreet.awskt.lambda/RuntimeVersionError.copy|copy(kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/RuntimeVersionError.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/RuntimeVersionError.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/RuntimeVersionError.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/RuntimeVersionError> { // com.steamstreet.awskt.lambda/RuntimeVersionError.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/RuntimeVersionError.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/RuntimeVersionError.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/RuntimeVersionError.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/RuntimeVersionError // com.steamstreet.awskt.lambda/RuntimeVersionError.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/RuntimeVersionError) // com.steamstreet.awskt.lambda/RuntimeVersionError.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.RuntimeVersionError){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/RuntimeVersionError.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/RuntimeVersionError> // com.steamstreet.awskt.lambda/RuntimeVersionError.Companion.serializer|serializer(){}[0]
+    }
+}
+
 final class com.steamstreet.awskt.lambda/ServiceException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/ServiceException|null[0]
     constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/ServiceException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
 }
 
+final class com.steamstreet.awskt.lambda/SnapStartResponse { // com.steamstreet.awskt.lambda/SnapStartResponse|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.lambda/SnapStartResponse.<init>|<init>(kotlin.String?;kotlin.String?){}[0]
+
+    final val applyOn // com.steamstreet.awskt.lambda/SnapStartResponse.applyOn|{}applyOn[0]
+        final fun <get-applyOn>(): kotlin/String? // com.steamstreet.awskt.lambda/SnapStartResponse.applyOn.<get-applyOn>|<get-applyOn>(){}[0]
+    final val optimizationStatus // com.steamstreet.awskt.lambda/SnapStartResponse.optimizationStatus|{}optimizationStatus[0]
+        final fun <get-optimizationStatus>(): kotlin/String? // com.steamstreet.awskt.lambda/SnapStartResponse.optimizationStatus.<get-optimizationStatus>|<get-optimizationStatus>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.lambda/SnapStartResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // com.steamstreet.awskt.lambda/SnapStartResponse.component2|component2(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ...): com.steamstreet.awskt.lambda/SnapStartResponse // com.steamstreet.awskt.lambda/SnapStartResponse.copy|copy(kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/SnapStartResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/SnapStartResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/SnapStartResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/SnapStartResponse> { // com.steamstreet.awskt.lambda/SnapStartResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/SnapStartResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/SnapStartResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/SnapStartResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/SnapStartResponse // com.steamstreet.awskt.lambda/SnapStartResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/SnapStartResponse) // com.steamstreet.awskt.lambda/SnapStartResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.SnapStartResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/SnapStartResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/SnapStartResponse> // com.steamstreet.awskt.lambda/SnapStartResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
 final class com.steamstreet.awskt.lambda/SubnetIPAddressLimitReachedException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/SubnetIPAddressLimitReachedException|null[0]
     constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/SubnetIPAddressLimitReachedException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/TenancyConfig { // com.steamstreet.awskt.lambda/TenancyConfig|null[0]
+    constructor <init>(kotlin/String) // com.steamstreet.awskt.lambda/TenancyConfig.<init>|<init>(kotlin.String){}[0]
+
+    final val tenantIsolationMode // com.steamstreet.awskt.lambda/TenancyConfig.tenantIsolationMode|{}tenantIsolationMode[0]
+        final fun <get-tenantIsolationMode>(): kotlin/String // com.steamstreet.awskt.lambda/TenancyConfig.tenantIsolationMode.<get-tenantIsolationMode>|<get-tenantIsolationMode>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.lambda/TenancyConfig.component1|component1(){}[0]
+    final fun copy(kotlin/String = ...): com.steamstreet.awskt.lambda/TenancyConfig // com.steamstreet.awskt.lambda/TenancyConfig.copy|copy(kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/TenancyConfig.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/TenancyConfig.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/TenancyConfig.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/TenancyConfig> { // com.steamstreet.awskt.lambda/TenancyConfig.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/TenancyConfig.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/TenancyConfig.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/TenancyConfig.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/TenancyConfig // com.steamstreet.awskt.lambda/TenancyConfig.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/TenancyConfig) // com.steamstreet.awskt.lambda/TenancyConfig.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.TenancyConfig){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/TenancyConfig.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/TenancyConfig> // com.steamstreet.awskt.lambda/TenancyConfig.Companion.serializer|serializer(){}[0]
+    }
 }
 
 final class com.steamstreet.awskt.lambda/TooManyRequestsException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/TooManyRequestsException|null[0]
@@ -239,8 +950,71 @@ final class com.steamstreet.awskt.lambda/TooManyRequestsException : com.steamstr
         final fun <get-reason>(): kotlin/String? // com.steamstreet.awskt.lambda/TooManyRequestsException.reason.<get-reason>|<get-reason>(){}[0]
 }
 
+final class com.steamstreet.awskt.lambda/TracingConfigResponse { // com.steamstreet.awskt.lambda/TracingConfigResponse|null[0]
+    constructor <init>(kotlin/String? = ...) // com.steamstreet.awskt.lambda/TracingConfigResponse.<init>|<init>(kotlin.String?){}[0]
+
+    final val mode // com.steamstreet.awskt.lambda/TracingConfigResponse.mode|{}mode[0]
+        final fun <get-mode>(): kotlin/String? // com.steamstreet.awskt.lambda/TracingConfigResponse.mode.<get-mode>|<get-mode>(){}[0]
+
+    final fun component1(): kotlin/String? // com.steamstreet.awskt.lambda/TracingConfigResponse.component1|component1(){}[0]
+    final fun copy(kotlin/String? = ...): com.steamstreet.awskt.lambda/TracingConfigResponse // com.steamstreet.awskt.lambda/TracingConfigResponse.copy|copy(kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/TracingConfigResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/TracingConfigResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/TracingConfigResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/TracingConfigResponse> { // com.steamstreet.awskt.lambda/TracingConfigResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/TracingConfigResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/TracingConfigResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/TracingConfigResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/TracingConfigResponse // com.steamstreet.awskt.lambda/TracingConfigResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/TracingConfigResponse) // com.steamstreet.awskt.lambda/TracingConfigResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.TracingConfigResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/TracingConfigResponse.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/TracingConfigResponse> // com.steamstreet.awskt.lambda/TracingConfigResponse.Companion.serializer|serializer(){}[0]
+    }
+}
+
 final class com.steamstreet.awskt.lambda/UnsupportedMediaTypeException : com.steamstreet.awskt.lambda/LambdaException { // com.steamstreet.awskt.lambda/UnsupportedMediaTypeException|null[0]
     constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.lambda/UnsupportedMediaTypeException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.lambda/VpcConfigResponse { // com.steamstreet.awskt.lambda/VpcConfigResponse|null[0]
+    constructor <init>(kotlin/Boolean? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ...) // com.steamstreet.awskt.lambda/VpcConfigResponse.<init>|<init>(kotlin.Boolean?;kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?;kotlin.String?){}[0]
+
+    final val ipv6AllowedForDualStack // com.steamstreet.awskt.lambda/VpcConfigResponse.ipv6AllowedForDualStack|{}ipv6AllowedForDualStack[0]
+        final fun <get-ipv6AllowedForDualStack>(): kotlin/Boolean? // com.steamstreet.awskt.lambda/VpcConfigResponse.ipv6AllowedForDualStack.<get-ipv6AllowedForDualStack>|<get-ipv6AllowedForDualStack>(){}[0]
+    final val securityGroupIds // com.steamstreet.awskt.lambda/VpcConfigResponse.securityGroupIds|{}securityGroupIds[0]
+        final fun <get-securityGroupIds>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.lambda/VpcConfigResponse.securityGroupIds.<get-securityGroupIds>|<get-securityGroupIds>(){}[0]
+    final val subnetIds // com.steamstreet.awskt.lambda/VpcConfigResponse.subnetIds|{}subnetIds[0]
+        final fun <get-subnetIds>(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.lambda/VpcConfigResponse.subnetIds.<get-subnetIds>|<get-subnetIds>(){}[0]
+    final val vpcId // com.steamstreet.awskt.lambda/VpcConfigResponse.vpcId|{}vpcId[0]
+        final fun <get-vpcId>(): kotlin/String? // com.steamstreet.awskt.lambda/VpcConfigResponse.vpcId.<get-vpcId>|<get-vpcId>(){}[0]
+
+    final fun component1(): kotlin/Boolean? // com.steamstreet.awskt.lambda/VpcConfigResponse.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.lambda/VpcConfigResponse.component2|component2(){}[0]
+    final fun component3(): kotlin.collections/List<kotlin/String>? // com.steamstreet.awskt.lambda/VpcConfigResponse.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.lambda/VpcConfigResponse.component4|component4(){}[0]
+    final fun copy(kotlin/Boolean? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin.collections/List<kotlin/String>? = ..., kotlin/String? = ...): com.steamstreet.awskt.lambda/VpcConfigResponse // com.steamstreet.awskt.lambda/VpcConfigResponse.copy|copy(kotlin.Boolean?;kotlin.collections.List<kotlin.String>?;kotlin.collections.List<kotlin.String>?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.lambda/VpcConfigResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.lambda/VpcConfigResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.lambda/VpcConfigResponse.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<com.steamstreet.awskt.lambda/VpcConfigResponse> { // com.steamstreet.awskt.lambda/VpcConfigResponse.$serializer|null[0]
+        final val descriptor // com.steamstreet.awskt.lambda/VpcConfigResponse.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // com.steamstreet.awskt.lambda/VpcConfigResponse.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // com.steamstreet.awskt.lambda/VpcConfigResponse.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): com.steamstreet.awskt.lambda/VpcConfigResponse // com.steamstreet.awskt.lambda/VpcConfigResponse.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, com.steamstreet.awskt.lambda/VpcConfigResponse) // com.steamstreet.awskt.lambda/VpcConfigResponse.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;com.steamstreet.awskt.lambda.VpcConfigResponse){}[0]
+    }
+
+    final object Companion { // com.steamstreet.awskt.lambda/VpcConfigResponse.Companion|null[0]
+        final val $childSerializers // com.steamstreet.awskt.lambda/VpcConfigResponse.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<com.steamstreet.awskt.lambda/VpcConfigResponse> // com.steamstreet.awskt.lambda/VpcConfigResponse.Companion.serializer|serializer(){}[0]
+    }
 }
 
 open class com.steamstreet.awskt.lambda/LambdaException : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.lambda/LambdaException|null[0]
@@ -258,10 +1032,13 @@ final val com.steamstreet.awskt.lambda/LAMBDA_PROTOCOL // com.steamstreet.awskt.
     final fun <get-LAMBDA_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.lambda/LAMBDA_PROTOCOL.<get-LAMBDA_PROTOCOL>|<get-LAMBDA_PROTOCOL>(){}[0]
 
 final fun (com.steamstreet.awskt.lambda/InvokeResponse).com.steamstreet.awskt.lambda/orThrow(): com.steamstreet.awskt.lambda/InvokeResponse // com.steamstreet.awskt.lambda/orThrow|orThrow@com.steamstreet.awskt.lambda.InvokeResponse(){}[0]
+final fun (com.steamstreet.awskt.lambda/Lambda).com.steamstreet.awskt.lambda/listFunctionsPaginated(com.steamstreet.awskt.lambda/ListFunctionsRequest = ...): kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.lambda/ListFunctionsResponse> // com.steamstreet.awskt.lambda/listFunctionsPaginated|listFunctionsPaginated@com.steamstreet.awskt.lambda.Lambda(com.steamstreet.awskt.lambda.ListFunctionsRequest){}[0]
 final fun (kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.lambda/InvokeStreamEvent>).com.steamstreet.awskt.lambda/payloadChunks(): kotlinx.coroutines.flow/Flow<kotlin/ByteArray> // com.steamstreet.awskt.lambda/payloadChunks|payloadChunks@kotlinx.coroutines.flow.Flow<com.steamstreet.awskt.lambda.InvokeStreamEvent>(){}[0]
+final fun (kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.lambda/ListFunctionsResponse>).com.steamstreet.awskt.lambda/functions(): kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.lambda/FunctionConfiguration> // com.steamstreet.awskt.lambda/functions|functions@kotlinx.coroutines.flow.Flow<com.steamstreet.awskt.lambda.ListFunctionsResponse>(){}[0]
 final fun com.steamstreet.awskt.lambda/Lambda(kotlin/Function1<com.steamstreet.awskt.lambda/LambdaConfig, kotlin/Unit> = ...): com.steamstreet.awskt.lambda/Lambda // com.steamstreet.awskt.lambda/Lambda|Lambda(kotlin.Function1<com.steamstreet.awskt.lambda.LambdaConfig,kotlin.Unit>){}[0]
 final suspend fun (com.steamstreet.awskt.lambda/Lambda).com.steamstreet.awskt.lambda/dryRun(kotlin/String, kotlin/String? = ...) // com.steamstreet.awskt.lambda/dryRun|dryRun@com.steamstreet.awskt.lambda.Lambda(kotlin.String;kotlin.String?){}[0]
 final suspend fun (com.steamstreet.awskt.lambda/Lambda).com.steamstreet.awskt.lambda/invokeEvent(kotlin/String, kotlin/String? = ..., kotlin/String? = ...) // com.steamstreet.awskt.lambda/invokeEvent|invokeEvent@com.steamstreet.awskt.lambda.Lambda(kotlin.String;kotlin.String?;kotlin.String?){}[0]
 final suspend fun (com.steamstreet.awskt.lambda/Lambda).com.steamstreet.awskt.lambda/invokeFunction(kotlin/String, kotlin/String? = ..., kotlin/String? = ..., com.steamstreet.awskt.core/OperationSafety = ...): kotlin/String // com.steamstreet.awskt.lambda/invokeFunction|invokeFunction@com.steamstreet.awskt.lambda.Lambda(kotlin.String;kotlin.String?;kotlin.String?;com.steamstreet.awskt.core.OperationSafety){}[0]
+final suspend fun (com.steamstreet.awskt.lambda/Lambda).com.steamstreet.awskt.lambda/listFunctions(com.steamstreet.awskt.lambda/ListFunctionsRequest = ...): com.steamstreet.awskt.lambda/ListFunctionsResponse // com.steamstreet.awskt.lambda/listFunctions|listFunctions@com.steamstreet.awskt.lambda.Lambda(com.steamstreet.awskt.lambda.ListFunctionsRequest){}[0]
 final suspend fun (kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.lambda/InvokeStreamEvent>).com.steamstreet.awskt.lambda/collectPayload(): kotlin/ByteArray // com.steamstreet.awskt.lambda/collectPayload|collectPayload@kotlinx.coroutines.flow.Flow<com.steamstreet.awskt.lambda.InvokeStreamEvent>(){}[0]
 final suspend fun (kotlinx.coroutines.flow/Flow<com.steamstreet.awskt.lambda/InvokeStreamEvent>).com.steamstreet.awskt.lambda/collectPayloadText(): kotlin/String // com.steamstreet.awskt.lambda/collectPayloadText|collectPayloadText@kotlinx.coroutines.flow.Flow<com.steamstreet.awskt.lambda.InvokeStreamEvent>(){}[0]

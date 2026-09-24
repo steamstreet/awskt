@@ -34,6 +34,11 @@ public val LAMBDA_PROTOCOL: AwsProtocol = AwsProtocol.restJson1(endpointPrefix =
  * a function that calls it at runtime is almost always a design mistake. Shipping it here would
  * roughly quintuple the module for capability nothing needs.
  *
+ * **One exception: `ListFunctions`**, as the extensions [listFunctions] and [listFunctionsPaginated].
+ * It provisions nothing. A running scheduler or admin API uses it to find sibling functions by name
+ * before invoking or scheduling them, which makes it a runtime lookup rather than resource-plane
+ * work.
+ *
  * `InvokeAsync` is also absent. It is AWS-deprecated, superseded by `InvocationType=Event` on
  * `Invoke`, and there is no reason to add a second spelling of something this module already does.
  *
