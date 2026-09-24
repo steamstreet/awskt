@@ -5,7 +5,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 AWSKT is a Kotlin multiplatform library collection for building AWS applications, particularly AWS Lambda functions. The
-project is organized as a Gradle multi-module build with both JVM-only and multiplatform (JVM/JS/iOS) modules.
+project is organized as a Gradle multi-module build with both JVM-only and multiplatform modules. Multiplatform modules
+target the JVM and Kotlin/Native (`linuxX64`, `linuxArm64`, `macosArm64`), so that the same code runs as a native Lambda.
+
+Since 3.0 the library does not use the AWS SDK for Kotlin at runtime. The `aws/*` modules are a small hand-written client
+(SigV4 signing plus a Ktor transport). The SDK appears only in JVM tests, in `aws-dynamodb-sdk-adapter`, in
+`aws-sdk-credentials`, and in `lambda-dynamo-streams`'s Kinesis redrive. `NATIVE-AWS-CLIENT-PLAN.md` records the design and
+its decisions.
 
 ## Build Commands
 
@@ -37,9 +43,14 @@ project is organized as a Gradle multi-module build with both JVM-only and multi
 # Create development snapshot
 ./gradlew snapshot
 
-# Release to Maven Central
-./gradlew final
+# Release to Maven Central: use the script, never `./gradlew final` alone
+scripts/release.sh --dry-run
+scripts/release.sh
 ```
+
+`./gradlew final` exits 0 without publishing anything: the Central deployment stops at `VALIDATED`. It also skips the
+`gradle-plugin` included build. `scripts/release.sh` runs the clean check, `final`, the plugin publish, the explicit
+publish of both deployments, and a check that the artifacts answer on repo1. See "Releasing" in `AGENTS.md`.
 
 ## Project Architecture
 
@@ -47,20 +58,38 @@ project is organized as a Gradle multi-module build with both JVM-only and multi
 
 The project follows a multi-module architecture with these key components:
 
+#### AWS Clients (under `aws/`)
+
+- **aws-signing**: SigV4 signing
+- **aws-core**: Signed transport: credentials, endpoints, retries, error mapping. It depends on `aws-signing` and Ktor
+  only, never on `env`, `standards` or `logging` (plan Decision 6), and never on the AWS SDK
+- **aws-dynamodb, aws-eventbridge, aws-s3, aws-sqs, aws-sns, aws-kinesis, aws-kms, aws-lambda, aws-scheduler,
+  aws-secretsmanager, aws-ses, aws-cloudwatch-logs, aws-bedrock-runtime, aws-opensearch**: One client per service,
+  each depending on `aws-core` only
+- **aws-dynamodb-sdk-adapter** (JVM): A `DynamoDb` backed by the SDK's `DynamoDbClient`, for migrations
+- **aws-sdk-credentials** (JVM): Lends the SDK's default credential chain to every awskt client. `aws-core`'s own
+  default reads environment variables only
+
 #### Core Libraries
 
 - **standards**: Language-level extensions and utilities for AWS environments
 - **env**: Environment variable and secrets management
 - **logging**: Structured logging utilities with Kotlin Serialization support
+- **dynamo**: `AttributeValue` and its serialization, shared by `dynamokt` and `aws-dynamodb`
 - **dynamokt**: Type-safe DynamoDB client with coroutine support
+- **dynamokt-exposed**: An Exposed-style table DSL over `dynamokt`
 - **events**: Event handling and EventBridge integration
 - **serialization**: JSON serialization utilities
+- **jwt**: JWT verification (RS256/ES256 with JWKS) and ES256 signing on JVM and native, via cryptography-kotlin
 
 #### Lambda Modules (under `lambda/`)
 
 - **lambda-core**: Base Lambda functionality and annotations
 - **lambda-api-gateway**: API Gateway proxy handler
 - **lambda-api-gateway-ktor**: Ktor integration for API Gateway
+- **lambda-api-gateway-ktor-jwt** (JVM): `JWTPrincipal` and the `ApiGatewayJWT` plugin
+- **lambda-coroutines**: Coroutine context for handlers, including `lambdaContext`
+- **lambda-native**: The Kotlin/Native Lambda runtime; `lambda-native-smoke` is its live smoke test
 - **lambda-appsync**: AppSync resolver support
 - **lambda-dynamo-streams**: DynamoDB Streams processing
 - **lambda-eventbridge**: EventBridge event handling
@@ -74,15 +103,18 @@ The project follows a multi-module architecture with these key components:
 - **appsync**: AppSync utilities
 - **cognito**: Cognito integration
 - **test**: AWS testing utilities and mocks
+- **gradle-plugin** (included build): `com.steamstreet.awskt.native-lambda`, for packaging native Lambdas
 
 ### Build Configuration
 
 - Uses custom Gradle convention plugins:
     - `steamstreet-common.jvm-library-conventions` for JVM-only modules
     - `steamstreet-common.multiplatform-library-conventions` for multiplatform modules
-- Enforces Java 17 toolchain
+- Enforces Java 17 toolchain and Kotlin 2.3
 - Uses explicit API mode for better API stability
-- Supports context receivers (`-Xcontext-receivers`)
+- Supports context parameters (`-Xcontext-parameters`)
+- ABI dumps live in each module's `api/` directory. `checkKotlinAbi` runs in `check`; after an intended public API
+  change, regenerate the dumps with `./gradlew :module:updateKotlinAbi`
 
 ## Testing
 
@@ -121,7 +153,7 @@ The project follows a multi-module architecture with these key components:
 
 ### Key Libraries and Dependencies
 
-- **AWS SDK**: Primary AWS service integration
+- **awskt `aws/*` clients**: AWS service integration (the AWS SDK only in JVM tests and the JVM bridge modules)
 - **Kotlin Coroutines**: Async programming model
 - **Kotlin Serialization**: JSON handling and structured logging
 - **Ktor**: HTTP server framework for Lambda API Gateway integration
@@ -169,10 +201,13 @@ The project follows a multi-module architecture with these key components:
 
 ## Publishing
 
-The project publishes to Maven Central under the `com.steamstreet` group with artifact IDs prefixed with `awskt-`.
+The project publishes to Maven Central as `com.steamstreet.awskt:<module>`, with no `awskt-` prefix, from 3.1.0 on.
+Versions through 3.0.0 published as `com.steamstreet:awskt-<module>`; those coordinates are not maintained.
 
-Current branch: `2.1.x` (development branch)
-Main branch: `main` (stable releases)
+Versions come from nebula.release and follow the branch. The current release line is `3.1.x`, where the default release
+scope is patch. `main` was last updated in 2023 and is not where releases are cut.
+
+Consumers moving from 2.x should read `docs/migrating-2.x-to-3.x.md`.
 
 ## Commit Guidelines
 

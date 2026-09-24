@@ -1,408 +1,362 @@
 # AWSKT - Kotlin/AWS Commons
 
-A comprehensive collection of Kotlin libraries for building AWS applications, with special focus on AWS Lambda functions. The libraries support both JVM-only and multiplatform (JVM/JS/iOS) targets.
+Kotlin libraries for building AWS applications, with a focus on AWS Lambda. Most modules are Kotlin
+Multiplatform and target the JVM and Kotlin/Native (`linuxX64`, `linuxArm64`, `macosArm64`), so the
+same handler code runs on the JVM or as a native `provided.al2023` Lambda.
+
+Since 3.0, awskt does not use the AWS SDK for Kotlin at runtime. The `aws/*` modules are a small
+hand-written client: SigV4 signing plus a Ktor transport.
+
+**Moving from 2.x?** Read [Migrating from awskt 2.x to 3.x](docs/migrating-2.x-to-3.x.md). The
+coordinates changed, and so did the default credentials chain.
 
 ## Installation
 
-Add the following to your `build.gradle.kts`:
-
 ```kotlin
 dependencies {
-    implementation("com.steamstreet:awskt-standards:VERSION")
-    implementation("com.steamstreet:awskt-dynamokt:VERSION")
-    implementation("com.steamstreet:awskt-lambda-core:VERSION")
+    implementation("com.steamstreet.awskt:dynamokt:VERSION")
+    implementation("com.steamstreet.awskt:lambda-api-gateway-ktor:VERSION")
+    implementation("com.steamstreet.awskt:aws-sqs:VERSION")
     // Add other modules as needed
 }
 ```
 
-## Core Libraries
+Artifacts publish as `com.steamstreet.awskt:<module>` from 3.1.0 on. Versions through 3.0.0 used
+`com.steamstreet:awskt-<module>`; those coordinates are no longer maintained, and 3.0.0 should not be
+used. Maven and other non-Gradle builds must name the platform variant of a multiplatform module,
+for example `dynamokt-jvm`.
+
+Requires Kotlin 2.3 and Ktor 3.5 or later. Handlers in `lambda-sqs` and `lambda-sns` declare context
+parameters, so a build that subclasses them needs `-Xcontext-parameters`.
+
+## AWS clients
+
+Each service module exposes an interface, a factory function that takes a configuration lambda, and
+suspending calls. Every service module depends only on `aws-core`.
+
+```kotlin
+val sqs = Sqs { region = "us-west-2" }
+sqs.sendMessage(SendMessageRequest(queueUrl = queueUrl, messageBody = body))
+```
+
+| Module | Provides |
+|---|---|
+| `aws-signing` | SigV4 signing (`SigV4`, `AwsCredentials`) |
+| `aws-core` | The signed transport: credentials, endpoints, retries, error mapping, `AwsServiceClient` |
+| `aws-dynamodb` | `DynamoDb`: items, query, scan, batch and transact operations, table create/describe/delete |
+| `aws-eventbridge` | `EventBridge.putEvents` |
+| `aws-kinesis` | Put records, shards, iterators, get records |
+| `aws-kms` | Encrypt, decrypt, re-encrypt, data keys, random, sign, verify |
+| `aws-lambda` | `invoke`, `invokeWithResponseStream`, and `listFunctions` / `listFunctionsPaginated` |
+| `aws-opensearch` | A signed OpenSearch transport: `request`, `search`, `bulk`, `getDocument` |
+| `aws-s3` | Get, put, head and delete object, and `S3Presigner` |
+| `aws-scheduler` | EventBridge Scheduler schedules |
+| `aws-secretsmanager` | Get, put and batch-get secret values |
+| `aws-ses` | SES v2 `sendEmail` |
+| `aws-sns` | Publish, batch publish, mobile push endpoints and APNs/FCM payloads |
+| `aws-sqs` | Send, receive and delete (single and batch), visibility, queue URLs |
+| `aws-bedrock-runtime` | `converse` and `converseStream` |
+| `aws-cloudwatch-logs` | Logs Insights queries |
+| `aws-dynamodb-sdk-adapter` (JVM) | `SdkBackedDynamoDb`: the `DynamoDb` interface backed by the SDK's `DynamoDbClient` |
+| `aws-sdk-credentials` (JVM) | The AWS SDK's default credential chain for every awskt client |
+
+### Credentials
+
+By default, clients read credentials from **environment variables only**, which is what Lambda
+provides. On ECS or EC2, or on a machine that uses `~/.aws` profiles or SSO, add
+`aws-sdk-credentials` and install the SDK's chain once at startup:
+
+```kotlin
+AwsCredentialsDefaults.provider = sdkDefaultChainCredentialsProvider()
+```
+
+A client can also be given its own provider through `credentialsProvider` in its configuration. The
+region comes from configuration, `AWS_REGION`, `AWS_DEFAULT_REGION` or the `aws.region` system
+property, never from `~/.aws/config`.
+
+## Core libraries
 
 ### standards
-Language-level extensions and utilities optimized for AWS environments. Provides foundational Kotlin extensions that enhance productivity when working with AWS services.
+General Kotlin helpers: `asyncLazy`, `mutableLazy`, `cached(Duration)`, `whenNotNull`,
+string and collection extensions, and exception types such as `NotFoundException`. Also targets JS,
+Wasm and iOS.
 
-**Key Features:**
-- Common AWS utility functions
-- Extension functions for AWS SDK types
-- Result handling and error utilities
+```kotlin
+val config = asyncLazy { loadConfig() }          // config.get() suspends
+var token: String by cached(5.minutes) { fetchToken() }
+```
 
 ### env
-Unified configuration management across multiple sources. Seamlessly access configuration values from environment variables, system properties, or AWS Secrets Manager.
+Reads environment variables through `Env` and the `env()` delegate. A value of the form
+`Secret_<id>[.jsonKey]`, or a separate `Secret_<KEY>` variable, is resolved from Secrets Manager: on
+the JVM through the AWS SDK, and on native through `aws-secretsmanager`. Resolved values are not
+cached, so read them once. On the JVM only, `AppConfig.<app>.<env>.<config>.<key>` values are
+resolved from AppConfig.
 
-**Usage:**
 ```kotlin
-// Automatically resolves from env var, system property, or AWS secret
-val apiKey = getEnvironmentVariable("API_KEY")
-val dbPassword = getSecret("db/password")
+val tableName = Env["TABLE_NAME"]                // throws if missing
+val region: String? = Env.optional("AWS_REGION")
+val apiKey by env("API_KEY")
 ```
 
 ### logging
-Structured logging utilities with Kotlin Serialization support. Provides explicit, type-safe logging without requiring a Logger implementation.
+Structured JSON logging. Common code uses the suspending `log` object, whose context follows
+coroutines; the JVM adds slf4j helpers such as `logInfo` and `logValue`.
 
-**Usage:**
 ```kotlin
-logInfo("Some info")
-logWarning("Some warning", t)
-
-// Log structured data
-@Serializable
-data class UserEvent(val name: String, val action: String)
-logValue("User action", "event", UserEvent("Alice", "login"))
+log.ctx({ "requestId" `is` id }) {
+    log.info("Processing")
+    log.data("User created", user, field = "user")
+}
 ```
-
-Lambda-Core automatically configures CloudWatch Logs integration for proper structured logging.
 
 ### serialization
-JSON serialization utilities built on Kotlin Serialization. Provides common serialization patterns and utilities for AWS services.
-
-**Key Features:**
-- Pre-configured JSON serializers for AWS services
-- Custom serializers for AWS-specific types
-- Utility functions for JSON conversion
+`JsonObject` helpers: `copy`, `copyOrBuild`, `diff`, `comprehensiveDiff` and `deepEquals`.
 
 ### events
-Event handling and EventBridge integration. Simplifies working with AWS EventBridge for event-driven architectures.
+Typed EventBridge publishing. The default poster is an `EventBridgeSubmitter` built on
+`aws-eventbridge`, configured from the `EventBusArn` and `EventPosterSource` environment variables.
 
-**Usage:**
 ```kotlin
-// Define event schema
-@Serializable
-data class OrderEvent(val orderId: String, val status: String)
+@Serializable data class OrderEvent(val orderId: String, val status: String)
+val OrderCompleted = eventSchema<OrderEvent>("OrderCompleted")
 
-// Publish events
-eventBridge.putEvent(OrderEvent("123", "completed"))
+OrderCompleted.post(OrderEvent("123", "completed"))
 ```
+
+### jwt
+JWT verification and signing on the JVM and native, where `com.auth0:java-jwt` cannot run.
+Verifies RS256 and ES256 against a cached JWKS, and signs ES256, for example a Sign in with Apple
+client secret. Built on cryptography-kotlin: the JDK's providers on the JVM, and a statically linked
+OpenSSL 3 on native.
+
+```kotlin
+val apple = JwtVerifier(
+    keys = JwksKeySource("https://appleid.apple.com/auth/keys"),
+    issuers = setOf("https://appleid.apple.com"),
+    audiences = setOf("com.example.app"),
+)
+val userId = apple.verify(idToken).claims.subject
+
+val clientSecret = Es256Signer.fromPrivateKey(p8, keyId = keyId).sign {
+    issuer = teamId; subject = clientId
+    audience("https://appleid.apple.com")
+    issuedAt = now; expiresAt = now + 180.days
+}
+```
+
+`JwtVerifier` requires both issuers and audiences, and takes the accepted algorithms from its own
+configuration, never from the token.
 
 ## DynamoKt
 
 ### dynamokt
-Type-safe DynamoDB client with full coroutine support. Provides a Kotlin-first API for DynamoDB operations with compile-time safety.
+A single-table DynamoDB library built on `aws-dynamodb`. `DynamoKt` holds the table configuration,
+and sessions provide get, put, update, query, scan and transactions over `Item` and `MutableItem`,
+with typed attribute delegates.
 
-**Key Features:**
-- Type-safe table operations
-- Automatic serialization/deserialization
-- Transaction support
-- Query and scan builders
-- Secondary index support
-
-### [Detailed Documentation](docs/dynamokt.md)
-
-## Lambda Modules
-
-### lambda-core
-Foundation for all Lambda functions. Provides base classes, annotations, and core Lambda functionality.
-
-**Key Features:**
-- Lambda handler base classes
-- Automatic CloudWatch Logs configuration
-- Request/response serialization
-- Error handling and recovery
-- Context management
-
-**Usage:**
 ```kotlin
-class MyHandler : LambdaHandler<Request, Response> {
-    override suspend fun handleRequest(input: Request, context: Context): Response {
-        logInfo("Processing request", "id" to input.id)
-        return Response("Success")
-    }
+val db = DynamoKt(table = "app", pkName = "pk", skName = "sk")
+val session = db.session()
+session.put("user#1", "profile") { set("name", "Alice") }
+val name = session.get("user#1", "profile").getString("name")
+```
+
+[Detailed documentation](docs/dynamokt.md)
+
+### dynamo
+`AttributeValue` and its serializer, and the DynamoDB stream models, shared by `dynamokt` and
+`aws-dynamodb`.
+
+### dynamokt-exposed
+An Exposed-style typed DSL for DynamoDB: `Table`, typed columns, `Op` expressions and `Database`.
+See its own [README](dynamokt-exposed/README.md).
+
+## Lambda modules
+
+JVM handlers are abstract classes you subclass. Native handlers are `main` functions built with the
+`*Lambda { }` entry points listed for each module.
+
+### lambda-coroutines
+The coroutine foundation: `lambdaContext`, `lambdaJson` and, on the JVM, the handler base classes
+`SuspendingLambda`, `IOLambda<T, R>` and `InputLambda<T>`.
+
+```kotlin
+class MyHandler : IOLambda<Request, Response>(Request.serializer(), Response.serializer()) {
+    override suspend fun handle(input: Request) = Response("ok ${input.id}")
 }
 ```
 
-### lambda-api-gateway
-API Gateway proxy integration for REST APIs. Simplifies building REST APIs with Lambda.
+### lambda-native
+The Kotlin/Native custom runtime for `provided.al2023`. Native targets only.
 
-**Key Features:**
-- Request/response mapping
-- Path parameter extraction
-- Query string parsing
-- Header management
-- CORS support
-
-**Usage:**
 ```kotlin
-class ApiHandler : ApiGatewayHandler() {
-    override suspend fun handleRequest(event: APIGatewayProxyRequestEvent): APIGatewayProxyResponseEvent {
-        return response(200) {
-            body = Json.encodeToString(Result("success"))
-            headers = mapOf("Content-Type" to "application/json")
-        }
-    }
+fun main() = nativeLambdaIO<Request, Response> { request -> Response("ok ${request.id}") }
+```
+
+The `com.steamstreet.awskt.native-lambda` Gradle plugin, from the `gradle-plugin` included build,
+packages a `linuxArm64` executable as a Lambda bootstrap zip.
+
+### lambda-core
+JVM only. `@AWSLambdaConstructor`, `MockLambdaContext` for tests, and the `aws-lambda-java-core`
+dependency.
+
+### lambda-api-gateway
+Serializable API Gateway models for REST proxy (`ApiGatewayProxyRequest`/`Response`) and HTTP API
+v2 (`ApiGatewayV2HttpRequest`/`Response`), with JVM base classes `ApiGatewayProxyHandler` and
+`ApiGatewayV2HttpHandler`.
+
+```kotlin
+class ApiHandler : ApiGatewayProxyHandler() {
+    override suspend fun handle(input: ApiGatewayProxyRequest) =
+        ApiGatewayProxyResponse(statusCode = 200, body = """{"result":"success"}""")
 }
 ```
 
 ### lambda-api-gateway-ktor
-Ktor server integration for API Gateway. Run full Ktor applications in Lambda.
+Runs a Ktor `Application` behind API Gateway, REST or HTTP API, with no server engine. JVM:
+`APIGatewayLambdaServer` and `APIGatewayV2LambdaServer`. Native: `apiGatewayKtorLambda { }` and
+`apiGatewayV2KtorLambda { }`.
 
-**Key Features:**
-- Full Ktor routing support
-- Middleware and plugins
-- Content negotiation
-- Authentication/Authorization
-- Seamless Lambda deployment
-
-**Usage:**
 ```kotlin
-class KtorHandler : ApiGatewayKtorHandler() {
+class KtorHandler : APIGatewayLambdaServer() {
     override fun Application.module() {
-        routing {
-            get("/users/{id}") {
-                val id = call.parameters["id"]
-                call.respond(User(id!!, "John"))
-            }
-        }
+        routing { get("/users/{id}") { call.respondText(call.parameters["id"]!!) } }
     }
 }
 ```
 
 ### lambda-api-gateway-ktor-jwt
-`JWTPrincipal` and the `ApiGatewayJWT` authentication plugin, for reading Cognito claims off an API
-Gateway request. JVM only — `ktor-server-auth-jwt` wraps `com.auth0:java-jwt` and publishes no klibs.
+JVM only. `JWTPrincipal` and the `ApiGatewayJWT` plugin, which build a Ktor principal from the
+Cognito claims API Gateway has already verified. It does not validate tokens itself.
 
-**Usage:**
 ```kotlin
 class KtorHandler : APIGatewayLambdaServer() {
     override fun Application.module() {
         install(ApiGatewayJWT)
         routing {
             authenticate("api-gateway-jwt") {
-                get("/me") {
-                    val principal = call.principal<JWTPrincipal>()
-                    call.respond(principal!!.subject)
-                }
+                get("/me") { call.respond(call.principal<JWTPrincipal>()!!.subject) }
             }
         }
     }
 }
 ```
 
-> **Breaking change in 3.0.** These declarations used to ship inside `lambda-api-gateway-ktor`, which
-> made every consumer of that adapter resolve `ktor-server-auth-jwt`, `com.auth0:java-jwt` and
-> `com.auth0:jwks-rsa` whether or not it used them. They now live in this separate artifact, in the
-> **same package**, so no imports change — but a build that uses `JWTPrincipal` or `ApiGatewayJWT`
-> and does not already declare `ktor-server-auth-jwt` itself must add:
-> ```kotlin
-> implementation("com.steamstreet:awskt-lambda-api-gateway-ktor-jwt:VERSION")
-> ```
+These declarations shipped inside `lambda-api-gateway-ktor` before 3.0. They are now in this
+separate artifact, in the same package:
+`implementation("com.steamstreet.awskt:lambda-api-gateway-ktor-jwt:VERSION")`.
 
 ### lambda-appsync
-AppSync resolver support for GraphQL APIs. Build GraphQL resolvers with type safety.
+Direct-Lambda AppSync resolvers routed by `type` and `field`. JVM: `appSync(input, output, context) { }`.
+Native: `appSyncLambda { }`.
 
-**Key Features:**
-- Direct resolver pattern
-- Pipeline resolver support
-- Type-safe field resolution
-- Batch resolver optimization
-
-**Usage:**
 ```kotlin
-class UserResolver : AppSyncResolver<GetUserRequest, User> {
-    override suspend fun resolve(request: GetUserRequest): User {
-        return dynamoKt.get(request.id)
+appSync(input, output, context) {
+    type("Query") {
+        field("getUser", GetUserArgs.serializer(), User.serializer()) { args -> loadUser(args.id) }
     }
 }
 ```
 
 ### lambda-dynamo-streams
-DynamoDB Streams event processing. Handle table changes with type-safe stream records.
+DynamoDB stream handlers that accept direct, Kinesis-wrapped and SQS-redriven batches. JVM:
+`DynamoStreamHandler` and `DynamoKtStreamHandler`. Native: `dynamoStreamLambda`,
+`dynamoStreamBatchLambda` and `dynamoKtStreamLambda`.
 
-**Key Features:**
-- Stream record deserialization
-- Change type detection (INSERT/MODIFY/REMOVE)
-- Old/new image comparison
-- Batch processing support
-
-**Usage:**
 ```kotlin
-class StreamHandler : DynamoStreamHandler<User>() {
-    override suspend fun handleRecord(record: StreamRecord<User>) {
-        when (record.eventName) {
-            INSERT -> handleNewUser(record.newImage)
-            MODIFY -> handleUserUpdate(record.oldImage, record.newImage)
-            REMOVE -> handleUserDeletion(record.oldImage)
-        }
+class StreamHandler : DynamoStreamHandler() {
+    override suspend fun handleRecord(record: DynamoStreamEvent) {
+        when (record.eventName) { "INSERT" -> onInsert(record); "REMOVE" -> onRemove(record) }
     }
 }
 ```
 
 ### lambda-eventbridge
-EventBridge event handling. Process custom events from EventBridge.
+Routes EventBridge events by detail-type through an `EventSchema`. JVM: `EventBridgeFunction`.
+Native: `eventBridgeLambda { }`.
 
-**Key Features:**
-- Type-safe event deserialization
-- Event pattern matching
-- Rule-based routing
-- Event replay support
-
-**Usage:**
 ```kotlin
-class OrderEventHandler : EventBridgeHandler<OrderEvent>() {
-    override suspend fun handleEvent(event: OrderEvent, context: Context) {
-        when (event.status) {
-            "pending" -> processPendingOrder(event)
-            "completed" -> finalizeOrder(event)
-        }
+class OrderHandler : EventBridgeFunction {
+    override suspend fun EventBridgeHandlerConfig.onEvent() {
+        on(OrderCompleted) { order -> finalizeOrder(order) }
     }
 }
 ```
 
 ### lambda-kinesis
-Kinesis stream processing. Handle high-throughput streaming data.
+Kinesis event models and batch processing with partial failures. JVM: `KinesisHandler`. Native:
+`kinesisLambda` and `kinesisBatchLambda`.
 
-**Key Features:**
-- Record deserialization
-- Batch processing
-- Checkpointing support
-- Error handling with DLQ
-
-**Usage:**
 ```kotlin
-class KinesisProcessor : KinesisHandler<SensorData>() {
-    override suspend fun processRecords(records: List<SensorData>) {
-        records.forEach { data ->
-            if (data.temperature > threshold) {
-                sendAlert(data)
-            }
-        }
+class Processor : KinesisHandler() {
+    override suspend fun processRecord(record: KinesisRecord) {
+        val data = Json.decodeFromString<SensorData>(record.kinesis.decodedData())
     }
 }
 ```
 
 ### lambda-sns
-SNS message processing. Handle notifications from SNS topics.
+Typed or raw SNS message processing. JVM: `SNSHandler<T>`. Native: `snsLambda` and `snsRawLambda`.
 
-**Key Features:**
-- Message deserialization
-- Message attributes support
-- Subscription confirmation
-- Error handling
-
-**Usage:**
 ```kotlin
-class NotificationHandler : SNSHandler<Notification>() {
-    override suspend fun handleMessage(message: Notification, context: Context) {
-        sendEmail(message.recipient, message.content)
-        logInfo("Notification sent", "recipient" to message.recipient)
-    }
+class NotificationHandler : SNSHandler<Notification>(Notification.serializer()) {
+    context(record: SnsRecord)
+    override suspend fun handleMessage(message: Notification) = sendEmail(message)
 }
 ```
 
 ### lambda-sqs
-SQS message processing. Build reliable queue processors.
+SQS handlers. JVM: `SQSRawHandler`, `SQSHandler<T>`, and `SQSBatchHandler<T>`, which reports
+partial batch failures. Native: `sqsLambda`, `sqsBatchLambda` and `sqsRawLambda`.
 
-**Key Features:**
-- Message deserialization
-- Batch processing
-- Dead letter queue support
-- Message visibility timeout
-- FIFO queue support
-
-**Usage:**
 ```kotlin
-class QueueProcessor : SQSHandler<Job>() {
-    override suspend fun processMessage(message: Job): ProcessingResult {
-        return try {
-            executeJob(message)
-            ProcessingResult.Success
-        } catch (e: Exception) {
-            ProcessingResult.Retry
-        }
+class QueueProcessor : SQSBatchHandler<Job>(Job.serializer()) {
+    context(record: SQSRecord)
+    override suspend fun handleMessage(message: Job) {
+        executeJob(message)   // a throw fails only this record
     }
 }
 ```
 
 ### lambda-logging
-Lambda-specific logging configuration. Enhanced logging for Lambda environments.
+JVM only. A logback appender that writes through the Lambda runtime logger, and a default
+`logback.xml` that uses it with a JSON encoder. Adding the dependency is enough.
 
-**Key Features:**
-- Automatic CloudWatch Logs integration
-- Correlation ID tracking
-- Request/response logging
-- Performance metrics
-- Error aggregation
+### lambda-default
+JVM only. A bundle of `env`, `standards`, `logging`, `lambda-core` and `lambda-logging`.
 
-## Supporting Modules
+## Supporting modules
 
 ### appsync
-AppSync utilities and helpers. Additional tools for GraphQL API development.
-
-**Key Features:**
-- GraphQL schema utilities
-- Subscription helpers
-- Real-time data synchronization
-- Offline support utilities
+Serializable AppSync resolver event models (`AppSyncContext`, `AppSyncIdentity`, `AppSyncInfo`) and
+`String.appSyncContext()`.
 
 ### cognito
-Cognito integration utilities. Simplify user authentication and authorization.
-
-**Key Features:**
-- User pool management
-- Token validation
-- Custom authorizers
-- User attributes handling
-- MFA support
-
-**Usage:**
-```kotlin
-// Validate JWT token
-val claims = cognito.validateToken(token)
-
-// Get user attributes
-val user = cognito.getUser(userId)
-```
+JVM only. `Claims` and `JsonElementClaim`, which read Cognito claims from API Gateway's authorizer
+context. This is the support code for `lambda-api-gateway-ktor-jwt`.
 
 ### test
-AWS testing utilities and mocks. Comprehensive testing support for AWS services.
-
-**Key Features:**
-- Local DynamoDB testing
-- Lambda test harness
-- Mock AWS services
-- Integration test utilities
-- Testcontainers integration
-
-**Usage:**
-```kotlin
-class UserServiceTest {
-    @Test
-    fun testUserCreation() = runTest {
-        withLocalDynamoDB { dynamo ->
-            val service = UserService(dynamo)
-            val user = service.createUser("Alice")
-            
-            user.name shouldBe "Alice"
-        }
-    }
-}
-```
-
-## Build Configuration
-
-### Gradle Setup
-
-The project uses convention plugins for consistent build configuration:
+JVM only. Local and mock AWS for tests: `DynamoLocalBuilder` (in-memory DynamoDB Local, exposing an
+SDK `DynamoDbClient`), `EventBridgeMock` (which implements awskt's `EventBridge`, with pattern
+matching), `DynamoStreamRunner`, `SqsMock`, `S3Local` and `LambdaMock`.
 
 ```kotlin
-plugins {
-    id("steamstreet-common.jvm-library-conventions") // For JVM-only modules
-    id("steamstreet-common.multiplatform-library-conventions") // For multiplatform
-}
+val dynamo = DynamoLocalBuilder().apply { start() }
+val db = DynamoKt("table", builder = { SdkBackedDynamoDb(dynamo.client) })
+val events = EventBridgeMock()
 ```
 
-### Key Features
-- Java 17 toolchain
-- Explicit API mode for better API stability
-- Context receivers support (`-Xcontext-receivers`)
-- Kotlin coroutines throughout
-- Comprehensive test coverage
+## Building
 
-## Contributing
+```bash
+./gradlew check                     # every target, tests and ABI dumps
+./gradlew :aws:aws-core:allTests    # one module
+./gradlew publishToMavenLocal
+```
 
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new functionality
-4. Ensure all tests pass: `./gradlew test`
-5. Submit a pull request
+Releases are cut with `scripts/release.sh`; see "Releasing" in [AGENTS.md](AGENTS.md).
 
 ## License
 
-Licensed under the Apache License 2.0. See LICENSE file for details.
+MIT. See [LICENSE](LICENSE).

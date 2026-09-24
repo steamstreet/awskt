@@ -8,7 +8,7 @@ DynamoKt is a type-safe Kotlin library for working with AWS DynamoDB. It provide
 
 ```kotlin
 dependencies {
-    implementation("com.steamstreet:awskt-dynamokt:2.1.0")
+    implementation("com.steamstreet.awskt:dynamokt:3.1.1")
 }
 ```
 
@@ -16,9 +16,10 @@ dependencies {
 
 ```xml
 <dependency>
-    <groupId>com.steamstreet</groupId>
-    <artifactId>awskt-dynamokt</artifactId>
-    <version>2.1.0</version>
+    <groupId>com.steamstreet.awskt</groupId>
+    <!-- Maven does not resolve Gradle module metadata, so name the JVM variant. -->
+    <artifactId>dynamokt-jvm</artifactId>
+    <version>3.1.1</version>
 </dependency>
 ```
 
@@ -63,23 +64,31 @@ fun main() = runBlocking {
 ### Initialize DynamoDB connection with custom credentials
 
 ```kotlin
-import aws.sdk.kotlin.services.dynamodb.DynamoDbClient
-import aws.smithy.kotlin.runtime.auth.awscredentials.StaticCredentialsProvider
+import com.steamstreet.awskt.core.StaticCredentialsProvider
+import com.steamstreet.awskt.dynamodb.DynamoDb
+import com.steamstreet.awskt.signing.AwsCredentials
 
 val dynamoKt = DynamoKt(
     table = "my-table",
     pkName = "pk",
     skName = "sk",
-    builder = { credentialsProvider ->
-        DynamoDbClient {
+    builder = { _ ->
+        DynamoDb {
             region = "us-east-1"
-            credentialsProvider = StaticCredentialsProvider {
-                accessKeyId = "YOUR_ACCESS_KEY"
-                secretAccessKey = "YOUR_SECRET_KEY"
-            }
+            credentialsProvider = StaticCredentialsProvider(
+                AwsCredentials(accessKeyId = "YOUR_ACCESS_KEY", secretAccessKey = "YOUR_SECRET_KEY"),
+            )
         }
     }
 )
+```
+
+Without a `builder`, DynamoKt uses `aws-core`'s default credentials, which read **environment
+variables only**. That is right for Lambda. On ECS, EC2 or a machine that uses `~/.aws` profiles,
+add `com.steamstreet.awskt:aws-sdk-credentials` and install the AWS SDK's chain once at startup:
+
+```kotlin
+AwsCredentialsDefaults.provider = sdkDefaultChainCredentialsProvider()
 ```
 
 ### Create and update items
@@ -438,32 +447,9 @@ class UserRepository(private val session: DynamoKtSession) {
 
 ## Versioning & Migration Notes
 
-DynamoKt follows semantic versioning (SemVer). Current version: 2.1.0
+DynamoKt is versioned with the rest of awskt. The current line is 3.1, published as
+`com.steamstreet.awskt:dynamokt`.
 
-### Breaking Changes in 2.0
-
-- Migrated from AWS SDK v1 to v2 (kotlin SDK)
-- All operations are now suspend functions requiring coroutines
-- Changed from `AmazonDynamoDB` to `DynamoDbClient`
-- Removed synchronous API methods
-
-### Migration from 1.x to 2.x
-
-```kotlin
-// Old (1.x)
-val dynamo = DynamoKt(table = "my-table")
-val item = dynamo.get("key", "sort")  // Blocking
-
-// New (2.x)
-val dynamo = DynamoKt(table = "my-table")
-val item = runBlocking {
-    dynamo.session().get("key", "sort")  // Suspend function
-}
-```
-
-### Future Deprecations
-
-- Legacy builder methods will be removed in 3.0
-- Synchronous wrapper methods are deprecated
-
-For latest updates and migration guides, check the project repository.
+3.0 replaced the AWS SDK's `DynamoDbClient` with awskt's own `DynamoDb` client. It also moved
+`AttributeValue` into `com.steamstreet.dynamokt` and changed the credentials, date and enum-serializer
+APIs. See [Migrating from awskt 2.x to 3.x](migrating-2.x-to-3.x.md).
