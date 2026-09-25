@@ -48,7 +48,8 @@ import java.util.concurrent.TimeUnit
  * OkHttp keeps 5 idle connections by default. Any burst wider than that closes the surplus when it
  * ends, and those sockets go to TIME_WAIT just as they did under CIO. The pool is shared across the
  * JVM, as Ktor's own default pool is, so an application that builds many clients holds at most 100
- * idle sockets, not 100 per client. Idle connections are closed after OkHttp's default 5 minutes.
+ * idle sockets, not 100 per client. Idle connections are closed after 15 seconds, not OkHttp's
+ * default 5 minutes, which outlasted the idle timeout on the AWS side (see the next two sections).
  * Closing any one client evicts every idle connection in the pool. The other clients then open new
  * ones, which costs them a handshake but never fails a call.
  *
@@ -63,11 +64,20 @@ import java.util.concurrent.TimeUnit
  * awskt's retry loop retries for an idempotent operation and surfaces for a write. With the flag
  * off, the failure reaches that loop instead.
  *
- * The cost is the race in which AWS closes an idle pooled connection just as a request is sent
- * on it. OkHttp probes a POST's connection for EOF before reuse once it has been idle for 10
- * seconds, which narrows the race. What remains surfaces as an ordinary transport failure. It also
- * gives up OkHttp's fallback to a second IP address after a failed connect, which the retry loop
- * already covers because a connect failure is NOT_SENT.
+ * It also gives up OkHttp's fallback to a second IP address after a failed connect, which the retry
+ * loop already covers, because a connect failure is NOT_SENT.
+ *
+ * ### Stale pooled connections are discarded before the write
+ *
+ * The flag's real cost was the stale keep-alive race, and 3.1.2 shipped without an answer to it.
+ * AWS closes an idle pooled connection, the next call writes its request onto it, and the read
+ * finds EOF before a status line. With the flag on, OkHttp would have resent the request. With it
+ * off, the failure is AMBIGUOUS and a write surfaces it. In production, a DynamoDB-stream Lambda
+ * that posts to EventBridge failed 24 invocations with `unexpected end of stream` in its first burst.
+ * [StaleConnectionGuard] now closes such a connection before anything is written to it and runs the
+ * call on another. It is installed as an application interceptor, a network interceptor and an
+ * event listener, and it shares the pool's lifetime. Its KDoc explains why the failure itself is
+ * not reclassified as safe to retry.
  *
  * ### Timeouts
  *
@@ -80,7 +90,18 @@ import java.util.concurrent.TimeUnit
  * Ignored on the JVM, as it was under CIO. The engine trusts the JVM's default trust store, and the
  * parameter exists for libcurl on native.
  */
-public actual fun awsHttpClient(caInfo: String?, timeouts: AwsHttpTimeouts): HttpClient {
+public actual fun awsHttpClient(caInfo: String?, timeouts: AwsHttpTimeouts): HttpClient =
+    awsHttpClient(timeouts, sharedConnectionPool, sharedStaleConnectionGuard)
+
+/**
+ * The engine with its pool and guard supplied, so that tests can give the guard their own clocks.
+ * A guard must see every release from its pool, so the two are always passed as a pair.
+ */
+internal fun awsHttpClient(
+    timeouts: AwsHttpTimeouts,
+    connectionPool: ConnectionPool,
+    staleConnectionGuard: StaleConnectionGuard,
+): HttpClient {
     val dispatcher = Dispatcher().apply {
         maxRequests = 1_000
         maxRequestsPerHost = 100
@@ -91,11 +112,17 @@ public actual fun awsHttpClient(caInfo: String?, timeouts: AwsHttpTimeouts): Htt
             // Applied after Ktor's own defaults, which stay in force for everything not named here.
             config {
                 dispatcher(dispatcher)
-                connectionPool(sharedConnectionPool)
+                connectionPool(connectionPool)
                 retryOnConnectionFailure(false)
+                eventListener(staleConnectionGuard.eventListener)
+                addInterceptor(staleConnectionGuard.applicationInterceptor)
+                addNetworkInterceptor(staleConnectionGuard.networkInterceptor)
             }
         }
     }
 }
 
-private val sharedConnectionPool = ConnectionPool(100, 5, TimeUnit.MINUTES)
+private val sharedConnectionPool =
+    ConnectionPool(100, StaleConnectionGuard.DEFAULT_MAX_IDLE_MILLIS, TimeUnit.MILLISECONDS)
+
+private val sharedStaleConnectionGuard = StaleConnectionGuard()

@@ -48,6 +48,13 @@ or other non-Gradle consumer must name it, for example `dynamokt-jvm`.
   If you worked around that by passing your own `httpClient`, you can remove the workaround. If
   something else in your build pins OkHttp 4, Gradle raises it to 5. OkHttp 5 keeps the `okhttp3`
   package and is intended as a drop-in upgrade, but test that other code against it.
+- **Skip 3.1.2 and 3.1.3 on the JVM if you write through awskt without an outer retry.** Both
+  releases can fail a non-idempotent write, such as `PutEvents` or `PutItem`, with
+  `java.io.IOException: unexpected end of stream` when AWS has closed an idle pooled connection.
+  Lambda is the most exposed, because pooled connections survive a freeze. A DynamoDB-stream or SQS
+  batch retry recovers it, but a direct call or a long-lived server loses the write. From 3.1.4,
+  awskt discards such a connection before writing to it. No write is ever resent after it may have
+  reached AWS, so nothing needs to change in your code.
 - Java 17 and `-Xcontext-parameters` are unchanged.
 
 ## 3. The AWS SDK is no longer re-exported

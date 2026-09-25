@@ -90,6 +90,17 @@ class PlatformTransportFailureJvmTest {
         )
     }
 
+    /**
+     * The guard throws this before a byte of the request is written, so it is NOT_SENT even for a
+     * write. The message contains none of the classifier's patterns, so only the type can say so.
+     */
+    @Test
+    fun aDiscardedStaleConnectionIsNotSent() {
+        val stale = StalePooledConnectionException("idle for 600000ms")
+        assertEquals(TransportFailure.NOT_SENT, platformTransportFailureHint(stale))
+        assertEquals(TransportFailure.NOT_SENT, classifyTransportFailure(RuntimeException("call failed", stale)))
+    }
+
     /** A typed cause buried under untyped wrappers is still found — the hook runs per chain link. */
     @Test
     fun theHintIsConsultedForEveryCause() {

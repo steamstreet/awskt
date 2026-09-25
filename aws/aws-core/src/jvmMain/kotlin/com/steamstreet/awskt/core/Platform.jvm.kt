@@ -11,11 +11,12 @@ internal actual fun platformGetEnv(name: String): String? = System.getenv(name)
 internal actual fun platformGetProperty(name: String): String? = System.getProperty(name)
 
 /**
- * The five JVM shapes that prove a request never left the process, matched as types.
+ * The JVM shapes that prove a request never left the process, matched as types.
  *
  * Each one fails strictly before the request bytes are written: DNS lookup
  * ([UnknownHostException], [UnresolvedAddressException]), TCP connect ([ConnectException],
- * [ConnectTimeoutException]) and the TLS handshake ([SSLHandshakeException]). `is` rather than a
+ * [ConnectTimeoutException]), the TLS handshake ([SSLHandshakeException]), and a pooled connection
+ * discarded before the write ([StalePooledConnectionException]). `is` rather than a
  * name comparison, so a subclass — which an engine is free to introduce in a patch release —
  * answers the same as its parent. [ConnectTimeoutException] is in fact already covered by that
  * rule, since ktor declares it as a [ConnectException] subclass on the JVM; it is named anyway
@@ -34,6 +35,9 @@ internal actual fun platformTransportFailureHint(failure: Throwable): TransportF
         is UnresolvedAddressException,
         is SSLHandshakeException,
         is ConnectTimeoutException,
+        // Ours, and thrown only before the request is written. It reaches the classifier only when
+        // StaleConnectionGuard has discarded MAX_STALE_DISCARDS stale connections in a row.
+        is StalePooledConnectionException,
         -> TransportFailure.NOT_SENT
 
         else -> null
