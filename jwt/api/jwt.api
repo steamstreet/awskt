@@ -1,3 +1,8 @@
+public final class com/steamstreet/awskt/jwt/CognitoKt {
+	public static final fun cognitoAccessToken (Lcom/steamstreet/awskt/jwt/JwtVerifier$Companion;Ljava/lang/String;Ljava/lang/String;Ljava/util/Set;)Lcom/steamstreet/awskt/jwt/JwtVerifier;
+	public static final fun cognitoIssuer (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+}
+
 public final class com/steamstreet/awskt/jwt/Es256Signer {
 	public static final field Companion Lcom/steamstreet/awskt/jwt/Es256Signer$Companion;
 	public synthetic fun <init> (Ljava/lang/String;Ldev/whyoleg/cryptography/operations/SignatureGenerator;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -39,6 +44,22 @@ public final class com/steamstreet/awskt/jwt/JwtAlgorithm : java/lang/Enum {
 	public final fun getHeaderName ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lcom/steamstreet/awskt/jwt/JwtAlgorithm;
 	public static fun values ()[Lcom/steamstreet/awskt/jwt/JwtAlgorithm;
+}
+
+public abstract class com/steamstreet/awskt/jwt/JwtAudience {
+}
+
+public final class com/steamstreet/awskt/jwt/JwtAudience$Aud : com/steamstreet/awskt/jwt/JwtAudience {
+	public fun <init> (Ljava/util/Set;)V
+	public final fun getValues ()Ljava/util/Set;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/awskt/jwt/JwtAudience$Claim : com/steamstreet/awskt/jwt/JwtAudience {
+	public fun <init> (Ljava/lang/String;Ljava/util/Set;)V
+	public final fun getName ()Ljava/lang/String;
+	public final fun getValues ()Ljava/util/Set;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/steamstreet/awskt/jwt/JwtClaims {
@@ -111,6 +132,7 @@ public final class com/steamstreet/awskt/jwt/JwtVerificationException : com/stea
 public final class com/steamstreet/awskt/jwt/JwtVerificationException$Reason : java/lang/Enum {
 	public static final field ALGORITHM_NOT_ALLOWED Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
 	public static final field AUDIENCE Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
+	public static final field CLAIM Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
 	public static final field EXPIRED Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
 	public static final field INVALID_SIGNATURE Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
 	public static final field ISSUER Lcom/steamstreet/awskt/jwt/JwtVerificationException$Reason;
@@ -136,9 +158,15 @@ public final class com/steamstreet/awskt/jwt/JwtVerificationKey$Companion {
 }
 
 public final class com/steamstreet/awskt/jwt/JwtVerifier {
-	public synthetic fun <init> (Lcom/steamstreet/awskt/jwt/JwtKeySource;Ljava/util/Set;Ljava/util/Set;Ljava/util/Set;JLkotlin/time/Clock;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (Lcom/steamstreet/awskt/jwt/JwtKeySource;Ljava/util/Set;Ljava/util/Set;Ljava/util/Set;JLkotlin/time/Clock;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final field Companion Lcom/steamstreet/awskt/jwt/JwtVerifier$Companion;
+	public synthetic fun <init> (Lcom/steamstreet/awskt/jwt/JwtKeySource;Ljava/util/Set;Lcom/steamstreet/awskt/jwt/JwtAudience;Ljava/util/Set;Ljava/util/Map;JLkotlin/time/Clock;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/jwt/JwtKeySource;Ljava/util/Set;Lcom/steamstreet/awskt/jwt/JwtAudience;Ljava/util/Set;Ljava/util/Map;JLkotlin/time/Clock;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/jwt/JwtKeySource;Ljava/util/Set;Ljava/util/Set;Ljava/util/Set;Ljava/util/Map;JLkotlin/time/Clock;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lcom/steamstreet/awskt/jwt/JwtKeySource;Ljava/util/Set;Ljava/util/Set;Ljava/util/Set;Ljava/util/Map;JLkotlin/time/Clock;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun toString ()Ljava/lang/String;
 	public final fun verify (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/steamstreet/awskt/jwt/JwtVerifier$Companion {
 }
 

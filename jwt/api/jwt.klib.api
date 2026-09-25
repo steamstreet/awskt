@@ -141,6 +141,7 @@ final class com.steamstreet.awskt.jwt/JwtVerificationException : com.steamstreet
     final enum class Reason : kotlin/Enum<com.steamstreet.awskt.jwt/JwtVerificationException.Reason> { // com.steamstreet.awskt.jwt/JwtVerificationException.Reason|null[0]
         enum entry ALGORITHM_NOT_ALLOWED // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.ALGORITHM_NOT_ALLOWED|null[0]
         enum entry AUDIENCE // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.AUDIENCE|null[0]
+        enum entry CLAIM // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.CLAIM|null[0]
         enum entry EXPIRED // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.EXPIRED|null[0]
         enum entry INVALID_SIGNATURE // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.INVALID_SIGNATURE|null[0]
         enum entry ISSUER // com.steamstreet.awskt.jwt/JwtVerificationException.Reason.ISSUER|null[0]
@@ -171,12 +172,40 @@ final class com.steamstreet.awskt.jwt/JwtVerificationKey { // com.steamstreet.aw
 }
 
 final class com.steamstreet.awskt.jwt/JwtVerifier { // com.steamstreet.awskt.jwt/JwtVerifier|null[0]
-    constructor <init>(com.steamstreet.awskt.jwt/JwtKeySource, kotlin.collections/Set<kotlin/String>, kotlin.collections/Set<kotlin/String>, kotlin.collections/Set<com.steamstreet.awskt.jwt/JwtAlgorithm> = ..., kotlin.time/Duration = ..., kotlin.time/Clock = ...) // com.steamstreet.awskt.jwt/JwtVerifier.<init>|<init>(com.steamstreet.awskt.jwt.JwtKeySource;kotlin.collections.Set<kotlin.String>;kotlin.collections.Set<kotlin.String>;kotlin.collections.Set<com.steamstreet.awskt.jwt.JwtAlgorithm>;kotlin.time.Duration;kotlin.time.Clock){}[0]
+    constructor <init>(com.steamstreet.awskt.jwt/JwtKeySource, kotlin.collections/Set<kotlin/String>, com.steamstreet.awskt.jwt/JwtAudience, kotlin.collections/Set<com.steamstreet.awskt.jwt/JwtAlgorithm> = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ..., kotlin.time/Duration = ..., kotlin.time/Clock = ...) // com.steamstreet.awskt.jwt/JwtVerifier.<init>|<init>(com.steamstreet.awskt.jwt.JwtKeySource;kotlin.collections.Set<kotlin.String>;com.steamstreet.awskt.jwt.JwtAudience;kotlin.collections.Set<com.steamstreet.awskt.jwt.JwtAlgorithm>;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.time.Duration;kotlin.time.Clock){}[0]
+    constructor <init>(com.steamstreet.awskt.jwt/JwtKeySource, kotlin.collections/Set<kotlin/String>, kotlin.collections/Set<kotlin/String>, kotlin.collections/Set<com.steamstreet.awskt.jwt/JwtAlgorithm> = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ..., kotlin.time/Duration = ..., kotlin.time/Clock = ...) // com.steamstreet.awskt.jwt/JwtVerifier.<init>|<init>(com.steamstreet.awskt.jwt.JwtKeySource;kotlin.collections.Set<kotlin.String>;kotlin.collections.Set<kotlin.String>;kotlin.collections.Set<com.steamstreet.awskt.jwt.JwtAlgorithm>;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.time.Duration;kotlin.time.Clock){}[0]
 
     final fun toString(): kotlin/String // com.steamstreet.awskt.jwt/JwtVerifier.toString|toString(){}[0]
     final suspend fun verify(kotlin/String): com.steamstreet.awskt.jwt/Jwt // com.steamstreet.awskt.jwt/JwtVerifier.verify|verify(kotlin.String){}[0]
+
+    final object Companion // com.steamstreet.awskt.jwt/JwtVerifier.Companion|null[0]
 }
 
 open class com.steamstreet.awskt.jwt/JwtException : kotlin/Exception { // com.steamstreet.awskt.jwt/JwtException|null[0]
     constructor <init>(kotlin/String, kotlin/Throwable? = ...) // com.steamstreet.awskt.jwt/JwtException.<init>|<init>(kotlin.String;kotlin.Throwable?){}[0]
 }
+
+sealed class com.steamstreet.awskt.jwt/JwtAudience { // com.steamstreet.awskt.jwt/JwtAudience|null[0]
+    final class Aud : com.steamstreet.awskt.jwt/JwtAudience { // com.steamstreet.awskt.jwt/JwtAudience.Aud|null[0]
+        constructor <init>(kotlin.collections/Set<kotlin/String>) // com.steamstreet.awskt.jwt/JwtAudience.Aud.<init>|<init>(kotlin.collections.Set<kotlin.String>){}[0]
+
+        final val values // com.steamstreet.awskt.jwt/JwtAudience.Aud.values|{}values[0]
+            final fun <get-values>(): kotlin.collections/Set<kotlin/String> // com.steamstreet.awskt.jwt/JwtAudience.Aud.values.<get-values>|<get-values>(){}[0]
+
+        final fun toString(): kotlin/String // com.steamstreet.awskt.jwt/JwtAudience.Aud.toString|toString(){}[0]
+    }
+
+    final class Claim : com.steamstreet.awskt.jwt/JwtAudience { // com.steamstreet.awskt.jwt/JwtAudience.Claim|null[0]
+        constructor <init>(kotlin/String, kotlin.collections/Set<kotlin/String>) // com.steamstreet.awskt.jwt/JwtAudience.Claim.<init>|<init>(kotlin.String;kotlin.collections.Set<kotlin.String>){}[0]
+
+        final val name // com.steamstreet.awskt.jwt/JwtAudience.Claim.name|{}name[0]
+            final fun <get-name>(): kotlin/String // com.steamstreet.awskt.jwt/JwtAudience.Claim.name.<get-name>|<get-name>(){}[0]
+        final val values // com.steamstreet.awskt.jwt/JwtAudience.Claim.values|{}values[0]
+            final fun <get-values>(): kotlin.collections/Set<kotlin/String> // com.steamstreet.awskt.jwt/JwtAudience.Claim.values.<get-values>|<get-values>(){}[0]
+
+        final fun toString(): kotlin/String // com.steamstreet.awskt.jwt/JwtAudience.Claim.toString|toString(){}[0]
+    }
+}
+
+final fun (com.steamstreet.awskt.jwt/JwtVerifier.Companion).com.steamstreet.awskt.jwt/cognitoAccessToken(kotlin/String, kotlin/String, kotlin.collections/Set<kotlin/String>): com.steamstreet.awskt.jwt/JwtVerifier // com.steamstreet.awskt.jwt/cognitoAccessToken|cognitoAccessToken@com.steamstreet.awskt.jwt.JwtVerifier.Companion(kotlin.String;kotlin.String;kotlin.collections.Set<kotlin.String>){}[0]
+final fun com.steamstreet.awskt.jwt/cognitoIssuer(kotlin/String, kotlin/String): kotlin/String // com.steamstreet.awskt.jwt/cognitoIssuer|cognitoIssuer(kotlin.String;kotlin.String){}[0]

@@ -145,8 +145,19 @@ val clientSecret = Es256Signer.fromPrivateKey(p8, keyId = keyId).sign {
 }
 ```
 
-`JwtVerifier` requires both issuers and audiences, and takes the accepted algorithms from its own
-configuration, never from the token.
+`JwtVerifier` requires both issuers and an audience rule, and takes the accepted algorithms from
+its own configuration, never from the token.
+
+Cognito access tokens carry no `aud`. They name the app client in `client_id` and set `token_use`
+to `access`, and `cognitoAccessToken` checks both, along with the pool's issuer and keys:
+
+```kotlin
+val cognito = JwtVerifier.cognitoAccessToken("us-east-1", "us-east-1_AbCdEf123", setOf(appClientId))
+val userId = cognito.verify(accessToken).claims.subject
+```
+
+For other issuers, `JwtAudience.Claim` checks a claim other than `aud`, and `requiredClaims` requires
+exact string values.
 
 ## DynamoKt
 

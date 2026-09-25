@@ -237,6 +237,217 @@ class VerifierRulesTest {
     }
 }
 
+class RecipientAndRequiredClaimsTest {
+    private val keys = JwtKeySource { _, algorithm -> JwtVerificationKey.fromJwk(jwk(Vectors.RSA_JWK), algorithm) }
+
+    private fun verifier(
+        audience: JwtAudience = JwtAudience.Claim("client_id", setOf("client-1")),
+        requiredClaims: Map<String, String> = emptyMap(),
+    ) = JwtVerifier(
+        keys = keys,
+        issuers = setOf("https://issuer.example"),
+        audience = audience,
+        requiredClaims = requiredClaims,
+        clock = TestClock(),
+    )
+
+    private fun claims(vararg extra: Pair<String, Any>) = buildJsonObject {
+        put("iss", "https://issuer.example")
+        put("exp", (NOW + 1.hours).epochSeconds)
+        put("sub", "user-1")
+        for ((name, value) in extra) when (value) {
+            is String -> put(name, value)
+            is Number -> put(name, value)
+            is Boolean -> put(name, value)
+        }
+    }
+
+    @Test
+    fun aClaimAudienceAcceptsAnyListedValue() = runTest {
+        val v = verifier(JwtAudience.Claim("client_id", setOf("client-1", "client-2")))
+
+        v.verify(rs256(claims("client_id" to "client-1")))
+        v.verify(rs256(claims("client_id" to "client-2")))
+    }
+
+    @Test
+    fun aClaimAudienceRejectsAnotherValueAndNamesTheClaim() = runTest {
+        val e = assertFailsWith<JwtVerificationException> {
+            verifier().verify(rs256(claims("client_id" to "someone-else")))
+        }
+        assertEquals(Reason.AUDIENCE, e.reason)
+        assertEquals("client_id someone-else is not accepted", e.message)
+    }
+
+    @Test
+    fun aClaimAudienceRejectsAMissingOrNonStringClaim() = runTest {
+        assertRejected(Reason.AUDIENCE) { verifier().verify(rs256(claims())) }
+        assertRejected(Reason.AUDIENCE) { verifier().verify(rs256(claims("client_id" to 1))) }
+        assertRejected(Reason.AUDIENCE) {
+            verifier(JwtAudience.Claim("client_id", setOf("true"))).verify(rs256(claims("client_id" to true)))
+        }
+    }
+
+    /** A token whose `aud` would match is still refused when the verifier checks another claim. */
+    @Test
+    fun aClaimAudienceIgnoresAud() = runTest {
+        assertRejected(Reason.AUDIENCE) { verifier().verify(rs256(claims("aud" to "client-1"))) }
+    }
+
+    @Test
+    fun requiredClaimsMustMatchExactlyAsStrings() = runTest {
+        val v = verifier(requiredClaims = mapOf("token_use" to "access"))
+
+        v.verify(rs256(claims("client_id" to "client-1", "token_use" to "access")))
+        assertRejected(Reason.CLAIM) { v.verify(rs256(claims("client_id" to "client-1"))) }
+        assertRejected(Reason.CLAIM) { v.verify(rs256(claims("client_id" to "client-1", "token_use" to "id"))) }
+
+        val numeric = verifier(requiredClaims = mapOf("version" to "2"))
+        assertRejected(Reason.CLAIM) { numeric.verify(rs256(claims("client_id" to "client-1", "version" to 2))) }
+    }
+
+    @Test
+    fun aRequiredClaimFailureNamesTheClaimButNotItsValue() = runTest {
+        val e = assertFailsWith<JwtVerificationException> {
+            verifier(requiredClaims = mapOf("token_use" to "access"))
+                .verify(rs256(claims("client_id" to "client-1", "token_use" to "secret-looking-value")))
+        }
+        assertEquals(Reason.CLAIM, e.reason)
+        assertTrue("token_use" in e.message!!)
+        assertFalse("secret-looking-value" in e.message!!)
+        assertFalse("access" in e.message!!)
+    }
+
+    @Test
+    fun theAudienceIsCheckedBeforeRequiredClaims() = runTest {
+        assertRejected(Reason.AUDIENCE) {
+            verifier(requiredClaims = mapOf("token_use" to "access")).verify(rs256(claims("token_use" to "id")))
+        }
+    }
+
+    @Test
+    fun requiredClaimsAlsoWorkWithTheAudCheck() = runTest {
+        val v = verifier(JwtAudience.Aud(setOf("client-1")), mapOf("token_use" to "id"))
+
+        v.verify(rs256(claims("aud" to "client-1", "token_use" to "id")))
+        assertRejected(Reason.CLAIM) { v.verify(rs256(claims("aud" to "client-1", "token_use" to "access"))) }
+    }
+
+    @Test
+    fun theAudiencesShorthandTakesRequiredClaims() = runTest {
+        val v = JwtVerifier(
+            keys = keys,
+            issuers = setOf("https://issuer.example"),
+            audiences = setOf("client-1"),
+            requiredClaims = mapOf("token_use" to "id"),
+            clock = TestClock(),
+        )
+
+        v.verify(rs256(claims("aud" to "client-1", "token_use" to "id")))
+        assertRejected(Reason.CLAIM) { v.verify(rs256(claims("aud" to "client-1"))) }
+    }
+
+    @Test
+    fun audienceValuesAreRequired() {
+        assertFailsWith<IllegalArgumentException> { JwtAudience.Aud(emptySet()) }
+        assertFailsWith<IllegalArgumentException> { JwtAudience.Claim("client_id", emptySet()) }
+        assertFailsWith<IllegalArgumentException> { JwtAudience.Claim("", setOf("a")) }
+    }
+}
+
+class CognitoAccessTokenTest {
+    private val issuer = cognitoIssuer("us-east-1", "us-east-1_AbCdEf123")
+    private val verifier = cognitoAccessToken(
+        issuer = issuer,
+        keys = { _, algorithm -> JwtVerificationKey.fromJwk(jwk(Vectors.RSA_JWK), algorithm) },
+        clientIds = setOf("app-client"),
+        clock = TestClock(),
+    )
+
+    /** The shape of a real Cognito access token: no `aud`, the client in `client_id`. */
+    private fun accessToken(
+        tokenUse: String? = "access",
+        clientId: String = "app-client",
+        iss: String = issuer,
+    ) = buildJsonObject {
+        put("sub", "user-1")
+        put("iss", iss)
+        put("client_id", clientId)
+        put("origin_jti", "jti-1")
+        put("event_id", "event-1")
+        tokenUse?.let { put("token_use", it) }
+        put("scope", "aws.cognito.signin.user.admin")
+        put("auth_time", NOW.epochSeconds)
+        put("exp", (NOW + 1.hours).epochSeconds)
+        put("iat", NOW.epochSeconds)
+        put("jti", "jti-2")
+        put("username", "user-1")
+    }
+
+    @Test
+    fun theIssuerIsThePoolUrl() {
+        assertEquals("https://cognito-idp.us-east-1.amazonaws.com/us-east-1_AbCdEf123", issuer)
+    }
+
+    @Test
+    fun theKeysComeFromThePoolsJwksEndpoint() {
+        val v = JwtVerifier.cognitoAccessToken("us-east-1", "us-east-1_AbCdEf123", setOf("app-client"))
+
+        assertTrue("JwksKeySource($issuer/.well-known/jwks.json)" in v.toString(), v.toString())
+    }
+
+    @Test
+    fun acceptsAnAccessTokenForTheClient() = runTest {
+        assertEquals("user-1", verifier.verify(rs256(accessToken())).claims.subject)
+    }
+
+    /**
+     * The shape of a real Cognito ID token for the same client: the client is in `aud`, and there is
+     * no `client_id`. It fails the recipient check, so it never reaches the `token_use` check.
+     */
+    @Test
+    fun refusesAnIdTokenForTheSameClient() = runTest {
+        val idToken = buildJsonObject {
+            put("sub", "user-1")
+            put("aud", "app-client")
+            put("email_verified", true)
+            put("event_id", "event-1")
+            put("token_use", "id")
+            put("auth_time", NOW.epochSeconds)
+            put("iss", issuer)
+            put("cognito:username", "user-1")
+            put("exp", (NOW + 1.hours).epochSeconds)
+            put("iat", NOW.epochSeconds)
+            put("email", "person@example.com")
+        }
+
+        assertRejected(Reason.AUDIENCE) { verifier.verify(rs256(idToken)) }
+    }
+
+    /** A token that names the client but does not say it is an access token. */
+    @Test
+    fun requiresTokenUseAccess() = runTest {
+        assertRejected(Reason.CLAIM) { verifier.verify(rs256(accessToken(tokenUse = null))) }
+        assertRejected(Reason.CLAIM) { verifier.verify(rs256(accessToken(tokenUse = "id"))) }
+    }
+
+    @Test
+    fun refusesAnotherClient() = runTest {
+        assertRejected(Reason.AUDIENCE) { verifier.verify(rs256(accessToken(clientId = "other-client"))) }
+    }
+
+    @Test
+    fun refusesAnotherPool() = runTest {
+        val otherPool = cognitoIssuer("us-east-1", "us-east-1_Other")
+        assertRejected(Reason.ISSUER) { verifier.verify(rs256(accessToken(iss = otherPool))) }
+    }
+
+    @Test
+    fun refusesEs256() = runTest {
+        assertRejected(Reason.ALGORITHM_NOT_ALLOWED) { verifier.verify(Vectors.ES256_TOKEN) }
+    }
+}
+
 class JwksKeySourceTest {
     @Test
     fun fetchesOnceAndCaches() = runTest {

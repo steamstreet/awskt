@@ -64,11 +64,18 @@ public class JwtVerificationException(
         /** `iss` is missing or not one of the accepted issuers. */
         ISSUER,
 
-        /** `aud` is missing or names none of the accepted audiences. */
+        /**
+         * The token does not name an accepted recipient. With the standard `aud` check, `aud` is
+         * missing or names none of the accepted audiences. With a single-claim check, such as
+         * Cognito's `client_id`, that claim is missing, is not a string, or is not accepted.
+         */
         AUDIENCE,
 
         /** The header carries a `crit` extension this verifier does not implement. */
         UNSUPPORTED_HEADER,
+
+        /** A required claim is missing, is not a string, or does not have the required value. */
+        CLAIM,
     }
 }
 
