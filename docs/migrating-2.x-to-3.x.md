@@ -41,6 +41,13 @@ or other non-Gradle consumer must name it, for example `dynamokt-jvm`.
 - **Ktor 3.5 or later.** `aws-core` exposes `ktor-client-core` and `lambda-api-gateway-ktor` exposes
   `ktor-server-core`, so Gradle raises an older Ktor to 3.5.2. Align your own Ktor dependencies with
   it rather than letting it happen silently. Below 3.5, native Curl responses hang on large bodies.
+- **OkHttp 5 on the JVM, from 3.1.2.** `aws-core` uses Ktor's OkHttp engine, and so brings
+  `okhttp-jvm` 5.x and `okio` onto the runtime classpath in place of `ktor-client-cio`. Through
+  3.1.1 the engine was CIO, which opens a new connection for every call. Under load that runs out
+  of ephemeral ports, and it fails with `java.net.BindException: Can't assign requested address`.
+  If you worked around that by passing your own `httpClient`, you can remove the workaround. If
+  something else in your build pins OkHttp 4, Gradle raises it to 5. OkHttp 5 keeps the `okhttp3`
+  package and is intended as a drop-in upgrade, but test that other code against it.
 - Java 17 and `-Xcontext-parameters` are unchanged.
 
 ## 3. The AWS SDK is no longer re-exported

@@ -118,7 +118,7 @@ public class ConditionalRequestConflictException(
  *
  * **This exists because TLS gives per-record integrity, not stream completeness.** A connection
  * dying mid-body yields a well-formed, silently short `ByteArray`; whether the engine notices is
- * engine-dependent, and this library runs on CIO for the JVM and Curl for native — the very engine
+ * engine-dependent, and this library runs on OkHttp for the JVM and Curl for native — the very engine
  * whose response-body handling forced the Ktor bump. Treating "the engine will throw" as given
  * would leave silent truncation as the failure mode on `linuxArm64`, the one target that cannot run
  * tests locally.

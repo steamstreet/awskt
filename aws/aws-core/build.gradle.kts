@@ -30,9 +30,11 @@ kotlin {
             }
         }
 
+        // OkHttp rather than CIO on the JVM: CIO opens and closes a socket per request, which
+        // exhausts ephemeral ports under load. awsHttpClient's JVM actual records the comparison.
         jvmMain {
             dependencies {
-                implementation(libs.ktor.client.cio)
+                implementation(libs.ktor.client.okhttp)
             }
         }
 

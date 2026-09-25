@@ -474,7 +474,7 @@ class AwsCallObserverIsolationTest {
 // -------------------------------------------------------------------------------------------------
 
 /**
- * Without one of these, requests reach AWS labelled `ktor-client` (CIO) or unlabelled (Curl), and
+ * Without one of these, requests reach AWS labelled `okhttp/<version>` (JVM) or unlabelled (Curl), and
  * CloudTrail's `userAgent`, S3 server access logs and AWS Support triage all key on that field.
  */
 class UserAgentTest {

@@ -550,8 +550,8 @@ internal class DefaultS3(
  * **That is defence in depth rather than redundancy.** Ktor's client core does compare
  * `Content-Length` against a `ByteArray` body and raise before this check is reached — but whether
  * a *real* engine notices a stream that died mid-body is engine-dependent, and this library runs
- * CIO on the JVM and Curl on native, whose response-body handling is the reason this project pinned
- * a newer Ktor in the first place. On `linuxArm64`, the one target whose tests cannot run locally,
+ * OkHttp on the JVM and Curl on native. Curl's response-body handling is the reason this project
+ * pinned a newer Ktor in the first place. On `linuxArm64`, the one target whose tests cannot run locally,
  * "something upstream will throw" is an assumption rather than an observation.
  */
 internal fun checkDownloadComplete(

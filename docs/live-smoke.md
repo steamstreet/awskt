@@ -54,8 +54,8 @@ export AWS_REGION=us-west-2
           :aws:aws-opensearch:jvmTest :aws:aws-lambda:jvmTest \
           :aws:aws-ses:jvmTest
 
-# On macOS, the same tests through the Curl engine rather than CIO — worth doing at least once,
-# because the native Lambda uses Curl and CIO is not evidence about it.
+# On macOS, the same tests through the Curl engine rather than OkHttp — worth doing at least once,
+# because the native Lambda uses Curl and OkHttp is not evidence about it.
 ./gradlew :aws:aws-kms:macosArm64Test
 ```
 

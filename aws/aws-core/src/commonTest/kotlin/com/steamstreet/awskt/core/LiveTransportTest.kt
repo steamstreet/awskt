@@ -8,7 +8,7 @@ import kotlin.test.assertTrue
 /**
  * End-to-end proof against real AWS, through the real transport.
  *
- * This lives in `commonTest` deliberately, so it runs on **both** jvm (CIO) and macosArm64 (Curl).
+ * This lives in `commonTest` deliberately, so it runs on **both** jvm (OkHttp) and macosArm64 (Curl).
  * That single placement covers two things the plan asks for separately:
  *
  * 1. the whole M2 stack — credential resolution, endpoint resolution, signing, Ktor, response

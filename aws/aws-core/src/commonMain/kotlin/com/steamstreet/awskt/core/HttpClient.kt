@@ -91,7 +91,8 @@ internal fun HttpClientConfig<*>.configureAwsClient(timeouts: AwsHttpTimeouts) {
 }
 
 /**
- * Builds the HTTP client used for signed AWS calls: CIO on JVM, Curl on native.
+ * Builds the HTTP client used for signed AWS calls: OkHttp on JVM, Curl on native. Both keep
+ * connections open between calls. The JVM actual records why that rules out CIO.
  *
  * Three settings are not negotiable and are asserted by tests:
  *

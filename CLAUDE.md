@@ -62,7 +62,8 @@ The project follows a multi-module architecture with these key components:
 
 - **aws-signing**: SigV4 signing
 - **aws-core**: Signed transport: credentials, endpoints, retries, error mapping. It depends on `aws-signing` and Ktor
-  only, never on `env`, `standards` or `logging` (plan Decision 6), and never on the AWS SDK
+  only, never on `env`, `standards` or `logging` (plan Decision 6), and never on the AWS SDK. Its HTTP engine is OkHttp
+  on the JVM and Curl on native. See `AGENTS.md` for why the JVM engine is not CIO
 - **aws-dynamodb, aws-eventbridge, aws-s3, aws-sqs, aws-sns, aws-kinesis, aws-kms, aws-lambda, aws-scheduler,
   aws-secretsmanager, aws-ses, aws-cloudwatch-logs, aws-bedrock-runtime, aws-opensearch**: One client per service,
   each depending on `aws-core` only

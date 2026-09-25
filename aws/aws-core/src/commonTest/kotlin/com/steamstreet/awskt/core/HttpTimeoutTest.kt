@@ -74,7 +74,7 @@ class AwsHttpTimeoutsTest {
 /**
  * The client configuration `awsHttpClient` applies, exercised through `MockEngine`.
  *
- * `awsHttpClient` itself hardcodes CIO/Curl, so the shared [configureAwsClient] is what is tested
+ * `awsHttpClient` itself hardcodes OkHttp/Curl, so the shared [configureAwsClient] is what is tested
  * here — it is the whole of what those two functions install, so a regression in it is a regression
  * in both engines.
  *

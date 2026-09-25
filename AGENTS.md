@@ -19,6 +19,9 @@ Artifacts publish as `com.steamstreet.awskt:<module>`, and the plugin as `com.st
 ## Coding Style & Naming Conventions
 Follow standard Kotlin style: 4-space indentation, `PascalCase` types, `camelCase` members, and `UPPER_SNAKE_CASE` constants. Most modules enable `explicitApi()`, so declare visibility and return types on public APIs. Keep package names under `com.steamstreet.<module>`. Gradle scripts use Kotlin DSL; align new tasks with the conventions in `buildSrc/steamstreet-common.*`. Serialization relies on `@Serializable` models; prefer data classes and meaningful property names mirroring AWS schemas.
 
+## HTTP Engines
+`aws-core`'s `awsHttpClient` runs on OkHttp on the JVM and on Curl on native. Keep the JVM engine one that pools connections. Through 3.1.1 it was CIO, which opens and closes a socket for every request and ran a consumer's test suite out of ephemeral ports. The JVM actual's KDoc says why OkHttp was chosen over the Java engine and over CIO with pipelining. It also covers the three OkHttp defaults that awskt overrides: the per-host concurrency limit, the idle pool size and `retryOnConnectionFailure`. `AwsHttpClientJvmTest` checks connection reuse, those overrides and the timeouts against a real socket, so run `./gradlew :aws:aws-core:jvmTest` after any change to the engine or its configuration.
+
 ## Testing Guidelines
 Tests use the built-in Kotlin test framework (`kotlin("test")`) with platform-specific source sets such as `src/commonTest` and `src/jvmTest`. Name test files and classes with the `*Test.kt` pattern (e.g., `JsonDiffTest.kt`). Run `./gradlew :module:allTests` before submitting changes, and ensure new functionality includes coverage across relevant source sets. For concurrency-heavy features, add coroutine test dispatchers to mirror production behavior.
 

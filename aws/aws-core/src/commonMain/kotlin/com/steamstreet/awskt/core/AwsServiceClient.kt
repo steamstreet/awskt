@@ -139,7 +139,7 @@ internal const val AWSKT_VERSION: String = "3.0.0"
  * Shaped `awskt/<version> <transport>` after the official SDKs' `aws-sdk-kotlin/1.2.3 …` convention:
  * a token AWS Support and CloudTrail's `userAgent` field can key on, plus the transport, because
  * "which HTTP engine" is the first question asked about a transport-level failure. Without it,
- * requests arrive labelled `ktor-client` (CIO) or unlabelled (Curl), and every awskt caller in an
+ * requests arrive labelled `okhttp/<version>` (JVM) or unlabelled (Curl), and every awskt caller in an
  * account is indistinguishable from every other Ktor program.
  *
  * Never signed — `user-agent` is in the signer's skipped set, along with everything else a proxy or
@@ -1172,7 +1172,7 @@ internal fun classifyTransportFailure(failure: Throwable): TransportFailure {
             "connection refused" in message ||
             "failed to connect" in message ||
             // Belt to the name check's braces. `ConnectTimeoutException` (Ktor's wording) covers
-            // CIO and Curl; "connect timed out" is the JDK's, which some engines raise as a plain
+            // OkHttp and Curl; "connect timed out" is the JDK's, which some engines raise as a plain
             // `java.net.SocketTimeoutException` — a name that must otherwise stay AMBIGUOUS,
             // because the same class also carries "Read timed out". Both are narrow enough not to
             // collide with "Request timeout has expired".

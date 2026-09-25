@@ -22,6 +22,15 @@ import io.ktor.client.engine.curl.Curl
  * has **second** granularity, so it cannot express the millisecond values this API takes, and the
  * engine rebuilds its easy handle per request from `CurlRequestData` — there is no supported seam to
  * add an option to it from outside.
+ *
+ * ### Connection reuse
+ *
+ * Curl does not have the defect that 3.1.1's CIO engine had on the JVM (see the JVM actual). Each
+ * engine owns one `CurlMultiApiHandler`, whose single `curl_multi_init()` handle lives until the
+ * client is closed. Each request's easy handle is removed and cleaned up when it completes, but
+ * libcurl keeps the connection in the multi handle's connection cache. Nothing sets
+ * `CURLOPT_FORBID_REUSE` or `CURLOPT_FRESH_CONNECT`, so the next request to the same host reuses the
+ * connection. This comes from reading the Ktor 3.5.2 source; unlike the JVM, no test observes it.
  */
 public actual fun awsHttpClient(caInfo: String?, timeouts: AwsHttpTimeouts): HttpClient = HttpClient(Curl) {
     configureAwsClient(timeouts)
