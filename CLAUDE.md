@@ -65,8 +65,9 @@ The project follows a multi-module architecture with these key components:
   only, never on `env`, `standards` or `logging` (plan Decision 6), and never on the AWS SDK. Its HTTP engine is OkHttp
   on the JVM and Curl on native. See `AGENTS.md` for why the JVM engine is not CIO
 - **aws-dynamodb, aws-eventbridge, aws-s3, aws-sqs, aws-sns, aws-kinesis, aws-kms, aws-lambda, aws-scheduler,
-  aws-secretsmanager, aws-ses, aws-cloudwatch-logs, aws-bedrock-runtime, aws-opensearch**: One client per service,
-  each depending on `aws-core` only
+  aws-secretsmanager, aws-ses, aws-sts, aws-cloudwatch-logs, aws-bedrock-runtime, aws-opensearch**: One client per
+  service, each depending on `aws-core` only. `aws-sts` also provides `AssumeRoleCredentialsProvider`, which plugs into
+  `aws-core`'s `AwsCredentialsProvider` seam
 - **aws-dynamodb-sdk-adapter** (JVM): A `DynamoDb` backed by the SDK's `DynamoDbClient`, for migrations
 - **aws-sdk-credentials** (JVM): Lends the SDK's default credential chain to every awskt client. `aws-core`'s own
   default reads environment variables only

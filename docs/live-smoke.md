@@ -34,6 +34,7 @@ export AWS_REGION=us-west-2
 | `aws-secretsmanager` | `SMOKE_SECRET_ID` | any readable secret (read-only; never written) |
 | `aws-sqs` | `SMOKE_QUEUE_URL` | a **standard** (non-FIFO) queue |
 | `aws-sns` | `SMOKE_TOPIC_ARN` | a topic, ideally with no subscriptions |
+| `aws-sts` | *(credentials alone)*; `SMOKE_STS_ROLE_ARN` for `AssumeRole` | a role whose trust policy lets the caller assume it |
 | `aws-ses` | `SMOKE_SES_FROM`, `SMOKE_SES_TO` | a verified sending identity, and an address you own — **it really sends mail** |
 | `aws-scheduler` | `SMOKE_SCHEDULER_TARGET_ARN`, `SMOKE_SCHEDULER_ROLE_ARN` | a target and a role trusting `scheduler.amazonaws.com` |
 | `aws-bedrock-runtime` | `SMOKE_BEDROCK_MODEL_ID` | model access granted in the account |
@@ -52,7 +53,7 @@ export AWS_REGION=us-west-2
           :aws:aws-sqs:jvmTest :aws:aws-sns:jvmTest :aws:aws-scheduler:jvmTest \
           :aws:aws-bedrock-runtime:jvmTest :aws:aws-cloudwatch-logs:jvmTest \
           :aws:aws-opensearch:jvmTest :aws:aws-lambda:jvmTest \
-          :aws:aws-ses:jvmTest
+          :aws:aws-ses:jvmTest :aws:aws-sts:jvmTest
 
 # On macOS, the same tests through the Curl engine rather than OkHttp — worth doing at least once,
 # because the native Lambda uses Curl and OkHttp is not evidence about it.
