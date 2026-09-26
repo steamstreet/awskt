@@ -1,0 +1,172 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet.awskt:aws-sts>
+abstract interface com.steamstreet.awskt.sts/Sts : kotlin/AutoCloseable { // com.steamstreet.awskt.sts/Sts|null[0]
+    abstract val client // com.steamstreet.awskt.sts/Sts.client|{}client[0]
+        abstract fun <get-client>(): com.steamstreet.awskt.core/AwsServiceClient // com.steamstreet.awskt.sts/Sts.client.<get-client>|<get-client>(){}[0]
+
+    abstract suspend fun assumeRole(com.steamstreet.awskt.sts/AssumeRoleRequest): com.steamstreet.awskt.sts/AssumeRoleResponse // com.steamstreet.awskt.sts/Sts.assumeRole|assumeRole(com.steamstreet.awskt.sts.AssumeRoleRequest){}[0]
+    abstract suspend fun getCallerIdentity(): com.steamstreet.awskt.sts/CallerIdentity // com.steamstreet.awskt.sts/Sts.getCallerIdentity|getCallerIdentity(){}[0]
+}
+
+final class com.steamstreet.awskt.sts/AssumeRoleCredentialsProvider : com.steamstreet.awskt.core/AwsCredentialsProvider, kotlin/AutoCloseable { // com.steamstreet.awskt.sts/AssumeRoleCredentialsProvider|null[0]
+    constructor <init>(com.steamstreet.awskt.sts/AssumeRoleRequest, com.steamstreet.awskt.sts/Sts, kotlin.time/Duration = ...) // com.steamstreet.awskt.sts/AssumeRoleCredentialsProvider.<init>|<init>(com.steamstreet.awskt.sts.AssumeRoleRequest;com.steamstreet.awskt.sts.Sts;kotlin.time.Duration){}[0]
+    constructor <init>(com.steamstreet.awskt.sts/AssumeRoleRequest, kotlin.time/Duration = ..., kotlin/Function1<com.steamstreet.awskt.sts/StsConfig, kotlin/Unit> = ...) // com.steamstreet.awskt.sts/AssumeRoleCredentialsProvider.<init>|<init>(com.steamstreet.awskt.sts.AssumeRoleRequest;kotlin.time.Duration;kotlin.Function1<com.steamstreet.awskt.sts.StsConfig,kotlin.Unit>){}[0]
+
+    final fun close() // com.steamstreet.awskt.sts/AssumeRoleCredentialsProvider.close|close(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sts/AssumeRoleCredentialsProvider.toString|toString(){}[0]
+    final suspend fun resolve(): com.steamstreet.awskt.signing/AwsCredentials // com.steamstreet.awskt.sts/AssumeRoleCredentialsProvider.resolve|resolve(){}[0]
+}
+
+final class com.steamstreet.awskt.sts/AssumeRoleRequest { // com.steamstreet.awskt.sts/AssumeRoleRequest|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin.time/Duration? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String> = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ..., kotlin.collections/List<kotlin/String> = ..., kotlin/String? = ...) // com.steamstreet.awskt.sts/AssumeRoleRequest.<init>|<init>(kotlin.String;kotlin.String;kotlin.time.Duration?;kotlin.String?;kotlin.String?;kotlin.collections.List<kotlin.String>;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.collections.List<kotlin.String>;kotlin.String?){}[0]
+
+    final val duration // com.steamstreet.awskt.sts/AssumeRoleRequest.duration|{}duration[0]
+        final fun <get-duration>(): kotlin.time/Duration? // com.steamstreet.awskt.sts/AssumeRoleRequest.duration.<get-duration>|<get-duration>(){}[0]
+    final val externalId // com.steamstreet.awskt.sts/AssumeRoleRequest.externalId|{}externalId[0]
+        final fun <get-externalId>(): kotlin/String? // com.steamstreet.awskt.sts/AssumeRoleRequest.externalId.<get-externalId>|<get-externalId>(){}[0]
+    final val policy // com.steamstreet.awskt.sts/AssumeRoleRequest.policy|{}policy[0]
+        final fun <get-policy>(): kotlin/String? // com.steamstreet.awskt.sts/AssumeRoleRequest.policy.<get-policy>|<get-policy>(){}[0]
+    final val policyArns // com.steamstreet.awskt.sts/AssumeRoleRequest.policyArns|{}policyArns[0]
+        final fun <get-policyArns>(): kotlin.collections/List<kotlin/String> // com.steamstreet.awskt.sts/AssumeRoleRequest.policyArns.<get-policyArns>|<get-policyArns>(){}[0]
+    final val roleArn // com.steamstreet.awskt.sts/AssumeRoleRequest.roleArn|{}roleArn[0]
+        final fun <get-roleArn>(): kotlin/String // com.steamstreet.awskt.sts/AssumeRoleRequest.roleArn.<get-roleArn>|<get-roleArn>(){}[0]
+    final val roleSessionName // com.steamstreet.awskt.sts/AssumeRoleRequest.roleSessionName|{}roleSessionName[0]
+        final fun <get-roleSessionName>(): kotlin/String // com.steamstreet.awskt.sts/AssumeRoleRequest.roleSessionName.<get-roleSessionName>|<get-roleSessionName>(){}[0]
+    final val sourceIdentity // com.steamstreet.awskt.sts/AssumeRoleRequest.sourceIdentity|{}sourceIdentity[0]
+        final fun <get-sourceIdentity>(): kotlin/String? // com.steamstreet.awskt.sts/AssumeRoleRequest.sourceIdentity.<get-sourceIdentity>|<get-sourceIdentity>(){}[0]
+    final val tags // com.steamstreet.awskt.sts/AssumeRoleRequest.tags|{}tags[0]
+        final fun <get-tags>(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.awskt.sts/AssumeRoleRequest.tags.<get-tags>|<get-tags>(){}[0]
+    final val transitiveTagKeys // com.steamstreet.awskt.sts/AssumeRoleRequest.transitiveTagKeys|{}transitiveTagKeys[0]
+        final fun <get-transitiveTagKeys>(): kotlin.collections/List<kotlin/String> // com.steamstreet.awskt.sts/AssumeRoleRequest.transitiveTagKeys.<get-transitiveTagKeys>|<get-transitiveTagKeys>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sts/AssumeRoleRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.sts/AssumeRoleRequest.component2|component2(){}[0]
+    final fun component3(): kotlin.time/Duration? // com.steamstreet.awskt.sts/AssumeRoleRequest.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.sts/AssumeRoleRequest.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // com.steamstreet.awskt.sts/AssumeRoleRequest.component5|component5(){}[0]
+    final fun component6(): kotlin.collections/List<kotlin/String> // com.steamstreet.awskt.sts/AssumeRoleRequest.component6|component6(){}[0]
+    final fun component7(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.steamstreet.awskt.sts/AssumeRoleRequest.component7|component7(){}[0]
+    final fun component8(): kotlin.collections/List<kotlin/String> // com.steamstreet.awskt.sts/AssumeRoleRequest.component8|component8(){}[0]
+    final fun component9(): kotlin/String? // com.steamstreet.awskt.sts/AssumeRoleRequest.component9|component9(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin.time/Duration? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/List<kotlin/String> = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ..., kotlin.collections/List<kotlin/String> = ..., kotlin/String? = ...): com.steamstreet.awskt.sts/AssumeRoleRequest // com.steamstreet.awskt.sts/AssumeRoleRequest.copy|copy(kotlin.String;kotlin.String;kotlin.time.Duration?;kotlin.String?;kotlin.String?;kotlin.collections.List<kotlin.String>;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.collections.List<kotlin.String>;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sts/AssumeRoleRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sts/AssumeRoleRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sts/AssumeRoleRequest.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sts/AssumeRoleResponse { // com.steamstreet.awskt.sts/AssumeRoleResponse|null[0]
+    constructor <init>(com.steamstreet.awskt.signing/AwsCredentials, com.steamstreet.awskt.sts/AssumedRoleUser?, kotlin/Int?, kotlin/String?) // com.steamstreet.awskt.sts/AssumeRoleResponse.<init>|<init>(com.steamstreet.awskt.signing.AwsCredentials;com.steamstreet.awskt.sts.AssumedRoleUser?;kotlin.Int?;kotlin.String?){}[0]
+
+    final val assumedRoleUser // com.steamstreet.awskt.sts/AssumeRoleResponse.assumedRoleUser|{}assumedRoleUser[0]
+        final fun <get-assumedRoleUser>(): com.steamstreet.awskt.sts/AssumedRoleUser? // com.steamstreet.awskt.sts/AssumeRoleResponse.assumedRoleUser.<get-assumedRoleUser>|<get-assumedRoleUser>(){}[0]
+    final val credentials // com.steamstreet.awskt.sts/AssumeRoleResponse.credentials|{}credentials[0]
+        final fun <get-credentials>(): com.steamstreet.awskt.signing/AwsCredentials // com.steamstreet.awskt.sts/AssumeRoleResponse.credentials.<get-credentials>|<get-credentials>(){}[0]
+    final val packedPolicySize // com.steamstreet.awskt.sts/AssumeRoleResponse.packedPolicySize|{}packedPolicySize[0]
+        final fun <get-packedPolicySize>(): kotlin/Int? // com.steamstreet.awskt.sts/AssumeRoleResponse.packedPolicySize.<get-packedPolicySize>|<get-packedPolicySize>(){}[0]
+    final val sourceIdentity // com.steamstreet.awskt.sts/AssumeRoleResponse.sourceIdentity|{}sourceIdentity[0]
+        final fun <get-sourceIdentity>(): kotlin/String? // com.steamstreet.awskt.sts/AssumeRoleResponse.sourceIdentity.<get-sourceIdentity>|<get-sourceIdentity>(){}[0]
+
+    final fun component1(): com.steamstreet.awskt.signing/AwsCredentials // com.steamstreet.awskt.sts/AssumeRoleResponse.component1|component1(){}[0]
+    final fun component2(): com.steamstreet.awskt.sts/AssumedRoleUser? // com.steamstreet.awskt.sts/AssumeRoleResponse.component2|component2(){}[0]
+    final fun component3(): kotlin/Int? // com.steamstreet.awskt.sts/AssumeRoleResponse.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.steamstreet.awskt.sts/AssumeRoleResponse.component4|component4(){}[0]
+    final fun copy(com.steamstreet.awskt.signing/AwsCredentials = ..., com.steamstreet.awskt.sts/AssumedRoleUser? = ..., kotlin/Int? = ..., kotlin/String? = ...): com.steamstreet.awskt.sts/AssumeRoleResponse // com.steamstreet.awskt.sts/AssumeRoleResponse.copy|copy(com.steamstreet.awskt.signing.AwsCredentials;com.steamstreet.awskt.sts.AssumedRoleUser?;kotlin.Int?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sts/AssumeRoleResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sts/AssumeRoleResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sts/AssumeRoleResponse.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sts/AssumedRoleUser { // com.steamstreet.awskt.sts/AssumedRoleUser|null[0]
+    constructor <init>(kotlin/String, kotlin/String) // com.steamstreet.awskt.sts/AssumedRoleUser.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val arn // com.steamstreet.awskt.sts/AssumedRoleUser.arn|{}arn[0]
+        final fun <get-arn>(): kotlin/String // com.steamstreet.awskt.sts/AssumedRoleUser.arn.<get-arn>|<get-arn>(){}[0]
+    final val assumedRoleId // com.steamstreet.awskt.sts/AssumedRoleUser.assumedRoleId|{}assumedRoleId[0]
+        final fun <get-assumedRoleId>(): kotlin/String // com.steamstreet.awskt.sts/AssumedRoleUser.assumedRoleId.<get-assumedRoleId>|<get-assumedRoleId>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sts/AssumedRoleUser.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.sts/AssumedRoleUser.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ...): com.steamstreet.awskt.sts/AssumedRoleUser // com.steamstreet.awskt.sts/AssumedRoleUser.copy|copy(kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sts/AssumedRoleUser.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sts/AssumedRoleUser.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sts/AssumedRoleUser.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sts/CallerIdentity { // com.steamstreet.awskt.sts/CallerIdentity|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String) // com.steamstreet.awskt.sts/CallerIdentity.<init>|<init>(kotlin.String;kotlin.String;kotlin.String){}[0]
+
+    final val account // com.steamstreet.awskt.sts/CallerIdentity.account|{}account[0]
+        final fun <get-account>(): kotlin/String // com.steamstreet.awskt.sts/CallerIdentity.account.<get-account>|<get-account>(){}[0]
+    final val arn // com.steamstreet.awskt.sts/CallerIdentity.arn|{}arn[0]
+        final fun <get-arn>(): kotlin/String // com.steamstreet.awskt.sts/CallerIdentity.arn.<get-arn>|<get-arn>(){}[0]
+    final val userId // com.steamstreet.awskt.sts/CallerIdentity.userId|{}userId[0]
+        final fun <get-userId>(): kotlin/String // com.steamstreet.awskt.sts/CallerIdentity.userId.<get-userId>|<get-userId>(){}[0]
+
+    final fun component1(): kotlin/String // com.steamstreet.awskt.sts/CallerIdentity.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.steamstreet.awskt.sts/CallerIdentity.component2|component2(){}[0]
+    final fun component3(): kotlin/String // com.steamstreet.awskt.sts/CallerIdentity.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ...): com.steamstreet.awskt.sts/CallerIdentity // com.steamstreet.awskt.sts/CallerIdentity.copy|copy(kotlin.String;kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.steamstreet.awskt.sts/CallerIdentity.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.steamstreet.awskt.sts/CallerIdentity.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.steamstreet.awskt.sts/CallerIdentity.toString|toString(){}[0]
+}
+
+final class com.steamstreet.awskt.sts/ExpiredTokenException : com.steamstreet.awskt.sts/StsException { // com.steamstreet.awskt.sts/ExpiredTokenException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sts/ExpiredTokenException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sts/MalformedPolicyDocumentException : com.steamstreet.awskt.sts/StsException { // com.steamstreet.awskt.sts/MalformedPolicyDocumentException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sts/MalformedPolicyDocumentException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sts/PackedPolicyTooLargeException : com.steamstreet.awskt.sts/StsException { // com.steamstreet.awskt.sts/PackedPolicyTooLargeException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sts/PackedPolicyTooLargeException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sts/RegionDisabledException : com.steamstreet.awskt.sts/StsException { // com.steamstreet.awskt.sts/RegionDisabledException|null[0]
+    constructor <init>(kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sts/RegionDisabledException.<init>|<init>(kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class com.steamstreet.awskt.sts/StsConfig { // com.steamstreet.awskt.sts/StsConfig|null[0]
+    constructor <init>() // com.steamstreet.awskt.sts/StsConfig.<init>|<init>(){}[0]
+
+    final var caInfo // com.steamstreet.awskt.sts/StsConfig.caInfo|{}caInfo[0]
+        final fun <get-caInfo>(): kotlin/String? // com.steamstreet.awskt.sts/StsConfig.caInfo.<get-caInfo>|<get-caInfo>(){}[0]
+        final fun <set-caInfo>(kotlin/String?) // com.steamstreet.awskt.sts/StsConfig.caInfo.<set-caInfo>|<set-caInfo>(kotlin.String?){}[0]
+    final var credentialsProvider // com.steamstreet.awskt.sts/StsConfig.credentialsProvider|{}credentialsProvider[0]
+        final fun <get-credentialsProvider>(): com.steamstreet.awskt.core/AwsCredentialsProvider? // com.steamstreet.awskt.sts/StsConfig.credentialsProvider.<get-credentialsProvider>|<get-credentialsProvider>(){}[0]
+        final fun <set-credentialsProvider>(com.steamstreet.awskt.core/AwsCredentialsProvider?) // com.steamstreet.awskt.sts/StsConfig.credentialsProvider.<set-credentialsProvider>|<set-credentialsProvider>(com.steamstreet.awskt.core.AwsCredentialsProvider?){}[0]
+    final var endpointUrl // com.steamstreet.awskt.sts/StsConfig.endpointUrl|{}endpointUrl[0]
+        final fun <get-endpointUrl>(): kotlin/String? // com.steamstreet.awskt.sts/StsConfig.endpointUrl.<get-endpointUrl>|<get-endpointUrl>(){}[0]
+        final fun <set-endpointUrl>(kotlin/String?) // com.steamstreet.awskt.sts/StsConfig.endpointUrl.<set-endpointUrl>|<set-endpointUrl>(kotlin.String?){}[0]
+    final var httpClient // com.steamstreet.awskt.sts/StsConfig.httpClient|{}httpClient[0]
+        final fun <get-httpClient>(): io.ktor.client/HttpClient? // com.steamstreet.awskt.sts/StsConfig.httpClient.<get-httpClient>|<get-httpClient>(){}[0]
+        final fun <set-httpClient>(io.ktor.client/HttpClient?) // com.steamstreet.awskt.sts/StsConfig.httpClient.<set-httpClient>|<set-httpClient>(io.ktor.client.HttpClient?){}[0]
+    final var httpTimeouts // com.steamstreet.awskt.sts/StsConfig.httpTimeouts|{}httpTimeouts[0]
+        final fun <get-httpTimeouts>(): com.steamstreet.awskt.core/AwsHttpTimeouts // com.steamstreet.awskt.sts/StsConfig.httpTimeouts.<get-httpTimeouts>|<get-httpTimeouts>(){}[0]
+        final fun <set-httpTimeouts>(com.steamstreet.awskt.core/AwsHttpTimeouts) // com.steamstreet.awskt.sts/StsConfig.httpTimeouts.<set-httpTimeouts>|<set-httpTimeouts>(com.steamstreet.awskt.core.AwsHttpTimeouts){}[0]
+    final var observer // com.steamstreet.awskt.sts/StsConfig.observer|{}observer[0]
+        final fun <get-observer>(): com.steamstreet.awskt.core/AwsCallObserver? // com.steamstreet.awskt.sts/StsConfig.observer.<get-observer>|<get-observer>(){}[0]
+        final fun <set-observer>(com.steamstreet.awskt.core/AwsCallObserver?) // com.steamstreet.awskt.sts/StsConfig.observer.<set-observer>|<set-observer>(com.steamstreet.awskt.core.AwsCallObserver?){}[0]
+    final var region // com.steamstreet.awskt.sts/StsConfig.region|{}region[0]
+        final fun <get-region>(): kotlin/String? // com.steamstreet.awskt.sts/StsConfig.region.<get-region>|<get-region>(){}[0]
+        final fun <set-region>(kotlin/String?) // com.steamstreet.awskt.sts/StsConfig.region.<set-region>|<set-region>(kotlin.String?){}[0]
+    final var retryConfig // com.steamstreet.awskt.sts/StsConfig.retryConfig|{}retryConfig[0]
+        final fun <get-retryConfig>(): com.steamstreet.awskt.core/RetryConfig // com.steamstreet.awskt.sts/StsConfig.retryConfig.<get-retryConfig>|<get-retryConfig>(){}[0]
+        final fun <set-retryConfig>(com.steamstreet.awskt.core/RetryConfig) // com.steamstreet.awskt.sts/StsConfig.retryConfig.<set-retryConfig>|<set-retryConfig>(com.steamstreet.awskt.core.RetryConfig){}[0]
+}
+
+open class com.steamstreet.awskt.sts/StsException : com.steamstreet.awskt.core/AwsServiceException { // com.steamstreet.awskt.sts/StsException|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin/Int, kotlin/String? = ..., kotlin/String? = ..., kotlin/Throwable? = ...) // com.steamstreet.awskt.sts/StsException.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.Int;kotlin.String?;kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final val com.steamstreet.awskt.sts/STS_PROTOCOL // com.steamstreet.awskt.sts/STS_PROTOCOL|{}STS_PROTOCOL[0]
+    final fun <get-STS_PROTOCOL>(): com.steamstreet.awskt.core/AwsProtocol // com.steamstreet.awskt.sts/STS_PROTOCOL.<get-STS_PROTOCOL>|<get-STS_PROTOCOL>(){}[0]
+
+final fun com.steamstreet.awskt.sts/Sts(kotlin/Function1<com.steamstreet.awskt.sts/StsConfig, kotlin/Unit> = ...): com.steamstreet.awskt.sts/Sts // com.steamstreet.awskt.sts/Sts|Sts(kotlin.Function1<com.steamstreet.awskt.sts.StsConfig,kotlin.Unit>){}[0]

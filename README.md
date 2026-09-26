@@ -55,6 +55,7 @@ sqs.sendMessage(SendMessageRequest(queueUrl = queueUrl, messageBody = body))
 | `aws-ses` | SES v2 `sendEmail` |
 | `aws-sns` | Publish, batch publish, mobile push endpoints and APNs/FCM payloads |
 | `aws-sqs` | Send, receive and delete (single and batch), visibility, queue URLs |
+| `aws-sts` | `assumeRole`, `getCallerIdentity`, and `AssumeRoleCredentialsProvider` |
 | `aws-bedrock-runtime` | `converse` and `converseStream` |
 | `aws-cloudwatch-logs` | Logs Insights queries |
 | `aws-dynamodb-sdk-adapter` (JVM) | `SdkBackedDynamoDb`: the `DynamoDb` interface backed by the SDK's `DynamoDbClient` |
@@ -69,6 +70,18 @@ provides. On ECS or EC2, or on a machine that uses `~/.aws` profiles or SSO, add
 ```kotlin
 AwsCredentialsDefaults.provider = sdkDefaultChainCredentialsProvider()
 ```
+
+To act as another role, add `aws-sts`. `AssumeRoleCredentialsProvider` calls `AssumeRole`, caches
+the result and refreshes it five minutes before it expires. It works on native as well as the JVM,
+and can be given to one client or installed for all of them:
+
+```kotlin
+AwsCredentialsDefaults.provider =
+    AssumeRoleCredentialsProvider(AssumeRoleRequest(roleArn, roleSessionName = "reports"))
+```
+
+The provider calls STS with credentials from the environment, not from
+`AwsCredentialsDefaults.provider`, so installing it there does not make it its own source.
 
 A client can also be given its own provider through `credentialsProvider` in its configuration. The
 region comes from configuration, `AWS_REGION`, `AWS_DEFAULT_REGION` or the `aws.region` system
