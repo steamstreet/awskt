@@ -18,6 +18,7 @@ kotlin {
                 api(projects.lambda.lambdaCoroutines)
                 api(libs.ktor.client.core)
                 api(libs.ktor.client.curl)
+                implementation(projects.logging)
                 implementation(libs.kotlin.serialization.json)
             }
         }

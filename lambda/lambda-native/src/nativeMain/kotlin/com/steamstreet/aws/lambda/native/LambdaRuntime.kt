@@ -2,6 +2,9 @@ package com.steamstreet.aws.lambda.native
 
 import com.steamstreet.aws.lambda.LambdaContext
 import com.steamstreet.aws.lambda.lambdaContext
+import com.steamstreet.awskt.logging.Log
+import com.steamstreet.awskt.logging.`is`
+import com.steamstreet.awskt.logging.log
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -216,7 +219,9 @@ public class LambdaRuntime internal constructor(
         // construction, the function's own failure, which is the only thing `/error` may be told
         // about — see the attribution note in the class KDoc.
         val result = try {
-            handler(eventBody)
+            // The request id goes into the logging context, so every line the handler logs can be
+            // grouped by invocation in CloudWatch Logs Insights, as the JVM handlers' lines can.
+            log.ctx(requestIdContext(requestId)) { handler(eventBody) }
         } catch (cancellation: CancellationException) {
             // A narrow carve-out from the Throwable catch below, and *only* that: cancellation means
             // the scope running this loop is being torn down, so there is no invocation left to
@@ -230,6 +235,10 @@ public class LambdaRuntime internal constructor(
             // runaway recursion, or any of the Kotlin/Native runtime's own errors — would otherwise
             // escape the poll loop and kill the process with the invocation still outstanding, so
             // Lambda would retry it and hit the same wall until the event expired.
+            //
+            // Logged as well as reported, because the Runtime API does not write the report to
+            // CloudWatch: without this line, the function's logs say nothing about why it failed.
+            logHandlerFailure(requestId, t)
             postError("$baseUrl/runtime/invocation/$requestId/error", t)
             return
         }
@@ -273,6 +282,23 @@ public class LambdaRuntime internal constructor(
         // Throwable this broad would otherwise swallow that decision and retry a POST the Runtime
         // API has already answered.
         checkRuntimeApiStatus(response, "POST $responseUrl")
+    }
+
+    private fun requestIdContext(requestId: String): Log.LoggingContextBuilder.() -> Unit = {
+        // Both names, because the JVM handlers write both.
+        "requestId" `is` requestId
+        "@requestId" `is` requestId
+    }
+
+    private suspend fun logHandlerFailure(requestId: String, t: Throwable) {
+        try {
+            log.ctx(requestIdContext(requestId)) { log.error("Handler failed", t) }
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (logFailure: Throwable) {
+            // A publisher that throws must not stop the failure from being reported to Lambda.
+            logError("Failed to log the handler's failure: $logFailure")
+        }
     }
 
     private suspend fun postResult(url: String, result: String): HttpResponse =

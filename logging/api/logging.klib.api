@@ -27,6 +27,12 @@ final class com.steamstreet.awskt.logging/HttpLogPublisher : com.steamstreet.aws
     final suspend fun publish(com.steamstreet.awskt.logging/Log.Level, kotlin/String?, com.steamstreet.awskt.logging/Log.LoggingContext) // com.steamstreet.awskt.logging/HttpLogPublisher.publish|publish(com.steamstreet.awskt.logging.Log.Level;kotlin.String?;com.steamstreet.awskt.logging.Log.LoggingContext){}[0]
 }
 
+final class com.steamstreet.awskt.logging/JsonLogPublisher : com.steamstreet.awskt.logging/LogPublisher { // com.steamstreet.awskt.logging/JsonLogPublisher|null[0]
+    constructor <init>(kotlin/Function1<kotlin/String, kotlin/Unit> = ...) // com.steamstreet.awskt.logging/JsonLogPublisher.<init>|<init>(kotlin.Function1<kotlin.String,kotlin.Unit>){}[0]
+
+    final suspend fun publish(com.steamstreet.awskt.logging/Log.Level, kotlin/String?, com.steamstreet.awskt.logging/Log.LoggingContext) // com.steamstreet.awskt.logging/JsonLogPublisher.publish|publish(com.steamstreet.awskt.logging.Log.Level;kotlin.String?;com.steamstreet.awskt.logging.Log.LoggingContext){}[0]
+}
+
 final class com.steamstreet.awskt.logging/Log { // com.steamstreet.awskt.logging/Log|null[0]
     constructor <init>(com.steamstreet.awskt.logging/LogPublisher) // com.steamstreet.awskt.logging/Log.<init>|<init>(com.steamstreet.awskt.logging.LogPublisher){}[0]
 

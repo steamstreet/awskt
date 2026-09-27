@@ -81,6 +81,13 @@ public final class com/steamstreet/awskt/logging/HttpLogPublisher : com/steamstr
 	public final fun setAlsoPublishToBackupPublisher (Z)V
 }
 
+public final class com/steamstreet/awskt/logging/JsonLogPublisher : com/steamstreet/awskt/logging/LogPublisher {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun publish (Lcom/steamstreet/awskt/logging/Log$Level;Ljava/lang/String;Lcom/steamstreet/awskt/logging/Log$LoggingContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public final class com/steamstreet/awskt/logging/Log {
 	public static final field Companion Lcom/steamstreet/awskt/logging/Log$Companion;
 	public fun <init> (Lcom/steamstreet/awskt/logging/LogPublisher;)V
