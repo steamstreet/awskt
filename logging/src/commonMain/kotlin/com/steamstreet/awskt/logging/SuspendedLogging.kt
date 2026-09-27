@@ -452,7 +452,7 @@ public class Log(public var publisher: LogPublisher) {
         this.ctx({
             builder()
         }) {
-            log(Level.ERROR, null)
+            log(Level.EVENT, null)
         }
     }
 }

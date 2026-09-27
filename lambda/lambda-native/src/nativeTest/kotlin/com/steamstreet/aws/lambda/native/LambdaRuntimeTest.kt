@@ -1,6 +1,8 @@
 package com.steamstreet.aws.lambda.native
 
 import com.steamstreet.aws.lambda.lambdaContext
+import com.steamstreet.awskt.logging.JsonLogPublisher
+import com.steamstreet.awskt.logging.log
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -12,6 +14,7 @@ import io.ktor.http.headersOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -559,5 +562,81 @@ class LambdaRuntimeTest {
 
         assertNotNull(seen)
         assertEquals("""{"a":1}""", seen)
+    }
+
+    /**
+     * Runs [block] with the global [log] writing to a list instead of stdout, and returns what it
+     * wrote. The runtime logs through the global, so that is what has to be captured.
+     */
+    private suspend fun capturingLogs(block: suspend () -> Unit): List<String> {
+        val lines = mutableListOf<String>()
+        val original = log.publisher
+        log.publisher = JsonLogPublisher { lines += it }
+        try {
+            block()
+        } finally {
+            log.publisher = original
+        }
+        return lines
+    }
+
+    /**
+     * Without the request id in the logging context, the handler's log lines cannot be grouped by
+     * invocation in CloudWatch Logs Insights. The JVM handlers put it there under both names.
+     */
+    @Test
+    fun putsTheRequestIdIntoTheHandlersLoggingContext() = runBlocking {
+        val recorder = Recorder()
+        var seen: Map<String, JsonElement>? = null
+        val runtime = runtimeFor(recorder, clientFor(recorder, requestId = "req-42")) {
+            seen = log.ctx()
+            "{}"
+        }
+
+        runtime.processNextInvocation(BASE_URL)
+
+        assertEquals("req-42", seen?.get("requestId")?.jsonPrimitive?.content)
+        assertEquals("req-42", seen?.get("@requestId")?.jsonPrimitive?.content)
+    }
+
+    /**
+     * The `/error` report does not reach CloudWatch, so a handler failure that is only reported
+     * leaves the function's logs with nothing to say about it.
+     */
+    @Test
+    fun logsAHandlerFailureWithTheRequestIdAndStackTrace() = runBlocking {
+        val recorder = Recorder()
+        val runtime = runtimeFor(recorder, clientFor(recorder, requestId = "req-7")) {
+            throw IllegalStateException("handler blew up")
+        }
+
+        val lines = capturingLogs { runtime.processNextInvocation(BASE_URL) }
+
+        val line = Json.parseToJsonElement(lines.single()).jsonObject
+        assertEquals("ERROR", line["level"]?.jsonPrimitive?.content)
+        assertEquals("Handler failed", line["message"]?.jsonPrimitive?.content)
+        assertEquals("req-7", line["requestId"]?.jsonPrimitive?.content)
+        assertContains(line["stack_trace"]!!.jsonPrimitive.content, "handler blew up")
+        assertContains(recorder.posts.single().url.toString(), "/error")
+    }
+
+    /** A publisher that throws must not stop the failure from being reported to Lambda. */
+    @Test
+    fun stillReportsAHandlerFailureWhenLoggingItThrows() = runBlocking {
+        val recorder = Recorder()
+        val runtime = runtimeFor(recorder, clientFor(recorder)) {
+            throw IllegalStateException("handler blew up")
+        }
+
+        val original = log.publisher
+        log.publisher = JsonLogPublisher { throw RuntimeException("publisher broke") }
+        try {
+            runtime.processNextInvocation(BASE_URL)
+        } finally {
+            log.publisher = original
+        }
+
+        assertContains(recorder.posts.single().url.toString(), "/error")
+        assertContains(recorder.loggedText(), "publisher broke")
     }
 }
