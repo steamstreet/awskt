@@ -12,6 +12,7 @@ public final class com/steamstreet/aws/lambda/Coroutines_jvmKt {
 	public static final fun getLogger ()Lorg/slf4j/Logger;
 	public static final fun lambda (Lcom/amazonaws/services/lambda/runtime/Context;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static synthetic fun lambda$default (Lcom/amazonaws/services/lambda/runtime/Context;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun readIncoming (Ljava/io/InputStream;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun readIncoming (Ljava/io/InputStream;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun readIncoming$default (Ljava/io/InputStream;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
@@ -25,6 +26,7 @@ public abstract class com/steamstreet/aws/lambda/IOLambda : com/steamstreet/aws/
 	public fun execute (Ljava/io/InputStream;Ljava/io/OutputStream;Lcom/amazonaws/services/lambda/runtime/Context;)V
 	public fun getLogIncoming ()Z
 	public fun getLogOutgoing ()Z
+	public fun getLogRedactor ()Lkotlin/jvm/functions/Function1;
 	public fun handle (Ljava/io/InputStream;Ljava/io/OutputStream;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun handle (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun setLogIncoming (Z)V
@@ -36,6 +38,7 @@ public abstract class com/steamstreet/aws/lambda/InputLambda : com/steamstreet/a
 	public fun execute (Ljava/io/InputStream;Ljava/io/OutputStream;Lcom/amazonaws/services/lambda/runtime/Context;)V
 	public fun getLogIncoming ()Z
 	public fun getLogOutgoing ()Z
+	public fun getLogRedactor ()Lkotlin/jvm/functions/Function1;
 	public fun handle (Ljava/io/InputStream;Ljava/io/OutputStream;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun handle (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun setLogIncoming (Z)V
@@ -54,6 +57,13 @@ public abstract interface class com/steamstreet/aws/lambda/LambdaContext {
 	public abstract fun getFunctionName ()Ljava/lang/String;
 	public abstract fun getRemainingTimeInMillis ()I
 	public abstract fun getRequestId ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/aws/lambda/RedactionKt {
+	public static final field REDACTED Ljava/lang/String;
+	public static final fun getCredentialFieldNames ()Ljava/util/Set;
+	public static final fun redactCredentials (Lkotlinx/serialization/json/JsonElement;Ljava/util/Set;)Lkotlinx/serialization/json/JsonElement;
+	public static synthetic fun redactCredentials$default (Lkotlinx/serialization/json/JsonElement;Ljava/util/Set;ILjava/lang/Object;)Lkotlinx/serialization/json/JsonElement;
 }
 
 public abstract interface class com/steamstreet/aws/lambda/SuspendingLambda {

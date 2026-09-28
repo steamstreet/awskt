@@ -15,6 +15,11 @@ abstract interface com.steamstreet.aws.lambda/LambdaContext { // com.steamstreet
         abstract fun <get-requestId>(): kotlin/String // com.steamstreet.aws.lambda/LambdaContext.requestId.<get-requestId>|<get-requestId>(){}[0]
 }
 
+final const val com.steamstreet.aws.lambda/REDACTED // com.steamstreet.aws.lambda/REDACTED|{}REDACTED[0]
+    final fun <get-REDACTED>(): kotlin/String // com.steamstreet.aws.lambda/REDACTED.<get-REDACTED>|<get-REDACTED>(){}[0]
+
+final val com.steamstreet.aws.lambda/credentialFieldNames // com.steamstreet.aws.lambda/credentialFieldNames|{}credentialFieldNames[0]
+    final fun <get-credentialFieldNames>(): kotlin.collections/Set<kotlin/String> // com.steamstreet.aws.lambda/credentialFieldNames.<get-credentialFieldNames>|<get-credentialFieldNames>(){}[0]
 final val com.steamstreet.aws.lambda/lambdaIODispatcher // com.steamstreet.aws.lambda/lambdaIODispatcher|{}lambdaIODispatcher[0]
     final fun <get-lambdaIODispatcher>(): kotlinx.coroutines/CoroutineDispatcher // com.steamstreet.aws.lambda/lambdaIODispatcher.<get-lambdaIODispatcher>|<get-lambdaIODispatcher>(){}[0]
 final val com.steamstreet.aws.lambda/lambdaJson // com.steamstreet.aws.lambda/lambdaJson|{}lambdaJson[0]
@@ -26,3 +31,5 @@ final var com.steamstreet.aws.lambda/lambdaContext // com.steamstreet.aws.lambda
 final var com.steamstreet.aws.lambda/logIncoming // com.steamstreet.aws.lambda/logIncoming|{}logIncoming[0]
     final fun <get-logIncoming>(): kotlin/Boolean // com.steamstreet.aws.lambda/logIncoming.<get-logIncoming>|<get-logIncoming>(){}[0]
     final fun <set-logIncoming>(kotlin/Boolean) // com.steamstreet.aws.lambda/logIncoming.<set-logIncoming>|<set-logIncoming>(kotlin.Boolean){}[0]
+
+final fun com.steamstreet.aws.lambda/redactCredentials(kotlinx.serialization.json/JsonElement, kotlin.collections/Set<kotlin/String> = ...): kotlinx.serialization.json/JsonElement // com.steamstreet.aws.lambda/redactCredentials|redactCredentials(kotlinx.serialization.json.JsonElement;kotlin.collections.Set<kotlin.String>){}[0]

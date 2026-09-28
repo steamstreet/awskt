@@ -11,6 +11,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.encodeToStream
+import net.logstash.logback.marker.LogstashMarker
 import net.logstash.logback.marker.Markers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -45,19 +46,48 @@ public val awsLambdaContext: Context
  * Read the incoming data stream as text and log if configured to do so.
  */
 public suspend fun InputStream.readIncoming(log: Boolean = logIncoming, handler: suspend (String) -> Unit) {
+    readIncoming(log, null, handler)
+}
+
+/**
+ * Read the incoming data stream as text and log if configured to do so, passing the logged copy
+ * through [redactor] first. The handler always receives the text as it arrived.
+ *
+ * With a null [redactor] the text is logged as it is, without being parsed.
+ */
+public suspend fun InputStream.readIncoming(
+    log: Boolean,
+    redactor: ((JsonElement) -> JsonElement)?,
+    handler: suspend (String) -> Unit
+) {
     val text = reader().readText()
     try {
         if (log) {
-            logger.info(Markers.appendRaw("input", text), "Request received")
+            logger.info(payloadMarker("input", text, redactor), "Request received")
         }
         handler(text)
     } catch (t: Throwable) {
         // we always log failures to read.
         if (!log) {
-            logger.info(Markers.appendRaw("input", text), "Request received")
+            logger.info(payloadMarker("input", text, redactor), "Request received")
         }
         throw t
     }
+}
+
+/**
+ * A marker that writes [text] under [field] as raw JSON, redacted by [redactor] if there is one.
+ * Text that is not JSON cannot be redacted structurally, and is written as a string instead, so a
+ * redacting handler never writes unparsed input into a log line.
+ */
+private fun payloadMarker(field: String, text: String, redactor: ((JsonElement) -> JsonElement)?): LogstashMarker {
+    if (redactor == null) return Markers.appendRaw(field, text)
+    val element = try {
+        lambdaJson.parseToJsonElement(text)
+    } catch (_: Exception) {
+        return Markers.append(field, text)
+    }
+    return Markers.appendRaw(field, redactor(element).toString())
 }
 
 /**
@@ -204,8 +234,14 @@ public abstract class InputLambda<T>(private val serializer: KSerializer<T>) : S
     override var logIncoming: Boolean = true
     override var logOutgoing: Boolean = true
 
+    /**
+     * Applied to the logged copy of each request, for example [redactCredentials] to keep tokens
+     * out of the logs. Null, the default, logs the request as it arrived.
+     */
+    public open val logRedactor: ((JsonElement) -> JsonElement)? = null
+
     override suspend fun handle(input: InputStream, output: OutputStream) {
-        input.readIncoming(logIncoming) { text ->
+        input.readIncoming(logIncoming, logRedactor) { text ->
             val parameter = lambdaJson.decodeFromString(serializer, text)
             handle(parameter)
         }
@@ -224,15 +260,22 @@ public abstract class IOLambda<T, R>(
     override var logIncoming: Boolean = true
     override var logOutgoing: Boolean = true
 
+    /**
+     * Applied to the logged copies of each request and response, for example [redactCredentials]
+     * to keep tokens out of the logs. Null, the default, logs them as they are.
+     */
+    public open val logRedactor: ((JsonElement) -> JsonElement)? = null
+
     override suspend fun handle(input: InputStream, output: OutputStream) {
-        input.readIncoming(logIncoming) { text ->
+        val redactor = logRedactor
+        input.readIncoming(logIncoming, redactor) { text ->
             val parameter = lambdaJson.decodeFromString(serializer, text)
             val result = handle(parameter)
 
             if (result != null) {
                 if (logOutgoing) {
                     val resultData = lambdaJson.encodeToString(out, result)
-                    logger.info(Markers.appendRaw("event", resultData), "Lambda response sent")
+                    logger.info(payloadMarker("event", resultData, redactor), "Lambda response sent")
                     output.writer().apply {
                         write(resultData)
                         flush()

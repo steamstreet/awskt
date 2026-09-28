@@ -22,6 +22,11 @@ kotlin {
                 api(projects.env)
             }
         }
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
         jvmMain {
             dependencies {
                 api(projects.lambda.lambdaCore)
