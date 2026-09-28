@@ -30,6 +30,8 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(libs.kluent)
+                implementation(libs.slf4j.logback.classic)
+                implementation(libs.logstash.logback.encoder)
             }
         }
     }

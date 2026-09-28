@@ -19,6 +19,19 @@ fun myCode() {
 
 The easiest way to set the value is just by setting an environment variable.
 
+### Missing Values
+
+`Env[key]`, `Env.lazy(key)` and an `env(name)` property without a default are required. When the
+variable has no value, because it is unset, set to `_NoValue`, or refers to a secret that could not
+be read, they throw an `IllegalStateException` naming it:
+
+```
+java.lang.IllegalStateException: Environment variable 'APIKey' is not set
+```
+
+Through 3.1.5 this was a bare `NullPointerException` that did not name the variable. Use
+`Env.optional(key)`, or `env(name).optional`, for a variable that may be absent.
+
 ### System Property
 
 Environment variables are problematic for testing, since they cannot be changed after starting

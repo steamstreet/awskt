@@ -1,5 +1,6 @@
 public abstract class com/steamstreet/aws/lambda/apigateway/ApiGatewayProxyHandler : com/steamstreet/aws/lambda/IOLambda {
 	public fun <init> ()V
+	public fun getLogRedactor ()Lkotlin/jvm/functions/Function1;
 }
 
 public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayProxyRequest {
@@ -163,6 +164,7 @@ public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2Http$Compan
 
 public abstract class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpHandler : com/steamstreet/aws/lambda/IOLambda {
 	public fun <init> ()V
+	public fun getLogRedactor ()Lkotlin/jvm/functions/Function1;
 }
 
 public final class com/steamstreet/aws/lambda/apigateway/ApiGatewayV2HttpRequest {

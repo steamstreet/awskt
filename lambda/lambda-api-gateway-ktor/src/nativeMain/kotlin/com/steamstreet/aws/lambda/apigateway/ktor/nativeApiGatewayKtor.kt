@@ -5,6 +5,7 @@ import com.steamstreet.aws.lambda.apigateway.ApiGatewayProxyResponse
 import com.steamstreet.aws.lambda.apigateway.ApiGatewayV2HttpRequest
 import com.steamstreet.aws.lambda.apigateway.ApiGatewayV2HttpResponse
 import com.steamstreet.aws.lambda.native.nativeLambdaIO
+import com.steamstreet.aws.lambda.redactCredentials
 import io.ktor.server.application.Application
 
 /**
@@ -37,6 +38,12 @@ import io.ktor.server.application.Application
  * [initialize] runs after the module is installed, so anything it sets up is available to handlers
  * but cannot be read by the module block itself. Configuration the module needs at install time
  * should be read inside [module].
+ *
+ * ### Logging
+ *
+ * Each request and response is logged as `nativeLambdaIO` logs them, with `redactCredentials`
+ * applied first, so `Authorization`, cookies and API keys stay out of the logs, as they do on the
+ * JVM's `APIGatewayLambdaServer`.
  */
 public fun apiGatewayKtorLambda(
     initialize: suspend () -> Unit = {},
@@ -49,7 +56,8 @@ public fun apiGatewayKtorLambda(
         initialize = {
             server = APIGatewayKtorServer(module)
             initialize()
-        }
+        },
+        logRedactor = { redactCredentials(it) }
     ) { request ->
         server.processRequest(request)
     }
@@ -82,7 +90,8 @@ public fun apiGatewayV2KtorLambda(
         initialize = {
             server = APIGatewayV2KtorServer(module)
             initialize()
-        }
+        },
+        logRedactor = { redactCredentials(it) }
     ) { request ->
         server.processRequest(request)
     }

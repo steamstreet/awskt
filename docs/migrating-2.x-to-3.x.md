@@ -303,6 +303,11 @@ Some awskt modules cover operations a consumer used to call through the SDK dire
   `withAudience` will now reject tokens meant for other clients, which is the intended result.
 - **`Secret_` environment values** now resolve on native too, through `aws-secretsmanager`, with
   the same rules as the JVM. `AppConfig.` values are still resolved on the JVM only.
+- **A missing required variable names itself, from 3.1.6.** `Env[key]`, `Env.lazy(key)` and an `env(name)`
+  property with no default throw `IllegalStateException("Environment variable 'KEY' is not set")`
+  when the variable has no value, on every platform. Through 3.1.5, and in 2.x, they threw a bare
+  `NullPointerException` that did not say which variable was missing. Code that caught
+  `NullPointerException` to detect a missing variable should use `Env.optional(key)` instead.
 
 ## Checklist
 

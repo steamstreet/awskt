@@ -19,6 +19,7 @@ import platform.posix.unsetenv
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -100,6 +101,22 @@ class NativeSecretsTest {
         set("AWSKT_NONE", "_NoValue")
 
         assertNull(getEnvironmentVariable("AWSKT_NONE"))
+    }
+
+    @Test
+    fun aRequiredReadOfNoValueOrAFailedSecretNamesTheVariable() {
+        secrets = FakeSecrets(mapOf("broken" to IllegalStateException("boom")))
+        set("AWSKT_NONE", "_NoValue")
+        set("AWSKT_BROKEN", "Secret_broken")
+
+        assertEquals(
+            "Environment variable 'AWSKT_NONE' is not set",
+            assertFailsWith<IllegalStateException> { Env["AWSKT_NONE"] }.message
+        )
+        assertEquals(
+            "Environment variable 'AWSKT_BROKEN' is not set",
+            assertFailsWith<IllegalStateException> { Env["AWSKT_BROKEN"] }.message
+        )
     }
 
     @Test

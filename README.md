@@ -107,7 +107,7 @@ cached, so read them once. On the JVM only, `AppConfig.<app>.<env>.<config>.<key
 resolved from AppConfig.
 
 ```kotlin
-val tableName = Env["TABLE_NAME"]                // throws if missing
+val tableName = Env["TABLE_NAME"]                // throws IllegalStateException naming TABLE_NAME if missing
 val region: String? = Env.optional("AWS_REGION")
 val apiKey by env("API_KEY")
 ```
@@ -217,6 +217,19 @@ The Kotlin/Native custom runtime for `provided.al2023`. Native targets only.
 ```kotlin
 fun main() = nativeLambdaIO<Request, Response> { request -> Response("ok ${request.id}") }
 ```
+
+`nativeLambdaIO` and `nativeLambdaInput` log each event as `Request received` (payload under
+`input`) and `nativeLambdaIO` logs each response as `Lambda response sent` (payload under `event`),
+with the request id, as the JVM handlers do. `logIncoming = false`, or `LogIncomingData=false` in the
+environment, suppresses the request line unless the handler fails; `logOutgoing = false` suppresses
+the response line.
+
+Request logging never writes credentials for API Gateway or AppSync. `redactCredentials` (in
+`lambda-coroutines`) replaces the value of any field named `Authorization`, `Cookie`, `Set-Cookie`,
+`X-Api-Key` and the like with `[REDACTED]`, at any depth, and the API Gateway handlers (JVM and
+native, Ktor or not) and both AppSync entry points apply it. Pass `logRedactor = { redactCredentials(it) }`
+to `nativeLambdaIO` or `nativeLambdaInput` to do the same elsewhere, or override `logRedactor` on an
+`IOLambda` or `InputLambda`. Request bodies are strings and are not redacted.
 
 The `com.steamstreet.awskt.native-lambda` Gradle plugin, from the `gradle-plugin` included build,
 packages a `linuxArm64` executable as a Lambda bootstrap zip.
