@@ -10,8 +10,9 @@
 #                      [--scope patch|minor|major] [--yes] [--dry-run]
 #
 # `--check` sets how much is verified before anything is uploaded:
-#   jvm   the JVM tests only (jvmTest, and test in the JVM-only modules), without a clean. A few
-#         minutes. The default for --target steamstreet.
+#   jvm   the JVM tests only (jvmTest, and test in the JVM-only modules), without a clean. About
+#         15 minutes from a cold build, less when the build cache is warm. The default for
+#         --target steamstreet.
 #   full  a clean `check`: every target compiled and tested, and the ABI dumps verified. About 25
 #         minutes. The default for --target central, whose releases are public and permanent.
 #   none  nothing. `--skip-check` is the same.
@@ -130,16 +131,24 @@ fi
 GRADLE_PROPS="${GRADLE_USER_HOME:-$HOME/.gradle}/gradle.properties"
 read_prop() { grep -E "^$1=" "$GRADLE_PROPS" 2>/dev/null | head -1 | cut -d= -f2- || true; }
 
-# Gradle's S3 support reads credentials from the environment, not from a named profile, so the
-# publishing profile's are exported for the rest of the run. AWS_PROFILE is cleared so that nothing
-# falls back to whichever profile the shell happened to have.
+# The publishing profile is handed to the publishing steps alone, as AWS_PROFILE, with any keys the
+# shell has removed so that they cannot take precedence over it. It holds a static key, which the AWS
+# SDK inside Gradle reads from ~/.aws/credentials; an SSO profile would not work there.
+#
+# It is never exported as AWS_ACCESS_KEY_ID: the live AWS tests (docs/live-smoke.md) run whenever
+# that variable is set, and with the publisher's key, which can only write the Maven bucket, they
+# fail. That stopped the first release made this way, before anything was uploaded.
 command -v aws >/dev/null || die "the AWS CLI is required to publish to the Steamstreet repository"
-PUBLISH_ENV="$(aws configure export-credentials --profile "$PUBLISH_PROFILE" --format env 2>/dev/null)" || \
-  die "no credentials for AWS profile '$PUBLISH_PROFILE'; see infrastructure/README.md"
-eval "$PUBLISH_ENV"
-unset AWS_PROFILE
-PUBLISH_ACCOUNT="$(aws sts get-caller-identity --query Account --output text 2>/dev/null)" || \
-  die "the credentials of profile '$PUBLISH_PROFILE' were rejected"
+publishing() {
+  env -u AWS_ACCESS_KEY_ID -u AWS_SECRET_ACCESS_KEY -u AWS_SESSION_TOKEN \
+    AWS_PROFILE="$PUBLISH_PROFILE" "$@"
+}
+# The checks run with no AWS credentials at all, so they stay offline whatever the shell holds.
+offline() {
+  env -u AWS_ACCESS_KEY_ID -u AWS_SECRET_ACCESS_KEY -u AWS_SESSION_TOKEN -u AWS_PROFILE "$@"
+}
+PUBLISH_ACCOUNT="$(publishing aws sts get-caller-identity --query Account --output text 2>/dev/null)" || \
+  die "no working credentials in AWS profile '$PUBLISH_PROFILE'; see infrastructure/README.md"
 [[ "$PUBLISH_ACCOUNT" == "$STEAMSTREET_ACCOUNT" ]] || \
   die "profile '$PUBLISH_PROFILE' is in account $PUBLISH_ACCOUNT, not the Steamstreet account $STEAMSTREET_ACCOUNT"
 
@@ -195,12 +204,12 @@ case "$CHECK" in
   jvm)
     say "Running the JVM tests"
     info "jvmTest in the multiplatform modules and test in the JVM-only ones; native tests and the ABI dumps are not checked"
-    ./gradlew jvmTest test --console=plain || die "the JVM tests failed; nothing has been uploaded"
+    offline ./gradlew jvmTest test --console=plain || die "the JVM tests failed; nothing has been uploaded"
     ;;
   full)
     say "Running clean check"
     info "this takes roughly 25 minutes; every target is compiled and the ABI dumps verified"
-    ./gradlew clean check --console=plain || die "check failed; nothing has been uploaded"
+    offline ./gradlew clean check --console=plain || die "check failed; nothing has been uploaded"
     ;;
 esac
 
@@ -242,7 +251,7 @@ if [[ "$TARGET" == "steamstreet" ]]; then
     die "aborted before upload"
   fi
 
-  ./gradlew final -Pawskt.publishTarget=steamstreet ${SCOPE_ARG[@]+"${SCOPE_ARG[@]}"} --console=plain || \
+  publishing ./gradlew final -Pawskt.publishTarget=steamstreet ${SCOPE_ARG[@]+"${SCOPE_ARG[@]}"} --console=plain || \
     die "the release build failed; check whether artifacts were uploaded and whether v$VERSION was tagged before retrying"
 
   git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null || die "release finished but tag v$VERSION was not created"
@@ -251,7 +260,7 @@ if [[ "$TARGET" == "steamstreet" ]]; then
 
   say "Publishing the Gradle plugin at $VERSION"
   info 'gradle-plugin is an includeBuild, so the final task does not cover it'
-  ./gradlew --project-dir gradle-plugin -Pawskt.pluginVersion="$VERSION" \
+  publishing ./gradlew --project-dir gradle-plugin -Pawskt.pluginVersion="$VERSION" \
     publishAllPublicationsToSteamstreetRepository --console=plain || die "the plugin build failed to upload"
 
   say "Checking the artifacts answer at $STEAMSTREET_REPO"
@@ -275,7 +284,7 @@ PRE_EXISTING="$(api_get "$OSSRH_API/manual/search/repositories" \
   | python3 -c 'import json,sys; print(" ".join(r["key"] for r in json.load(sys.stdin).get("repositories",[])))')"
 [[ -n "$PRE_EXISTING" ]] && info "note: staging repositories already exist and will be left alone"
 
-./gradlew final -Pawskt.publishTarget=central ${SCOPE_ARG[@]+"${SCOPE_ARG[@]}"} --console=plain || \
+publishing ./gradlew final -Pawskt.publishTarget=central ${SCOPE_ARG[@]+"${SCOPE_ARG[@]}"} --console=plain || \
   die "the release build failed; check whether artifacts were uploaded and whether v$VERSION was tagged before retrying"
 
 git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null || die "release finished but tag v$VERSION was not created"
@@ -284,7 +293,7 @@ info "tagged and pushed v$VERSION"
 
 say "Publishing the Gradle plugin at $VERSION"
 info 'gradle-plugin is an includeBuild, so the final task does not cover it'
-./gradlew --project-dir gradle-plugin -Pawskt.pluginVersion="$VERSION" \
+publishing ./gradlew --project-dir gradle-plugin -Pawskt.pluginVersion="$VERSION" \
   publishToSonatype closeSonatypeStagingRepository publishAllPublicationsToSteamstreetRepository \
   --console=plain || die "the plugin build failed to upload"
 
