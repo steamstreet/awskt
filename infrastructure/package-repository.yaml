@@ -1,0 +1,215 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Resources for the package repository
+
+# The Steamstreet Maven repository: an S3 bucket that the release scripts of awskt and GraphKt
+# publish to, served read-only to anyone over HTTPS through CloudFront. The libraries are open
+# source, so builds resolve them without credentials. The bucket itself stays private: CloudFront
+# reads it through an Origin Access Control, and only the release paths are served.
+
+Parameters:
+  PackageRepositoryName:
+    Type: String
+    Description: The name of the package repository bucket.
+  RepositoryDomainName:
+    Type: String
+    Default: repo.steamstreet.com
+    Description: The public host name builds resolve artifacts from.
+  HostedZoneId:
+    Type: AWS::Route53::HostedZone::Id
+    Default: Z23Y7TTHHW3Q77
+    Description: The steamstreet.com hosted zone, which holds the repository's record.
+  CertificateArn:
+    Type: String
+    Default: arn:aws:acm:us-east-1:141660060409:certificate/d75f920c-52e3-469e-96e8-5baf435f3dfb
+    Description: >-
+      A certificate covering RepositoryDomainName. CloudFront accepts only us-east-1 certificates,
+      and this stack is in us-west-2, so it is passed in; the default is the account's existing
+      *.steamstreet.com certificate, which ACM renews automatically.
+
+Resources:
+  PackageRepository:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref PackageRepositoryName
+      PublicAccessBlockConfiguration:
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  PackageRepositoryOriginAccess:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub '${PackageRepositoryName}-oac'
+        Description: CloudFront's read access to the package repository bucket
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  # A released artifact never changes, so it can be cached for a long time. maven-metadata.xml is
+  # rewritten by every release and lists its versions, so it is cached briefly. Gradle resolving a
+  # pinned version does not need it, but a version range or a `latest` lookup does.
+  ArtifactCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub '${PackageRepositoryName}-artifacts'
+        MinTTL: 0
+        DefaultTTL: 86400
+        MaxTTL: 31536000
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingGzip: true
+          EnableAcceptEncodingBrotli: true
+          CookiesConfig:
+            CookieBehavior: none
+          HeadersConfig:
+            HeaderBehavior: none
+          QueryStringsConfig:
+            QueryStringBehavior: none
+
+  MetadataCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub '${PackageRepositoryName}-metadata'
+        MinTTL: 0
+        DefaultTTL: 60
+        MaxTTL: 300
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingGzip: true
+          EnableAcceptEncodingBrotli: true
+          CookiesConfig:
+            CookieBehavior: none
+          HeadersConfig:
+            HeaderBehavior: none
+          QueryStringsConfig:
+            QueryStringBehavior: none
+
+  PackageRepositoryDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Comment: Steamstreet Maven repository (read-only)
+        Enabled: true
+        Aliases:
+          - !Ref RepositoryDomainName
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CertificateArn
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.2_2021
+        HttpVersion: http2and3
+        PriceClass: PriceClass_100
+        Origins:
+          - Id: PackageRepository
+            DomainName: !GetAtt PackageRepository.RegionalDomainName
+            # Only the release repository is served, at the root of the distribution, so a build's
+            # repository URL is just the distribution's.
+            OriginPath: /maven/release
+            OriginAccessControlId: !GetAtt PackageRepositoryOriginAccess.Id
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+        DefaultCacheBehavior:
+          TargetOriginId: PackageRepository
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD]
+          CachedMethods: [GET, HEAD]
+          Compress: true
+          CachePolicyId: !Ref ArtifactCachePolicy
+        CacheBehaviors:
+          - PathPattern: '*maven-metadata.xml*'
+            TargetOriginId: PackageRepository
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods: [GET, HEAD]
+            CachedMethods: [GET, HEAD]
+            Compress: true
+            CachePolicyId: !Ref MetadataCachePolicy
+
+  # CloudFront's read access, through this distribution only. A grant to a service principal with a
+  # SourceArn condition is not a public policy, so BlockPublicPolicy above still allows it.
+  PackageRepositoryPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref PackageRepository
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: CloudFrontReadsReleases
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub '${PackageRepository.Arn}/maven/release/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${PackageRepositoryDistribution}'
+          # Without ListBucket, a missing artifact answers 403 rather than 404, and Gradle reports a
+          # failed request instead of moving on to the next repository. S3 checks it without a
+          # prefix when it decides between the two, so it cannot be narrowed to a prefix. CloudFront
+          # never issues a list request, so no viewer can list the bucket through it.
+          - Sid: CloudFrontListsReleases
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:ListBucket
+            Resource: !GetAtt PackageRepository.Arn
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${PackageRepositoryDistribution}'
+
+  RepositoryRecord:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      RecordSets:
+        - Name: !Ref RepositoryDomainName
+          Type: A
+          AliasTarget:
+            DNSName: !GetAtt PackageRepositoryDistribution.DomainName
+            # The fixed hosted zone of every CloudFront distribution.
+            HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Ref RepositoryDomainName
+          Type: AAAA
+          AliasTarget:
+            DNSName: !GetAtt PackageRepositoryDistribution.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+
+  # The identity the release scripts of awskt and GraphKt publish as. Its long-lived access key
+  # sits in a local AWS profile (steamstreet-publisher), so publishing never waits on an SSO login.
+  # It can only read, write and list the Maven tree, so a leaked key can at worst alter published
+  # artifacts. The key is created outside this stack, so the secret never appears in it.
+  PublisherUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: steamstreet-maven-publisher
+      Policies:
+        - PolicyName: PublishMavenArtifacts
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: ReadWriteArtifacts
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource: !Sub '${PackageRepository.Arn}/maven/*'
+              - Sid: ListArtifacts
+                Effect: Allow
+                Action: s3:ListBucket
+                Resource: !GetAtt PackageRepository.Arn
+                Condition:
+                  StringLike:
+                    s3:prefix: 'maven/*'
+
+Outputs:
+  RepositoryUrl:
+    Description: The read-only Maven repository URL for builds
+    Value: !Sub 'https://${RepositoryDomainName}'
+  DistributionUrl:
+    Description: The distribution's own host name, which serves the same content
+    Value: !Sub 'https://${PackageRepositoryDistribution.DomainName}'
+  PublisherUserName:
+    Description: The IAM user the release scripts publish as
+    Value: !Ref PublisherUser
+  PublishUrl:
+    Description: The URL the release scripts publish to
+    Value: !Sub 's3://${PackageRepositoryName}/maven/release'
