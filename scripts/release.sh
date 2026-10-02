@@ -8,6 +8,12 @@
 # Usage:
 #   scripts/release.sh [--target steamstreet|central] [--check full|jvm|none]
 #                      [--scope patch|minor|major] [--yes] [--dry-run]
+#   scripts/release.sh --resume [--yes]
+#
+# `--resume` publishes the version tagged at HEAD to the Steamstreet repository again, without a
+# check and without tagging: to finish a release whose tag was pushed before its uploads completed,
+# or to backfill an older tag into the repository (check the tag out first). Uploads of a version
+# replace the same coordinates, so running it twice is harmless.
 #
 # `--check` sets how much is verified before anything is uploaded:
 #   jvm   the JVM tests only (jvmTest, and test in the JVM-only modules), without a clean. About
@@ -24,8 +30,11 @@
 # which can only write the bucket's Maven tree (infrastructure/package-repository.yaml). A static
 # key rather than an SSO profile, so that a release never waits on a login.
 #
-# The steps for `--target steamstreet`: preflight, version, check, final (uploads, tags, pushes),
-# plugin, and verify that the POMs answer at repo.steamstreet.com.
+# The steps for `--target steamstreet`: preflight, version, check, upload (every module, then the
+# plugin), verify that the POMs answer at repo.steamstreet.com, and only then tag and push. A
+# release interrupted before the tag leaves nothing to clean up: run it again and it re-uploads.
+# It does not use nebula's `final` task, which pushes the tag before the uploads finish; that left
+# 3.1.6 tagged and partly published when its first run was cut off.
 #
 # The steps for `--target central`, in order:
 #   1. preflight   — clean tree, branch in sync with origin, credentials present
@@ -62,6 +71,7 @@ CHECK=""
 SCOPE=""
 ASSUME_YES=0
 DRY_RUN=0
+RESUME=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -73,6 +83,7 @@ while [[ $# -gt 0 ]]; do
     --scope=*)    SCOPE="${1#*=}"; shift ;;
     --yes|-y)     ASSUME_YES=1; shift ;;
     --dry-run)    DRY_RUN=1; shift ;;
+    --resume)     RESUME=1; shift ;;
     --skip-check) CHECK="none"; shift ;;
     -h|--help)    sed -n '2,40p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *)            echo "unknown argument: $1" >&2; exit 2 ;;
@@ -81,6 +92,11 @@ done
 
 if [[ ! "$TARGET" =~ ^(steamstreet|central)$ ]]; then
   echo "--target must be steamstreet or central" >&2
+  exit 2
+fi
+
+if [[ $RESUME -eq 1 && "$TARGET" != "steamstreet" ]]; then
+  echo "--resume publishes to the Steamstreet repository only; a Central release cannot be resumed this way" >&2
   exit 2
 fi
 
@@ -122,10 +138,17 @@ if [[ -n "$(git status --porcelain)" ]]; then
 fi
 
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-git fetch --quiet origin "$BRANCH" || die "could not fetch origin/$BRANCH"
+if [[ $RESUME -eq 1 ]]; then
+  # Resuming publishes a commit that is already tagged and pushed, so it need not be a branch tip.
+  RESUME_TAG="$(git tag --points-at HEAD | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 || true)"
+  [[ -n "$RESUME_TAG" ]] || die "--resume needs HEAD to carry a release tag (vX.Y.Z); check the tag out first"
+  git ls-remote --tags origin "$RESUME_TAG" | grep -q . || die "$RESUME_TAG is not on origin"
+else
+  git fetch --quiet origin "$BRANCH" || die "could not fetch origin/$BRANCH"
 
-if [[ -n "$(git rev-list "origin/$BRANCH..HEAD")" ]]; then
-  die "$BRANCH has unpushed commits; push them first so the tag refers to a commit on origin"
+  if [[ -n "$(git rev-list "origin/$BRANCH..HEAD")" ]]; then
+    die "$BRANCH has unpushed commits; push them first so the tag refers to a commit on origin"
+  fi
 fi
 
 GRADLE_PROPS="${GRADLE_USER_HOME:-$HOME/.gradle}/gradle.properties"
@@ -166,7 +189,11 @@ fi
 
 info "target:      $TARGET"
 info "check:       $CHECK"
-info "branch:      $BRANCH (in sync with origin)"
+if [[ $RESUME -eq 1 ]]; then
+  info "resuming:    $RESUME_TAG at HEAD"
+else
+  info "branch:      $BRANCH (in sync with origin)"
+fi
 info "publishing:  AWS profile $PUBLISH_PROFILE"
 [[ "$TARGET" == "central" ]] && info "central:     credentials present"
 
@@ -183,15 +210,28 @@ say "Resolving version"
 SCOPE_ARG=()
 [[ -n "$SCOPE" ]] && SCOPE_ARG=(-Prelease.scope="$SCOPE")
 
-VERSION="$(./gradlew properties -Prelease.stage=final ${SCOPE_ARG[@]+"${SCOPE_ARG[@]}"} --console=plain -q 2>/dev/null \
+# Every Gradle run that builds the release passes these, so they all agree on the version. When
+# resuming, nebula takes it from the tag at HEAD instead of inferring the next one.
+if [[ $RESUME -eq 1 ]]; then
+  VERSION_ARGS=(-Prelease.useLastTag=true -Prelease.stage=final)
+else
+  VERSION_ARGS=(-Prelease.stage=final ${SCOPE_ARG[@]+"${SCOPE_ARG[@]}"})
+fi
+
+VERSION="$(./gradlew properties "${VERSION_ARGS[@]}" --console=plain -q 2>/dev/null \
   | grep -E '^version:' | head -1 | awk '{print $2}')"
 
 [[ -n "$VERSION" ]] || die "could not determine the version nebula would use"
 [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || \
   die "resolved version '$VERSION' is not a release version; check --scope and the branch name"
 
-git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null && \
-  die "tag v$VERSION already exists; this version has been released"
+if [[ $RESUME -eq 1 ]]; then
+  [[ "v$VERSION" == "$RESUME_TAG" ]] || die "nebula resolved $VERSION, but HEAD is tagged $RESUME_TAG"
+  CHECK="none"
+else
+  git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null && \
+    die "tag v$VERSION already exists; this version has been released (use --resume to finish publishing it)"
+fi
 
 info "version: $VERSION"
 
@@ -246,29 +286,37 @@ STEAMSTREET_PROBES=(
 )
 
 if [[ "$TARGET" == "steamstreet" ]]; then
-  say "Releasing $VERSION to the Steamstreet repository"
-  if ! confirm "Publish $VERSION to $STEAMSTREET_REPO and tag v$VERSION?"; then
-    die "aborted before upload"
+  if [[ $RESUME -eq 1 ]]; then
+    say "Publishing $VERSION to the Steamstreet repository again (--resume)"
+    confirm "Upload $VERSION, already tagged, to $STEAMSTREET_REPO?" || die "aborted before upload"
+  else
+    say "Releasing $VERSION to the Steamstreet repository"
+    confirm "Upload $VERSION to $STEAMSTREET_REPO, then tag v$VERSION?" || die "aborted before upload"
   fi
 
-  publishing ./gradlew final -Pawskt.publishTarget=steamstreet ${SCOPE_ARG[@]+"${SCOPE_ARG[@]}"} --console=plain || \
-    die "the release build failed; check whether artifacts were uploaded and whether v$VERSION was tagged before retrying"
-
-  git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null || die "release finished but tag v$VERSION was not created"
-  git ls-remote --tags origin "v$VERSION" | grep -q . || die "tag v$VERSION was not pushed to origin"
-  info "tagged and pushed v$VERSION"
+  publishing ./gradlew publishAllPublicationsToSteamstreetRepository "${VERSION_ARGS[@]}" --console=plain || \
+    die "the upload failed; nothing was tagged, so run the release again to finish it"
 
   say "Publishing the Gradle plugin at $VERSION"
-  info 'gradle-plugin is an includeBuild, so the final task does not cover it'
+  info 'gradle-plugin is an includeBuild, so the root build does not cover it'
   publishing ./gradlew --project-dir gradle-plugin -Pawskt.pluginVersion="$VERSION" \
-    publishAllPublicationsToSteamstreetRepository --console=plain || die "the plugin build failed to upload"
+    publishAllPublicationsToSteamstreetRepository --console=plain || \
+    die "the plugin upload failed; nothing was tagged, so run the release again to finish it"
 
   say "Checking the artifacts answer at $STEAMSTREET_REPO"
-  if verify_steamstreet "${STEAMSTREET_PROBES[@]}"; then
-    say "Release complete: $VERSION"
-    exit 0
+  verify_steamstreet "${STEAMSTREET_PROBES[@]}" || \
+    die "not every probe answered; nothing was tagged. Check s3://steamstreet-repository/maven/release"
+
+  if [[ $RESUME -eq 0 ]]; then
+    # Tagged last, so that a tag means a complete release. The message matches nebula's own tags.
+    say "Tagging v$VERSION"
+    git tag -a "v$VERSION" -m "Release of $VERSION" || die "could not create tag v$VERSION"
+    git push origin "v$VERSION" || die "could not push tag v$VERSION; push it by hand"
+    info "tagged and pushed v$VERSION"
   fi
-  die "not every probe answered; check the uploads in s3://steamstreet-repository/maven/release"
+
+  say "Release complete: $VERSION"
+  exit 0
 fi
 
 # --- 4/5. upload -------------------------------------------------------------
