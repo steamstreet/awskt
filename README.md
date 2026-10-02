@@ -113,8 +113,7 @@ val apiKey by env("API_KEY")
 ```
 
 ### logging
-Structured JSON logging. Common code uses the suspending `log` object, whose context follows
-coroutines; the JVM adds slf4j helpers such as `logInfo` and `logValue`.
+Structured JSON logging. The suspending `log` object carries its context through coroutines:
 
 ```kotlin
 log.ctx({ "requestId" `is` id }) {
@@ -122,6 +121,28 @@ log.ctx({ "requestId" `is` id }) {
     log.data("User created", user, field = "user")
 }
 ```
+
+The non-suspending helpers `logInfo`, `logWarning`, `logError` (each with vararg metadata, and the
+last two with a throwable), `logValue`, `logJson` and `mdcContext` are available on every platform:
+
+```kotlin
+mdcContext("requestId" to id) {
+    logInfo("Order placed", "orderId" to order.id)
+    logValue("Order", "order", order)
+}
+```
+
+On the JVM they go through slf4j's MDC and the Logstash encoder, and their output is unchanged
+from 3.1.5. Everywhere else each call writes one JSON object per line, in `JsonLogPublisher`'s
+format. Metadata values are written as strings and nulls are left out, on every platform.
+
+One difference to know about: Kotlin/Native has no `ThreadContextElement`, so off the JVM a
+non-suspending call cannot read its own coroutine's context. `mdcContext` fields reach the
+suspending `log` exactly, through the coroutine context. The non-suspending helpers read a
+process-wide registry of the `mdcContext` blocks currently running, so two coroutines that run
+concurrently under different values can see each other's fields. Nothing outlives its block, and a
+native Lambda runs one invocation at a time. The JVM-only extras (`logInfo` with a builder, the
+`Logger` extensions, `logEvent`, and the `JsonElement`-context overloads) remain JVM-only.
 
 ### serialization
 `JsonObject` helpers: `copy`, `copyOrBuild`, `diff`, `comprehensiveDiff` and `deepEquals`.

@@ -5,7 +5,6 @@ import kotlinx.coroutines.slf4j.MDCContext
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.*
-import kotlinx.serialization.serializer
 import net.logstash.logback.marker.Markers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -14,9 +13,12 @@ import org.slf4j.MDC
 public val loggingEncoder: Json = Json
 
 /**
- * Create a suspendable context for logging with MDC.
+ * Create a suspendable context for logging with MDC. See the common declaration.
+ *
+ * It was `inline` before it became common. Its compiled signature is unchanged, so code built
+ * against the inline version still links.
  */
-public suspend inline fun <T> mdcContext(vararg pairs: Pair<String, Any?>, crossinline block: suspend () -> T): T {
+public actual suspend fun <T> mdcContext(vararg pairs: Pair<String, Any?>, block: suspend () -> T): T {
     val notNull = pairs.mapNotNull {
         if (it.second == null) null
         else it.first to it.second!!.toString()
@@ -97,7 +99,7 @@ public inline fun <reified T> Logger.logValue(message: String, field: String, da
 /**
  * Log serialized JSON to the log.
  */
-public fun <T> logJson(message: String, key: String, serializer: KSerializer<T>, data: T) {
+public actual fun <T> logJson(message: String, key: String, serializer: KSerializer<T>, data: T) {
     defaultLogger.logJson(message, key, loggingEncoder.encodeToString(serializer, data))
 }
 
@@ -140,13 +142,6 @@ public inline fun <reified T> logErrorObject(message: String, data: T, throwable
     logError(message, element, throwable)
 }
 
-
-/**
- * Log serialized JSON to the log.
- */
-public inline fun <reified T> logValue(message: String, field: String, data: T) {
-    logJson(message, field, loggingEncoder.serializersModule.serializer<T>(), data)
-}
 
 /**
  * Log a value as structured json, setting the data values at the root of the
@@ -203,7 +198,7 @@ public fun logEvent(message: String, config: EventLogContext.() -> Unit = {}) {
 /**
  * Log warning with additional metadata
  */
-public fun logWarning(message: String, vararg metadata: Pair<String, Any?>) {
+public actual fun logWarning(message: String, vararg metadata: Pair<String, Any?>) {
     mdc(*metadata) {
         defaultLogger.warn(message)
     }
@@ -218,19 +213,19 @@ private fun mergeMdc(throwable: Throwable?, metadata: Array<out Pair<String, Any
     } else metadata.toMap()
 }
 
-public fun logWarning(message: String, throwable: Throwable?, vararg metadata: Pair<String, Any?>) {
+public actual fun logWarning(message: String, throwable: Throwable?, vararg metadata: Pair<String, Any?>) {
     mdc(mergeMdc(throwable, metadata)) {
         defaultLogger.warn(message, throwable)
     }
 }
 
-public fun logError(message: String, vararg metadata: Pair<String, Any?>) {
+public actual fun logError(message: String, vararg metadata: Pair<String, Any?>) {
     mdc(*metadata) {
         defaultLogger.error(message)
     }
 }
 
-public fun logError(message: String, throwable: Throwable?, vararg metadata: Pair<String, Any?>) {
+public actual fun logError(message: String, throwable: Throwable?, vararg metadata: Pair<String, Any?>) {
     mdc(mergeMdc(throwable, metadata)) {
         defaultLogger.error(message, throwable)
     }
@@ -239,7 +234,7 @@ public fun logError(message: String, throwable: Throwable?, vararg metadata: Pai
 /**
  * Log info with additional metadata
  */
-public fun logInfo(message: String, vararg metadata: Pair<String, Any?>) {
+public actual fun logInfo(message: String, vararg metadata: Pair<String, Any?>) {
     mdc(*metadata) {
         defaultLogger.info(message)
     }
