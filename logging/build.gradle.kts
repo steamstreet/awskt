@@ -31,6 +31,12 @@ kotlin {
                 compileOnly(libs.ktor.client.core)
             }
         }
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.kotlin.coroutines.test)
+            }
+        }
         jvmMain {
             dependencies {
                 api(libs.slf4j.api)
