@@ -6,6 +6,7 @@ plugins {
     id("kotlinx-serialization")
 
     id("maven-publish")
+    id("steamstreet-common.steamstreet-repository")
     id("org.jetbrains.dokka")
     signing
 }

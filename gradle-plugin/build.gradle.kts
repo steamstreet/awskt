@@ -57,6 +57,21 @@ afterEvaluate {
 }
 
 publishing {
+    // The Steamstreet repository, as the root build's steamstreet-repository convention defines it.
+    // An `includeBuild` cannot see buildSrc, so it is restated here; keep the two in step.
+    repositories {
+        maven {
+            name = "steamstreet"
+            url = uri(
+                providers.gradleProperty("awskt.steamstreetRepositoryUrl")
+                    .getOrElse("s3://steamstreet-repository/maven/release")
+            )
+            authentication {
+                create<AwsImAuthentication>("awsIm")
+            }
+        }
+    }
+
     publications.withType<MavenPublication>().configureEach {
         pom {
             name.set("AWSKT: native Lambda Gradle plugin")

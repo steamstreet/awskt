@@ -1,11 +1,32 @@
 #!/usr/bin/env bash
 #
-# Cuts a release of awskt to Maven Central: validates, uploads, and publishes.
+# Cuts a release of awskt. By default it publishes to the Steamstreet repository only, which
+# answers at https://repo.steamstreet.com within a minute or two of the upload. `--target central`
+# also publishes to Maven Central, which takes about two hours to reach repo1, for the occasional
+# public release. Either way the Steamstreet repository gets every version.
 #
 # Usage:
-#   scripts/release.sh [--scope patch|minor|major] [--yes] [--dry-run] [--skip-check]
+#   scripts/release.sh [--target steamstreet|central] [--check full|jvm|none]
+#                      [--scope patch|minor|major] [--yes] [--dry-run]
 #
-# The steps, in order:
+# `--check` sets how much is verified before anything is uploaded:
+#   jvm   the JVM tests only (jvmTest, and test in the JVM-only modules), without a clean. A few
+#         minutes. The default for --target steamstreet.
+#   full  a clean `check`: every target compiled and tested, and the ABI dumps verified. About 25
+#         minutes. The default for --target central, whose releases are public and permanent.
+#   none  nothing. `--skip-check` is the same.
+# Whatever the level, `final` still compiles every target to publish it, so a native compile error
+# still stops the release; `jvm` gives up the native tests and the ABI-dump check.
+#
+# Publishing to the Steamstreet repository uses the AWS profile named by AWSKT_PUBLISH_PROFILE,
+# `steamstreet-publisher` by default: the access key of the IAM user steamstreet-maven-publisher,
+# which can only write the bucket's Maven tree (infrastructure/package-repository.yaml). A static
+# key rather than an SSO profile, so that a release never waits on a login.
+#
+# The steps for `--target steamstreet`: preflight, version, check, final (uploads, tags, pushes),
+# plugin, and verify that the POMs answer at repo.steamstreet.com.
+#
+# The steps for `--target central`, in order:
 #   1. preflight   — clean tree, branch in sync with origin, credentials present
 #   2. version     — asked of nebula rather than assumed
 #   3. check       — a clean `check`, so the release is verified rather than hoped for
@@ -31,23 +52,44 @@ set -euo pipefail
 OSSRH_API="https://ossrh-staging-api.central.sonatype.com"
 PORTAL_API="https://central.sonatype.com/api/v1/publisher"
 REPO1="https://repo1.maven.org/maven2"
+STEAMSTREET_REPO="https://repo.steamstreet.com"
+STEAMSTREET_ACCOUNT="141660060409"
+PUBLISH_PROFILE="${AWSKT_PUBLISH_PROFILE:-steamstreet-publisher}"
 
+TARGET="steamstreet"
+CHECK=""
 SCOPE=""
 ASSUME_YES=0
 DRY_RUN=0
-SKIP_CHECK=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --target)     TARGET="${2:-}"; shift 2 ;;
+    --target=*)   TARGET="${1#*=}"; shift ;;
+    --check)      CHECK="${2:-}"; shift 2 ;;
+    --check=*)    CHECK="${1#*=}"; shift ;;
     --scope)      SCOPE="${2:-}"; shift 2 ;;
     --scope=*)    SCOPE="${1#*=}"; shift ;;
     --yes|-y)     ASSUME_YES=1; shift ;;
     --dry-run)    DRY_RUN=1; shift ;;
-    --skip-check) SKIP_CHECK=1; shift ;;
-    -h|--help)    sed -n '2,30p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    --skip-check) CHECK="none"; shift ;;
+    -h|--help)    sed -n '2,40p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *)            echo "unknown argument: $1" >&2; exit 2 ;;
   esac
 done
+
+if [[ ! "$TARGET" =~ ^(steamstreet|central)$ ]]; then
+  echo "--target must be steamstreet or central" >&2
+  exit 2
+fi
+
+if [[ -z "$CHECK" ]]; then
+  if [[ "$TARGET" == "central" ]]; then CHECK="full"; else CHECK="jvm"; fi
+fi
+if [[ ! "$CHECK" =~ ^(full|jvm|none)$ ]]; then
+  echo "--check must be full, jvm or none" >&2
+  exit 2
+fi
 
 if [[ -n "$SCOPE" && ! "$SCOPE" =~ ^(patch|minor|major)$ ]]; then
   echo "--scope must be patch, minor or major" >&2
@@ -88,18 +130,36 @@ fi
 GRADLE_PROPS="${GRADLE_USER_HOME:-$HOME/.gradle}/gradle.properties"
 read_prop() { grep -E "^$1=" "$GRADLE_PROPS" 2>/dev/null | head -1 | cut -d= -f2- || true; }
 
-CENTRAL_USER="${MAVEN_CENTRAL_USERNAME:-$(read_prop mavenCentralUsername)}"
-CENTRAL_PASS="${MAVEN_CENTRAL_PASSWORD:-$(read_prop mavenCentralPassword)}"
+# Gradle's S3 support reads credentials from the environment, not from a named profile, so the
+# publishing profile's are exported for the rest of the run. AWS_PROFILE is cleared so that nothing
+# falls back to whichever profile the shell happened to have.
+command -v aws >/dev/null || die "the AWS CLI is required to publish to the Steamstreet repository"
+PUBLISH_ENV="$(aws configure export-credentials --profile "$PUBLISH_PROFILE" --format env 2>/dev/null)" || \
+  die "no credentials for AWS profile '$PUBLISH_PROFILE'; see infrastructure/README.md"
+eval "$PUBLISH_ENV"
+unset AWS_PROFILE
+PUBLISH_ACCOUNT="$(aws sts get-caller-identity --query Account --output text 2>/dev/null)" || \
+  die "the credentials of profile '$PUBLISH_PROFILE' were rejected"
+[[ "$PUBLISH_ACCOUNT" == "$STEAMSTREET_ACCOUNT" ]] || \
+  die "profile '$PUBLISH_PROFILE' is in account $PUBLISH_ACCOUNT, not the Steamstreet account $STEAMSTREET_ACCOUNT"
 
-[[ -n "$CENTRAL_USER" && -n "$CENTRAL_PASS" ]] || \
-  die "mavenCentralUsername/mavenCentralPassword not found in $GRADLE_PROPS"
-[[ -n "$(read_prop signing.keyId)" ]] || \
-  die "signing.keyId not found in $GRADLE_PROPS; Central rejects unsigned artifacts"
+if [[ "$TARGET" == "central" ]]; then
+  CENTRAL_USER="${MAVEN_CENTRAL_USERNAME:-$(read_prop mavenCentralUsername)}"
+  CENTRAL_PASS="${MAVEN_CENTRAL_PASSWORD:-$(read_prop mavenCentralPassword)}"
 
-TOKEN="$(printf '%s:%s' "$CENTRAL_USER" "$CENTRAL_PASS" | base64)"
+  [[ -n "$CENTRAL_USER" && -n "$CENTRAL_PASS" ]] || \
+    die "mavenCentralUsername/mavenCentralPassword not found in $GRADLE_PROPS"
+  [[ -n "$(read_prop signing.keyId)" ]] || \
+    die "signing.keyId not found in $GRADLE_PROPS; Central rejects unsigned artifacts"
 
+  TOKEN="$(printf '%s:%s' "$CENTRAL_USER" "$CENTRAL_PASS" | base64)"
+fi
+
+info "target:      $TARGET"
+info "check:       $CHECK"
 info "branch:      $BRANCH (in sync with origin)"
-info "credentials: present"
+info "publishing:  AWS profile $PUBLISH_PROFILE"
+[[ "$TARGET" == "central" ]] && info "central:     credentials present"
 
 api_get()  { curl -fsS -u "$CENTRAL_USER:$CENTRAL_PASS" -H "Accept: application/json" --max-time 120 "$@"; }
 api_post() { curl -fsS -X POST -H "Authorization: Bearer $TOKEN" --max-time 300 "$@"; }
@@ -128,18 +188,78 @@ info "version: $VERSION"
 
 # --- 3. check ----------------------------------------------------------------
 
-if [[ $SKIP_CHECK -eq 1 ]]; then
-  say "Skipping check (--skip-check)"
-else
-  say "Running clean check"
-  info "this takes roughly 25 minutes; every target is compiled and the ABI dumps verified"
-  ./gradlew clean check --console=plain || die "check failed; nothing has been uploaded"
-fi
+case "$CHECK" in
+  none)
+    say "Skipping the check (--check none)"
+    ;;
+  jvm)
+    say "Running the JVM tests"
+    info "jvmTest in the multiplatform modules and test in the JVM-only ones; native tests and the ABI dumps are not checked"
+    ./gradlew jvmTest test --console=plain || die "the JVM tests failed; nothing has been uploaded"
+    ;;
+  full)
+    say "Running clean check"
+    info "this takes roughly 25 minutes; every target is compiled and the ABI dumps verified"
+    ./gradlew clean check --console=plain || die "check failed; nothing has been uploaded"
+    ;;
+esac
 
 if [[ $DRY_RUN -eq 1 ]]; then
   say "Dry run complete"
-  info "would have released $VERSION from $BRANCH"
+  info "would have released $VERSION from $BRANCH to $TARGET"
   exit 0
+fi
+
+# Waits for each path to answer 200 at the Steamstreet repository. CloudFront holds a 404 for about
+# ten seconds, so a path asked for a moment before its upload landed answers again shortly after.
+verify_steamstreet() {
+  local missing=1 path code
+  for _ in $(seq 1 18); do
+    missing=0
+    for path in "$@"; do
+      code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$STEAMSTREET_REPO/$path")"
+      [[ "$code" == "200" ]] || missing=1
+    done
+    [[ $missing -eq 0 ]] && break
+    sleep 10
+  done
+  for path in "$@"; do
+    code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$STEAMSTREET_REPO/$path")"
+    info "HTTP $code  $STEAMSTREET_REPO/$path"
+  done
+  [[ $missing -eq 0 ]]
+}
+
+STEAMSTREET_PROBES=(
+  "com/steamstreet/awskt/logging/$VERSION/logging-$VERSION.pom"
+  "com/steamstreet/awskt/aws-core-jvm/$VERSION/aws-core-jvm-$VERSION.pom"
+  "com/steamstreet/awskt/gradle-plugin/$VERSION/gradle-plugin-$VERSION.pom"
+)
+
+if [[ "$TARGET" == "steamstreet" ]]; then
+  say "Releasing $VERSION to the Steamstreet repository"
+  if ! confirm "Publish $VERSION to $STEAMSTREET_REPO and tag v$VERSION?"; then
+    die "aborted before upload"
+  fi
+
+  ./gradlew final -Pawskt.publishTarget=steamstreet ${SCOPE_ARG[@]+"${SCOPE_ARG[@]}"} --console=plain || \
+    die "the release build failed; check whether artifacts were uploaded and whether v$VERSION was tagged before retrying"
+
+  git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null || die "release finished but tag v$VERSION was not created"
+  git ls-remote --tags origin "v$VERSION" | grep -q . || die "tag v$VERSION was not pushed to origin"
+  info "tagged and pushed v$VERSION"
+
+  say "Publishing the Gradle plugin at $VERSION"
+  info 'gradle-plugin is an includeBuild, so the final task does not cover it'
+  ./gradlew --project-dir gradle-plugin -Pawskt.pluginVersion="$VERSION" \
+    publishAllPublicationsToSteamstreetRepository --console=plain || die "the plugin build failed to upload"
+
+  say "Checking the artifacts answer at $STEAMSTREET_REPO"
+  if verify_steamstreet "${STEAMSTREET_PROBES[@]}"; then
+    say "Release complete: $VERSION"
+    exit 0
+  fi
+  die "not every probe answered; check the uploads in s3://steamstreet-repository/maven/release"
 fi
 
 # --- 4/5. upload -------------------------------------------------------------
@@ -155,7 +275,7 @@ PRE_EXISTING="$(api_get "$OSSRH_API/manual/search/repositories" \
   | python3 -c 'import json,sys; print(" ".join(r["key"] for r in json.load(sys.stdin).get("repositories",[])))')"
 [[ -n "$PRE_EXISTING" ]] && info "note: staging repositories already exist and will be left alone"
 
-./gradlew final ${SCOPE_ARG[@]+"${SCOPE_ARG[@]}"} --console=plain || \
+./gradlew final -Pawskt.publishTarget=central ${SCOPE_ARG[@]+"${SCOPE_ARG[@]}"} --console=plain || \
   die "the release build failed; check whether artifacts were uploaded and whether v$VERSION was tagged before retrying"
 
 git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null || die "release finished but tag v$VERSION was not created"
@@ -165,7 +285,12 @@ info "tagged and pushed v$VERSION"
 say "Publishing the Gradle plugin at $VERSION"
 info 'gradle-plugin is an includeBuild, so the final task does not cover it'
 ./gradlew --project-dir gradle-plugin -Pawskt.pluginVersion="$VERSION" \
-  publishToSonatype closeSonatypeStagingRepository --console=plain || die "the plugin build failed to upload"
+  publishToSonatype closeSonatypeStagingRepository publishAllPublicationsToSteamstreetRepository \
+  --console=plain || die "the plugin build failed to upload"
+
+say "Checking the artifacts answer at $STEAMSTREET_REPO"
+verify_steamstreet "${STEAMSTREET_PROBES[@]}" || \
+  info "not every probe answered at $STEAMSTREET_REPO; Central continues regardless"
 
 # --- 6. validate -------------------------------------------------------------
 

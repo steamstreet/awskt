@@ -12,7 +12,17 @@ coordinates changed, and so did the default credentials chain.
 
 ## Installation
 
+Every release is published to the Steamstreet repository; some are also on Maven Central. Add the
+repository, limited to the awskt group so that nothing else is looked up there:
+
 ```kotlin
+repositories {
+    mavenCentral()
+    maven("https://repo.steamstreet.com") {
+        content { includeGroup("com.steamstreet.awskt") }
+    }
+}
+
 dependencies {
     implementation("com.steamstreet.awskt:dynamokt:VERSION")
     implementation("com.steamstreet.awskt:lambda-api-gateway-ktor:VERSION")

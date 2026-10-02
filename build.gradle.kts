@@ -87,7 +87,25 @@ tasks.named("snapshot") {
 // https://central.sonatype.com/publishing/deployments.
 val closeTask = tasks.named("closeSonatypeStagingRepository")
 
+// Where `final` publishes, chosen with -Pawskt.publishTarget:
+//
+// - `steamstreet` (the default) publishes only to the Steamstreet repository, which answers at
+//   https://repo.steamstreet.com within a minute or two. See the steamstreet-repository convention.
+// - `central` publishes to Maven Central as well, through the staging repository described above,
+//   so that the Steamstreet repository still holds every version. It takes about two hours to reach
+//   repo1, and is for the occasional public release.
+//
+// `scripts/release.sh --target` sets the property; use the script rather than `final` directly.
+val publishTarget = providers.gradleProperty("awskt.publishTarget").getOrElse("steamstreet")
+
 tasks.named("final") {
-    dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "publishToSonatype" } })
-    dependsOn(closeTask)
+    dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "publishAllPublicationsToSteamstreetRepository" } })
+    when (publishTarget) {
+        "steamstreet" -> {}
+        "central" -> {
+            dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "publishToSonatype" } })
+            dependsOn(closeTask)
+        }
+        else -> throw GradleException("awskt.publishTarget must be steamstreet or central, not '$publishTarget'")
+    }
 }
