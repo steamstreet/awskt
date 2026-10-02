@@ -9,15 +9,24 @@ import com.steamstreet.awskt.eventbridge.PutEventsEntry
 import com.steamstreet.awskt.eventbridge.PutEventsResponse
 import com.steamstreet.awskt.eventbridge.PutEventsResultEntry
 import com.steamstreet.events.EventSchema
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.json.*
 import software.amazon.event.ruler.Ruler
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.time.Instant
 import java.util.*
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 private class LocalTarget(
     val handler: (suspend (InputStream, Context) -> Unit)? = null
@@ -42,9 +51,65 @@ public class EventBridgeMock(
 
     private val events = ArrayList<PutEventsEntry>()
 
-    private var processSemaphore = AtomicInteger(0)
+    private val inFlight = MutableStateFlow(0)
 
-    override val isProcessing: Boolean get() = processSemaphore.get() != 0
+    private val failures = ArrayList<DeliveryFailure>()
+
+    /**
+     * The number of events whose delivery to matching targets has not yet finished. Each
+     * [putEvents] entry counts once, from the moment it is accepted until every target it matched
+     * has been invoked. An event published by a target counts before that target's own delivery
+     * finishes, so a cascade never reads as idle part-way through.
+     */
+    public val inFlightDeliveries: StateFlow<Int> = inFlight.asStateFlow()
+
+    override val isProcessing: Boolean get() = inFlight.value != 0
+
+    /**
+     * Suspends until no deliveries are in flight, including any events published by the targets
+     * themselves. Call it before asserting on a target's side effects, and before tearing down
+     * anything a target writes to.
+     *
+     * The wait runs on [Dispatchers.Default] so that [timeout] is real time even under `runTest`,
+     * whose virtual clock would otherwise expire it at once while the delivery threads still run.
+     *
+     * @throws IllegalStateException if deliveries are still in flight after [timeout].
+     */
+    public suspend fun awaitIdle(timeout: Duration = 20.seconds) {
+        withContext(Dispatchers.Default) {
+            withTimeoutOrNull(timeout) {
+                inFlight.first { it == 0 }
+            }
+        } ?: error("EventBridgeMock still has ${inFlight.value} deliveries in flight after $timeout")
+    }
+
+    /**
+     * A target that threw while handling an event.
+     */
+    public class DeliveryFailure(
+        public val eventBusName: String?,
+        public val detailType: String?,
+        public val ruleName: String,
+        public val error: Throwable,
+    )
+
+    /**
+     * Every target invocation that threw, oldest first. A throwing target is logged and recorded
+     * here rather than propagated: real EventBridge delivers to each target independently, so one
+     * failing target must not stop the others or leave the mock reporting [isProcessing] forever.
+     * Tests that expect every delivery to succeed can assert this is empty.
+     */
+    public val deliveryFailures: List<DeliveryFailure>
+        get() = synchronized(failures) { failures.toList() }
+
+    /**
+     * Clear the recorded [deliveryFailures].
+     */
+    public fun clearDeliveryFailures() {
+        synchronized(failures) {
+            failures.clear()
+        }
+    }
 
     /**
      * The extension seam is not available on a mock: there is no signed transport behind it, and
@@ -85,8 +150,6 @@ public class EventBridgeMock(
         val rules = ArrayList<EventRule>()
 
         fun putEvent(entry: PutEventsEntry) {
-            processSemaphore.incrementAndGet()
-
             val str = buildJsonObject {
                 put("source", entry.source)
                 put("detail-type", entry.detailType)
@@ -95,17 +158,41 @@ public class EventBridgeMock(
                 }
             }.toString()
 
-            thread {
-                runBlocking {
-                    synchronized(rules) {
+            // Counted only once nothing above can throw, and released in `finally`, so no failure
+            // inside the delivery thread can leave the mock reporting itself busy for good.
+            inFlight.update { it + 1 }
+            thread(name = "EventBridgeMock-delivery") {
+                try {
+                    val deliveries = synchronized(rules) {
                         rules.filter {
                             Ruler.matchesRule(str, it.eventPattern)
-                        }
-                    }.flatMap { it.targets }.forEach {
-                        sendToTarget(entry, it)
+                        }.flatMap { rule -> rule.targets.map { rule to it } }
                     }
+                    runBlocking {
+                        deliveries.forEach { (rule, target) ->
+                            try {
+                                sendToTarget(entry, target)
+                            } catch (t: Throwable) {
+                                recordFailure(entry, rule.name, t)
+                            }
+                        }
+                    }
+                } catch (t: Throwable) {
+                    recordFailure(entry, "<rule matching>", t)
+                } finally {
+                    inFlight.update { it - 1 }
                 }
-                processSemaphore.decrementAndGet()
+            }
+        }
+
+        private fun recordFailure(entry: PutEventsEntry, ruleName: String, t: Throwable) {
+            System.err.println(
+                "EventBridgeMock: delivery of '${entry.detailType}' on bus " +
+                    "'${entry.eventBusName ?: "default"}' to rule '$ruleName' failed: $t"
+            )
+            t.printStackTrace()
+            synchronized(failures) {
+                failures.add(DeliveryFailure(entry.eventBusName, entry.detailType, ruleName, t))
             }
         }
 
@@ -213,7 +300,9 @@ public class EventBridgeMock(
                 ?: throw IllegalArgumentException("No such rule: $ruleName")
         }
 
-        rule.targets.add(LocalTarget(handler))
+        synchronized(bus.rules) {
+            rule.targets.add(LocalTarget(handler))
+        }
     }
 
     /**
