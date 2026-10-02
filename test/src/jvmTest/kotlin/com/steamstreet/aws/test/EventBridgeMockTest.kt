@@ -1,16 +1,24 @@
 package com.steamstreet.aws.test
 
+import com.steamstreet.aws.lambda.eventbridge.EventBridgeFunction
+import com.steamstreet.aws.lambda.eventbridge.EventBridgeHandlerConfig
 import com.steamstreet.awskt.eventbridge.PutEventsEntry
+import com.steamstreet.events.eventSchema
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.io.InputStream
 import java.util.Collections
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Coverage for [EventBridgeMock]'s routing.
@@ -166,6 +174,143 @@ class EventBridgeMockTest {
     fun unknownBusIsRejected() = runTest {
         val mock = EventBridgeMock()
         assertFailsWith<IllegalArgumentException> { mock.listRules("no-such-bus") }
+    }
+
+    private fun orderPlaced(bus: String = "orders") = PutEventsEntry(
+        eventBusName = bus,
+        source = "shop",
+        detailType = "OrderPlaced",
+        detail = """{"orderId":"7"}""",
+    )
+
+    /**
+     * Real EventBridge delivers to each target independently. Through 3.1.5 the mock delivered to
+     * every target on one thread with no error handling, so the first throwing target killed the
+     * thread: later targets never ran, and the in-flight count was never released, leaving
+     * [EventBridgeMock.isProcessing] true for good.
+     */
+    @Test
+    fun throwingTargetDoesNotStopTheOthers() = runTest {
+        val mock = EventBridgeMock()
+        val received = Collections.synchronizedList(mutableListOf<String>())
+
+        mock.createEventBus("orders")
+        mock.putRule("fails", """{"detail-type":["OrderPlaced"]}""", "orders")
+        mock.putTarget("orders", "fails") { _: InputStream, _ -> error("boom") }
+        // A second target on the same rule, after the throwing one.
+        mock.collectInto("orders", "fails", received)
+        mock.putRule("succeeds", """{"detail-type":["OrderPlaced"]}""", "orders")
+        mock.collectInto("orders", "succeeds", received)
+
+        mock.putEvents(listOf(orderPlaced()))
+        mock.awaitIdle(5_000.milliseconds)
+
+        assertFalse(mock.isProcessing)
+        assertEquals(2, received.size, "both healthy targets must receive the event")
+        val failure = mock.deliveryFailures.single()
+        assertEquals("fails", failure.ruleName)
+        assertEquals("OrderPlaced", failure.detailType)
+        assertEquals("orders", failure.eventBusName)
+        assertEquals("boom", failure.error.message)
+
+        mock.clearDeliveryFailures()
+        assertTrue(mock.deliveryFailures.isEmpty())
+    }
+
+    /**
+     * The path consumers actually hit: [EventBridgeFunction.execute] rethrows a handler's exception
+     * when it is not in batch mode, so a failing function must be contained the same way.
+     */
+    @Test
+    fun throwingEventBridgeFunctionIsContained() = runTest {
+        val mock = EventBridgeMock()
+        val received = Collections.synchronizedList(mutableListOf<String>())
+        val schema = eventSchema<JsonObject>("OrderPlaced")
+
+        mock.createEventBus("orders")
+        mock.putTarget("orders", listOf("OrderPlaced"), object : EventBridgeFunction {
+            override val tracePerformance: Boolean get() = false
+            override suspend fun EventBridgeHandlerConfig.onEvent() {
+                schema { error("handler failed") }
+            }
+        })
+        mock.putRule("succeeds", """{"detail-type":["OrderPlaced"]}""", "orders")
+        mock.collectInto("orders", "succeeds", received)
+
+        mock.putEvents(listOf(orderPlaced(), orderPlaced()))
+        mock.awaitIdle(5_000.milliseconds)
+
+        assertFalse(mock.isProcessing)
+        assertEquals(2, received.size)
+        assertEquals(2, mock.deliveryFailures.size)
+    }
+
+    @Test
+    fun awaitIdleWaitsForSlowDeliveries() = runTest {
+        val mock = EventBridgeMock()
+        val received = Collections.synchronizedList(mutableListOf<String>())
+
+        mock.createEventBus("orders")
+        mock.putRule("slow", """{"detail-type":["OrderPlaced"]}""", "orders")
+        mock.putTarget("orders", "slow") { input: InputStream, _ ->
+            Thread.sleep(200)
+            received.add(input.readBytes().decodeToString())
+        }
+
+        mock.putEvents(listOf(orderPlaced()))
+        assertEquals(1, mock.inFlightDeliveries.value)
+        mock.awaitIdle(5_000.milliseconds)
+
+        assertEquals(1, received.size)
+        assertEquals(0, mock.inFlightDeliveries.value)
+    }
+
+    /**
+     * An event a target publishes is counted before that target's own delivery is released, so
+     * awaiting idle covers the whole cascade rather than returning between hops.
+     */
+    @Test
+    fun awaitIdleCoversEventsPublishedByTargets() = runTest {
+        val mock = EventBridgeMock()
+        val received = Collections.synchronizedList(mutableListOf<String>())
+
+        mock.createEventBus("orders")
+        mock.putRule("placed", """{"detail-type":["OrderPlaced"]}""", "orders")
+        mock.putTarget("orders", "placed") { _: InputStream, _ ->
+            mock.putEvents(
+                listOf(
+                    PutEventsEntry(eventBusName = "orders", source = "shop", detailType = "OrderShipped", detail = "{}"),
+                ),
+            )
+        }
+        mock.putRule("shipped", """{"detail-type":["OrderShipped"]}""", "orders")
+        mock.putTarget("orders", "shipped") { input: InputStream, _ ->
+            Thread.sleep(200)
+            received.add(input.readBytes().decodeToString())
+        }
+
+        mock.putEvents(listOf(orderPlaced()))
+        mock.awaitIdle(5_000.milliseconds)
+
+        assertEquals(1, received.size)
+    }
+
+    @Test
+    fun awaitIdleTimesOutWhileADeliveryHangs() = runTest {
+        val mock = EventBridgeMock()
+        val release = CountDownLatch(1)
+
+        mock.createEventBus("orders")
+        mock.putRule("hangs", """{"detail-type":["OrderPlaced"]}""", "orders")
+        mock.putTarget("orders", "hangs") { _: InputStream, _ -> release.await(10, TimeUnit.SECONDS) }
+
+        mock.putEvents(listOf(orderPlaced()))
+        try {
+            assertFailsWith<IllegalStateException> { mock.awaitIdle(100.milliseconds) }
+        } finally {
+            release.countDown()
+        }
+        mock.awaitIdle(5_000.milliseconds)
     }
 
     /**
