@@ -8,8 +8,9 @@
  * publish here, so this repository holds every version.
  *
  * Publishing needs AWS credentials that can write the bucket. Gradle reads them from the default
- * chain, so `scripts/release.sh` exports the `steamstreet` profile's credentials into the
- * environment first: Gradle's S3 support does not read an SSO profile itself.
+ * chain, so `scripts/release.sh` runs the publishing steps with `AWS_PROFILE` set to the
+ * `steamstreet-publisher` profile, whose static key the SDK reads from ~/.aws/credentials. Gradle's
+ * S3 support cannot use an SSO profile.
  *
  * `-Pawskt.steamstreetRepositoryUrl=s3://steamstreet-repository/maven/<prefix>` publishes somewhere
  * else in the bucket, which is how to try the publishing path without releasing anything:
