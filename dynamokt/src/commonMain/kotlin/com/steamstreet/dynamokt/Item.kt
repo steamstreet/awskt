@@ -19,10 +19,15 @@ public open class Item internal constructor(
     private val mutex = Mutex()
 
     /**
-     * Get all the attributes of the item. This will automatically load attributes if this is a facade.
+     * Get all the attributes of the item. This will automatically load attributes if this is an
+     * unloaded item.
+     *
+     * A loaded item answers from memory. Only an unloaded item, which must read from DynamoDB, runs
+     * the read in `runBlocking`; see [getWithoutSuspending] for why that distinction matters.
      */
     public val allAttributes: Map<String, AttributeValue>
         get() {
+            if (loaded) return attributes
             return runBlocking {
                 allAttributes()
             }
@@ -76,11 +81,36 @@ public open class Item internal constructor(
      * load if the attribute is not present.
      */
     public open suspend fun get(name: String): AttributeValue? {
-        val attribute = attributes[name]
-        if (attribute == null && !loaded) {
+        if (!canAnswerFromMemory(name)) {
             fetch()
         }
-        return attributes[name]
+        return fromMemory(name)
+    }
+
+    /**
+     * Whether [get] can answer for the attribute without a read: the item is loaded, or it already
+     * holds the attribute.
+     */
+    internal open fun canAnswerFromMemory(name: String): Boolean = loaded || attributes[name] != null
+
+    /**
+     * The attribute as [get] returns it once no read is needed.
+     */
+    internal open fun fromMemory(name: String): AttributeValue? = attributes[name]
+
+    /**
+     * [get] for callers that cannot suspend: the property delegates.
+     *
+     * When memory can answer, this returns directly. Only an unloaded item that lacks the attribute
+     * falls back to `runBlocking`, because only it has a DynamoDB read to wait for. Before 3.1.7
+     * every delegated read ran `runBlocking`, even on a loaded item, which starts a nested event
+     * loop on the calling thread. On a single-threaded Kotlin/Native Lambda that loop is pure
+     * overhead on every attribute read, and a blocking read is a stall of the whole handler, so the
+     * fallback is kept for the one case that needs it.
+     */
+    internal fun getWithoutSuspending(name: String): AttributeValue? {
+        if (canAnswerFromMemory(name)) return fromMemory(name)
+        return runBlocking { get(name) }
     }
 
     /**
