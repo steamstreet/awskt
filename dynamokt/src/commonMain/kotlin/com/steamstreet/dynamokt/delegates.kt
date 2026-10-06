@@ -1,6 +1,5 @@
 package com.steamstreet.dynamokt
 
-import kotlinx.coroutines.runBlocking
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.enums.enumEntries
@@ -19,11 +18,14 @@ public open class ItemAttributeDelegate<T, in R : ItemContainer>(
     private var hasDefault = false
     private var defaultValue: T? = null
 
+    /**
+     * Reads the attribute without suspending when the item can answer from memory. Only an
+     * unloaded item that lacks the attribute blocks on a DynamoDB read; see
+     * [Item.getWithoutSuspending].
+     */
     override fun getValue(thisRef: R, property: KProperty<*>): T {
-        return runBlocking {
-            val attribute = thisRef.entity.get(attributeName ?: property.name)
-            serializer.deserialize(thisRef, attribute)
-        }
+        val attribute = thisRef.entity.getWithoutSuspending(attributeName ?: property.name)
+        return serializer.deserialize(thisRef, attribute)
     }
 
     /**

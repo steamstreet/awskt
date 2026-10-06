@@ -85,7 +85,12 @@ public class MutableItem internal constructor(dynamo: DynamoKtSession, attribute
      * Get the attribute with the given name. Attempts to use the updated value if it
      * is available.
      */
-    override suspend fun get(name: String): AttributeValue? {
+    override suspend fun get(name: String): AttributeValue? = fromMemory(name)
+
+    /** A mutable item never reads from DynamoDB: it answers from its attributes and updates. */
+    internal override fun canAnswerFromMemory(name: String): Boolean = true
+
+    internal override fun fromMemory(name: String): AttributeValue? {
         val value = attributes[name]
         val update = updates[name]
         return when {

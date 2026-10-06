@@ -420,6 +420,31 @@ while (retries < 3) {
 - **Item size limit**: Individual items cannot exceed 400KB
 - **Transaction limits**: Transactions support maximum 100 operations
 
+### Property delegates and blocking reads
+
+Property delegates such as `stringAttribute()`, `intAttribute()`, `enumAttribute()`, `stringSetAttribute()` and
+`stringBacked()` are not suspending, and neither are `Item.allAttributes` or `Transaction.close()`. When one of them
+needs a DynamoDB call, it waits in `runBlocking`, which blocks the calling thread. From 3.1.7 on, they block only when
+a DynamoDB call is actually needed:
+
+| Item | Delegated read or `allAttributes` |
+|------|-----------------------------------|
+| Loaded: from `get`, `getOrNull`, `getAll`, a query, a scan or `facade` | Reads from memory. No `runBlocking`, no call |
+| `MutableItem` inside an update block | Reads its pending updates and attributes from memory. No `runBlocking`, no call |
+| Unloaded (`unloaded(...)`), attribute already held | Reads from memory. No `runBlocking`, no call |
+| Unloaded, attribute not held, or `allAttributes` | Blocks in `runBlocking` on one `GetItem`. Later reads come from memory |
+
+`Transaction.close()` returns at once for an empty transaction. With writes, it blocks on the commit, so code that can
+suspend should call `commit()` instead.
+
+Through 3.1.6, every delegated read ran `runBlocking`, even on a loaded item. On the JVM that was only overhead. On a
+single-threaded Kotlin/Native Lambda, it started a nested event loop for every attribute read. That nested loop runs
+any other coroutine already queued on the thread, so code ran at unexpected points.
+
+On a native or otherwise single-threaded handler, avoid the blocking case. Load the item with the suspending
+`get`/`getOrNull` or `allAttributes()` before reading its delegates, or read a missing attribute with the suspending
+`Item.get(name)`. The suspending reads never block.
+
 ### Design Patterns
 
 ```kotlin
@@ -453,3 +478,6 @@ DynamoKt is versioned with the rest of awskt. The current line is 3.1, published
 3.0 replaced the AWS SDK's `DynamoDbClient` with awskt's own `DynamoDb` client. It also moved
 `AttributeValue` into `com.steamstreet.dynamokt` and changed the credentials, date and enum-serializer
 APIs. See [Migrating from awskt 2.x to 3.x](migrating-2.x-to-3.x.md).
+
+3.1.7 stopped the property delegates, `Item.allAttributes` and `Transaction.close()` from running `runBlocking` when
+no DynamoDB call is needed. Results are unchanged. See [Property delegates and blocking reads](#property-delegates-and-blocking-reads).

@@ -133,7 +133,13 @@ public class Transaction internal constructor(private val mapper: DynamoKtSessio
         items.add(buildDelete(pk, sk))
     }
 
+    /**
+     * Commits the transaction. An empty transaction has nothing to write, so it returns without
+     * starting `runBlocking`; one with writes still blocks on the commit. Code that can suspend
+     * should call [commit] instead.
+     */
     override fun close() {
+        if (items.isEmpty()) return
         runBlocking {
             commit()
         }
