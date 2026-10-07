@@ -244,6 +244,10 @@ public final class com/steamstreet/awskt/core/RestXmlErrorParser : com/steamstre
 	public fun parse (ILjava/util/Map;[B)Lcom/steamstreet/awskt/core/ErrorDetails;
 }
 
+public final class com/steamstreet/awskt/core/RetiringEngineKt {
+	public static final fun retiringOnCancellation (Lio/ktor/client/engine/HttpClientEngineFactory;)Lio/ktor/client/engine/HttpClientEngineFactory;
+}
+
 public final class com/steamstreet/awskt/core/RetryConfig {
 	public synthetic fun <init> (IJJJJZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (IJJJJZLkotlin/jvm/internal/DefaultConstructorMarker;)V

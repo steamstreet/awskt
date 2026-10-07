@@ -31,8 +31,17 @@ import io.ktor.client.engine.curl.Curl
  * libcurl keeps the connection in the multi handle's connection cache. Nothing sets
  * `CURLOPT_FORBID_REUSE` or `CURLOPT_FRESH_CONNECT`, so the next request to the same host reuses the
  * connection. This comes from reading the Ktor 3.5.2 source; unlike the JVM, no test observes it.
+ *
+ * ### Cancellation
+ *
+ * The engine is wrapped by [retiringOnCancellation]. In Ktor 3.5.2's curl engine, a request cancelled
+ * before its response starts can make a later request on the same engine fail at once with the
+ * cancelled request's exception, because the cancellation is queued against the address of an easy
+ * handle that curl has since freed and handed to the later request. After a cancelled request the
+ * wrapper sends everything to a new engine, so the cost is one new connection. `CurlStaleCancellationTest`
+ * reproduces the defect against a local server and shows the wrapper avoiding it.
  */
-public actual fun awsHttpClient(caInfo: String?, timeouts: AwsHttpTimeouts): HttpClient = HttpClient(Curl) {
+public actual fun awsHttpClient(caInfo: String?, timeouts: AwsHttpTimeouts): HttpClient = HttpClient(Curl.retiringOnCancellation()) {
     configureAwsClient(timeouts)
     engine {
         // Left unset when null so libcurl falls back to the system trust store. On AL2023 the
