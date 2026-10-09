@@ -87,6 +87,10 @@ public abstract class ApiGatewayKtorCallBase internal constructor(
                                 )
                             }
                             responseContent = body
+                            // Ktor's engines settle the status here, before the send pipeline
+                            // finishes, so `on(ResponseSent)` hooks (request timing, metrics) read
+                            // the final status rather than an unset one.
+                            statusCode = body.status?.value ?: statusCode.takeIf { it != 0 } ?: 200
                             isSent = true
                         }
                     }
