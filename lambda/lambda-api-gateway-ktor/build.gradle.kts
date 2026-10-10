@@ -87,6 +87,8 @@ kotlin {
         jvmTest {
             dependencies {
                 implementation(libs.kluent)
+                // Only for the request-line comparison in `HttpApiFrontEndJvmTest`.
+                implementation(libs.ktor.server.netty)
             }
         }
     }
