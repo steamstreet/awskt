@@ -81,6 +81,14 @@ public abstract class ApiGatewayKtorCallBase internal constructor(
 
                         // Add an interceptor to capture the response body
                         intercept(ApplicationSendPipeline.Engine) { body ->
+                            // A response sent from inside the send pipeline of another, such as
+                            // the page a StatusPages `status` handler responds with, reaches this
+                            // step first. As in Ktor's engines, the first response committed is
+                            // the one sent, and the outer response it replaced is dropped.
+                            if (responseContent != null) {
+                                finish()
+                                return@intercept
+                            }
                             if (body !is OutgoingContent) {
                                 throw IllegalArgumentException(
                                     "Response pipeline couldn't transform '${body::class}' to the OutgoingContent"
@@ -100,7 +108,9 @@ public abstract class ApiGatewayKtorCallBase internal constructor(
             override fun push(builder: ResponsePushBuilder) {
             }
 
-            override fun status(): HttpStatusCode = HttpStatusCode.fromValue(statusCode)
+            // Null while no status has been set, as in Ktor's engines.
+            override fun status(): HttpStatusCode? =
+                if (statusCode == 0) null else HttpStatusCode.fromValue(statusCode)
 
             override fun status(value: HttpStatusCode) {
                 statusCode = value.value

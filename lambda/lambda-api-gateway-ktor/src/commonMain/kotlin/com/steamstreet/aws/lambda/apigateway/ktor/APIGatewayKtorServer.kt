@@ -6,7 +6,10 @@ import io.ktor.events.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.RoutingFailureStatusCode
 import io.ktor.util.*
+import io.ktor.utils.io.InternalAPI
 
 /**
  * Starts a Ktor [Application] with no network engine behind it.
@@ -70,6 +73,7 @@ internal class KtorApplicationHost(module: Application.() -> Unit) {
                 val created = applicationProvider()
                 created.sendPipeline.installDefaultTransformations()
                 created.receivePipeline.installDefaultTransformations()
+                created.installEngineFallback()
 
                 app = created
                 appProvider = {
@@ -86,6 +90,29 @@ internal class KtorApplicationHost(module: Application.() -> Unit) {
     }
 
     val application: Application get() = appProvider()
+}
+
+/**
+ * Answers a call that nothing handled, as Ktor's engines do (`BaseApplicationEngine` installs the
+ * same interceptor).
+ *
+ * Routing records why it found no route in [RoutingFailureStatusCode]: 405 for a path that exists
+ * under another method (such as `HEAD` on a `GET` route), and nothing for a path that matches no
+ * route. The fallback responds with that status, or 404, so the response goes through the send
+ * pipeline and `StatusPages` can turn it into a page. Without it the call ended with no response,
+ * which the adapter reported as a bare 404 that no plugin saw.
+ *
+ * Engines install it before the application's modules load, and so does the adapter: it runs
+ * ahead of any `Fallback` interceptor the application adds.
+ */
+@OptIn(InternalAPI::class)
+private fun Application.installEngineFallback() {
+    intercept(ApplicationCallPipeline.Fallback) {
+        if (call.isHandled) return@intercept
+
+        val status = call.attributes.getOrNull(RoutingFailureStatusCode) ?: HttpStatusCode.NotFound
+        call.respond(status)
+    }
 }
 
 /**

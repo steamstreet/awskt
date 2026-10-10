@@ -86,9 +86,9 @@ class HttpApiFrontEndTest {
 
         server.processRequest(request(path = "/teapot"))
         server.processRequest(request(path = "/redirect"))
-        // An unmatched route sends nothing, so the hook has nothing to report for it.
+        // An unmatched route is answered by the engine fallback, which is a response like any other.
         server.processRequest(request(path = "/missing"))
-        assertEquals(listOf("/ok" to 200, "/teapot" to 418, "/redirect" to 302), seen)
+        assertEquals(listOf("/ok" to 200, "/teapot" to 418, "/redirect" to 302, "/missing" to 404), seen)
     }
 
     @Test
@@ -187,15 +187,15 @@ class HttpApiFrontEndTest {
 
     /**
      * Pins what the adapter does with HEAD when the application has only GET routes: Ktor's routing
-     * does not map HEAD onto GET without the AutoHeadResponse plugin, so nothing matches and the
-     * adapter answers 404 with no body.
+     * does not map HEAD onto GET without the AutoHeadResponse plugin, so the path matches under
+     * another method, and the adapter answers 405 with no body, as Ktor's engines do.
      */
     @Test
-    fun headWithOnlyAGetRouteIs404WithNoBody() = runTest {
+    fun headWithOnlyAGetRouteIs405WithNoBody() = runTest {
         val response = run(request(method = "HEAD")) {
             routing { get("/") { call.respondText("<html>home</html>", ContentType.Text.Html) } }
         }
-        assertEquals(404, response.statusCode)
+        assertEquals(405, response.statusCode)
         assertNull(response.body)
     }
 
