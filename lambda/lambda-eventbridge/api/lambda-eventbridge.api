@@ -13,12 +13,17 @@ public abstract interface class com/steamstreet/aws/lambda/eventbridge/Event {
 	public abstract fun failed (Ljava/lang/Throwable;)V
 	public abstract fun getDetail ()Lkotlinx/serialization/json/JsonObject;
 	public abstract fun getId ()Ljava/lang/String;
+	public fun getMessageId ()Ljava/lang/String;
 	public abstract fun getResources ()Ljava/util/List;
 	public abstract fun getSource ()Ljava/lang/String;
 	public abstract fun getSourceAccount ()Ljava/lang/String;
 	public abstract fun getSourceEvent ()Ljava/lang/Object;
 	public abstract fun getTime ()Lkotlin/time/Instant;
 	public abstract fun getType ()Ljava/lang/String;
+}
+
+public final class com/steamstreet/aws/lambda/eventbridge/Event$DefaultImpls {
+	public static fun getMessageId (Lcom/steamstreet/aws/lambda/eventbridge/Event;)Ljava/lang/String;
 }
 
 public final class com/steamstreet/aws/lambda/eventbridge/EventBridgeEvent {

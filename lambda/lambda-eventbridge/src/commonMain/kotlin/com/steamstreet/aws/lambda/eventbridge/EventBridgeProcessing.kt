@@ -73,9 +73,24 @@ private suspend fun processSqsWrapped(
 
     // `Event.failed` used to emit this line itself, through a non-suspending slf4j call. It is
     // emitted here instead because `failed` is not a suspend function and the common `Log` API is
-    // suspend-only — same line, same invocation, now with the message id it never carried.
-    sqs.failures.keys.forEach { messageId ->
-        logEventError("Event processing failed", null, mapOf("messageId" to messageId))
+    // suspend-only. It carries the fields that a failed direct event logs, along with the message
+    // id, and it is logged with the event's detail type in the logging context because that
+    // context ended when the handler returned.
+    sqs.failures.forEach { (messageId, t) ->
+        val event = sqs.events.first { it.messageId == messageId }
+        withEventContext(event.type) {
+            logEventError(
+                "Event processing failed", t,
+                mapOf(
+                    "detail-type" to event.type,
+                    "source" to event.source,
+                    "time" to event.time.toString(),
+                    "account" to event.sourceAccount,
+                    "detail" to event.detail.toString(),
+                    "messageId" to messageId
+                )
+            )
+        }
     }
 
     // If we are not reporting batch failures, we throw the first exception and the entire batch
@@ -172,14 +187,18 @@ internal class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
                 val detail = eventBridgeRecord.detail
                     ?: throw IllegalArgumentException("Missing detail type or detail from message")
 
+                // SQS identifies the records to redeliver by its own message id, so failures are
+                // keyed by it rather than by the id of the event.
+                val messageId = record["messageId"]?.jsonPrimitive?.content ?: Uuid.random().toString()
+
                 object : Event {
-                    override val id: String =
-                        record["messageId"]?.jsonPrimitive?.content ?: Uuid.random().toString()
+                    override val id: String = eventBridgeRecord.id
+                    override val messageId: String = messageId
                     override val type: String = type
                     override val detail: JsonObject = detail
 
                     override fun failed(t: Throwable?) {
-                        failures[id] = t
+                        failures[messageId] = t
                     }
 
                     override val source: String? = eventBridgeRecord.source
