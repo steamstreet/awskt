@@ -95,6 +95,24 @@ class EventBridgeProcessingTest {
     }
 
     @Test
+    fun `an event has the EventBridge id however it is delivered while failures use the SQS message id`() = runTest {
+        val ids = mutableListOf<Pair<String, String?>>()
+
+        processEventBridgePayload(directEvent("a")) {
+            orderPlaced { ids.add(contextOf<Event>().id to contextOf<Event>().messageId) }
+        }
+        val response = processEventBridgePayload(sqsWrapped("a", "b"), batchSqs = true) {
+            orderPlaced { order ->
+                ids.add(contextOf<Event>().id to contextOf<Event>().messageId)
+                if (order.orderId == "b") error("failed")
+            }
+        }
+
+        assertEquals(listOf("event-1" to null, "event-a" to "msg-a", "event-b" to "msg-b"), ids)
+        assertEquals(listOf("msg-b"), response!!.batchItemFailures.map { it.itemIdentifier })
+    }
+
+    @Test
     fun `a failure throws when not batching so the whole batch is redriven`() = runTest {
         assertFailsWith<IllegalStateException> {
             processEventBridgePayload(sqsWrapped("a", "b"), batchSqs = false) {

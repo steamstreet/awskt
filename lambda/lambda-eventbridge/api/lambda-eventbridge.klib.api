@@ -23,6 +23,8 @@ abstract interface com.steamstreet.aws.lambda.eventbridge/Event { // com.steamst
         abstract fun <get-time>(): kotlin.time/Instant? // com.steamstreet.aws.lambda.eventbridge/Event.time.<get-time>|<get-time>(){}[0]
     abstract val type // com.steamstreet.aws.lambda.eventbridge/Event.type|{}type[0]
         abstract fun <get-type>(): kotlin/String // com.steamstreet.aws.lambda.eventbridge/Event.type.<get-type>|<get-type>(){}[0]
+    open val messageId // com.steamstreet.aws.lambda.eventbridge/Event.messageId|{}messageId[0]
+        open fun <get-messageId>(): kotlin/String? // com.steamstreet.aws.lambda.eventbridge/Event.messageId.<get-messageId>|<get-messageId>(){}[0]
 
     abstract fun failed(kotlin/Throwable?) // com.steamstreet.aws.lambda.eventbridge/Event.failed|failed(kotlin.Throwable?){}[0]
 }

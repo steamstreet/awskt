@@ -121,9 +121,17 @@ public class DefaultEventBridgeHandlerConfig(
  */
 public interface Event {
     /**
-     * A unique identifier of the event
+     * The EventBridge event id. This is the same whether the event was invoked directly or
+     * delivered through SQS, and it matches the id that the bus reports for the event. If the
+     * same event is delivered more than once, every delivery shares this id.
      */
     public val id: String
+
+    /**
+     * The id of the SQS message that delivered this event, or null if the event was not delivered
+     * through SQS. Unlike [id], this identifies a single delivery.
+     */
+    public val messageId: String? get() = null
 
     /**
      * The event type
@@ -190,17 +198,19 @@ public suspend fun <T, R> EventBridgeHandlerConfig.typeWithContext(
     handler: suspend context(Event) (T) -> R
 ) {
     eventsOfType(type.type).forEach { event ->
-        if (logEventProcessing) {
-            logProcessingEvent("Processing event", "event", event.detail.toString())
-        }
-
-        try {
-            val value = lambdaJson.decodeFromJsonElement(type.serializer, event.detail)
-            coroutineScope {
-                handler(event, value)
+        withEventContext(event.type) {
+            if (logEventProcessing) {
+                logProcessingEvent("Processing event", "event", event.detail.toString())
             }
-        } catch (t: Throwable) {
-            event.failed(t)
+
+            try {
+                val value = lambdaJson.decodeFromJsonElement(type.serializer, event.detail)
+                coroutineScope {
+                    handler(event, value)
+                }
+            } catch (t: Throwable) {
+                event.failed(t)
+            }
         }
     }
 }
@@ -212,16 +222,18 @@ public suspend fun <R> EventBridgeHandlerConfig.any(
     handler: suspend context(Event) (Event) -> R
 ) {
     allEvents().map { event ->
-        if (logEventProcessing) {
-            logProcessingEvent("Processing event", "event", event.detail.toString())
-        }
-
-        try {
-            coroutineScope {
-                handler(event, event)
+        withEventContext(event.type) {
+            if (logEventProcessing) {
+                logProcessingEvent("Processing event", "event", event.detail.toString())
             }
-        } catch (t: Throwable) {
-            event.failed(t)
+
+            try {
+                coroutineScope {
+                    handler(event, event)
+                }
+            } catch (t: Throwable) {
+                event.failed(t)
+            }
         }
     }
 }
@@ -266,13 +278,15 @@ public suspend fun EventBridgeHandlerConfig.type(
     handler: suspend context(Event) (JsonObject) -> Any?
 ) {
     eventsOfType(detailType).forEach { event ->
-        logProcessingEvent("Processing event", "event", event.detail.toString())
-        try {
-            coroutineScope {
-                handler(event, event.detail)
+        withEventContext(event.type) {
+            logProcessingEvent("Processing event", "event", event.detail.toString())
+            try {
+                coroutineScope {
+                    handler(event, event.detail)
+                }
+            } catch (t: Throwable) {
+                event.failed(t)
             }
-        } catch (t: Throwable) {
-            event.failed(t)
         }
     }
 }

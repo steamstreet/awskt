@@ -51,6 +51,7 @@ kotlin {
             dependencies {
                 implementation(libs.kluent)
                 implementation(projects.lambda.lambdaLogging)
+                implementation(libs.slf4j.logback.classic)
             }
         }
     }
