@@ -14,6 +14,7 @@ dependencies {
     testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.kluent)
     testImplementation(project(":lambda:lambda-logging"))
+    testImplementation(libs.slf4j.logback.classic)
 }
 
 publishing {

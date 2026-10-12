@@ -207,9 +207,17 @@ public class DefaultEventBridgeHandlerConfig(
  */
 public interface Event {
     /**
-     * A unique identifier of the event
+     * The EventBridge event id. This is the same whether the event was invoked directly or
+     * delivered through SQS, and it matches the id that the bus reports for the event. If the
+     * same event is delivered more than once, every delivery shares this id.
      */
     public val id: String
+
+    /**
+     * The id of the SQS message that delivered this event, or null if the event was not delivered
+     * through SQS. Unlike [id], this identifies a single delivery.
+     */
+    public val messageId: String? get() = null
 
     /**
      * The event type
@@ -276,15 +284,27 @@ private class SQSEventBridge(sqsEvent: JsonObject) : EventBridgeHandlerConfig {
                 val detail = eventBridgeRecord.detail
                     ?: throw IllegalArgumentException("Missing detail type or detail from message")
 
+                // SQS identifies the records to redeliver by its own message id, so failures are
+                // keyed by it rather than by the id of the event.
+                val messageId = record["messageId"]?.jsonPrimitive?.content ?: UUID.randomUUID().toString()
+
                 object : Event {
-                    override val id: String =
-                        record["messageId"]?.jsonPrimitive?.content ?: UUID.randomUUID().toString()
+                    override val id: String = eventBridgeRecord.id
+                    override val messageId: String = messageId
                     override val type: String = type
                     override val detail: JsonObject = detail
 
                     override fun failed(t: Throwable?) {
-                        logger.error("Event processing failed")
-                        failures[id] = t
+                        logError(
+                            "Event processing failed", t,
+                            "detail-type" to eventBridgeRecord.detailType,
+                            "source" to eventBridgeRecord.source,
+                            "time" to eventBridgeRecord.time.toString(),
+                            "account" to eventBridgeRecord.account,
+                            "detail" to detail.toString(),
+                            "messageId" to messageId
+                        )
+                        failures[messageId] = t
                     }
 
                     override val source: String? = eventBridgeRecord.source
@@ -328,6 +348,16 @@ public interface EventBridgeFunction {
 }
 
 
+/**
+ * Runs the handling of a single event with its detail type in the logging context, so that a
+ * handler logs the same keys whether the event was invoked directly or delivered through SQS.
+ */
+private suspend inline fun withEventContext(event: Event, crossinline block: suspend () -> Unit) {
+    mdcContext("event-detail-type" to event.type) {
+        block()
+    }
+}
+
 public suspend fun <T> EventBridgeHandlerConfig.on(type: EventSchema<T>, handler: suspend context(Event) (T) -> Any?): Unit =
     typeWithContext(type, handler)
 
@@ -339,17 +369,19 @@ public suspend fun <T, R> EventBridgeHandlerConfig.typeWithContext(
     handler: suspend context(Event) (T) -> R
 ) {
     eventsOfType(type.type).forEach { event ->
-        if (logEventProcessing) {
-            logger.logJson("Processing event", "event", event.detail.toString())
-        }
-
-        try {
-            val value = lambdaJson.decodeFromJsonElement(type.serializer, event.detail)
-            coroutineScope {
-                handler(event, value)
+        withEventContext(event) {
+            if (logEventProcessing) {
+                logger.logJson("Processing event", "event", event.detail.toString())
             }
-        } catch (t: Throwable) {
-            event.failed(t)
+
+            try {
+                val value = lambdaJson.decodeFromJsonElement(type.serializer, event.detail)
+                coroutineScope {
+                    handler(event, value)
+                }
+            } catch (t: Throwable) {
+                event.failed(t)
+            }
         }
     }
 }
@@ -361,16 +393,18 @@ public suspend fun <R> EventBridgeHandlerConfig.any(
     handler: suspend context(Event) (Event) -> R
 ) {
     allEvents().map { event ->
-        if (logEventProcessing) {
-            logger.logJson("Processing event", "event", event.detail.toString())
-        }
-
-        try {
-            coroutineScope {
-                handler(event, event)
+        withEventContext(event) {
+            if (logEventProcessing) {
+                logger.logJson("Processing event", "event", event.detail.toString())
             }
-        } catch (t: Throwable) {
-            event.failed(t)
+
+            try {
+                coroutineScope {
+                    handler(event, event)
+                }
+            } catch (t: Throwable) {
+                event.failed(t)
+            }
         }
     }
 }
@@ -415,13 +449,15 @@ public suspend fun EventBridgeHandlerConfig.type(
     handler: suspend context(Event) (JsonObject) -> Any?
 ) {
     eventsOfType(detailType).forEach { event ->
-        logger.logJson("Processing event", "event", event.detail.toString())
-        try {
-            coroutineScope {
-                handler(event, event.detail)
+        withEventContext(event) {
+            logger.logJson("Processing event", "event", event.detail.toString())
+            try {
+                coroutineScope {
+                    handler(event, event.detail)
+                }
+            } catch (t: Throwable) {
+                event.failed(t)
             }
-        } catch (t: Throwable) {
-            event.failed(t)
         }
     }
 }
