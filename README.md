@@ -294,9 +294,69 @@ class KtorHandler : APIGatewayLambdaServer() {
 }
 ```
 
+### lambda-api-gateway-ktor-auth
+From 3.1.11. `ApiGatewayPrincipal` and the `ApiGatewayAuth` plugin, which make the claims API Gateway
+has already verified available as a Ktor principal, on the JVM and on native. It does not validate
+tokens itself: its provider accepts every request, and sets a principal with null `claims` when the
+request carried none. It depends on `ktor-server-auth` only.
+
+```kotlin
+apiGatewayKtorLambda {
+    install(ApiGatewayAuth)
+    routing {
+        authenticate("api-gateway-jwt") {
+            get("/me") {
+                val principal = call.principal<ApiGatewayPrincipal>()
+                call.respondText("${principal?.subject} ${principal?.claim("email")} ${principal?.sourceIp}")
+            }
+        }
+    }
+}
+```
+
+`claim(name)` returns a string, number or boolean claim as its content string, and null for a claim
+that is missing, JSON `null`, an object or an array. `claims` is the raw `JsonObject`. The plugin reads
+a Cognito user pool authorizer's claims under a REST API and a JWT authorizer's claims under an HTTP
+API (`apiGatewayV2KtorLambda`).
+
+`install(ApiGatewayAuth) { name = "cognito" }` changes the provider name, and `name = null` makes it
+the default provider. In a test, `mockPrincipal` replaces the principal read from the request:
+
+```kotlin
+install(ApiGatewayAuth) {
+    mockPrincipal = { ApiGatewayPrincipal(buildJsonObject { put("sub", "test-user") }) }
+}
+```
+
+`ApiGatewayPrincipal(claims)` also wraps claims from another source, such as the response of
+Cognito's `oauth2/userInfo` endpoint.
+
+To move from `ApiGatewayJWT`, replace the `lambda-api-gateway-ktor-jwt` dependency with
+`lambda-api-gateway-ktor-auth` and change two names. The provider name is the same, so
+`authenticate("api-gateway-jwt") { }` blocks do not change, and the package is the same
+(`com.steamstreet.aws.lambda.apigateway.ktor`).
+
+```kotlin
+// before (JVM only)
+install(ApiGatewayJWT)
+val user = call.principal<JWTPrincipal>()?.subject
+
+// after (JVM and native)
+install(ApiGatewayAuth)
+val user = call.principal<ApiGatewayPrincipal>()?.subject
+```
+
+| `JWTPrincipal` | `ApiGatewayPrincipal` |
+|---|---|
+| `payload.getClaim("email").asString()` | `claim("email")` |
+| `payload.getClaim("sourceIp").asString()` | `sourceIp` |
+| `subject`, which throws when there is no `sub` claim | `subject`, which is null |
+| `mockPrinciple = { ... }`, a `JWTPrincipal` | `mockPrincipal = { ... }`, an `ApiGatewayPrincipal` |
+
 ### lambda-api-gateway-ktor-jwt
 JVM only. `JWTPrincipal` and the `ApiGatewayJWT` plugin, which build a Ktor principal from the
-Cognito claims API Gateway has already verified. It does not validate tokens itself.
+Cognito claims API Gateway has already verified. It does not validate tokens itself. For a Lambda
+that also runs on native, use `lambda-api-gateway-ktor-auth`.
 
 ```kotlin
 class KtorHandler : APIGatewayLambdaServer() {
@@ -402,7 +462,8 @@ Serializable AppSync resolver event models (`AppSyncContext`, `AppSyncIdentity`,
 
 ### cognito
 JVM only. `Claims` and `JsonElementClaim`, which read Cognito claims from API Gateway's authorizer
-context. This is the support code for `lambda-api-gateway-ktor-jwt`.
+context. This is the support code for `lambda-api-gateway-ktor-jwt`. On native, `ApiGatewayPrincipal`
+in `lambda-api-gateway-ktor-auth` does the job of `Claims`.
 
 ### test
 JVM only. Local and mock AWS for tests: `DynamoLocalBuilder` (in-memory DynamoDB Local, exposing an

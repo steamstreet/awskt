@@ -89,6 +89,8 @@ The project follows a multi-module architecture with these key components:
 - **lambda-core**: Base Lambda functionality and annotations
 - **lambda-api-gateway**: API Gateway proxy handler
 - **lambda-api-gateway-ktor**: Ktor integration for API Gateway
+- **lambda-api-gateway-ktor-auth**: `ApiGatewayPrincipal` and the `ApiGatewayAuth` plugin, which expose the authorizer's
+  claims as a Ktor principal on every target, with `ktor-server-auth` only
 - **lambda-api-gateway-ktor-jwt** (JVM): `JWTPrincipal` and the `ApiGatewayJWT` plugin
 - **lambda-coroutines**: Coroutine context for handlers, including `lambdaContext`
 - **lambda-native**: The Kotlin/Native Lambda runtime; `lambda-native-smoke` is its live smoke test

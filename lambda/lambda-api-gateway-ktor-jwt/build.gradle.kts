@@ -41,7 +41,8 @@ plugins {
 //
 // JVM-only, and not a multiplatform module with a single `jvm()` target, because there is no native
 // story to tell: `ktor-server-auth-jwt` wraps java-jwt and publishes no klibs. A native Lambda that
-// needs claims should read them off `ApiGatewayProxyRequest.requestContext.authorizer` directly.
+// needs claims uses `ApiGatewayAuth` and `ApiGatewayPrincipal` in `:lambda:lambda-api-gateway-ktor-auth`,
+// which read the same claims and need `ktor-server-auth` only.
 kotlin {
     // Matches the module this code came from, which is stricter than the `explicitApiWarning()` the
     // JVM conventions default to. Splitting an artifact out should not quietly relax its API rules.
@@ -64,6 +65,7 @@ dependencies {
     implementation(libs.kotlin.serialization.json)
 
     testImplementation(kotlin("test"))
+    testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.kluent)
 }
 

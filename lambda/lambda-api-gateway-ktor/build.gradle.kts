@@ -43,6 +43,10 @@ plugins {
 // the rest of the reasoning, including why demoting the dependency to `compileOnly` would not have
 // removed the jars.
 //
+// The multiplatform counterpart, `ApiGatewayAuth` and `ApiGatewayPrincipal`, is likewise outside this
+// module, in `:lambda:lambda-api-gateway-ktor-auth`, so that `ktor-server-auth` stays off the
+// classpath of a consumer that does not use it.
+//
 // `ktor-server-host-common` is retained rather than dropped: it is not needed to drive the pipeline
 // (core carries `embeddedServer` and `ApplicationEngine`), but it is an `api` dependency today and
 // some consumer may be resolving it transitively. It publishes klibs for all four targets, so

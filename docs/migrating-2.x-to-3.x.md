@@ -259,6 +259,10 @@ implementation("com.steamstreet.awskt:lambda-api-gateway-ktor-jwt:3.1.1")
 `lambda-api-gateway-ktor` also stopped re-exporting `:cognito` and `ktor-server-auth-jwt`. Declare
 them if you use them for anything else. The JWT module is JVM-only.
 
+From 3.1.11, `lambda-api-gateway-ktor-auth` provides the same claims on the JVM and on native, through
+`ApiGatewayAuth` and `ApiGatewayPrincipal`, without `ktor-server-auth-jwt`. A Lambda that is moving to
+Kotlin/Native should use it instead; the README section for that module shows the change.
+
 ## 10. The `test` module's EventBridge mock
 
 `EventBridgeMock` implements the awskt `EventBridge` plus a small `EventBridgeAdmin` interface. It no
