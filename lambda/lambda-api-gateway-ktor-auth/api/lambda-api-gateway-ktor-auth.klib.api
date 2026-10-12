@@ -1,0 +1,39 @@
+// Klib ABI Dump
+// Targets: [linuxArm64, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.steamstreet.awskt:lambda-api-gateway-ktor-auth>
+final class com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuthConfig { // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuthConfig|null[0]
+    constructor <init>() // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuthConfig.<init>|<init>(){}[0]
+
+    final var mockPrincipal // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuthConfig.mockPrincipal|{}mockPrincipal[0]
+        final fun <get-mockPrincipal>(): kotlin/Function0<com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayPrincipal?>? // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuthConfig.mockPrincipal.<get-mockPrincipal>|<get-mockPrincipal>(){}[0]
+        final fun <set-mockPrincipal>(kotlin/Function0<com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayPrincipal?>?) // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuthConfig.mockPrincipal.<set-mockPrincipal>|<set-mockPrincipal>(kotlin.Function0<com.steamstreet.aws.lambda.apigateway.ktor.ApiGatewayPrincipal?>?){}[0]
+    final var name // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuthConfig.name|{}name[0]
+        final fun <get-name>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuthConfig.name.<get-name>|<get-name>(){}[0]
+        final fun <set-name>(kotlin/String?) // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuthConfig.name.<set-name>|<set-name>(kotlin.String?){}[0]
+}
+
+final class com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayPrincipal { // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayPrincipal|null[0]
+    constructor <init>(com.steamstreet.aws.lambda.apigateway/ApiGatewayProxyRequest) // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayPrincipal.<init>|<init>(com.steamstreet.aws.lambda.apigateway.ApiGatewayProxyRequest){}[0]
+    constructor <init>(com.steamstreet.aws.lambda.apigateway/ApiGatewayV2HttpRequest) // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayPrincipal.<init>|<init>(com.steamstreet.aws.lambda.apigateway.ApiGatewayV2HttpRequest){}[0]
+    constructor <init>(kotlinx.serialization.json/JsonObject?, kotlin/String? = ...) // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayPrincipal.<init>|<init>(kotlinx.serialization.json.JsonObject?;kotlin.String?){}[0]
+
+    final val claims // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayPrincipal.claims|{}claims[0]
+        final fun <get-claims>(): kotlinx.serialization.json/JsonObject? // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayPrincipal.claims.<get-claims>|<get-claims>(){}[0]
+    final val sourceIp // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayPrincipal.sourceIp|{}sourceIp[0]
+        final fun <get-sourceIp>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayPrincipal.sourceIp.<get-sourceIp>|<get-sourceIp>(){}[0]
+    final val subject // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayPrincipal.subject|{}subject[0]
+        final fun <get-subject>(): kotlin/String? // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayPrincipal.subject.<get-subject>|<get-subject>(){}[0]
+
+    final fun claim(kotlin/String): kotlin/String? // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayPrincipal.claim|claim(kotlin.String){}[0]
+}
+
+final const val com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuthProviderName // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuthProviderName|{}ApiGatewayAuthProviderName[0]
+    final fun <get-ApiGatewayAuthProviderName>(): kotlin/String // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuthProviderName.<get-ApiGatewayAuthProviderName>|<get-ApiGatewayAuthProviderName>(){}[0]
+
+final val com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuth // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuth|{}ApiGatewayAuth[0]
+    final fun <get-ApiGatewayAuth>(): io.ktor.server.application/ApplicationPlugin<com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuthConfig> // com.steamstreet.aws.lambda.apigateway.ktor/ApiGatewayAuth.<get-ApiGatewayAuth>|<get-ApiGatewayAuth>(){}[0]

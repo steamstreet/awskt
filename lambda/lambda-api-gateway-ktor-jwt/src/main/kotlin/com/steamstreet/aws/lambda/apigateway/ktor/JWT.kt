@@ -91,7 +91,8 @@ public fun JWTPrincipal(request: ApiGatewayProxyRequest): JWTPrincipal {
 
 public class ApiGatewayJWTConfig {
     /**
-     * If set, will be called to allow for a custom JWTPrincipal in test scenarios.
+     * If set, will be called to allow for a custom JWTPrincipal in test scenarios. If it returns
+     * null, the call has no principal; the request is not consulted.
      */
     public var mockPrinciple: (() -> JWTPrincipal?)? = null
 }
@@ -99,6 +100,10 @@ public class ApiGatewayJWTConfig {
 /**
  * Install the ApiGatewayJWT authentication. This doesn't authenticate (this would be handled by
  * cognito), but installs the JWTPrincipal based on the data in the ApiGateway request.
+ *
+ * This plugin is JVM-only. A Lambda that also runs on Kotlin/Native uses `ApiGatewayAuth` and
+ * `ApiGatewayPrincipal` from `lambda-api-gateway-ktor-auth`, which install a provider of the same
+ * name.
  */
 public val ApiGatewayJWT: ApplicationPlugin<ApiGatewayJWTConfig> =
     createApplicationPlugin("ApiGatewayJWT", ::ApiGatewayJWTConfig) {
@@ -106,8 +111,9 @@ public val ApiGatewayJWT: ApplicationPlugin<ApiGatewayJWTConfig> =
         application.install(Authentication) {
             provider("api-gateway-jwt") {
                 authenticate { context ->
-                    if (config.mockPrinciple != null) {
-                        config.mockPrinciple?.invoke()
+                    val mock = config.mockPrinciple
+                    if (mock != null) {
+                        mock()?.let { context.principal(it) }
                     } else {
                         context.principal(JWTPrincipal(context.call.apiGatewayRequest))
                     }
