@@ -55,11 +55,30 @@ import java.util.WeakHashMap
  *    freeze is not guaranteed to advance the monotonic clock and the wall clock may step backwards.
  *    OkHttp's own pool measures only the monotonic clock, and it evicts from a background task that
  *    may not yet have run when the first call after a thaw takes a connection.
- * 2. **If it has been idle for at least [probeAfterIdleMillis], has the peer already closed it?**
- *    A one-byte read with a 1 ms timeout answers that. EOF, a reset or any unexpected byte means
- *    the connection is unusable, and a timeout means it is healthy. OkHttp runs the same probe
- *    itself, but only after 10 seconds of idleness. The threshold here keeps the millisecond the
- *    probe costs away from back-to-back calls, where the server's idle timer cannot have fired.
+ * 2. **Has the peer already closed it?** A one-byte read with a 1 ms timeout answers that. EOF, a
+ *    reset or any unexpected byte means the connection is unusable, and a timeout means it is
+ *    healthy. OkHttp runs the same probe itself, but only after 10 seconds of idleness. Here it
+ *    runs on every reuse, however briefly the connection was idle.
+ *
+ * ### Why every reuse is probed (3.1.13)
+ *
+ * Through 3.1.12 the probe ran only after a second of idleness, so that back-to-back calls would
+ * not pay for it. The reasoning was that a server's idle timer cannot fire within a second. In the
+ * EPG service on 3.1.11, about one `PutEvents` in a million still failed with
+ * `unexpected end of stream` (`EOFException: \n not found: limit=0`), thrown from inside
+ * [networkInterceptor]. The guard had passed the connection without probing it. Two things defeat
+ * an idle threshold:
+ *
+ * - A server closes connections for reasons other than idleness, such as a connection's age, its
+ *   request count or a host being drained. Such a close can come a moment after a response.
+ * - Inside Lambda, neither clock is guaranteed to count the time the environment spent frozen. A
+ *   connection that the server closed during a long freeze can then read as idle for milliseconds.
+ *
+ * In both cases the FIN has already arrived when the next call takes the connection, so the probe
+ * sees it however short the measured idle time. `AwsHttpClientJvmTest` reproduces both cases, and
+ * before 3.1.13 each failed with the production exception. The cost is the probe's 1 ms timeout on
+ * every call that reuses a healthy connection, which is about a millisecond against the tens of
+ * milliseconds an AWS call takes. A write that fails and cannot be retried costs far more.
  *
  * A connection that fails either test is closed, and the attempt fails with
  * [StalePooledConnectionException] before anything is written. [applicationInterceptor] catches
@@ -73,8 +92,17 @@ import java.util.WeakHashMap
  *
  * A server can still close a connection between the probe and the write, or close it for reasons
  * of its own after reading the request. Both remain AMBIGUOUS, as they must: retried for an
- * idempotent operation and surfaced for a write. The window is now the gap between a 1 ms probe and
- * the write, rather than the whole of the server's idle timeout.
+ * idempotent operation and surfaced for a write. The window is the gap between the probe and the
+ * write. Two cases fall outside the guard altogether:
+ *
+ * - A FIN that has not reached the client yet. If a frozen environment did not receive the FIN,
+ *   it may not arrive until after the thaw. Only the idle limit covers this, and only when a clock
+ *   saw the freeze.
+ * - A new connection that the server closes before reading the request. The guard checks only
+ *   connections that have been released to the pool.
+ *
+ * An operation that needs to survive these can opt in to `RetryConfig.retryAmbiguousWrites`, but
+ * only if a replayed write is acceptable to it.
  *
  * HTTP/2 connections are left alone. OkHttp reads their frames on a thread of its own, so a probe
  * would steal them, and it handles GOAWAY itself. Such a connection may also carry other calls'
@@ -85,7 +113,6 @@ import java.util.WeakHashMap
  */
 internal class StaleConnectionGuard(
     private val maxIdleMillis: Long = DEFAULT_MAX_IDLE_MILLIS,
-    private val probeAfterIdleMillis: Long = DEFAULT_PROBE_AFTER_IDLE_MILLIS,
     private val nanoTime: () -> Long = System::nanoTime,
     private val currentTimeMillis: () -> Long = System::currentTimeMillis,
 ) {
@@ -141,7 +168,7 @@ internal class StaleConnectionGuard(
             currentTimeMillis() - released.wallMillis,
         )
         if (idleMillis >= maxIdleMillis) return "idle for ${idleMillis}ms, at or over the ${maxIdleMillis}ms limit"
-        if (idleMillis >= probeAfterIdleMillis && peerHasClosed(connection.socket())) {
+        if (peerHasClosed(connection.socket())) {
             return "closed by the server after ${idleMillis}ms idle"
         }
         return null
@@ -180,8 +207,6 @@ internal class StaleConnectionGuard(
          * a call that follows a pause of 15 seconds or more.
          */
         const val DEFAULT_MAX_IDLE_MILLIS: Long = 15_000
-
-        const val DEFAULT_PROBE_AFTER_IDLE_MILLIS: Long = 1_000
 
         /**
          * Enough to walk past the stale connections a thawed Lambda would ordinarily hold for one

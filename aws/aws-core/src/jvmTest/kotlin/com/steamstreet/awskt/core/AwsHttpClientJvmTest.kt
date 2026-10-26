@@ -219,11 +219,17 @@ class AwsHttpClientJvmTest {
                     socket.use {
                         val input = it.getInputStream().bufferedReader()
                         while (true) {
-                            val contentLength = generateSequence { input.readLine() }
+                            // Every header line is read, and only then the body. Stopping at
+                            // Content-Length would leave the rest of the request to be counted as a
+                            // second one, and the server would hang up on a connection it had just
+                            // answered on.
+                            val headers = generateSequence { input.readLine() }
                                 .takeWhile { line -> line.isNotEmpty() }
-                                .firstNotNullOfOrNull { line ->
-                                    line.substringAfter("Content-Length:", "").trim().toIntOrNull()
-                                } ?: 0
+                                .toList()
+                            if (headers.isEmpty()) break
+                            val contentLength = headers.firstNotNullOfOrNull { line ->
+                                line.substringAfter("Content-Length:", "").trim().toIntOrNull()
+                            } ?: 0
                             repeat(contentLength) { input.read() }
                             // The first request is answered and leaves the connection open for the
                             // pool. Every later one is read in full and then hung up on.
@@ -276,9 +282,9 @@ class AwsHttpClientJvmTest {
      * AMBIGUOUS, so a `PutEvents` surfaced the failure instead of retrying. The server here answers
      * a connection's first request and then closes the connection.
      *
-     * The pause is longer than [StaleConnectionGuard.DEFAULT_PROBE_AFTER_IDLE_MILLIS], below which
-     * a reused connection is not probed. No AWS endpoint closes a connection within a second of
-     * answering on it.
+     * The pause is long enough for the guard to have probed the connection even before 3.1.13, when
+     * a connection idle for less than a second was not probed.
+     * [aConnectionTheServerClosedJustAfterAnsweringIsNotWrittenTo] covers the case with no pause.
      */
     @Test
     fun aConnectionTheServerClosedWhileIdleIsNotWrittenTo() = runBlocking {
@@ -323,13 +329,98 @@ class AwsHttpClientJvmTest {
     }
 
     /**
+     * Regression test for the 3.1.11 failure in the EPG service, where a Lambda on the JVM failed
+     * about one `PutEvents` in a million. The error was `IOException: unexpected end of stream`,
+     * caused by `EOFException: \n not found: limit=0`, and it was thrown from inside
+     * [StaleConnectionGuard.networkInterceptor]. The guard had looked at the reused connection and
+     * let the write go ahead.
+     *
+     * Through 3.1.12 the guard probed a pooled connection only after it had been idle for a second.
+     * The reasoning was that no server closes a connection within a second of answering on it. That
+     * does not hold. A server may close a connection for reasons other than idleness, such as a
+     * connection's age, its request count or a host being drained. Inside Lambda, the clocks the
+     * guard reads may also not count the time the environment spent frozen, so a connection that
+     * sat through a long freeze can look as if it had been idle for milliseconds. In both cases the
+     * server's FIN has already arrived, so a probe would have seen it. Without a probe, the request
+     * was written onto a closed socket, the failure was AMBIGUOUS, and a write surfaced it.
+     *
+     * The steps:
+     *
+     * 1. The server answers the first request on a connection and then closes that connection at
+     *    once, without `Connection: close`. The pool keeps the connection, because the response gave
+     *    no sign that it would be closed.
+     * 2. The test waits until the server has closed it, and for a few milliseconds more so that the
+     *    FIN reaches the client's socket. On loopback it arrives within microseconds. The connection
+     *    has then been idle for far less than a second.
+     * 3. The second call reuses the connection. The guard must probe it, find the FIN, discard the
+     *    connection before writing anything, and run the call on a new connection.
+     * 4. Each connection must have carried exactly one request. Two on the first would mean the
+     *    request went onto the closed socket. An empty list entry would mean a connection was opened
+     *    and abandoned.
+     *
+     * Before the fix, step 3 failed with exactly the production exception.
+     */
+    @Test
+    fun aConnectionTheServerClosedJustAfterAnsweringIsNotWrittenTo() = runBlocking {
+        RawHttpServer { requestOnConnection ->
+            if (requestOnConnection == 1) Reply.ANSWER_THEN_CLOSE else Reply.HANG_UP
+        }.use { server ->
+            awsHttpClient().use { client ->
+                assertEquals("{}", client.putEvents(server.url))
+                server.awaitClosedConnections(1)
+                Thread.sleep(20)
+                assertEquals("{}", client.putEvents(server.url))
+            }
+            assertEquals(
+                listOf(1, 1),
+                server.requestsPerConnection(),
+                "the request was written onto a connection the server had already closed",
+            )
+        }
+    }
+
+    /**
+     * The same failure, seen through the clocks. Inside Lambda, neither the monotonic clock nor the
+     * wall clock is guaranteed to count the time the environment spent frozen. If neither does, a
+     * connection that the server closed during a long freeze looks as if it had barely been idle.
+     *
+     * The steps:
+     *
+     * 1. The guard is given two clocks that never move, so every connection reads as idle for 0 ms.
+     *    That is the worst a freeze can do to the guard's measurement of idle time.
+     * 2. The server answers the first request and closes the connection, as a server whose idle
+     *    timeout ran out during the freeze would. The test waits a little longer than a second of
+     *    real time, which the frozen clocks do not see.
+     * 3. The second call must still be put on a new connection. The guard's probe of a reused
+     *    connection must not depend on how long the clocks say the connection was idle.
+     *
+     * Before the fix, the guard skipped the probe because the clocks reported no idle time, and the
+     * second call failed with `unexpected end of stream`.
+     */
+    @Test
+    fun aConnectionClosedWhileTheClocksStoodStillIsNotWrittenTo() = runBlocking {
+        val guard = StaleConnectionGuard(nanoTime = { 0L }, currentTimeMillis = { 0L })
+        RawHttpServer { requestOnConnection ->
+            if (requestOnConnection == 1) Reply.ANSWER_THEN_CLOSE else Reply.HANG_UP
+        }.use { server ->
+            awsHttpClient(AwsHttpTimeouts(), ConnectionPool(), guard).use { client ->
+                assertEquals("{}", client.putEvents(server.url))
+                server.awaitClosedConnections(1)
+                Thread.sleep(1_200)
+                assertEquals("{}", client.putEvents(server.url))
+            }
+            assertEquals(listOf(1, 1), server.requestsPerConnection(), "the closed connection was written to")
+        }
+    }
+
+    /**
      * Below the idle limit and with no FIN waiting, the guard must leave the connection alone, so
      * that a hang-up after the write is still reported and not replayed. This is the same case as
      * [theEngineDoesNotReplayARequestTheServerMayHaveApplied], with the probe forced to run.
      */
     @Test
     fun aHealthyPooledConnectionIsKeptAndAHangUpAfterTheWriteStaysAmbiguous() = runBlocking {
-        val guard = StaleConnectionGuard(probeAfterIdleMillis = 0)
+        val guard = StaleConnectionGuard()
         RawHttpServer { requestOnConnection ->
             if (requestOnConnection == 1) Reply.ANSWER else Reply.HANG_UP
         }.use { server ->
