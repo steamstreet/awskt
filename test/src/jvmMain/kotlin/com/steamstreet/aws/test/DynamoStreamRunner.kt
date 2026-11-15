@@ -3,8 +3,8 @@ package com.steamstreet.aws.test
 import aws.sdk.kotlin.runtime.AwsServiceException
 import com.steamstreet.dynamokt.AttributeValue
 import aws.sdk.kotlin.services.dynamodbstreams.*
-import aws.sdk.kotlin.services.dynamodbstreams.model.GetRecordsResponse
 import aws.sdk.kotlin.services.dynamodbstreams.model.Record
+import aws.sdk.kotlin.services.dynamodbstreams.model.ResourceNotFoundException
 import aws.sdk.kotlin.services.dynamodbstreams.model.ShardIteratorType
 import aws.sdk.kotlin.services.dynamodbstreams.model.TrimmedDataAccessException
 import aws.smithy.kotlin.runtime.time.epochMilliseconds
@@ -32,6 +32,15 @@ public class DynamoStreamRunner(
     private val running = AtomicBoolean(true)
     private val completed = AtomicBoolean(false)
 
+    /** How many calls in a row may fail before a shard, or the stream itself, is given up on. */
+    internal var maxConsecutiveFailures: Int = 8
+
+    /** The wait after the first failure. It doubles with each further failure in a row. */
+    internal var initialBackoffMillis: Long = 100
+
+    /** The longest wait between retries. */
+    internal var maxBackoffMillis: Long = 5_000
+
     override val isProcessing: Boolean
         get() {
             return starting.get() || iterators.isNotEmpty()
@@ -57,58 +66,95 @@ public class DynamoStreamRunner(
         }
     }
 
+    /**
+     * Reads one shard until the runner stops, the shard closes, the shard or stream disappears, or
+     * [maxConsecutiveFailures] calls in a row fail. A runner whose test aborted before teardown never sees
+     * [stop], so every exit other than the first must be reachable without it, and no failure may be retried
+     * without a pause.
+     */
     private suspend fun processShard(streamArn: String, shardId: String) {
         var lastSequence: String? = null
+        var hasFetchedIterator = false
+        var failures = 0
 
-        while (running.get()) {
-            try {
-                val shardIteratorResult = retry(30, delay = 100) {
-                    streamsClient.getShardIterator {
-                        this.streamArn = streamArn
-                        this.shardId = shardId
-                        if (lastSequence == null) {
-                            shardIteratorType = ShardIteratorType.TrimHorizon
-                        } else {
-                            shardIteratorType = ShardIteratorType.AfterSequenceNumber
-                            sequenceNumber = lastSequence
-                        }
+        try {
+            while (running.get()) {
+                var currentIterator: String? = null
+                try {
+                    val fetchIterator: suspend () -> String? = {
+                        streamsClient.getShardIterator {
+                            this.streamArn = streamArn
+                            this.shardId = shardId
+                            if (lastSequence == null) {
+                                shardIteratorType = ShardIteratorType.TrimHorizon
+                            } else {
+                                shardIteratorType = ShardIteratorType.AfterSequenceNumber
+                                sequenceNumber = lastSequence
+                            }
+                        }.shardIterator
                     }
-                }
-                var currentIterator = shardIteratorResult.shardIterator
-                while (currentIterator != null && running.get()) {
-                    val recordsResult: GetRecordsResponse?
-                    try {
-                        recordsResult = streamsClient.getRecords {
-                            shardIterator = currentIterator
-                        }
-                        iterators += currentIterator
-                        recordsResult.records?.forEach {
-                            processRecord(streamArn, it)
-                            lastSequence = it.dynamodb?.sequenceNumber
-                        }
-
-                        if (recordsResult.records.isNullOrEmpty()) {
-                            iterators.remove(currentIterator)
-                            delay(100)
-                        }
-
-                        if (recordsResult.nextShardIterator != currentIterator) {
-                            iterators.remove(currentIterator)
-                            currentIterator = recordsResult.nextShardIterator
-                        }
-                    } catch (_: TrimmedDataAccessException) {
-                        currentIterator = null
+                    // The first fetch retries quickly, because a new table's stream may not be ready yet. Later
+                    // fetches fail through to the backoff below.
+                    currentIterator = if (hasFetchedIterator) fetchIterator() else retry(30, delay = 100) {
+                        fetchIterator()
                     }
+                    hasFetchedIterator = true
+
+                    while (currentIterator != null && running.get()) {
+                        val iterator: String = currentIterator
+                        try {
+                            val recordsResult = streamsClient.getRecords {
+                                shardIterator = iterator
+                            }
+                            failures = 0
+                            iterators += iterator
+                            recordsResult.records?.forEach {
+                                processRecord(streamArn, it)
+                                lastSequence = it.dynamodb?.sequenceNumber
+                            }
+
+                            if (recordsResult.records.isNullOrEmpty()) {
+                                iterators.remove(iterator)
+                                delay(100)
+                            }
+
+                            if (recordsResult.nextShardIterator != iterator) {
+                                iterators.remove(iterator)
+                                currentIterator = recordsResult.nextShardIterator
+                                if (currentIterator == null) {
+                                    // The shard is closed and fully read. Its children appear in describeStream.
+                                    return
+                                }
+                            }
+                        } catch (_: TrimmedDataAccessException) {
+                            // The records after lastSequence aged out, so start again from the oldest one left.
+                            iterators.remove(iterator)
+                            lastSequence = null
+                            currentIterator = null
+                        }
+                        starting.set(false)
+                    }
+                } catch (e: AwsServiceException) {
+                    currentIterator?.let { iterators.remove(it) }
+                    if (e.isShardOrStreamGone()) {
+                        log("Stopping shard $shardId, which no longer exists", e)
+                        return
+                    }
+                    // An expired iterator lands here too: the next pass fetches a fresh one from lastSequence.
+                    failures++
+                    if (failures >= maxConsecutiveFailures) {
+                        log("Stopping shard $shardId after $failures consecutive failures", e)
+                        return
+                    }
+                    log("Retrying shard $shardId (failure $failures of $maxConsecutiveFailures)", e)
+                    pause(backoff(failures))
+                } finally {
                     starting.set(false)
                 }
-            } catch (e: AwsServiceException) {
-                // ignored. This should only happen when we're closing, and if not, might just be a temporary thing.
-                println("AWS Service Exception in stream processing: ${e.message}")
-                e.printStackTrace()
-            } finally {
-                completed.set(true)
-                starting.set(false)
             }
+        } finally {
+            completed.set(true)
+            starting.set(false)
         }
     }
 
@@ -139,23 +185,66 @@ public class DynamoStreamRunner(
     }
 
     private suspend fun processStream(streamArn: String) {
+        // A shard stays in this map after its job ends, so a shard that was given up on is not restarted.
         val shards = HashMap<String, Job>()
+        var failures = 0
         withContext(Dispatchers.IO) {
             while (running.get()) {
-                streamsClient.describeStream {
-                    this.streamArn = streamArn
-                }.streamDescription?.shards?.map {
-                    if (!shards.containsKey(it.shardId)) {
-                        val shardJob = launch(Dispatchers.IO) {
-                            processShard(streamArn, it.shardId!!)
+                try {
+                    streamsClient.describeStream {
+                        this.streamArn = streamArn
+                    }.streamDescription?.shards?.forEach {
+                        if (!shards.containsKey(it.shardId)) {
+                            val shardJob = launch(Dispatchers.IO) {
+                                processShard(streamArn, it.shardId!!)
+                            }
+                            shards[it.shardId!!] = shardJob
                         }
-                        shards[it.shardId!!] = shardJob
                     }
-                    it
-                }.orEmpty()
-                delay(300)
+                    failures = 0
+                    delay(300)
+                } catch (e: AwsServiceException) {
+                    if (e.isShardOrStreamGone()) {
+                        log("Stopping the stream reader for $tableName, whose stream no longer exists", e)
+                        break
+                    }
+                    failures++
+                    if (failures >= maxConsecutiveFailures) {
+                        log("Stopping the stream reader for $tableName after $failures consecutive failures", e)
+                        break
+                    }
+                    log("Retrying describeStream for $tableName (failure $failures of $maxConsecutiveFailures)", e)
+                    pause(backoff(failures))
+                }
             }
         }
+    }
+
+    /**
+     * The wait before retry number [failure], doubling from [initialBackoffMillis] up to [maxBackoffMillis].
+     */
+    private fun backoff(failure: Int): Long {
+        val shift = (failure - 1).coerceIn(0, 20)
+        return (initialBackoffMillis shl shift).coerceAtMost(maxBackoffMillis)
+    }
+
+    /**
+     * Waits [millis], but returns early once the runner stops, so that [stop] is not held up by a backoff.
+     */
+    private suspend fun pause(millis: Long) {
+        var remaining = millis
+        while (remaining > 0 && running.get()) {
+            val step = remaining.coerceAtMost(100)
+            delay(step)
+            remaining -= step
+        }
+    }
+
+    /**
+     * One line per failure. A stack trace each time is what let a looping runner fill a 50 GB daemon log.
+     */
+    private fun log(message: String, e: AwsServiceException) {
+        println("DynamoStreamRunner: $message: ${e::class.simpleName}: ${e.message}")
     }
 
     override suspend fun stop() {
@@ -175,6 +264,14 @@ public class DynamoStreamRunner(
     }
 }
 
+
+/**
+ * Whether the error means the shard or the stream is gone, for example because a test deleted and recreated
+ * its table, or the local DynamoDB was reset. Retrying such an error can never succeed. DynamoDB Local reports
+ * a stale shard as a validation error, "Invalid ShardId in ShardIterator", rather than as a modeled exception.
+ */
+private fun AwsServiceException.isShardOrStreamGone(): Boolean =
+    this is ResourceNotFoundException || message?.contains("Invalid ShardId", ignoreCase = true) == true
 
 internal fun aws.sdk.kotlin.services.dynamodbstreams.model.AttributeValue.toModelAttributeValue(): AttributeValue {
     return when (this) {
